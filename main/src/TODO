@@ -44,8 +44,8 @@ short instead of int to indiciate success/failure of
 operation in order to use memory more wisely (?).
 (done)
 
-* Modify somanager so it respects the new object-
-oriented foundation and other editions.
+* Modify somanager and sosel so it respects the new 
+object-oriented foundation and other editions. (done)
 
 * Write a skeleton do-nothing engine, and attach it to
 the list of XMLDEngine's which serve the requests.
