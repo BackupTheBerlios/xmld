@@ -182,7 +182,7 @@ all the code sets xmld_errno appropriately.
 remember to include xmld_sockets.h each time
 you include xmld_errors.h. (done)
 
-* Implement Engine-XMLD !!!
+* Implement Engine-XMLD (done)
 
 * Implement func_list like engine_list.
 (done)
@@ -208,12 +208,9 @@ since the 'HAVE' thing has another use.
 * ptasker/ptasker.h inclusion must include
 sys/types.h for pid_t before it.
 
-* Implement dmstrstr and dmstrchr. 
+* Implement dmstrstr, dmstrchr, dmcstrchr,
+dmwstrchr.
 (in dutils.h).
-
-* In XMLDResponse_fill_col, don't use 
-XMLDCol_fill, in order not to copy
-the input string.
 
 * XMLDEngine's walk function now returns
 the current level and not a status
@@ -228,11 +225,10 @@ aggregate one.
 * Stream specific functions in
 Engine-XMLD should receive only 
 an fd, for them to be usable out 
-of a resource context. (done --
-the functions were put in element_op)
+of a resource context. (done)
 
 * Split engine_xmld/engine_xmld.(c|h)
-to:
+to: (done)
 
 engine_xmld.(c|h): which contains the 
 functions for XMLDEngine. 
@@ -257,8 +253,13 @@ get_write_fd -> *_get_ex_fd. (done)
 
 * walk in XMLDEngine must return int. (done)
 
-* Implement element_ops.
+* Implement element_ops. (done)
 
-* Implement the rest of format_manip.
+* Implement the rest of format_manip. (done)
 
 * Aggregate expression resolution!!
+
+* XMLDCol_fill shouldn't copy the given string.
+(done)
+
+* str_split.(c|h) -> sutils.(c|h) + str_prepend.
