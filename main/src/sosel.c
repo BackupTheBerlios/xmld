@@ -20,6 +20,7 @@
 #include <unistd.h>
 #include <string.h>
 #include "cfg.h"
+#include "xmld_list.h"
 #include "xmld_connection.h"
 #include "sosel.h"
 #include "mtasker.h"

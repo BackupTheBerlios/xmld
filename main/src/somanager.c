@@ -15,6 +15,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "xmld_sockets.h"
+#include "xmld_list.h"
 #include "xmld_connection.h"
 #include "cfg.h"
 #include "mtasker.h"
@@ -82,6 +83,6 @@ void somanager_handle(void *sockfd) {
    perror("xmld_socket_accept");
    return;
   }
-  sosel_add(status, "/");  
+  sosel_add(status, "/");
  } 
 }
