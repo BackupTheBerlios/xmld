@@ -12,7 +12,10 @@
 way -- XMLDPart won't be used out of the initializer.
 (done)
 
-* Use XMLDList (of XMLDConnection) in sosel.
+* Create a generic XMLDTable structure to maintain
+static size lists of objects.
+
+* Use a XMLDList of XMLDConnection's in sosel.
 
 * Create a hash table implementation for places where
 search speed is important (XMLDHashTable), and provide
