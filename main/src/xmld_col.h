@@ -18,10 +18,10 @@ struct XMLDCol {
  char *val;
 };
 
+typedef struct XMLDCol XMLDCol;
+
 XMLDCol *XMLDCol_create(char *, short); /* short is whether to copy the char **/
 void XMLDCol_free_content(XMLDCol *)
 void XMLDCol_free(XMLDCol *);
-
-typedef struct XMLDCol XMLDCol;
 
 #endif /* HAVE_XMLD_COL_H */
