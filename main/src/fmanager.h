@@ -14,15 +14,8 @@
 #ifndef __FMANAGER_H
 #define __FMANAGER_H
 
-XMLDList *file_list;
-
-short fmanager_init(void);
-FILE *fmanager_get_read_fd(char *);
-FILE *fmanager_get_write_fd(char *);
-short fmanager_lock_read_fd(FILE *);
-short fmanager_lock_write_fd(FILE *);
+FILE *fmanager_get_sh_fd(char *);
+FILE *fmanager_get_ex_fd(char *);
 short fmanager_unlock_fd(FILE *);
-short fmanager_shutdown(void);
-void fmanager_assoc_file_to_fd(char *, FILE *);
 
 #endif /* __FMANAGER_H */
