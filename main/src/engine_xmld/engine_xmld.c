@@ -149,7 +149,88 @@ char *engine_xmld_eval_expr(XMLDWork *work, XMLDExpr *expr) {
 
 /* eval_cond function */
 short engine_xmld_eval_cond(XMLDWork *work, XMLDCond *cond) {
- return 1;
+ short val;
+ char *left_val;
+ char *right_val;
+ if (cond->type == 0) {
+  left_val=engine_xmld_eval_expr(work, cond->left);
+  right_val=engine_xmld_eval_expr(work, cond->right);
+  switch(cond->op) {
+   case 0:
+    if (strcmp(left_val, right_val) == 0) {
+     val=1;
+    }
+    else {
+     val=0;
+    }
+   break;
+   case 1:
+    if (atoi(left_val) < atoi(right_val)) {
+     val=1;
+    }
+    else {
+     val=0;
+    }
+   break;
+   case 2:
+    if (atoi(left_val) > atoi(right_val)) {
+     val=1;
+    }
+    else {
+     val=0;
+    }
+   break;
+   case 3:
+    if (atoi(left_val) != atoi(right_val)) {
+     val=1;
+    }
+    else {
+     val=0;
+    }
+   break;
+   case 4:
+    if (atoi(left_val) <= atoi(right_val)) {
+     val=1;
+    }
+    else {
+     val=0;
+    }
+   break;
+   case 5:
+    if (atoi(left_val) >= atoi(right_val)) {
+     val=1;
+    }
+    else {
+     val=0;
+    }
+   break;
+   case 6:
+    val=engine_xmld_like(left_val, right_val);
+   break;
+   case 7:
+    val=engine_xmld_between(left_val, right_val);
+   break;
+   case 8:
+    val=!engine_xmld_between(left_val, right_val);
+   break;
+  }
+  free(left_val);
+  free(right_val);
+ }
+ else if (cond->type == 1) {
+  if (cond->cop == 0) {
+   val=(engine_xmld_eval_cond(work, cond->cleft) && engine_xmld_eval_cond(work, cond->cright));
+  }
+  else if (cond->cop == 1) {
+   val=(engine_xmld_eval_cond(work, cond->cleft) || engine_xmld_eval_cond(work, cond->cright));
+  }
+ }
+ if (cond->negate == 1) {
+  return !val;
+ }
+ else {
+  return val;
+ }
 }
 
 /* eval_aggr_expr function */
