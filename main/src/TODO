@@ -10,6 +10,7 @@
 
 * Remove XMLDPart and revert the initializer to the old
 way -- XMLDPart won't be used out of the initializer.
+(done)
 
 * Use XMLDList (of XMLDConnection) in sosel.
 
