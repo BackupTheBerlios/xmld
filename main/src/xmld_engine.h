@@ -18,9 +18,9 @@ struct XMLDEngine {
  char *name;
  void *(*init) (XMLDWork *);
  void *(*destroy) (XMLDWork *);
- int (*walk) (XMLDWork *);
+ short (*walk) (XMLDWork *);
  char *(*eval_expr) (XMLDWork *, XMLDExpr *);
- int (*eval_cond) (XMLDWork *, XMLDCond *);
+ short (*eval_cond) (XMLDWork *, XMLDCond *);
  char *(*eval_aggr_expr) (XMLDWork *, XMLDExpr *);
 };
 
