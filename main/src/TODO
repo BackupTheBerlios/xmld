@@ -100,7 +100,7 @@ curr_dir of XMLDConnection with file of XMLDRequest.
 (done)
 
 * Create the engine_list global variable in a sepa
-rate module file.
+rate module file. (done)
 
 * Replace usage of xmld_types.h every where with
 the new structures of the object-oriented foundation.
