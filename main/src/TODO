@@ -380,9 +380,13 @@ of document. (done)
 must be encoded before sending by XMLDResponse_flush.
 (done)
 
-* Implement mstrchr_replace.
+* Implement mstrchr_replace. (done)
 
-* Real string handling in xmld-sql.lex.
+* Handle quotes inside strings in xmld-sql.lex
+
+* cfg_parser must handle # inside values correctly,
+that is, # must mean commenting only if it was at 
+the beginning of the line. (done)
 
 * xmld_socket_read contains a buffer over-flow possibility.
 
@@ -396,6 +400,12 @@ to close the client socket. (done)
 ONNECT.
 
 * XMLDExpr must contain a floating-point type (e.g double).
+Support that in xmld-sql.(lex|y).
+(done)
+
+* Support for expression type 6 in engine_xmld.
+
+* Consider converting nval back to int.
 
 * Make sure that mtasker_handle_idle is called whensever
 a child is no longer busy, and install a semaphore on ttable

@@ -54,7 +54,7 @@ short cfg_parser_parse() {
   if (buf == EOF) {
    break;
   }
-  if (buf == '#') {
+  if (buf == '#' && mode == 0) {
    mode=4;
    ign_ws=0;
    continue;

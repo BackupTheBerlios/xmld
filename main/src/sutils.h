@@ -20,7 +20,7 @@ short str_like(char *, char *);
 short str_between(char *, char *, char *);
 char *ltoa(long);
 char *ltrim(char *);
-void mstrchr_replace(char *, char*, char **, int);
+char *mstrchr_replace(char *, char*, char **, int);
 
 #endif /* __SUTILS_H */
 

@@ -21,6 +21,7 @@ struct XMLDExpr {
                 * 3 = function call
                 * 4 = quoted value
                 * 5 = wildcard
+		* 6 = floating point number
                 */
  
  short aggr; /* whether or not it's an aggregate expression
@@ -65,6 +66,8 @@ struct XMLDExpr {
 		             * 0 = '*'
 		             * 1 = '@'
 		             */
+ /*------------------*/
+ double fnval; /* type 6: floating point number */
  /*------------------*/
  char *alias;
 };

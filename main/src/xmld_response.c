@@ -253,8 +253,10 @@ void XMLDResponse_flush(XMLDResponse *resp, int fd) {
   XMLDList_reset(curr_row->cols);
   while (XMLDList_next(curr_row->cols)) {
    curr_col=(XMLDCol *) XMLDList_curr(curr_row->cols);
-   if (curr_col->val != NULL) {    
-    mstrchr_replace(curr_col->val, repl_tok, col_sep_enc, 2);
+   if (curr_col->val != NULL) {
+    char *old_val=curr_col->val;
+    curr_col->val=mstrchr_replace(curr_col->val, repl_tok, repl_tok_enc, 2);
+    free(old_val);
    }
    resp_len+=((curr_col->val != NULL) ? strlen(curr_col->val) : 0)+1;
    response=(char *) realloc(response, resp_len*sizeof(char));

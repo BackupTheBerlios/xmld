@@ -159,22 +159,31 @@ char *ltrim(char *str) {
 }
 
 /*
- * Replaces a character in a string with a particular string.
+ * Replaces each occurence of a character in neddle in the haystack string
+ * with the corresponding string in repl.
  */
-void mstrchr_replace(char *haystack, char *neddle, char **repl, int num) {
+char *mstrchr_replace(char *haystack, char *neddle, char **repl, int num) {
  char *tmp=(char *) malloc(sizeof(char));
  int tmp_len=1;
  tmp[0]='\0';
  char *curr=haystack;
+ int i;
  
  while (*curr != '\0') {
-  if (*curr == neddle) {
+  for (i = 0; i < num; i++) {
+   if (*curr == neddle[i]) {
+    tmp_len+=strlen(repl[i]);
+    tmp = (char *) realloc(tmp, tmp_len * sizeof(char));
+    strcat(tmp, repl[i]);
+    break;
+   }
   }
-  else {
+  if (i == num) {
    tmp=(char *) realloc(tmp, (++tmp_len) * sizeof(char));
    tmp[tmp_len-1]='\0';
    tmp[tmp_len-2]=*curr;
   }
   curr++;
  }
+ return tmp; 
 }

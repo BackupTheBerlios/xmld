@@ -17,6 +17,8 @@
 char col_sep;
 char row_sep;
 char *document_root;
+char *row_sep_enc;
+char *col_sep_enc;
 
 short cfg_init(void);
 void *cfg_get(char *);

@@ -50,6 +50,7 @@ struct XMLDEngine;
  XMLDList *list;
  char *qval;
  long num;
+ double fnum;
 }
 
 /* We may have a multi-threaded mtasker later */
@@ -78,6 +79,7 @@ struct XMLDEngine;
 /* Other Tokens  */
 %token <qval> QVAL IDENTIFIER
 %token <num> NUM
+%token <fnum> FNUM
 
 /* Logical Operators */
 %left AND OR
@@ -321,6 +323,12 @@ expr: '(' expr ')' {
 	     $$->type=0;
 	     $$->nval=$1;
             }
+      | FNUM {
+              $$=XMLDExpr_create();
+	      $$->aggr=0;
+	      $$->type=6;
+	      $$->fnval=$1;
+             }
       | expr '+' expr {                       
                        $$=XMLDExpr_create();
 		       $$->aggr=($1->aggr || $3->aggr);

@@ -74,10 +74,10 @@ struct XMLDEngine;
 "=" return '=';
 "\""  BEGIN STR;
 <STR>[^"]* {
-	   lvalp->qval=(char *) malloc(strlen(yytext)*sizeof(char));
-           strcpy(lvalp->qval, yytext);
-           return QVAL;
-          }
+	    lvalp->qval=(char *) malloc(strlen(yytext)*sizeof(char));
+            strcpy(lvalp->qval, yytext);
+            return QVAL;
+           }
 <STR>\" BEGIN INITIAL;
 [A-Z_]([A-Z0-9_]*) {
                    lvalp->qval=(char *) malloc((strlen(yytext)+1)*sizeof(char));
@@ -89,6 +89,10 @@ struct XMLDEngine;
 		                         strcpy(lvalp->qval, yytext);
 		                         return IDENTIFIER;
                                         }
+[0-9]+"."[0-9]+ {
+                 lvalp->fnum=strtod(yytext);
+		 return FNUM;
+                }
 [0-9]+ {
         lvalp->num=atol(yytext);
 	return NUM;

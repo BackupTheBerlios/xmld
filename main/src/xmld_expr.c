@@ -105,6 +105,8 @@ void XMLDExpr_copy(XMLDExpr *src, XMLDExpr *dest) {
   case 5:
    dest->wildcard=src->wildcard;
   break;
+  case 6:
+   dest->fnval=src->fnval;
  }
  if (src->alias != NULL) {
   dest->alias=src->alias;
