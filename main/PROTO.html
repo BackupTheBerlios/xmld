@@ -22,7 +22,7 @@ a client should connect and work with a running OpenXMLD daemon.
 
 Connection Establishment:
 -------------------------
-Obviously a client can establish a connection with an OpenXMLD daemon by connecting
+Obviously a client can establish a connection with an OpenXMLD server by connecting
 to one of its listener sockets (specified in the xmld.conf file).
 
 Header Format:
@@ -40,6 +40,8 @@ messages)
 
 Note: All messages are NUL-terminated, and all length values mentioned in 
 this protocol include the NUL character.
+
+Note: '\n' is the character which is used to separate lines in this protocol.
 
 Session Initialization:
 -----------------------
