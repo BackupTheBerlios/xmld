@@ -9,6 +9,7 @@ struct XMLDFunc;
  typedef struct XMLDFunc XMLDFunc;
 #endif /* XMLD_FUNC_TYPE_DEFINED */
 #include "xmld_expr.h"
+#include "xmld_assign.h"
 #include "xmld_func.h"
 #include "xmld_cond.h"
 #include "xmld_col.h"
@@ -24,9 +25,9 @@ struct XMLDEngine;
 #include "xmld_connection.h"
 #include "xmld_work.h"
 #include "xmld_engine.h"
+#include "xmld_errors.h"
 #include "func_list.h"
-#define YYPARSE_PARAM fd
-#define YYLEX_PARAM fd
+#define YYPARSE_PARAM work
 %}
 
 %union {
@@ -75,8 +76,19 @@ struct XMLDEngine;
 
 %%
 
-query: SELECT expr_list FROM QVAL
-       | SELECT expr_list FROM QVAL WHERE cond_list
+query: SELECT expr_list FROM QVAL {
+                                   ((XMLDWork *) work)->req=XMLDRequest_create();
+				   ((XMLDWork *) work)->req->type=0;
+				   ((XMLDWork *) work)->req->file=$4;
+				   ((XMLDWork *) work)->req->retr=$2;				   
+                                  }
+       | SELECT expr_list FROM QVAL WHERE cond_list {
+                                                     ((XMLDWork *) work)->req=XMLDRequest_create();
+			     	                     ((XMLDWork *) work)->req->type=1;
+				                     ((XMLDWork *) work)->req->file=$4;
+				                     ((XMLDWork *) work)->req->retr=$2;
+						     ((XMLDWork *) work)->req->where=$6;
+                                                    }
        | UPDATE QVAL SET assign_list
        | UPDATE QVAL SET assign_list WHERE cond_list
        | DELETE FROM QVAL
@@ -94,47 +106,234 @@ assign_list: assign
              | assign_list ',' assign
 ;
 
-cond_list: cond
-           | cond_list ':' cond
+cond_list: cond {
+                 $$=XMLDCond_create_list();
+		 XMLDCond *cond=XMLDCond_add_to_list($$);
+		 XMLDCond_copy($1, cond);
+		 XMLDCond_free($1);
+                }
+           | cond_list ':' cond {
+                                 $1=XMLDCond_create_list();
+		                 XMLDCond *cond=XMLDCond_add_to_list($$);
+		                 XMLDCond_copy($1, cond);
+		                 XMLDCond_free($1);
+	                        }
 ;
 
-expr_list: expr
-           | expr_list ',' expr
+expr_list: expr {
+                 $$=XMLDExpr_create_list();
+		 XMLDExpr *expr=XMLDExpr_add_to_list($$);
+		 XMLDExpr_copy($1, expr);
+		 XMLDExpr_free($1);
+                }
+           | expr_list ',' expr {
+                                 $$=$1;
+		                 XMLDExpr *expr=XMLDExpr_add_to_list($$);
+		                 XMLDExpr_copy($3, expr);
+		                 XMLDExpr_free($3);
+	                        }
 ;
 
 assign: IDENTIFIER '=' expr
 ;
 
-cond: '(' cond ')'
-      | expr '=' expr
-      | expr '<' expr
-      | expr '>' expr
-      | expr NE expr
-      | expr LE expr
-      | expr GE expr
-      | expr LIKE expr
-      | expr BETWEEN expr
-      | expr NBETWEEN expr
-      | cond AND cond
-      | cond OR cond
-      | NOT cond
+cond: '(' cond ')' {
+                    $$=$2;
+		   }		   
+      | expr '=' expr {
+                       $$=XMLDCond_create();
+		       $$->negate=0;
+		       $$->type=0;
+		       $$->left=$1;
+		       $$->right=3;
+		       $$->op=0;
+                      }
+      | expr '<' expr {
+                       $$=XMLDCond_create();
+		       $$->negate=0;
+		       $$->type=0;
+		       $$->left=$1;
+		       $$->right=3;
+		       $$->op=1;
+                      }
+      | expr '>' expr {
+                       $$=XMLDCond_create();
+		       $$->negate=0;
+		       $$->type=0;
+		       $$->left=$1;
+		       $$->right=3;
+		       $$->op=2;
+                      }
+      | expr NE expr {
+                      $$=XMLDCond_create();
+		      $$->negate=0;
+		      $$->type=0;
+		      $$->left=$1;
+		      $$->right=3;
+		      $$->op=3;
+                     }
+      | expr LE expr {
+                      $$=XMLDCond_create();
+		      $$->negate=0;
+		      $$->type=0;
+		      $$->left=$1;
+		      $$->right=3;
+		      $$->op=4;
+		     } 
+      | expr GE expr {
+                      $$=XMLDCond_create();
+		      $$->negate=0;
+		      $$->type=0;
+		      $$->left=$1;
+		      $$->right=3;
+		      $$->op=5;
+		     }
+      | expr LIKE expr {
+                        $$=XMLDCond_create();
+                        $$->negate=0;
+                        $$->type=0;
+                        $$->left=$1;
+                        $$->right=$3;
+			$$->op=6;
+		       }
+      | expr BETWEEN expr  {
+                            $$=XMLDCond_create();
+			    $$->negate=0;
+			    $$->type=0;
+			    $$->left=$1;
+			    $$->right=$3;
+			    $$->op=7;
+                           }
+      | expr NBETWEEN expr {
+                            $$=XMLDCond_create();
+			    $$->negate=0;
+			    $$->type=0;
+			    $$->left=$1;
+			    $$->right=$3;
+			    $$->op=8;
+                           }
+      | cond AND cond {
+                       $$=XMLDCond_create();
+		       $$->negate=0;
+		       $$->type=1;
+		       $$->cleft=$1;
+		       $$->cright=$3;
+		       $$->cop=0;
+		      } 
+      | cond OR cond {
+                      $$=XMLDCond_create();
+		      $$->negate=0;
+		      $$->type=1;
+		      $$->cleft=$1;
+		      $$->cright=$3;
+		      $$->cop=1;
+                     }
+      | NOT cond {
+                  $$=$2;
+		  $$->negate=~($$->negate);
+                 }
 ;
 
-expr: '(' expr ')'
-      | NUM
-      | expr '+' expr
-      | expr '-' expr
-      | expr '*' expr
-      | expr '/' expr
-      | expr '^' expr
-      | '-' expr %prec NEG
-      | expr AND expr
-      | IDENTIFIER
-      | IDENTIFIER '(' expr_list ')'
-      | QVAL
-      | '*'
-      | '@'
-      | expr AS QVAL
+expr: '(' expr ')' {
+                    $$=$2;
+                   }
+      | NUM {
+             $$=XMLDExpr_create();
+	     $$->aggr=0;
+	     $$->type=0;
+	     $$->nval=$1;
+            }
+      | expr '+' expr {                       
+                       $$=XMLDExpr_create();
+		       $$->aggr=($1->aggr || $3->aggr);
+		       $$->type=1;
+		       $$->left=$1;
+		       $$->right=$3;
+		       $$->op=0;
+		      }		      
+      | expr '-' expr {
+                       $$=XMLDExpr_create();
+		       $$->aggr=($1->aggr || $3->aggr);
+		       $$->type=1;
+		       $$->left=$1;
+		       $$->right=$3;
+		       $$->op=1;
+                      }
+      | expr '*' expr {
+                       $$=XMLDExpr_create();
+		       $$->aggr=($1->aggr || $3->aggr);
+		       $$->type=1;
+		       $$->left=$1;
+		       $$->right=$3;
+		       $$->op=2;                       
+                      }
+      | expr '/' expr {
+                       $$=XMLDExpr_create();
+		       $$->aggr=($1->aggr || $3->aggr);
+		       $$->type=1;
+		       $$->left=$1;
+		       $$->right=$3;
+		       $$->op=3;
+                      }
+      | expr '^' expr {
+                       $$=XMLDExpr_create();
+		       $$->aggr=($1->aggr || $3->aggr);
+		       $$->type=1;
+		       $$->left=$1;
+		       $$->right=$3;
+		       $$->op=4;		       
+                      }
+      | '-' expr %prec NEG {
+                            $$=XMLDExpr_create();
+			    $$->aggr=$2->aggr;
+			    $$->type=1;
+			    $$->right=$2;
+			    $$->op=5;
+                           }
+      | expr AND expr {
+                       $$=XMLDExpr_create();
+		       $$->aggr=($1->aggr || $3->aggr);
+		       $$->type=1;
+		       $$->left=$1;
+		       $$->right=$3;
+		       $$->op=6;
+                      }
+      | IDENTIFIER {
+                    $$=XMLDExpr_create();
+		    $$->aggr=0;
+		    $$->type=2;
+		    $$->ident=$1;
+                   }
+      | IDENTIFIER '(' expr_list ')' {
+                                      $$=XMLDExpr_create();
+				      $$->type=3;
+				      $$->func=XMLDFunc_search_list_by_name(func_list, $1);
+				      $$->arg_list=$3;
+				      $$->aggr=$$->func->aggr;
+				      free($1);
+                                     }
+      | QVAL {
+              $$=XMLDExpr_create();
+	      $$->aggr=0;
+	      $$->type=4;
+	      $$->qval=$1;
+             }
+      | '*' {
+             $$=XMLDExpr_create();
+	     $$->aggr=0;
+	     $$->type=5;
+	     $$->wildcard=0;
+            }
+      | '@' {
+             $$=XMLDExpr_create();
+	     $$->aggr=0;
+	     $$->type=5;
+	     $$->wildcard=1;
+            }
+      | expr AS QVAL {
+                      $$=$1;
+		      $$->alias=$3;		      
+                     }
 ;
 
 %%
