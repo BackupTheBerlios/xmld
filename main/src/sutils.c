@@ -62,6 +62,7 @@ char **str_split(char *str, char delim) {
  return ret;
 }
 
+/* Prepends a string to another */
 char *str_prepend(char *dest, char *pre) {
  char *ret=(char *) malloc((strlen(dest)+strlen(pre)+1)*sizeof(char));
  strcpy(ret, pre);
@@ -69,10 +70,59 @@ char *str_prepend(char *dest, char *pre) {
  return ret;
 }
 
+/* checks whether str is LIKE patern (SQL) */
 short str_like(char *str, char *patern) {
- return 1;
+ if (strchr(patern, '%') == NULL) {
+  return !strcmp(str, patern);
+ }
+
+ char *str_ptr=str;
+ char *pat_ptr=patern;
+ char *str_tmp;
+
+ while (1) {
+  if (*pat_ptr != '%') {
+   if (*str_ptr != *pat_ptr) {
+    return 0;
+   }
+  }
+  else {
+   if (*(pat_ptr + 1) == '\0') {
+    return 1;
+   }
+   else {
+    str_ptr=strchr(str_ptr+1, *(pat_ptr+1));
+    if (str_ptr == NULL) {
+     return 0;
+    }
+    else {
+     while (1) {
+      str_tmp=strchr(str_ptr+1, *(pat_ptr+1));
+      if (str_tmp == NULL) {
+       break;
+      }
+      else {
+       str_ptr=str_tmp;
+      } 
+     } 
+     str_ptr--;
+    }
+   }
+  }
+  pat_ptr++;
+  str_ptr++;
+  
+  if (*pat_ptr == '\0' && *str_ptr == '\0') {
+   return 1;
+  }
+  else if ((*pat_ptr == '\0' || *str_ptr == '\0') && *pat_ptr != *str_ptr) {
+   return 0;
+  }
+ } 
 }
 
+/* Checks for whether the value of str is between min and max */
 short str_between(char *str, char *min, char *max) {
- return 1;
+ int val=atol(str);
+ return (val >= atol(min) && val <= atol(max));
 }
