@@ -12,8 +12,9 @@
  */
 
 #include <stdlib.h>
-#include "mutils.h"
 #include <string.h>
+#include "xmlddef.h"
+#include "mutils.h"
 #include "cfg.h"
 #include "xmld_list.h"
 struct XMLDFunc;

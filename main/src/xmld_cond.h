@@ -44,14 +44,9 @@ struct XMLDCond {
  /*---------*/
  struct XMLDCond *cleft; /* type 1 */
  struct XMLDCond *cright;
- int cop;  /*
-	      * 0 = AND
-	      * 1 = OR
-	      */
+ int cop;
  /*----------*/
- int negate; /* 0 = Affirmative condition
-                * 1 = Negative condition
-	        */	
+ XMLDBool negate; /* Whether it's a negative condition */	
 };
 
 typedef struct XMLDCond XMLDCond;

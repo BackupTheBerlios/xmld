@@ -15,6 +15,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "xmlddef.h"
 #include "xmld_list.h"
 struct XMLDFunc;
 #ifndef XMLD_FUNC_TYPE_DEFINED
@@ -38,7 +39,6 @@ struct XMLDEngine;
 #include "xmld_connection.h"
 #include "xmld_work.h"
 #include "xmld_engine.h"
-#include "xmld_errors.h"
 #include "func_list.h"
 #define YYPARSE_PARAM work
 #include "qp.h"
@@ -219,7 +219,7 @@ cond: '(' cond ')' {
 		   }		   
       | expr '=' expr {
                        $$=XMLDCond_create();
-		       $$->negate=0;
+		       $$->negate=XMLD_FALSE;
 		       $$->type=XMLD_CONDITION;
 		       $$->left=$1;
 		       $$->right=$3;
@@ -227,7 +227,7 @@ cond: '(' cond ')' {
                       }
       | expr '<' expr {
                        $$=XMLDCond_create();
-		       $$->negate=0;
+		       $$->negate=XMLD_FALSE;
 		       $$->type=XMLD_CONDITION;
 		       $$->left=$1;
 		       $$->right=$3;
@@ -235,7 +235,7 @@ cond: '(' cond ')' {
                       }
       | expr '>' expr {
                        $$=XMLDCond_create();
-		       $$->negate=0;
+		       $$->negate=XMLD_FALSE;
 		       $$->type=XMLD_CONDITION;
 		       $$->left=$1;
 		       $$->right=$3;
@@ -243,7 +243,7 @@ cond: '(' cond ')' {
                       }
       | expr NE expr {
                       $$=XMLDCond_create();
-		      $$->negate=0;
+		      $$->negate=XMLD_FALSE;
 		      $$->type=XMLD_CONDITION;
 		      $$->left=$1;
 		      $$->right=$3;
@@ -251,7 +251,7 @@ cond: '(' cond ')' {
                      }
       | expr LE expr {
                       $$=XMLDCond_create();
-		      $$->negate=0;
+		      $$->negate=XMLD_FALSE;
 		      $$->type=XMLD_CONDITION;
 		      $$->left=$1;
 		      $$->right=$3;
@@ -259,7 +259,7 @@ cond: '(' cond ')' {
 		     } 
       | expr GE expr {
                       $$=XMLDCond_create();
-		      $$->negate=0;
+		      $$->negate=XMLD_FALSE;
 		      $$->type=XMLD_CONDITION;
 		      $$->left=$1;
 		      $$->right=$3;
@@ -267,7 +267,7 @@ cond: '(' cond ')' {
 		     }
       | expr LIKE expr {
                         $$=XMLDCond_create();
-                        $$->negate=0;
+                        $$->negate=XMLD_FALSE;
                         $$->type=XMLD_CONDITION;
                         $$->left=$1;
                         $$->right=$3;
@@ -275,7 +275,7 @@ cond: '(' cond ')' {
 		       }
       | expr BETWEEN expr  {
                             $$=XMLDCond_create();
-			    $$->negate=0;
+			    $$->negate=XMLD_FALSE;
 			    $$->type=XMLD_CONDITION;
 			    $$->left=$1;
 			    $$->right=$3;
@@ -283,7 +283,7 @@ cond: '(' cond ')' {
                            }
       | expr NBETWEEN expr {
                             $$=XMLDCond_create();
-			    $$->negate=0;
+			    $$->negate=XMLD_FALSE;
 			    $$->type=XMLD_CONDITION;
 			    $$->left=$1;
 			    $$->right=$3;
@@ -291,7 +291,7 @@ cond: '(' cond ')' {
                            }
       | cond AND cond {
                        $$=XMLDCond_create();
-		       $$->negate=0;
+		       $$->negate=XMLD_FALSE;
 		       $$->type=XMLD_CONDITION_GRP;
 		       $$->cleft=$1;
 		       $$->cright=$3;
@@ -299,7 +299,7 @@ cond: '(' cond ')' {
 		      } 
       | cond OR cond {
                       $$=XMLDCond_create();
-		      $$->negate=0;
+		      $$->negate=XMLD_FALSE;
 		      $$->type=XMLD_CONDITION_GRP;
 		      $$->cleft=$1;
 		      $$->cright=$3;
@@ -320,13 +320,13 @@ expr: '(' expr ')' {
                    }
       | NUM {
              $$=XMLDExpr_create();
-	     $$->aggr=0;
+	     $$->aggr=XMLD_FALSE;
 	     $$->type=XMLD_INTEGER;
 	     $$->nval=$1;
             }
       | FNUM {
               $$=XMLDExpr_create();
-	      $$->aggr=0;
+	      $$->aggr=XMLD_FALSE;
 	      $$->type=XMLD_FLOAT;
 	      $$->fnval=$1;
              }
@@ -387,7 +387,7 @@ expr: '(' expr ')' {
                       }
       | IDENTIFIER {
                     $$=XMLDExpr_create();
-		    $$->aggr=0;
+		    $$->aggr=XMLD_FALSE;
 		    $$->type=XMLD_IDENTIFIER;
 		    $$->ident=$1;
                    }
@@ -401,19 +401,19 @@ expr: '(' expr ')' {
                                      }
       | QVAL {
               $$=XMLDExpr_create();
-	      $$->aggr=0;
+	      $$->aggr=XMLD_FALSE;
 	      $$->type=XMLD_QVAL;
 	      $$->qval=$1;
              }
       | '*' {
              $$=XMLDExpr_create();
-	     $$->aggr=0;
+	     $$->aggr=XMLD_FALSE;
 	     $$->type=XMLD_WILDCARD;
 	     $$->wildcard=XMLD_WILDCARD_ALL;
             }
       | '@' {
              $$=XMLDExpr_create();
-	     $$->aggr=0;
+	     $$->aggr=XMLD_FALSE;
 	     $$->type=XMLD_WILDCARD;
 	     $$->wildcard=XMLD_WILDCARD_ATTS;
             }

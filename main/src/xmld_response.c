@@ -13,6 +13,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include "xmlddef.h"
 #include "mutils.h"
 #include "sutils.h"
 #include "xmld_sockets.h"

@@ -17,10 +17,7 @@
 struct XMLDFunc { /* represents a SQL function */
  char *name;
  XMLDExpr *(*func) (XMLDList *); 
- short aggr; /*
-               * 1 = Aggregate function
-               * 0 = Scalar function
-               */
+ XMLDBool aggr; /* Whether it's an aggregate function */
 };
 
 #ifndef XMLD_FUNC_TYPE_DEFINED

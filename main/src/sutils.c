@@ -14,8 +14,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "xmlddef.h"
 #include "sutils.h"
-#define NUMERIC_LENGTH 10
+#define INTEGER_LENGTH 15
+#define FLOAT_LENGTH 15
 
 /*
  * : Returns an array of strings extracted
@@ -73,7 +75,7 @@ char *str_prepend(char *dest, char *pre) {
 }
 
 /* checks whether str is LIKE patern (SQL) */
-short str_like(char *str, char *patern) {
+XMLDBool str_like(char *str, char *patern) {
  if (strchr(patern, '%') == NULL) {
   return !strcmp(str, patern);
  }
@@ -85,17 +87,17 @@ short str_like(char *str, char *patern) {
  while (1) {
   if (*pat_ptr != '%') {
    if (*str_ptr != *pat_ptr) {
-    return 0;
+    return XMLD_FALSE;
    }
   }
   else {
    if (*(pat_ptr + 1) == '\0') {
-    return 1;
+    return XMLD_TRUE;
    }
    else {
     str_ptr=strchr(str_ptr+1, *(pat_ptr+1));
     if (str_ptr == NULL) {
-     return 0;
+     return XMLD_FALSE;
     }
     else {
      while (1) {
@@ -115,16 +117,16 @@ short str_like(char *str, char *patern) {
   str_ptr++;
   
   if (*pat_ptr == '\0' && *str_ptr == '\0') {
-   return 1;
+   return XMLD_TRUE;
   }
   else if ((*pat_ptr == '\0' || *str_ptr == '\0') && *pat_ptr != *str_ptr) {
-   return 0;
+   return XMLD_FALSE;
   }
  } 
 }
 
 /* Checks for whether the value of str is between min and max */
-short str_between(char *str, char *min, char *max) {
+XMLDBool str_between(char *str, char *min, char *max) {
  int val=atol(str);
  return (val >= atol(min) && val <= atol(max));
 }
@@ -132,18 +134,20 @@ short str_between(char *str, char *min, char *max) {
 /*
  * Turns a given integer to its string representation.
  * i.e atoi inverse.
- * FIXME: make it snprintf-independent. (ctype.h)
  */
-char *itoa(int num) {
+char *itostr(int num) {
  char *ret=(char *) malloc(NUMERIC_LENGTH*sizeof(char));
- int conv=snprintf(ret, NUMERIC_LENGTH, "%d", num);
- if (conv > 0) {
-  ret=(char *) realloc(ret, (NUMERIC_LENGTH+conv)*sizeof(char));
-  snprintf(ret, NUMERIC_LENGTH+conv, "%d", num);
- }
- else if (strlen(ret)+1 < NUMERIC_LENGTH) {
-  ret=(char *) realloc(ret, (strlen(ret)+1)*sizeof(char));
- }
+ snprintf(ret, NUMERIC_LENGTH, "%d", num);
+ return ret;
+}
+
+/*
+ * Turns a given float to its string representation
+ * i.e atof inverse.
+ */
+char *ftostr(float num) {
+ char *ret=(char *) malloc(FLOAT_LENGTH*sizeof(char));
+ snprintf(ret, FLOAT_LENGTH, "%f", num);
  return ret;
 }
 

@@ -30,8 +30,8 @@ void *XMLDList_add(XMLDList *);
 void XMLDList_reset(XMLDList *);
 void *XMLDList_first(XMLDList *);
 void *XMLDList_last(XMLDList *);
-short XMLDList_next(XMLDList *);
-short XMLDList_prev(XMLDList *);
+XMLDStatus XMLDList_next(XMLDList *);
+XMLDStatus XMLDList_prev(XMLDList *);
 void *XMLDList_curr(XMLDList *);
 void default_free_func(void *);
 

@@ -12,8 +12,9 @@
  */
 
 #include <stdlib.h>
-#include "mutils.h"
 #include <string.h>
+#include "xmlddef.h"
+#include "mutils.h"
 #include "xmld_list.h"
 #include "xmld_col.h"
 #include "xmld_row.h"

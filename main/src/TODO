@@ -402,8 +402,7 @@ to close the client socket. (done)
 Support that in xmld-sql.(lex|y).
 (done)
 
-* Implement ftoa (sutils.h). and ltoa -> itoa. and reimplement
-itoa (both using ctype.h).
+* Implement ftoa/ltoa (sutils.h) -- ltoa -> itoa). (done)
 
 * Convert nval back to int. in xmld-sql.lex, xmld-sql.y
 XMLDExpr. (done)
@@ -469,9 +468,9 @@ BIT_ISSET and take all to xmlddef.h. (done)
 * move contents of xmld_errors -> xmlddef (done)
 
 * #include bitutils.h and xmld_errors.h -> 
-#include xmlddef.
+#include xmlddef. (done)
 
-* Use global XMLD_* macros everywhere.
+* Use global XMLD_* macros everywhere. (done)
 
 * If the level in question given to one of 
 format_manip functions is higher than the actual
@@ -491,10 +490,6 @@ return 0 or NULL as well, higher level
 functions must produce an XMLD_EMALFORMAT
 error. (done)
 
-* Check for tagname/attribute name conflict
-if both are the same, should it cause
-problems ? (in locate_att).
-
 * Add void conditions to QUERY.html (done)
 
 * Specify and fully implement a communication protocol.
@@ -512,7 +507,17 @@ if you are going to handle it in any process.
 * Remove/Secure usage of SIGUSR1 in ptasker.
 
 * Fix xmld_socket_accept: Interupted system call on DISC
-ONNECT.
+ONNECT. (check how of xmld_socket_shutdown).
+
+* Create a resptrans part that does the job of XMLDR
+esponse_flush.
+
+* Find a way of correct resolution of aggregate
+expressions. A way to attach the requirements of each
+aggregate expression through-out the walk'ing over
+the data nodes (maybe attach a new XMLDList of requir
+ements to the XMLDExpr struct representing the aggregate
+expression).
 
 * Implement multiple files support, and expression->
 file association.
@@ -526,10 +531,11 @@ parser switching.
 float type [5] nval -> back to int. [6] store+1 poin
 ts out availbility of format file. [7] the major
 changes in simplify_expr. [8] Multiple file support
-and expression -> file association. [9] that format
+and expression -> file association. [9] format
 manipulation functions may return NULL or 0 (issue
 XMLD_EMALFORMAT in that case. [10] Multiple
-query parsers support.
+query parsers support. [11] itostr and ftostr.
+[12] tagname/attribute name conflicts.
 
 * Define and implement the exec_assign engine
 function, implement the UPDATE and UPDATE with
@@ -545,10 +551,9 @@ ectory "functions" for them.
 * Add the file/engine association document, and mime/engine
 association document, and implement cfg functions that
 play with them.
-
 --------------- Start of The OpenXMLD 0.6.0 part:
 
-Goal: PUMP the features in it!
+Goal: PUMP the features in!
 
 * Implement the XMLD_ENOTIMPL things in twalker,
 and specify the corresponding engine functions
@@ -559,9 +564,6 @@ and implement them in Engine-XMLD.
 * Implement alphabetical comparsion in str_between.
 (check the GNU C Library documentation for "Searching
 and Sorting")
-
-* Find a way of correct resolution of aggregate
-expressions.
 
 * SQL functions must be able to report errors.
 
@@ -574,6 +576,10 @@ APIs in XMLDEngine and XMLDFunc (...?) in that form:
 XMLDEngine_create_hashtable(...)
 XMLDEngine_add_to_hashtable(...)
 XMLDEngine_search_hashtable(...)
+
+* itoa, ftoa use snprintf with a fixed INTEGER_LENGTH
+size of output string, that is--integers bigger than
+that are ignored! fix that please.
 
 *--------------- Start of The OpenXMLD 0.7.0 part:
 

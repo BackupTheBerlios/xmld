@@ -12,8 +12,9 @@
  */
 
 #include <stdlib.h>
-#include "mutils.h"
 #include <string.h>
+#include "xmlddef.h"
+#include "mutils.h"
 #include "xmld_list.h"
 struct XMLDFunc;
 #ifndef XMLD_FUNC_TYPE_DEFINED
@@ -31,7 +32,7 @@ XMLDFunc *XMLDFunc_create() {
  XMLDFunc *func=(XMLDFunc *) malloc(sizeof(XMLDFunc));
  func->name=NULL;
  func->func=NULL;
- func->aggr=0;
+ func->aggr=XMLD_FALSE;
  return func;
 }
 
@@ -71,7 +72,7 @@ XMLDFunc *XMLDFunc_add_to_list(XMLDList *list) {
  XMLDFunc *func=(XMLDFunc *) XMLDList_add(list);
  func->name=NULL;
  func->func=NULL;
- func->aggr=0;
+ func->aggr=XMLD_FALSE;
  return func;
 }
 

@@ -12,8 +12,8 @@
  */
 
 #include <stdlib.h>
-#include "mutils.h"
 #include <string.h>
+#include "mutils.h"
 #include "xmld_list.h"
 struct XMLDFunc;
 #ifndef XMLD_FUNC_TYPE_DEFINED

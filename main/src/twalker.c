@@ -13,7 +13,7 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "xmld_errors.h"
+#include "xmlddef.h"
 #include "xmld_list.h"
 #include "xmld_col.h"
 #include "xmld_row.h"
@@ -42,7 +42,7 @@ struct XMLDEngine;
 #include "twalker.h"
 #include "xmld-sql.h"
 
-short twalker_handle(XMLDWork *work) {
+XMLDStatus twalker_handle(XMLDWork *work) {
  switch(work->req->type) {
   case XMLD_SQL_SELECT:
    work->res=XMLDResource_create();
@@ -219,5 +219,4 @@ short twalker_handle(XMLDWork *work) {
    return XMLD_SPECIAL;
   break;
  } 
- return 1;
 };

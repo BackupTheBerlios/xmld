@@ -16,6 +16,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include "xmlddef.h"
 #include "xmld_sockets.h"
 #include "xmld_list.h"
 #include "xmld_connection.h"
@@ -35,7 +36,7 @@ int *fds;
 int *ports;
 int num_sock;
 
-short somanager_init() {
+XMLDStatus somanager_init() {
  num_sock=*((int *) cfg_get("somanager.num_listeners"));
  ports=(int *) cfg_get("somanager.listeners");
  fds=(int*) malloc(num_sock*sizeof(int));
@@ -47,30 +48,30 @@ short somanager_init() {
   
   if (fds[t] == -1) {
    perror("xmld_socket_create");
-   return 0;
+   return XMLD_FAILURE;
   }
   s = xmld_socket_bind(fds[t], ports[t]);
   if (s == -1) {
    perror("xmld_socket_bind");
-   return 0;
+   return XMLD_FAILURE;
   }
   s = mtasker_handle(somanager_handle, (void *) (fds+t), fds[t]);
-  if (s == 0) {
+  if (s == XMLD_FAILURE) {
    perror("mtasker_handle");
-   return 0;
+   return XMLD_FAILURE;
   }
  }
- return 1;
+ return XMLD_SUCCESS;
 }
 
-short somanager_shutdown() {
+XMLDStatus somanager_shutdown() {
  int i;
  for (i = 0; i < num_sock; i++) {
   xmld_socket_shutdown(fds[i]);
  }
  free(fds);
  free(ports);
- return 1;
+ return XMLD_SUCCESS;
 }
 
 void somanager_handle(void *sockfd) {
@@ -85,8 +86,8 @@ void somanager_handle(void *sockfd) {
   perror("xmld_socket_listen");
   return;
  }
- while (1) {
 
+ while (1) {
 #ifdef MULTI_PROC_MTASKER
   s = xmld_socket_accept(passed_fd);
 #else

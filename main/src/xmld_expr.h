@@ -38,16 +38,9 @@
 
 struct XMLDExpr {
  int type; 
- int aggr; /* whether or not it's an aggregate expression
-	      * aggregate if type = 3 (function call) with 
-	      * this function being an aggregate one.
-	      * ------
-	      * 1 = aggregate
-	      * 0 = scalar
-	      */
- 
+ XMLDBool aggr; /* Whether it's an aggregate expression */
+
  int nval; /* type 0 */
- 
  /*--------------------*/
  struct XMLDExpr *left; /* type 1:
 	                 * to represent an expression 

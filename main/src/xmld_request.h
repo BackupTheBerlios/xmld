@@ -17,7 +17,7 @@
 /* carries the parsed query */
 struct XMLDRequest {
  char *file;
- short type; /* type of the query */
+ int type; /* type of the query */
  XMLDList *retr;  /* list of action expressions (query type dependent) */
  XMLDList *vals; /* A list of values for the above expressions  (query type dependent) */
  XMLDList *where; /* A condition for each level */

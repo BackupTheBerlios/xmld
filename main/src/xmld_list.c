@@ -12,6 +12,7 @@
  */
 
 #include <stdlib.h>
+#include "xmlddef.h"
 #include "mutils.h"
 #include "xmld_list.h"
 #include "xmld_directive.h"
@@ -93,17 +94,17 @@ void *XMLDList_last(XMLDList *list) {
  * list: the list whose pointer is to be advanced.
  * returns: whether successful.
  */
-short XMLDList_next(XMLDList *list) {
+XMLDStatus XMLDList_next(XMLDList *list) {
  if (list->curr_element == list->last_element) {
-  return 0;
+  return XMLD_FAILURE;
  }
  else if (list->curr_element == NULL) {
   list->curr_element=list->content;
-  return 1;
+  return XMLD_SUCCESS;
  }
  else {
   list->curr_element+=list->item_size;
-  return 1;
+  return XMLD_SUCCESS;
  } 
 }
 
@@ -112,17 +113,17 @@ short XMLDList_next(XMLDList *list) {
  * list: the list whose pointer is to be rewinded.
  * returns: whether successful.
  */
-short XMLDList_prev(XMLDList *list) {
+XMLDStatus XMLDList_prev(XMLDList *list) {
  if (list->curr_element == list->content) {
-  return 0;
+  return XMLD_FAILURE;
  }
  else if (list->curr_element == NULL) {
   list->curr_element = list->last_element;
-  return 1;
+  return XMLD_SUCCESS;
  }
  else {
   list->curr_element-=list->item_size;
-  return 1;
+  return XMLD_SUCCESS;
  }
 }
 

@@ -16,9 +16,10 @@
 
 char **str_split(char *, char);
 char *str_prepend(char *, char *);
-short str_like(char *, char *);
-short str_between(char *, char *, char *);
-char *itoa(int);
+XMLDBool str_like(char *, char *);
+XMLDBool str_between(char *, char *, char *);
+char *itostr(int);
+char *ftostr(float);
 char *ltrim(char *);
 char *mstrchr_replace(char *, char*, char **, int);
 
