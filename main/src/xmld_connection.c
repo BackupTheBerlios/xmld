@@ -27,7 +27,7 @@ XMLDConnection *XMLDConnection_create(int fd, char *curr_dir) {
  XMLDConnection *conn=(XMLDConnection *) malloc(sizeof(XMLDConnection));
  conn->fd=fd;
  if (curr_dir != NULL) {
-  conn->curr_dir=(char *) malloc(strlen(curr_dir)*sizeof(char));
+  conn->curr_dir=(char *) malloc((strlen(curr_dir)+1)*sizeof(char));
   strcpy(conn->curr_dir, curr_dir);
  } 
  return conn;
@@ -68,7 +68,7 @@ XMLDConnection *XMLDConnection_add_to_list(XMLDList *list, int fd, char *curr_di
  XMLDConnection *conn=(XMLDConnection *) XMLDList_add(list);
  conn->fd=fd;
  if (curr_dir != NULL) {
-  conn->curr_dir=(char *) malloc(strlen(curr_dir)*sizeof(char));
+  conn->curr_dir=(char *) malloc((strlen(curr_dir)+1)*sizeof(char));
   strcpy(conn->curr_dir, curr_dir);
  } 
  return conn;

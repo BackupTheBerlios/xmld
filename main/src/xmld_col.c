@@ -52,7 +52,7 @@ void XMLDCol_free_content(void *col) {
  * val: the value.
  */
 void XMLDCol_fill(XMLDCol *col, char *val) {
- col->val=(char *) malloc(strlen(val)*sizeof(char));
+ col->val=(char *) malloc((strlen(val)+1)*sizeof(char));
  strcpy(col->val, val);
 }
 

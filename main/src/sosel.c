@@ -32,7 +32,7 @@ int max_conn;
 struct connection_table *conn_table;
 
 short sosel_init() {
- max_conn=cfg_get("sosel.max_conn");
+ max_conn=*((int*) cfg_get("sosel.max_conn"));
  /* FIXME: should check ftok's usage */
  key_t key=ftok("cfg.h", 'X');
  int id=shmget(key, sizeof(struct connection_table), IPC_CREAT);
@@ -134,16 +134,16 @@ short sosel_add(int fd, char *dir) {
  while (conn_table->used >= max_conn) {
  }
  for (j=0;j<max_conn;j++) {
-   if (conn_table->conn[j].fd==0 && conn_table->conn[j].sfd==0) {
-      conn_table->used++;
-      conn_table->conn[j].curr_dir=(char*) malloc(strlen(dir)*sizeof(char));
-      strcpy(conn_table->conn[j].curr_dir, dir);
-      conn_table->conn[j].fd=fd;
-      conn_table->conn[j].sfd=1;
-      stat=0;
-      break;
-     }
+  if (conn_table->conn[j].fd==0 && conn_table->conn[j].sfd==0) {
+   conn_table->used++;
+   conn_table->conn[j].curr_dir=(char*) malloc((strlen(dir)+1)*sizeof(char));
+   strcpy(conn_table->conn[j].curr_dir, dir);
+   conn_table->conn[j].fd=fd;
+   conn_table->conn[j].sfd=1;
+   stat=0;
+   break;
   }
+ }
  return stat;
 }
 short sosel_remove(XMLDConnection *conn) {

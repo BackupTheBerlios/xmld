@@ -44,7 +44,7 @@ char **str_split(char *str, char delim) {
   ret[num-1]=NULL;
   
   if (ptr == NULL) {
-   ret[num-2]=(char *) malloc((strlen(str) - ((lptr==NULL) ? 0 : (++lptr - str)) + 1)*sizeof(char));
+   ret[num-2]=(char *) malloc(((strlen(str)+1) - ((lptr==NULL) ? 0 : (++lptr - str)) + 1)*sizeof(char));
    strcpy(ret[num-2], (lptr==NULL) ? str : lptr);
    break;
   }
