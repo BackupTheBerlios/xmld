@@ -45,7 +45,7 @@ struct XMLDEngine;
 #include "qp.h"
 #define YY_DECL int yylex(YYSTYPE *lvalp)
 %}
-
+%x STR
 %%
 
 "select" return SELECT;
@@ -67,24 +67,32 @@ struct XMLDEngine;
 "like" return LIKE;
 "between" return BETWEEN;
 "not between" return NBETWEEN;
-\"[^\n]+\" {
-            lvalp->qval=(char *) malloc(strlen(yytext+1)-1*sizeof(char));
-	    strncpy(lvalp->qval, yytext+1, strlen(yytext+1)-1);
-	    lvalp->qval[strlen(yytext+1)]='\0';
-            return QVAL;
-	   }
-[A-Z][A-Z0-9]* {
+":" return ':';
+"," return ',';
+\" BEGIN STR;
+<STR>[^\n"]* {
+         lvalp->qval=(char *) malloc((strlen(yytext)+1)*sizeof(char));
+         strcpy(lvalp->qval, yytext);
+         return QVAL;
+        }
+<STR>\" BEGIN INITIAL;
+[A-Z_]([A-Z0-9_]*) {
                    lvalp->qval=(char *) malloc((strlen(yytext)+1)*sizeof(char));
 		   strcpy(lvalp->qval, yytext);
 		   return IDENTIFIER;
                   }
+([(]{1})(("text"|"tagname"){1})([)]{1}) {
+                                         lvalp->qval=(char *) malloc((strlen(yytext)+1)*sizeof(char));
+		                         strcpy(lvalp->qval, yytext);
+		                         return IDENTIFIER;
+                                        }
 [0-9]+ {
         lvalp->num=atol(yytext);
 	return NUM;
        }
 [*] return '*';
 [@] return '@';
-.
+. {}
 
 %%
 

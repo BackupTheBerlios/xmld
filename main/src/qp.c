@@ -68,7 +68,6 @@ void qp_handle(void *conn) {
   
   char *query=xmld_socket_read(work->conn->fd);
   YY_BUFFER_STATE buf=yy_scan_string(query);
-  
   int status=yyparse((void *) work);
   yy_delete_buffer(buf);
   if (status == 1) {

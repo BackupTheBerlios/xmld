@@ -14,6 +14,7 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include <sys/types.h>
+#include <sys/wait.h>
 #include <sys/socket.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -43,7 +44,8 @@ short mtasker_init() {
  if (i == -1) {
   return 0;
  }
-
+ 
+ signal(SIGCHLD, SIG_IGN);
  ttable.num_tasks=0;
  ttable.tasks=0;
  
@@ -96,7 +98,8 @@ short mtasker_init() {
   }
   else if (curr_pid==0) {
    table->children[i].pid=getpid();
-  
+   signal(SIGCHLD, SIG_IGN);
+   
    while (1) {
     if (table->children[i].func != 0) {
      if (table->children[i].fd != -1) {
@@ -201,6 +204,7 @@ struct proc *mtasker_spawn() {
     }
     else if (curr_pid==0) {
      table->children[i].pid=getpid();
+     signal(SIGCHLD, SIG_IGN);
      
      while (1) {
       if (table->children[i].func!=0) {

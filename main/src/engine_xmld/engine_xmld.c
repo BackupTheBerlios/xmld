@@ -117,17 +117,28 @@ void engine_xmld_destroy() {
 /* walk function */
 int engine_xmld_walk(XMLDWork *work) {
  short token;
- char *tokens[3]={"<", "/>", "</"};
+ char buf;
+ char *tokens[2]={"<", "/>"};
   
  while (1) {
-  token=dmstrstr((FILE *) work->res->data_source, tokens, 3);
+  token=dmstrstr((FILE *) work->res->data_source, tokens, 2);
   if (token == -1) {
    return *((int *) work->res->store);
   }
   else if (token == 0) {
-   return ++(*((int *) work->res->store));
+   buf=getc((FILE *) work->res->data_source);
+   if (buf == '/') {
+    (*((int *) work->res->store))--;
+    if ((*((int *) work->res->store)) == 0) {
+     return 0;
+    }
+   }
+   else {
+    fseek((FILE *) work->res->data_source, -1, SEEK_CUR);
+    return ++(*((int *) work->res->store));
+   } 
   }
-  else if (token == 1 || token == 2) {
+  else if (token == 1) {
    (*((int *) work->res->store))--;
    if ((*((int *) work->res->store)) == 0) {
     return 0;
@@ -373,19 +384,29 @@ char *engine_xmld_get_column_value(XMLDWork *work, char *col_name) {
  else if (strcmp(col_name, "@") == 0) {
   ret=(char *) malloc(sizeof(char));
   ret[0]='\0';
+  int ret_len=1;
   while (1) {
    token=dmstrchr((FILE *) work->res->data_source, " >", 2);
    if (token == 1) { /* Attribute not found */
+    if (ret_len == 1) {
+     free(ret);
+     ret=NULL;
+    }
+    else {
+     ret_len-=1;
+     ret=(char *) realloc(ret, ret_len*sizeof(char));
+     ret[ret_len-1]='\0';
+    } 
     break;
    }
    else if (token == 0) {
     engine_xmld_discard_curr_att_name((FILE *) work->res->data_source);
     char *att_value=engine_xmld_get_curr_att_value((FILE *) work->res->data_source);
-    ret=(char *) realloc(ret, (strlen(ret)+strlen(att_value)+2)*sizeof(char));
-    if (strlen(ret) > 0) {
-     ret[strlen(ret)]=col_sep;
-    } 
+    ret_len+=strlen(att_value)+1;
+    ret=(char *) realloc(ret, (ret_len)*sizeof(char));
     strcat(ret, att_value);
+    ret[ret_len-2]=col_sep;
+    ret[ret_len-1]='\0';
     free(att_value);
    } 
   }

@@ -371,9 +371,17 @@ only once. (done)
 type char (e.g \t). (done)
 
 * Fix that '@' character that was put in front of a second attribute.
+(done)
 
 * Fix that the query parser has generated an error when an attribute
-name 'name' was given.
+name 'name' was given. (done)
+
+* walk must respect that dmstrstr doesn't respect the longest match.
+(done)
+
+* ptasker leaves Zmobies behind, those should make other child
+processes afraid and unable to work representing a performance 
+bottleneck. (done)
 
 **** Checks: ****
 
