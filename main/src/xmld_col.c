@@ -37,9 +37,18 @@ XMLDCol *XMLDCol_create(char *val, short cpy) {
  */
 void XMLDCol_free(XMLDCol *col, short free_str) {
  if (free_str) {
-  free(col->val);
- }
+  XMLDCol_free_content((void *) col);
+ } 
  free(col);
+}
+
+/*
+ * : Frees the memory allocated by a column
+ * col: the column to free
+ * free_str: whether to free the string.
+ */
+void XMLDCol_free_content(void *col) {
+ free(((XMLDCol *)col)->val);
 }
 
 /*
@@ -63,7 +72,7 @@ void XMLDCol_fill(XMLDCol *col, char *val, short cpy) {
  * returns: the newly created list.
  */
 XMLDList *XMLDCol_create_list() {
- XMLDList *list=XMLDList_create(sizeof(XMLDCol));
+ XMLDList *list=XMLDList_create(sizeof(XMLDCol), XMLDCol_free_content);
  return list;
 }
 
