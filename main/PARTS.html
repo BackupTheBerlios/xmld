@@ -1,0 +1,120 @@
+<html>
+<head>
+<title>The OpenXMLD PARTS Document</title>
+</head>
+<body>
+<pre><xmp>
+Date: November the 21st 2003                    Written by: Khalid Al-Kary
+
+                          The OpenXMLD PARTS document
+==========================================================================
+This Document:
+--------------
+This document describes the parts of the OpenXMLD xml database server in the
+order they are used to serve up a request.
+
+Every part has a name between two brackets after its original name, this
+name is the one used within code and directory structure.
+==========================================================================
+
+The Initializer (init):
+-----------------------
+This part will invoke <part>_init functions off all the other parts
+that need initialization, and are listed below:
+
+ * The Configuration Parser (cfgparser)
+ * The Multi-tasker (mtasker)
+ * The Socket Manager (somanager)
+ * The Socket Selector (sosel)
+
+On shutdown this part also invokes <part>_shutdown functions of all
+the other parts that need finalization before the OpenXMLD is shutdown, these
+parts are not yet determined.
+
+In the directory tree, init lives in the OpenXMLD's root directory.
+
+==========================================================================
+
+The Configuration Parser (cfgparser):
+-------------------------------------
+This part will use the memory parser to read the xmld.conf file (using 
+the file manager to obtain it), and makes an internal configuration
+parse tree available for all other parts that need to read configurati-
+on options.
+
+==========================================================================
+
+The Multi-tasker (mtasker):
+---------------------------
+Handles internal tasks that need to be done in different execution cont-
+exts (i.e each request should be handled independently), the underlying
+implementation can be anything. The default implementation -however- 
+will be multi-processing.
+
+Externally, this part should provide this method:
+  
+  xmld_status_t handle(function, data)
+
+Where function is the function to be executed asynchrously and data
+is a generic structure that's to be passed to it,
+
+==========================================================================
+
+The Socket Manager (somanager):
+-------------------------------
+This part provides the very basic socket functions in a system independ-
+ent naming (i.e xmld_socket_listen), so every function can be emulated
+on different systems. The Socket Manager also reads the configuration
+to get information about the initially listening sockets for the server
+and calls handle(xmld_socket_init, socket address) for each of them.
+
+==========================================================================
+
+Each of the listener sockets:
+-----------------------------
+(Mentioned only to connect the request cycle.) Each of the listener sock-
+ets should be running in its own execution context, once the listener re-
+ceives a connection request, it attaches a new fd to the fd set being w-
+orked on by The Socket Selector.
+
+===========================================================================
+
+The Socket Selector (sosel):
+----------------------------
+This part contains a blocking loop on the select() function acts as a re-
+quest listener for all the client sockets established by the listener s-
+ockets, once one of the client sockets becomes available for reading, it
+stops waiting for it, and calls handle(query parser, socket fd), when
+the request is delivered, the client socket is reattached to the socket
+set being watched by select().
+
+Update: select() was used with a time out value in order to handle more
+than one request in a single select() loop.
+============================================================================
+
+The Query Parser (qp):
+----------------------
+This part reads the query from the client socket passed to it by The Socket
+Selector, then uses the Query Analyzer to extract tokens from it, and final-
+ly forms a OpenXMLD work structure (XMLDWork) which contains four structures:
+
+ * A Request Structure (XMLDRequest)
+ * A Response Structure (XMLDResponse)
+ * A Resource Structure (XMLDResource)
+ * A Connection Structure (XMLDConnection)
+
+The socket's fd gets attached to the XMLDResource structure which is resp-
+onsible for carrying any required resources for the up-coming operations.
+
+============================================================================
+
+The Query Anazlyzer (qa):
+-------------------------
+This part has no direct interaction with any other part except The Query P-
+arser which uses it to extract tokens from the query.
+
+============================================================================
+</xmp>
+</pre>
+</body>
+</html>
