@@ -90,18 +90,8 @@ XMLDStatus twalker_handle(XMLDWork *work) {
       XMLDResponse_curr_row(work->resp)->num_down=num_down;
       XMLDResponse_curr_row(work->resp)->num_up=num_up;
       num_up=num_down=0;
-      /* Handle expressions of type "expression list" */
-      if (((XMLDExpr *) XMLDList_curr(work->req->retr))->type == XMLD_LIST) {
-       XMLDExprList *expr_list=((XMLDExpr *) XMLDList_curr(work->req->retr))->exprs;
-       XMLDList_reset(expr_list);
-       while (XMLDList_next(expr_list)) {
-        XMLDResponse_add_col(work->resp);
-        XMLDResponse_fill_col(work->resp, (*(((XMLDFile *) XMLDList_first(work->files))->engine->eval_expr)) (work, (XMLDExpr *) XMLDList_curr(expr_list), curr_max_level));
-       }
-      }
-      else {	      
-       XMLDResponse_add_col(work->resp);
-       XMLDResponse_fill_col(work->resp, (*(((XMLDFile *) XMLDList_first(work->files))->engine->eval_expr)) (work, (XMLDExpr *) XMLDList_curr(work->req->retr), curr_max_level));
+      if (XMLDExpr_to_columns((XMLDExpr *) XMLDList_curr(work->req->retr), work, curr_max_level) == XMLD_FAILURE) {
+       return XMLD_FAILURE; 
       }
      } 
     }
@@ -217,23 +207,16 @@ XMLDStatus twalker_handle(XMLDWork *work) {
      }
      retr = retr && where;
      if (retr && !(((XMLDExpr *) XMLDList_curr(work->req->retr))->type == XMLD_VOID_LIST)) {
-      if ((*(((XMLDFile *) XMLDList_first(work->files))->engine->eval_cond)) (work, (XMLDCond *) XMLDList_curr(work->req->where), curr_max_level)) {
+      XMLDExpr *condition = twalker_simplify_expr((XMLDExpr *) XMLDList_curr(work->req->where), work, curr_max_level);
+      retr = XMLDExpr_to_boolean(condition);
+      XMLDExpr_free(condition);
+      if (retr == XMLD_TRUE) {
        XMLDResponse_add_row(work->resp);
        XMLDResponse_curr_row(work->resp)->num_down=num_down;
        XMLDResponse_curr_row(work->resp)->num_up=num_up;
        num_up=num_down=0;
-       /* Handle expressions of type "expression list" */
-       if (((XMLDExpr *) XMLDList_curr(work->req->retr))->type == XMLD_LIST) {
-        XMLDExprList *expr_list=((XMLDExpr *) XMLDList_curr(work->req->retr))->exprs;
-        XMLDList_reset(expr_list);
-        while (XMLDList_next(expr_list)) {
-	 XMLDResponse_add_col(work->resp);
-         XMLDResponse_fill_col(work->resp, (*(((XMLDFile *) XMLDList_first(work->files))->engine->eval_expr)) (work, (XMLDExpr *) XMLDList_curr(expr_list), curr_max_level));
-	}
-       }
-       else {
-	XMLDResponse_add_col(work->resp);
-        XMLDResponse_fill_col(work->resp, (*(((XMLDFile *) XMLDList_first(work->files))->engine->eval_expr)) (work, (XMLDExpr *) XMLDList_curr(work->req->retr), curr_max_level));
+       if (XMLDExpr_to_columns((XMLDExpr *) XMLDList_curr(work->req->retr), work, curr_max_level) == XMLD_FAILURE) {
+        return XMLD_FAILURE;
        }
       }
       else {
@@ -946,8 +929,14 @@ XMLDExpr *twalker_simplify_expr(XMLDExpr *expr, XMLDWork *work, int level) {
  else if (expr->type == XMLD_IDENTIFIER) {
   char *type = (*(expr->file->engine->get_attribute_type)) (expr->file, expr->ident);
   ret = XMLDExpr_create();
-  ret->ident = (char *) malloc((strlen(expr->ident)+1) * sizeof(char));
-  strcpy(ret->ident, expr->ident);
+  if (expr->alias == NULL) {
+   ret->ident = (char *) malloc((strlen(expr->ident)+1) * sizeof(char));
+   strcpy(ret->ident, expr->ident);
+  }
+  else {
+   ret->ident = (char *) malloc((strlen(expr->alias)+1) * sizeof(char));
+   strcpy(ret->ident, expr->alias);
+  }
   ret->qval=(*(expr->file->engine->get_attribute)) (expr->file, expr->ident);
   XMLDExpr_apply_type(ret, type);
   free(type);
@@ -956,7 +945,13 @@ XMLDExpr *twalker_simplify_expr(XMLDExpr *expr, XMLDWork *work, int level) {
   if (expr->sident == XMLD_SIDENT_TEXT) {
    char *type = (*(expr->file->engine->get_text_type)) (expr->file);
    ret = XMLDExpr_create();
-   ret->sident = XMLD_SIDENT_TEXT;
+   if (expr->alias != NULL) {
+    ret->sident = XMLD_SIDENT_TEXT;
+   } 
+   else {
+    ret->ident = (char *) malloc((strlen(expr->alias)+1) * sizeof(char));
+    strcpy(ret->ident, expr->alias);
+   }
    ret->qval=(*(expr->file->engine->get_text)) (expr->file);
    XMLDExpr_apply_type(ret, type);
    free(type);
@@ -964,7 +959,13 @@ XMLDExpr *twalker_simplify_expr(XMLDExpr *expr, XMLDWork *work, int level) {
   else if (expr->sident == XMLD_SIDENT_TAGNAME) {
    ret = XMLDExpr_create();
    ret->type = XMLD_QVAL;
-   ret->sident = XMLD_SIDENT_TAGNAME;
+   if (expr->alias == NULL) {
+    ret->sident = XMLD_SIDENT_TAGNAME;
+   }
+   else {
+    ret->ident = (char *) malloc((strlen(expr->alias)+1) * sizeof(char));
+    strcpy(ret->ident, expr->alias);
+   }
    ret->qval=(*(expr->file->engine->get_tagname)) (expr->file);
   }
  }

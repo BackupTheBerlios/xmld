@@ -786,10 +786,10 @@ useful as something useful.
   - XMLDExpr_to_boolean (done)
  * twalker (call twalker_simplify_expr if is_complex returns
  true):
-  - resolve XMLD_LIST recursively.
-  - No special resolution for conditions in twalker.
+  - resolve XMLD_LIST recursively. (done -- XMLDExpr_to_columns)
+  - conditions are resolved just like expressions. (done)
  * twalker_simplify_expr (if alias is not NULL copy it into ret instead of the 
- real column's  name).
+ real column's  name -- done).
  * resptrans (call XMLDExpr_to_string on each column).
  * Engine-XMLD (Implement the required functions)
  * XMLDResponse_fill_col/XMLDCol_fill might need to fill the
@@ -797,6 +797,10 @@ useful as something useful.
 
 * If the above gets stabilized, remove unused functions
 in Engine-XMLD, XMLDResponse [...?].
+
+* Every column must have a name:
+  * XMLDExpr_to_string: support operation translation.
+  * twalker_simplify_expr: use XMLDExpr_to_string and fill ret->ident.
 
 * The engine must not know about [text] and [tagname].
 (Implement separate functions for their retrieval).

@@ -189,7 +189,7 @@ char *XMLDExpr_to_string(XMLDExpr *expr) {
 /*
  * Returns the boolean representation of the given expression.
  */
-XMLDBool XMLDExpr_to_boolwan(XMLDExpr *expr) {
+XMLDBool XMLDExpr_to_boolean(XMLDExpr *expr) {
  if (expr->type == XMLD_INTEGER) {
   if (expr->nval == 0) {
    return XMLD_FALSE;
@@ -226,6 +226,32 @@ XMLDBool XMLDExpr_to_boolwan(XMLDExpr *expr) {
 XMLDExprList *XMLDExprList_create() {
  XMLDExprList *list=XMLDList_create(sizeof(XMLDExpr), XMLDExpr_free_content);
  return list;
+}
+
+/*
+ * Fills the response structure of the given work structure with the simplest 
+ * form(s) of the given expression.
+ */
+XMLDStatus XMLDExpr_to_columns(XMLDExpr *expr, XMLDWork *work, int level) {
+ if (expr->type == XMLD_LIST) {
+  XMLDList_reset(expr->exprs);
+  while (XMLDList_next(expr->exprs)) {
+   if (XMLDExpr_to_columns((XMLDExpr *) XMLDList_curr(expr->exprs), work) == XMLD_FAILURE) {
+    return XMLD_FAILURE;
+   }
+  }
+ }
+ else {
+  XMLDExpr *simple = twalker_simplify_expr(expr, work, level);
+  if (simple == NULL) {
+   return XMLD_FAILURE;
+  }
+  else {
+   XMLDResponse_add_col(work->resp);
+   XMLDResponse_fill_col(simple);
+   return XMLD_SUCCESS;
+  }
+ }
 }
 
 /*
