@@ -10,7 +10,7 @@
  * /usr/include/socketbits.h
  * /usr/include/sys/socket.h
  */
-#include <stdio.h>
+#include <stdio.h> /* <-- that's my own only addition */
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/uio.h>

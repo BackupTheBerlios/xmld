@@ -16,8 +16,8 @@
 
 XMLDList *cfg_tree;
 
-short cfg_parser_parse(void);
-void cfg_parser_parse_token(char *, short);
-short cfg_parser_clean(void);
+int cfg_parser_parse(void);
+void cfg_parser_parse_token(char *, int);
+int cfg_parser_clean(void);
 
 #endif /* __CFG_PARSER_H */

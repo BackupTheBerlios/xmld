@@ -42,6 +42,7 @@ struct XMLDEngine;
 #include "func_list.h"
 #define YYPARSE_PARAM work
 #include "qp.h"
+#include "xmld-sql.h"
 %}
 
 %union {
@@ -49,7 +50,7 @@ struct XMLDEngine;
  XMLDCond *cond;
  XMLDList *list;
  char *qval;
- long num;
+ int num;
  float fnum;
 }
 
@@ -95,66 +96,66 @@ struct XMLDEngine;
 %%
 
 query: SELECT expr_list FROM QVAL {
-				   ((XMLDWork *) work)->req->type=0;
+				   ((XMLDWork *) work)->req->type=XMLD_SQL_SELECT;
 				   ((XMLDWork *) work)->req->file=$4;
 				   ((XMLDWork *) work)->req->retr=$2;
 				   YYACCEPT;
                                   }
        | DISCONNECT {
-                     ((XMLDWork *) work)->req->type=11;
+                     ((XMLDWork *) work)->req->type=XMLD_SQL_DISCONNECT;
 		     YYACCEPT;
                     }
        | SELECT expr_list FROM QVAL WHERE cond_list {
-			     	                     ((XMLDWork *) work)->req->type=1;
+			     	                     ((XMLDWork *) work)->req->type=XMLD_SQL_SELECT_WHERE;
 				                     ((XMLDWork *) work)->req->file=$4;
 				                     ((XMLDWork *) work)->req->retr=$2;
 						     ((XMLDWork *) work)->req->where=$6;
 						     YYACCEPT;
                                                     }
        | UPDATE QVAL SET cond_list {
-				    ((XMLDWork *) work)->req->type=2;
+				    ((XMLDWork *) work)->req->type=XMLD_SQL_UPDATE;
 				    ((XMLDWork *) work)->req->file=$2;
 				    ((XMLDWork *) work)->req->vals=$4;
 				    YYACCEPT;
                                    }
        | UPDATE QVAL SET cond_list WHERE cond_list {
-				                    ((XMLDWork *) work)->req->type=3;
+				                    ((XMLDWork *) work)->req->type=XMLD_SQL_UPDATE_WHERE;
 				                    ((XMLDWork *) work)->req->file=$2;
 				                    ((XMLDWork *) work)->req->vals=$4;
 						    ((XMLDWork *) work)->req->where=$6;
 						    YYACCEPT;
                                                    }
        | DELETE FROM QVAL {
- 		           ((XMLDWork *) work)->req->type=4;
+ 		           ((XMLDWork *) work)->req->type=XMLD_SQL_DELETE;
 			   ((XMLDWork *) work)->req->file=$3;
 			   YYACCEPT;
                           }
        | DELETE FROM QVAL WHERE cond_list {
- 		                           ((XMLDWork *) work)->req->type=5;
+ 		                           ((XMLDWork *) work)->req->type=XMLD_SQL_DELETE_WHERE;
 			                   ((XMLDWork *) work)->req->file=$3;
 					   ((XMLDWork *) work)->req->where=$5;
 					   YYACCEPT;
                                           }
        | DELETE '*' FROM QVAL {
- 		               ((XMLDWork *) work)->req->type=4;
+ 		               ((XMLDWork *) work)->req->type=XMLD_SQL_DELETE;
 			       ((XMLDWork *) work)->req->file=$4;
 			       YYACCEPT;
                               }
        | INSERT INTO QVAL '(' expr_list ')' VALUES '(' expr_list ')' {
-                                                                      ((XMLDWork *) work)->req->type=6;
+                                                                      ((XMLDWork *) work)->req->type=XMLD_SQL_INSERT_COL;
 								      ((XMLDWork *) work)->req->file=$3;
 								      ((XMLDWork *) work)->req->retr=$5;
 								      ((XMLDWork *) work)->req->vals=$9;
 								      YYACCEPT;
 								     }								     
        | INSERT INTO QVAL VALUES '(' expr_list ')' {
-                                                    ((XMLDWork *) work)->req->type=9;
+                                                    ((XMLDWork *) work)->req->type=XMLD_SQL_INSERT;
 					            ((XMLDWork *) work)->req->file=$3;
 						    ((XMLDWork *) work)->req->vals=$6;
 						    YYACCEPT;
                                                    }
        | INSERT INTO QVAL '(' expr_list ')' VALUES '(' expr_list ')' WHERE cond_list {
-                                                                                      ((XMLDWork *) work)->req->type=7;
+                                                                                      ((XMLDWork *) work)->req->type=XMLD_SQL_INSERT_COL_WHERE;
 										      ((XMLDWork *) work)->req->file=$3;
 										      ((XMLDWork *) work)->req->retr=$5;
 										      ((XMLDWork *) work)->req->vals=$9;
@@ -162,14 +163,14 @@ query: SELECT expr_list FROM QVAL {
 										      YYACCEPT;
 										     }
        | INSERT INTO QVAL VALUES '(' expr_list ')' WHERE cond_list {
-                                                                    ((XMLDWork *) work)->req->type=8;
+                                                                    ((XMLDWork *) work)->req->type=XMLD_SQL_INSERT_WHERE;
 						                    ((XMLDWork *) work)->req->file=$3;
 								    ((XMLDWork *) work)->req->vals=$6;
 								    ((XMLDWork *) work)->req->where=$9;
 								    YYACCEPT;
                                                                    }
        | USE QVAL {
-                   ((XMLDWork *) work)->req->type=10;
+                   ((XMLDWork *) work)->req->type=XMLD_SQL_USE;
 		   ((XMLDWork *) work)->req->file=$2;
 		   YYACCEPT;
                   }
@@ -219,98 +220,98 @@ cond: '(' cond ')' {
       | expr '=' expr {
                        $$=XMLDCond_create();
 		       $$->negate=0;
-		       $$->type=0;
+		       $$->type=XMLD_CONDITION;
 		       $$->left=$1;
 		       $$->right=$3;
-		       $$->op=0;
+		       $$->op=XMLD_COND_OP_EQUAL;
                       }
       | expr '<' expr {
                        $$=XMLDCond_create();
 		       $$->negate=0;
-		       $$->type=0;
+		       $$->type=XMLD_CONDITION;
 		       $$->left=$1;
 		       $$->right=$3;
-		       $$->op=1;
+		       $$->op=XMLD_COND_OP_L;
                       }
       | expr '>' expr {
                        $$=XMLDCond_create();
 		       $$->negate=0;
-		       $$->type=0;
+		       $$->type=XMLD_CONDITION;
 		       $$->left=$1;
 		       $$->right=$3;
-		       $$->op=2;
+		       $$->op=XMLD_COND_OP_G;
                       }
       | expr NE expr {
                       $$=XMLDCond_create();
 		      $$->negate=0;
-		      $$->type=0;
+		      $$->type=XMLD_CONDITION;
 		      $$->left=$1;
 		      $$->right=$3;
-		      $$->op=3;
+		      $$->op=XMLD_COND_OP_NE;
                      }
       | expr LE expr {
                       $$=XMLDCond_create();
 		      $$->negate=0;
-		      $$->type=0;
+		      $$->type=XMLD_CONDITION;
 		      $$->left=$1;
 		      $$->right=$3;
-		      $$->op=4;
+		      $$->op=XMLD_COND_OP_LE;
 		     } 
       | expr GE expr {
                       $$=XMLDCond_create();
 		      $$->negate=0;
-		      $$->type=0;
+		      $$->type=XMLD_CONDITION;
 		      $$->left=$1;
 		      $$->right=$3;
-		      $$->op=5;
+		      $$->op=XMLD_COND_OP_GE;
 		     }
       | expr LIKE expr {
                         $$=XMLDCond_create();
                         $$->negate=0;
-                        $$->type=0;
+                        $$->type=XMLD_CONDITION;
                         $$->left=$1;
                         $$->right=$3;
-			$$->op=6;
+			$$->op=XMLD_COND_OP_LIKE;
 		       }
       | expr BETWEEN expr  {
                             $$=XMLDCond_create();
 			    $$->negate=0;
-			    $$->type=0;
+			    $$->type=XMLD_CONDITION;
 			    $$->left=$1;
 			    $$->right=$3;
-			    $$->op=7;
+			    $$->op=XMLD_COND_OP_BET;
                            }
       | expr NBETWEEN expr {
                             $$=XMLDCond_create();
 			    $$->negate=0;
-			    $$->type=0;
+			    $$->type=XMLD_CONDITION;
 			    $$->left=$1;
 			    $$->right=$3;
-			    $$->op=8;
+			    $$->op=XMLD_COND_OP_NBET;
                            }
       | cond AND cond {
                        $$=XMLDCond_create();
 		       $$->negate=0;
-		       $$->type=1;
+		       $$->type=XMLD_CONDITION_GRP;
 		       $$->cleft=$1;
 		       $$->cright=$3;
-		       $$->cop=0;
+		       $$->cop=XMLD_COND_GRP_AND;
 		      } 
       | cond OR cond {
                       $$=XMLDCond_create();
 		      $$->negate=0;
-		      $$->type=1;
+		      $$->type=XMLD_CONDITION_GRP;
 		      $$->cleft=$1;
 		      $$->cright=$3;
-		      $$->cop=1;
+		      $$->cop=XMLD_COND_GRP_OR;
                      }
       | NOT cond {
                   $$=$2;
-		  $$->negate=~($$->negate);
+		  $$->negate=!($$->negate);
                  }
       | '!' { /* void condition */
              $$=XMLDCond_create();
-	     $$->type=2;
+	     $$->type=XMLD_CONDITION_VOID;
             }
 ;
 
@@ -320,79 +321,79 @@ expr: '(' expr ')' {
       | NUM {
              $$=XMLDExpr_create();
 	     $$->aggr=0;
-	     $$->type=0;
+	     $$->type=XMLD_INTEGER;
 	     $$->nval=$1;
             }
       | FNUM {
               $$=XMLDExpr_create();
 	      $$->aggr=0;
-	      $$->type=6;
+	      $$->type=XMLD_FLOAT;
 	      $$->fnval=$1;
              }
       | expr '+' expr {                       
                        $$=XMLDExpr_create();
 		       $$->aggr=($1->aggr || $3->aggr);
-		       $$->type=1;
+		       $$->type=XMLD_OPERATION;
 		       $$->left=$1;
 		       $$->right=$3;
-		       $$->op=0;
+		       $$->op=XMLD_OP_ADD;
 		      }		      
       | expr '-' expr {
                        $$=XMLDExpr_create();
 		       $$->aggr=($1->aggr || $3->aggr);
-		       $$->type=1;
+		       $$->type=XMLD_OPERATION;
 		       $$->left=$1;
 		       $$->right=$3;
-		       $$->op=1;
+		       $$->op=XMLD_OP_BNEG;
                       }
       | expr '*' expr {
                        $$=XMLDExpr_create();
 		       $$->aggr=($1->aggr || $3->aggr);
-		       $$->type=1;
+		       $$->type=XMLD_OPERATION;
 		       $$->left=$1;
 		       $$->right=$3;
-		       $$->op=2;                       
+		       $$->op=XMLD_OP_MULTIP;
                       }
       | expr '/' expr {
                        $$=XMLDExpr_create();
 		       $$->aggr=($1->aggr || $3->aggr);
-		       $$->type=1;
+		       $$->type=XMLD_OPERATION;
 		       $$->left=$1;
 		       $$->right=$3;
-		       $$->op=3;
+		       $$->op=XMLD_OP_DIV;
                       }
       | expr '^' expr {
                        $$=XMLDExpr_create();
 		       $$->aggr=($1->aggr || $3->aggr);
-		       $$->type=1;
+		       $$->type=XMLD_OPERATION;
 		       $$->left=$1;
 		       $$->right=$3;
-		       $$->op=4;		       
+		       $$->op=XMLD_OP_EXPO;
                       }
       | '-' expr %prec NEG {
                             $$=XMLDExpr_create();
 			    $$->aggr=$2->aggr;
-			    $$->type=1;
+			    $$->type=XMLD_OPERATION;
 			    $$->right=$2;
-			    $$->op=5;
+			    $$->op=XMLD_OP_UNEG;
                            }
       | expr AND expr {
                        $$=XMLDExpr_create();
 		       $$->aggr=($1->aggr || $3->aggr);
-		       $$->type=1;
+		       $$->type=XMLD_OPERATION;
 		       $$->left=$1;
 		       $$->right=$3;
-		       $$->op=6;
+		       $$->op=XMLD_OP_AND;
                       }
       | IDENTIFIER {
                     $$=XMLDExpr_create();
 		    $$->aggr=0;
-		    $$->type=2;
+		    $$->type=XMLD_IDENTIFIER;
 		    $$->ident=$1;
                    }
       | IDENTIFIER '(' expr_list ')' {
                                       $$=XMLDExpr_create();
-				      $$->type=3;
+				      $$->type=XMLD_FUNCTION;
 				      $$->func=XMLDFunc_search_list_by_name(func_list, $1);
 				      $$->arg_list=$3;
 				      $$->aggr=$$->func->aggr;
@@ -401,20 +402,20 @@ expr: '(' expr ')' {
       | QVAL {
               $$=XMLDExpr_create();
 	      $$->aggr=0;
-	      $$->type=4;
+	      $$->type=XMLD_QVAL;
 	      $$->qval=$1;
              }
       | '*' {
              $$=XMLDExpr_create();
 	     $$->aggr=0;
-	     $$->type=5;
-	     $$->wildcard=0;
+	     $$->type=XMLD_WILDCARD;
+	     $$->wildcard=XMLD_WILDCARD_ALL;
             }
       | '@' {
              $$=XMLDExpr_create();
 	     $$->aggr=0;
-	     $$->type=5;
-	     $$->wildcard=1;
+	     $$->type=XMLD_WILDCARD;
+	     $$->wildcard=XMLD_WILDCARD_ATTS;
             }
       | expr AS QVAL {
                       $$=$1;

@@ -20,6 +20,7 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <stdio.h>
+#include "../xmld_errors.h"
 #include "../cfg.h"
 #include "../passfd.h"
 #include "ptasker.h"
@@ -35,14 +36,14 @@ int init_proc;
 int max_proc;
 int max_idle_proc;
 
-short mtasker_init() {
+int mtasker_init() {
  int i;
  struct sigaction action;
  action.sa_handler=mtasker_handle_idle;
  
  i=sigaction(SIGUSR1, &action, NULL);
  if (i == -1) {
-  return 0;
+  return XMLD_FAILURE;
  }
  
  signal(SIGCHLD, SIG_IGN);
@@ -64,14 +65,14 @@ short mtasker_init() {
  int childrenid=shmget(childrenkey, max_proc*sizeof(struct proc), IPC_CREAT);
  
  if (tableid == -1) {
-  return 0;
+  return XMLD_FAILURE;
  }
  
  table=(struct proc_table *)shmat(tableid, 0, 0);
  shmctl(tableid, IPC_RMID, 0);
  
  if (childrenid == -1) {
-  return 0;
+  return XMLD_FAILURE;
  }
  
  table->num=0;
@@ -86,7 +87,7 @@ short mtasker_init() {
   if(socketpair(PF_UNIX, SOCK_STREAM, 0, table->children[i].sp) != 0) {
    table->children[i].pid=0;
    perror("mtasker_spawn");
-   return 0; 
+   return XMLD_FAILURE; 
   }
   curr_pid=fork();
 
@@ -94,7 +95,7 @@ short mtasker_init() {
    table->children[i].pid=0;
    perror("mtasker_init");
    mtasker_shutdown();
-   return 0;
+   return XMLD_FAILURE;
   }
   else if (curr_pid==0) {
    table->children[i].pid=getpid();
@@ -123,9 +124,9 @@ short mtasker_init() {
    exit(0);
   }
  }
- return 1;
+ return XMLD_SUCCESS;
 }
-short mtasker_shutdown() {
+int mtasker_shutdown() {
  int i;
  for (i = 0; i < max_proc; i++) {
   shutdown(table->children[i].sp[0], 2);
@@ -136,9 +137,9 @@ short mtasker_shutdown() {
   table->children[i].die=1;
  }
  free(ttable.tasks);
- return 1;
+ return XMLD_SUCCESS;
 }
-short mtasker_handle(void (*func) (void *), void *data, int fd) {
+int mtasker_handle(void (*func) (void *), void *data, int fd) {
  int i;
  struct proc *use_proc;
  if (table->num > table->num_busy) {
@@ -159,7 +160,7 @@ short mtasker_handle(void (*func) (void *), void *data, int fd) {
    ttable.tasks[ttable.num_tasks-1].func=func;
    ttable.tasks[ttable.num_tasks-1].data=data;
    ttable.tasks[ttable.num_tasks-1].fd=fd;
-   return 1;
+   return XMLD_SUCCESS;
   }
  }
 
@@ -171,17 +172,17 @@ short mtasker_handle(void (*func) (void *), void *data, int fd) {
   } 
   use_proc->busy=1;
   table->num_busy++;
-  return 1;
+  return XMLD_SUCCESS;
  }
  else {
-  return 0;
+  return XMLD_FAILURE;
  }
 }
 
 struct proc *mtasker_spawn() {
  int i;
  if (table->num > max_proc) {
-  return 0;
+  return NULL;
  }
  else {
   for (i = 0; i < max_proc; i++) {
@@ -193,14 +194,14 @@ struct proc *mtasker_spawn() {
     if(socketpair(PF_UNIX, SOCK_STREAM, 0, table->children[i].sp) != 0) {
      table->children[i].pid=0;
      perror("mtasker_spawn");
-     return 0; 
+     return NULL; 
     }
     curr_pid=fork();
     
     if (curr_pid==-1) {
      table->children[i].pid=0;
      perror("mtasker_spawn");
-     return 0;
+     return NULL;
     }
     else if (curr_pid==0) {
      table->children[i].pid=getpid();
@@ -235,7 +236,7 @@ struct proc *mtasker_spawn() {
  }
 }
 
-short mtasker_kill(int num_proc) {
+void mtasker_kill(int num_proc) {
  int i;
  int killed_proc=0;
  for (i=0;i<max_proc;i++) {
@@ -246,12 +247,11 @@ short mtasker_kill(int num_proc) {
    }
   }  
  }
- return 0;
 }
 
 void mtasker_handle_idle(int signum) {
  int j;
- short status;
+ int status;
  if (ttable.num_tasks>0) {
   status=mtasker_handle(ttable.tasks[0].func, ttable.tasks[0].data, ttable.tasks[0].fd);
   if (status!=0) {

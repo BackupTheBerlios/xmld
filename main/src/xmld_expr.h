@@ -14,58 +14,60 @@
 #ifndef __XMLD_EXPR_H
 #define __XMLD_EXPR_H
 
+/* Expression types */
+#define XMLD_INTEGER 0    /* Integer type         */
+#define XMLD_OPERATION 1  /* Operation type       */
+#define XMLD_IDENTIFIER 2 /* Identifier type      */
+#define XMLD_FUNCTION 3   /* Function call type   */
+#define XMLD_QVAL 4       /* Quoted value type    */ 
+#define XMLD_WILDCARD 5   /* Wildcard type        */
+#define XMLD_FLOAT 6      /* Floating point type  */
+
+/* Operation types */
+#define XMLD_OP_ADD 0    /* Addition                  */
+#define XMLD_OP_BNEG 1   /* Binary substraction       */
+#define XMLD_OP_MULTIP 2 /* Multiplication            */
+#define XMLD_OP_DIV 3    /* Division                  */
+#define XMLD_OP_EXPO 4   /* Exponentation             */
+#define XMLD_OP_UNEG 5   /* Sign switching            */
+#define XMLD_OP_AND 6    /* AND (for between support) */
+
+/* Wildcard types */
+#define XMLD_WILDCARD_ALL 0  /* All columns     */
+#define XMLD_WILDCARD_ATTS 1 /* Only attributes */
+
 struct XMLDExpr {
- short type; /* 0 = numeric 
-                * 1 = containing an operation
-                * 2 = IDENTIFIER (column name)
-                * 3 = function call
-                * 4 = quoted value
-                * 5 = wildcard
-		* 6 = floating point number
-                */
- 
- short aggr; /* whether or not it's an aggregate expression
-	      * aggregate if type = 5 (wildcard) or if type
-	      * = 3 (function call) with this function being
-	      * an aggregate one.
+ int type; 
+ int aggr; /* whether or not it's an aggregate expression
+	      * aggregate if type = 3 (function call) with 
+	      * this function being an aggregate one.
 	      * ------
-	      * NOTE:
-	      *   1 = aggregate
-	      *   0 = scalar
+	      * 1 = aggregate
+	      * 0 = scalar
 	      */
  
- long nval; /* type 0 */
+ int nval; /* type 0 */
  
  /*--------------------*/
  struct XMLDExpr *left; /* type 1:
-		                     * to represent an expression 
-		                     * containing an operation op
-		                     */
+	                 * to represent an expression 
+	                 * containing an operation op
+	                 */
  struct XMLDExpr *right;
- short op; /* 0 = '+'
-	    * 1 = '-' (binary negative)
-	    * 2 = '*'
-	    * 3 = '/'
-	    * 4 = '^'
-	    * 5 = '-' (unary negative)
-	    * 6 = AND (for between and not between)
-	    */ 
+ int op; 
  /*-------------------*/
  char *ident; /* type 2 */
  /*-------------------*/
  XMLDFunc *func; /* type 3:
-				      * a function call
-				      * with an exprssion array
-				      * being passed as an argument
-				      */
+	          * a function call
+		  * with an exprssion array
+		  * being passed as an argument
+		  */
  XMLDList *arg_list;
  /*-------------------*/
  char *qval; /* type 4: Quoted value */
  /*-------------------*/
- short wildcard; /* type 5: wildcard 
-		             * 0 = '*'
-		             * 1 = '@'
-		             */
+ short wildcard; /* type 5: wildcard */
  /*------------------*/
  float fnval; /* type 6: floating point number */
  /*------------------*/

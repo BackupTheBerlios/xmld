@@ -94,7 +94,7 @@ struct XMLDEngine;
 		 return FNUM;
                 }
 [0-9]+ {
-        lvalp->num=atol(yytext);
+        lvalp->num=atoi(yytext);
 	return NUM;
        }
 [*] return '*';

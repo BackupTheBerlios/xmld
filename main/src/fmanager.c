@@ -16,7 +16,7 @@
 #include <sys/file.h>
 
 /*
- *
+ * Get a file decriptor and obtain a shared lock on its inode.
  */
 FILE *fmanager_get_sh_fd(char *file) {
  FILE *ret=fopen(file, "r+");
@@ -33,7 +33,7 @@ FILE *fmanager_get_sh_fd(char *file) {
 }
 
 /*
- *
+ * Get a file descriptor and obtain an execlsive lock on its inode.
  */
 FILE *fmanager_get_ex_fd(char *file) {
  FILE *ret=fopen(file, "r+");

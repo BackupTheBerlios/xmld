@@ -18,7 +18,7 @@ char **str_split(char *, char);
 char *str_prepend(char *, char *);
 short str_like(char *, char *);
 short str_between(char *, char *, char *);
-char *ltoa(long);
+char *itoa(int);
 char *ltrim(char *);
 char *mstrchr_replace(char *, char*, char **, int);
 

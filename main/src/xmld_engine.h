@@ -15,16 +15,21 @@
 #define __XMLD_ENGINE_H
 
 /* Access level bits */
-#define XMLD_ACCESS_FORMAT 1     /* Whether to open a format file */
-#define XMLD_ACCESS_EX 2         /* Whether to execlusively access the file */
+#define XMLD_ACCESS_FORMAT 1     /* Whether to open a format file                  */
+#define XMLD_ACCESS_EX 2         /* Whether to execlusively access the file        */
 #define XMLD_ACCESS_FORMAT_EX 4  /* Whether to execlusively access the format file */
+
+/* walk return values */
+#define XMLD_WALK_UP -1  /* One level shallower */
+#define XMLD_WALK_END 0  /* End of document     */
+#define XMLD_WALK_DOWN 1 /* One level deeper    */
 
 struct XMLDEngine {
  char *name; /* The engine's name */
  void (*init) (void); /* The function that's called once the engine
 		       * is added to the engine_list.
 		       */
- short (*prepare) (XMLDWork *, int); /* The function called before each
+ int (*prepare) (XMLDWork *, int); /* The function called before each
 				      * request the engine serves.
 				      * The integer argument is named level
 				      * and determines access levels of the
@@ -42,10 +47,6 @@ struct XMLDEngine {
  int (*walk) (XMLDWork *); /* The function which the tree walker
 			    * calls for the engine to give a next
 			    * result from its data source.
-			    * return values:
-			    * -1: shallower by one
-			    * 0 : end of document
-			    * 1 : deeper by one
 			    */
  int (*get_level) (XMLDWork *); /* The function which gets the current
 				 *  level in the document.
@@ -57,7 +58,7 @@ struct XMLDEngine {
 					       * engine. 	 
 					       */
  
- short (*eval_cond) (XMLDWork *, XMLDCond *); /* The function which
+ int (*eval_cond) (XMLDWork *, XMLDCond *); /* The function which
 					       * the tree walker calls
 					       * when it needs the eng-
 					       * ine to evaluate a con-

@@ -16,8 +16,8 @@
 
 XMLDList *func_list;
 
-short func_list_init();
-short func_list_shutdown();
+int func_list_init();
+int func_list_shutdown();
 XMLDExpr *foo_func(XMLDList *);
 
 #endif /* __FUNC_LIST_H */

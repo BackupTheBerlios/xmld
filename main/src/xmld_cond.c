@@ -53,11 +53,11 @@ void XMLDCond_free(XMLDCond *cond) {
  * cond: the condition whose internal memory is to be freed.
  */
 void XMLDCond_free_content(void *cond) {
- if (((XMLDCond *) cond)->type == 0) {
+ if (((XMLDCond *) cond)->type == XMLD_CONDITION) {
   XMLDExpr_free(((XMLDCond *) cond)->left);
   XMLDExpr_free(((XMLDCond *) cond)->right);
  }
- else if (((XMLDCond *) cond)->type ==1) {
+ else if (((XMLDCond *) cond)->type == XMLD_CONDITION_GRP) {
   XMLDCond_free(((XMLDCond *) cond)->cleft);
   XMLDCond_free(((XMLDCond *) cond)->cright);
  }
@@ -70,12 +70,12 @@ void XMLDCond_copy(XMLDCond *src, XMLDCond *dest) {
  dest->type=src->type;
  dest->negate=src->negate;
  switch (src->type) {
-  case 0:
+  case XMLD_CONDITION:
    dest->left=src->left;
    dest->right=src->right;
    dest->op=src->op;
   break;
-  case 1:
+  case XMLD_CONDITION_GRP:
    dest->cleft=src->cleft;
    dest->cright=src->cright;
    dest->cop=src->cop;

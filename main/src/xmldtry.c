@@ -25,7 +25,7 @@ int main() {
  }
  
  char query[150];
- strcpy(query, "select name from \"my_file.xml\" where !:(tagname)=\"c\"");
+ strcpy(query, "select name from \"my_file.xml\" where name=\"khalid\":!");
  status=write(fd, (void *) query, 150);
  
  if (status == -1) {

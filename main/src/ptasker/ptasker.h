@@ -45,11 +45,11 @@ int passed_fd; /*
 		* The fd last passed using passfd.c
 		*/
 
-short mtasker_init(void);
-short mtasker_shutdown(void);
-short mtasker_handle(void (*) (void*), void *, int);
+int mtasker_init(void);
+int mtasker_shutdown(void);
+int mtasker_handle(void (*) (void*), void *, int);
 struct proc *mtasker_spawn();
-short mtasker_kill(int);
+void mtasker_kill(int);
 void mtasker_handle_idle(int);
 
 #endif /* __PTASKER_H */

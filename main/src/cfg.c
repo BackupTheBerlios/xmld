@@ -12,6 +12,7 @@
  */
 
 #include <stdlib.h>
+#include "xmld_errors.h"
 #include "xmld_list.h"
 #include "xmld_directive.h"
 #include "cfg_parser.h"
@@ -21,9 +22,9 @@
  * : Initiates the configuration manager.
  * returns: whether successful.
  */
-short cfg_init() {
+int cfg_init() {
  cfg_tree=NULL;
- short ret=cfg_parser_parse();
+ int ret=cfg_parser_parse();
  col_sep=*((char *) cfg_get("response.col_sep"));
  col_sep_enc=((char *) cfg_get("response.col_sep_enc"));
  row_sep=*((char *) cfg_get("response.row_sep"));
@@ -46,23 +47,19 @@ void *cfg_get(char *key) {
  if (dir == NULL) {
   return (void *) NULL;
  }
- if (dir->type == 0) {
-  return (void *) &dir->value.int_value;
- }
- else if (dir->type == 1) {
-  return (void *) dir->value.int_array_value;
- }
- else if (dir->type == 2) {
-  return (void *) dir->value.string_value;
- }
- else if (dir->type == 3) {
-  return (void *) dir->value.string_array_value;
- }
- else if (dir->type == 4) {
-  return (void *) &dir->value.char_value;
- }
- else {
-  return (void *) NULL;
+ switch (dir->type) {
+  case XMLD_DIR_INT:
+   return (void *) &dir->value.int_value;
+  case XMLD_DIR_INTARR:
+   return (void *) dir->value.int_array_value;
+  case XMLD_DIR_STR:
+   return (void *) dir->value.string_value;
+  case XMLD_DIR_STRARR:
+   return (void *) dir->value.string_array_value;
+  case XMLD_DIR_CHAR:
+   return (void *) &dir->value.char_value;
+  default:
+   return (void *) NULL;
  }
 }
 
@@ -113,8 +110,8 @@ void cfg_set_mime_engine(char *mime, char *engine) {
  * Finalizes and cleans up the parse tree of the conf.
  * returns: whether successful.
  */
-short cfg_shutdown() {
+int cfg_shutdown() {
  cfg_parser_clean();
- return 1;
+ return XMLD_SUCCESS;
 }
  

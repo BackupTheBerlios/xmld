@@ -46,7 +46,7 @@ struct xmld_part parts[NUM_PARTS];
 
 int main() {
  int t;
- short s;
+ int s;
  
  struct sigaction action;
  action.sa_handler=init_shutdown_parts;
@@ -68,7 +68,7 @@ int main() {
  
  for (t = 0; t < NUM_PARTS; t++) {
   s = (*(parts[t].init_func))();
-  if (s == 0) {
+  if (s == XMLD_FAILURE) {
    perror("Initializer");
    init_shutdown_parts(0);
    break;
@@ -90,14 +90,13 @@ void init_create_part(struct xmld_part *part, short (*init_func) (void), short (
 
 void init_shutdown_parts(int signum) {
  int t;
- short s;
+ int s;
  for (t = NUM_PARTS - 1; t >= 0; t--) {
   if (parts[t].ok == 1) {
    s = (*(parts[t].shutdown_func))();
-   if (s == 0) {
+   if (s == XMLD_FAILURE) {
     perror("init_shutdown_parts");
    }
   } 
  }
- exit(0);
 }

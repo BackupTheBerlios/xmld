@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "xmld_errors.h"
 #include "dutils.h"
 
 /*
@@ -187,7 +188,7 @@ char *dmcstrchr(FILE *fd, char *tokens, int num) {
  * when there are no more characters in write.
  * returns: success/failure.
  */ 
-short dmwstrchr(FILE *fd, char *tokens, int num, char *write) {
+int dmwstrchr(FILE *fd, char *tokens, int num, char *write) {
  char c;
  int i;
  char *curr=write;
@@ -195,17 +196,17 @@ short dmwstrchr(FILE *fd, char *tokens, int num, char *write) {
  while (1) {
   c=getc(fd);
   if (c == EOF) {
-   return 0;
+   return XMLD_FAILURE;
   }
   for (i = 0; i < num; i++) {
    if (c == tokens[i]) {
-    return 1;
+    return XMLD_SUCCESS;
    }
   }
   fseek(fd, -1, SEEK_CUR);
   putc(*curr, fd);
   if (*(++curr) == '\0') {
-   return 1;
+   return XMLD_SUCCESS;
   }
  }
 }

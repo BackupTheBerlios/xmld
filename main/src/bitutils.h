@@ -14,7 +14,6 @@
 #ifndef __BITUTILS_H
 #define __BITUTILS_H
 
-int bit_isset(int, int);
-void bit_set(int, int);
+#define BIT_ISSET(bitmask, bit) ((bitmask) & (bit))
 
 #endif /* __BITUTILS_H */

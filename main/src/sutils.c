@@ -132,14 +132,14 @@ short str_between(char *str, char *min, char *max) {
 /*
  * Turns a given integer to its string representation.
  * i.e atoi inverse.
- * FIXME: make it snprintf-independent.
+ * FIXME: make it snprintf-independent. (ctype.h)
  */
-char *ltoa(long num) {
+char *itoa(int num) {
  char *ret=(char *) malloc(NUMERIC_LENGTH*sizeof(char));
- int conv=snprintf(ret, NUMERIC_LENGTH, "%li", num);
+ int conv=snprintf(ret, NUMERIC_LENGTH, "%d", num);
  if (conv > 0) {
   ret=(char *) realloc(ret, (NUMERIC_LENGTH+conv)*sizeof(char));
-  snprintf(ret, NUMERIC_LENGTH+conv, "%li", num);
+  snprintf(ret, NUMERIC_LENGTH+conv, "%d", num);
  }
  else if (strlen(ret)+1 < NUMERIC_LENGTH) {
   ret=(char *) realloc(ret, (strlen(ret)+1)*sizeof(char));

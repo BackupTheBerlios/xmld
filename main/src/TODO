@@ -95,6 +95,8 @@ in:
 
 --------- Start of The OpenXMLD 0.4.0 part:
 
+Goal: GET IT RUNNING!
+
 * Implement XMLDResponse_flush which sends the response
 contents as string chunks to the fd of the listener
 socket, and use it in qp. (done)
@@ -374,7 +376,11 @@ of document. (done)
 
 * get_level engine function. (done)
 
---------------- Start of The OpenXMLD 0.4.1 part:
+--------------- Start of The OpenXMLD 0.5.0 part:
+
+Goal: Code base stabilization and preparation for
+the hard upcoming features and a slight increase 
+in usability.
 
 * If a column value contains col_sep or row_sep they
 must be encoded before sending by XMLDResponse_flush.
@@ -387,8 +393,6 @@ must be encoded before sending by XMLDResponse_flush.
 * cfg_parser must handle # inside values correctly,
 that is, # must mean commenting only if it was at 
 the beginning of the line. (done)
-
-* xmld_socket_read contains a buffer over-flow possibility.
 
 * somanager must close all server sockets on shutdown.
 (done)
@@ -403,10 +407,11 @@ ONNECT.
 Support that in xmld-sql.(lex|y).
 (done)
 
-* Implement ftoa (sutils.h).
+* Implement ftoa (sutils.h). and ltoa -> itoa. and reimplement
+itoa (both using ctype.h).
 
 * Convert nval back to int. in xmld-sql.lex, xmld-sql.y
-XMLDExpr.
+XMLDExpr. (done)
 
 * Make sure that mtasker_handle_idle is called whensever
 a child is no longer busy, and install a semaphore on ttable
@@ -437,24 +442,77 @@ to format. (done)
 * Engine-XMLD must be rewritten with consideration of
 [1] availablity of column types [2] access levels.
 [3] type and access level enumerations. [4] the new
-float type [5] nval -> back to int.
+float type [5] nval -> back to int. [6] the change
+in format_manip's load_format_file.
 
 * All lists of numeric --> meaning association in all
 structures/functions must be converted to correspon-
-ding enumerations.
+ding enumerations/macros.
 
 * The access level given to prepare must be defined
-as macros of four bits OR'ing them gives a proper
+as macros of three bits OR'ing them gives a proper
 result. (done)
 
 * consider the macro and enumeration thing in xmld-sql.y
-and twalker.
+and twalker. (done)
 
-* Implement bitutils.(c|h).
+* Implement bitutils.h (done)
 
 * Add XMLD_ENOFORMAT to xmld_errors.(h/c). (done)
 
---------------- Start of The OpenXMLD 0.5.0 part:
+* All success/failure -> back to int. and XMLD_SUCCESS
+and XMLD_FAILURE and XMLD_SPECIAL.
+
+* XMLDDirective now has type macros change cfg_parser
+to conform. (done)
+
+* xmld-sql.y must have its own request types defined
+as macros (done)
+
+* twalker must respect xmld-sql.y macros. (done)
+
+* twalker prepare calls must use the access level 
+bitmask. (done)
+
+* engine_xmld_prepare doesn't use BIT_ISSET correctly
+(done)
+
+* in cfg_parser convert mode to macros
+
+* Specify a (in and out) query header format and 
+create header manipulation functions.
+
+* Add the header_length configuration option.
+
+* XMLDResponse_flush must send header information
+(message length and status code) to the user
+before sending the message. using header manipula
+tion functions. (headmanip part).
+
+* The server must send internal header length config
+option value to the user just when the connection
+is initialized.
+
+* The user must respond with authentication 
+information. (user name) then password.
+
+* Add authentication support and an authman part.
+
+* Multiple query parsers support and on-the-fly query
+parser switching.
+
+* Implement multiple files support, and expression->
+file association.
+
+* format_manip's load_format_file must return a pointer
+to the opened file rather than a status indiciator
+and NULL in case of failure (fix prepare to conform).
+
+* XMLD_TRUE and XMLD_FALSE and XMLDBool type and take
+all to xmlddef.h.
+--------------- Start of The OpenXMLD 0.6.0 part:
+
+Goal: PUMP the features in it!
 
 * Implement the XMLD_ENOTIMPL things in twalker,
 and specify the corresponding engine functions
@@ -466,9 +524,6 @@ and implement them in Engine-XMLD.
 * Implement alphabetical comparsion in str_between.
 (check the GNU C Library documentation for "Searching
 and Sorting")
-
-* Implement multiple files support, and expression->
-file association.
 
 * Find a way of correct resolution of aggregate
 expressions.
@@ -485,20 +540,21 @@ XMLDEngine_create_hashtable(...)
 XMLDEngine_add_to_hashtable(...)
 XMLDEngine_search_hashtable(...)
 
-* Multiple query parsers support and on-the-fly query
-parser switching.
-
 * Add the file/engine association document, and mime/engine
-association documents, and implement cfg functions that
+association document, and implement cfg functions that
 play with them.
 
-*--------------- Start of The OpenXMLD 0.6.0 part:
+*--------------- Start of The OpenXMLD 0.7.0 part:
+
+Goal: Confromance and high-usability.
 
 * Make it a robust XMLD-SQL implementation!
 
 * XML compliance and Unicode support.
 
-*--------------- Start of The OpenXMLD 0.7.0 part:
+*--------------- Start of The OpenXMLD 1.0.0 part:
+
+Goal: Portability.
 
 * Implement a multi-threaded multi-
 tasker (Macro: USE_TTASKER).

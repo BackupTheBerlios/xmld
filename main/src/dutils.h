@@ -26,7 +26,7 @@ char fgetc_buf(FILE *, buf_t *);
 void buf_dump(FILE *, buf_t *);
 int dmstrstr(FILE *, char **, int);
 int dmstrchr(FILE *, char *, int);
-short dmwstrchr(FILE *, char *, int, char *);
+int dmwstrchr(FILE *, char *, int, char *);
 char *dmcstrchr(FILE *, char *, int);
 
 #endif /* __DUTILS_H */

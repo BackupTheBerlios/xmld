@@ -62,7 +62,7 @@ void engine_xmld_init() {
 /* prepare function 
  * level: consult xmld_engine.h
  * */
-short engine_xmld_prepare(XMLDWork *work, int level) {
+int engine_xmld_prepare(XMLDWork *work, int level) {
  char *full_name=XMLDWork_get_full_file(work);
  char *mime=mfigure_get_mime(full_name);
  
@@ -70,11 +70,11 @@ short engine_xmld_prepare(XMLDWork *work, int level) {
   xmld_errno=XMLD_EINVALFILE;
   free(mime);
   free(full_name);
-  return 0;
+  return XMLD_FAILURE;
  }
  
  free(mime);
- if (bit_isset(level, 2)) {
+ if (BIT_ISSET(level, XMLD_ACCESS_EX)) {
   work->res->data_source=(void *) fmanager_get_ex_fd(full_name);
  }
  else {
@@ -84,32 +84,31 @@ short engine_xmld_prepare(XMLDWork *work, int level) {
  if (work->res->data_source == NULL) {
   xmld_errno = XMLD_ENOFILE;
   free(full_name);
-  return 0;
+  return XMLD_FAILURE;
  }
  
  work->res->store=malloc(3*sizeof(int));
  *((int *) work->res->store)=0; /* <-- the current level in the document */
- if (bit_isset(level, 1)) {	 
-  *((int *) work->res->store+2)=engine_xmld_load_format_file(&(FILE *) (work->res->store+1), full_name, bit_isset(level, 3));
-  if (*((int *) work->res->store+2)==0) {
+                                /* store + 1 is FILE pointer to the format file */
+ if (BIT_ISSET(level, XMLD_ACCESS_FORMAT)) {	 
+  *((int *) work->res->store+1)=engine_xmld_load_format_file(full_name, BIT_ISSET(level, XMLD_ACCESS_FORMAT_EX));
+  if (*((int *) work->res->store+1) == NULL) {
    xmld_errno = XMLD_ENOFORMAT;
-   return 0;
+   return XMLD_FAILURE;
   }  
  }
  else {
-  *((int *) work->res->store+2)=0;
+  *((int *) work->res->store+1) = NULL;
  }
  free(full_name);
-
- return 1;
+ return XMLD_SUCCESS;
 }
 /* cleanup function */
 void engine_xmld_cleanup(XMLDWork *work) {
- if (*((int *) work->res->store+2)) {
+ if (*((int *) work->res->store+1) != NULL) {
   fmanager_unlock_fd((FILE *) (work->res->store+1));
   fclose((FILE *) (work->res->store+1));
  }
-
  free(work->res->store);
  fmanager_unlock_fd((FILE *) (work->res->data_source));
  fclose((FILE *) work->res->data_source);
@@ -200,7 +199,7 @@ char *engine_xmld_eval_expr(XMLDWork *work, XMLDExpr *expr) {
 }
 
 /* eval_cond function */
-short engine_xmld_eval_cond(XMLDWork *work, XMLDCond *cond) {
+int engine_xmld_eval_cond(XMLDWork *work, XMLDCond *cond) {
  short val;
  char *left_val;
  char *right_val;
@@ -442,11 +441,11 @@ char *engine_xmld_get_column_value(XMLDWork *work, char *col_name) {
  return ret;
 }
 
-short engine_xmld_set_column_value(XMLDWork *work, char *col_name, char *value) {
+/* FIXME: always use the format file */
+int engine_xmld_set_column_value(XMLDWork *work, char *col_name, char *value) {
  fpos_t pos;
  fgetpos((FILE *) work->res->data_source, &pos);
  short ret;
- /* FIXME: should the lengthed writing be in element_op ? */
  if (*((int *) work->res->store+2)) { /* we have got a format file */
   int stat;
   char *tag_name=engine_xmld_get_tagname((FILE *) work->res->data_source);

@@ -29,22 +29,19 @@
  * be opened.
  * ex: Whether or not to execlusively access the format file.
  */
-short engine_xmld_load_format_file(FILE **fd, char *full_file, int ex) {
+FILE *engine_xmld_load_format_file(char *full_file, int ex) {
  full_file=(char *) realloc(full_file, (strlen(full_file)+8)*sizeof(char));
  strcat(full_file, ".format");
- if (type == 0) {
-  *fd=fmanager_get_sh_fd(full_file);
+ FILE *fd;
+
+ if (ex == 0) {
+  fd=fmanager_get_sh_fd(full_file);
  }
  else {
-  *fd=fmanager_get_ex_fd(full_file);
+  fd=fmanager_get_ex_fd(full_file);
  }
 
- if (*fd == NULL) {
-  return 0;
- }
- else {
-  return 1;
- }
+ return fd; 
 }
 
 /*

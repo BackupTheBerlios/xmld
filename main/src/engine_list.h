@@ -16,7 +16,7 @@
 
 XMLDList *engine_list;
 
-short engine_list_init();
-short engine_list_shutdown();
+int engine_list_init();
+int engine_list_shutdown();
 
 #endif /* __ENGINE_LIST_H */

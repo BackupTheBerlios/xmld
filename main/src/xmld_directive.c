@@ -24,7 +24,7 @@
 XMLDDirective *XMLDDirective_create() {
  XMLDDirective *dir=(XMLDDirective *) malloc(sizeof(XMLDDirective));
  dir->name=NULL;
- dir->type=2;
+ dir->type=XMLD_DIR_STR;
  dir->value.string_value=NULL;
  return dir;
 }
@@ -48,13 +48,13 @@ void XMLDDirective_free(XMLDDirective *directive) {
  */
 void XMLDDirective_free_content(void *directive) {
  XMLDDirective *dir=(XMLDDirective *) directive;
- if (dir->type == 1) {
+ if (dir->type == XMLD_DIR_INTARR) {
   cfree(dir->value.int_array_value);
  }
- else if (dir->type == 2) {
+ else if (dir->type == XMLD_DIR_STR) {
   cfree(dir->value.string_value);
  }
- else if (dir->type == 3) {
+ else if (dir->type == XMLD_DIR_STRARR) {
   char **ptr=dir->value.string_array_value;
   while (ptr != NULL) {
    cfree(*ptr);
@@ -62,7 +62,7 @@ void XMLDDirective_free_content(void *directive) {
   }
   cfree(dir->value.string_array_value);
  }
- if (dir->type != -1) {
+ if (dir->type != XMLD_DIR_ERROR) {
   cfree(dir->name);
  }
 }
@@ -85,7 +85,7 @@ XMLDList *XMLDDirective_create_list() {
 XMLDDirective *XMLDDirective_add_to_list(XMLDList *list) {
  XMLDDirective *dir=(XMLDDirective *) XMLDList_add(list);
  dir->name=NULL;
- dir->type=2;
+ dir->type=XMLD_DIR_STR;
  dir->value.string_value=NULL;
  return dir;
 }

@@ -59,17 +59,17 @@ void XMLDExpr_free(XMLDExpr *expr) {
  */
 void XMLDExpr_free_content(void *expr) {
  switch(((XMLDExpr *)expr)->type) {
-  case 1:
+  case XMLD_OPERATION:
    XMLDExpr_free(((XMLDExpr *)expr)->left);
    XMLDExpr_free(((XMLDExpr *)expr)->right);
    break;
-  case 2:
+  case XMLD_IDENTIFIER:
    cfree(((XMLDExpr *)expr)->ident);
    break;
-  case 3:
+  case XMLD_FUNCTION:
    XMLDList_free(((XMLDExpr *)expr)->arg_list);
    break;
-  case 4:
+  case XMLD_QVAL:
    cfree(((XMLDExpr *)expr)->qval);
    break;
  }
@@ -82,33 +82,31 @@ void XMLDExpr_free_content(void *expr) {
 void XMLDExpr_copy(XMLDExpr *src, XMLDExpr *dest) {
  dest->type=src->type;
  switch (src->type) {
-  case 0:
+  case XMLD_NUMERIC:
    dest->nval=src->nval;
   break;
-  case 1:
+  case XMLD_OPERATION:
    dest->left=src->left;
    dest->right=src->right;
    dest->op=src->op;
   break;
-  case 2:
+  case XMLD_IDENTIFIER:
    dest->ident=src->ident;
   break;
-  case 3:
+  case XMLD_FUNCTION:
    dest->func=src->func;
    dest->arg_list=src->arg_list;
   break;
-  case 4:   
+  case XMLD_QVAL:  
    dest->qval=src->qval;
   break;
-  case 5:
+  case XMLD_WILDCARD:
    dest->wildcard=src->wildcard;
   break;
-  case 6:
+  case XMLD_FLOAT:
    dest->fnval=src->fnval;
  }
- if (src->alias != NULL) {
-  dest->alias=src->alias;
- }
+ dest->alias=src->alias;
 }
 
 /*

@@ -20,12 +20,12 @@ char *document_root;
 char *row_sep_enc;
 char *col_sep_enc;
 
-short cfg_init(void);
+int cfg_init(void);
 void *cfg_get(char *);
 char *cfg_get_engine(char *);
 void cfg_set_engine(char *, char *);
 char *cfg_get_mime_engine(char *);
 void cfg_set_mime_engine(char *, char *);
-short cfg_shutdown(void);
+int cfg_shutdown(void);
 
 #endif /* __CFG_H */

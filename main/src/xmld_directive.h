@@ -14,6 +14,14 @@
 #ifndef __XMLD_DIRECTIVE_H
 #define __XMLD_DIRECTIVE_H
 
+/* Directive types */
+#define XMLD_DIR_ERR -1   /* Error         */
+#define XMLD_DIR_INT 0    /* Integer       */
+#define XMLD_DIR_INTARR 1 /* Integer array */
+#define XMLD_DIR_STR 2    /* String        */
+#define XMLD_DIR_STRARR 3 /* String array  */
+#define XMLD_DIR_CHAR 4   /* Character     */
+
 union cfg_value {
   int int_value;
   int *int_array_value;
@@ -26,13 +34,7 @@ union cfg_value {
 struct XMLDDirective {
  char *name;
  union cfg_value value;
- short type; /* -1 = error
-              * 0 = int
-              * 1 = int*
-	      * 2 = char*
-	      * 3 = char**
-	      * 4 = char
-	      */
+ int type;
 };
 
 typedef struct XMLDDirective XMLDDirective;

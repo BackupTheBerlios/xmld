@@ -15,15 +15,15 @@
 #define __ENGINE_XMLD_H
 
 void engine_xmld_init (void);
-short engine_xmld_prepare (XMLDWork *);
+int engine_xmld_prepare (XMLDWork *);
 void engine_xmld_cleanup (XMLDWork *);
 void engine_xmld_destroy (void);
 int engine_xmld_walk (XMLDWork *);
 int engine_xmld_get_level (XMLDWork *);
 char *engine_xmld_eval_expr (XMLDWork *, XMLDExpr *);
-short engine_xmld_eval_cond (XMLDWork *, XMLDCond *);
+int engine_xmld_eval_cond (XMLDWork *, XMLDCond *);
 char *engine_xmld_get_column_value (XMLDWork *, char *);
-short engine_xmld_set_column_value (XMLDWork *, char *, char *);
+int engine_xmld_set_column_value (XMLDWork *, char *, char *);
 void engine_xmld_simplify_expr (XMLDWork *, XMLDExpr *);
 
 #endif /* __ENGINE_XMLD_H */

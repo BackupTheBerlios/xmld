@@ -27,6 +27,9 @@ enum xmld_error {
 char *err_str[7];
 
 #define ERROR_RESPONSE xmld_socket_write(work->conn->fd, err_str[xmld_errno])
+#define XMLD_SUCCESS 1
+#define XMLD_FAILURE 0
+#define XMLD_SPECIAL -1
 
 void init_error_array(void);
 

@@ -26,6 +26,7 @@ XMLDRequest *XMLDRequest_create() {
  req->retr=NULL;
  req->vals=NULL;
  req->where=NULL;
+ req->misc=NULL;
  return req;
 }
 
@@ -49,6 +50,7 @@ void XMLDRequest_free_content(void *req) {
  XMLDList_free(((XMLDRequest *) req)->retr);
  XMLDList_free(((XMLDRequest *) req)->vals);
  XMLDList_free(((XMLDRequest *) req)->where);
+ XMLDList_free(((XMLDRequest *) req)->misc);
 }
 
 /*
@@ -71,5 +73,6 @@ XMLDRequest *XMLDRequest_add_to_list(XMLDList *list) {
  req->retr=NULL;
  req->vals=NULL;
  req->where=NULL;
+ req->misc=NULL;
  return req;
 }

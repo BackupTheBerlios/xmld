@@ -40,10 +40,11 @@ struct XMLDEngine;
 #include "cfg.h"
 #include "engine_list.h"
 #include "twalker.h"
+#include "xmld-sql.h"
 
 short twalker_handle(XMLDWork *work) {
  switch(work->req->type) {
-  case 0: /* SELECT */
+  case XMLD_SQL_SELECT:
    work->res=XMLDResource_create();
   
    char *full_file=XMLDWork_get_full_file(work);
@@ -52,17 +53,17 @@ short twalker_handle(XMLDWork *work) {
    
    if (work->res->engine == NULL) {
     xmld_errno=XMLD_ENOENGINE;
-    return 0;
+    return XMLD_FAILURE;
    }
    
-   if (((*(work->res->engine->prepare)) (work)) == 0) {
-    return 0;
+   if (((*(work->res->engine->prepare)) (work, 0)) == XMLD_FAILURE) {
+    return XMLD_FAILURE;
    }
 
    work->resp=XMLDResponse_create();
    int ret=(*(work->res->engine->walk)) (work);
-   while (ret != 0) {
-    if (ret == 1) {
+   while (ret != XMLD_WALK_END) {
+    if (ret == XMLD_WALK_DOWN) {
      XMLDList_reset(work->req->retr);
      XMLDResponse_add_row(work->resp);
      while (XMLDList_next(work->req->retr)) {
@@ -86,7 +87,7 @@ short twalker_handle(XMLDWork *work) {
    XMLDList_free(work->resp->tables);
    (*(work->res->engine->cleanup)) (work);
   break;
-  case 1: /* SELECT with WHERE */
+  case XMLD_SQL_SELECT_WHERE:
    work->res=XMLDResource_create();
   
    full_file=XMLDWork_get_full_file(work);
@@ -95,11 +96,11 @@ short twalker_handle(XMLDWork *work) {
    
    if (work->res->engine == NULL) {
     xmld_errno=XMLD_ENOENGINE;
-    return 0;
+    return XMLD_FAILURE;
    }
    
-   if (((*(work->res->engine->prepare)) (work)) == 0) {
-    return 0;
+   if (((*(work->res->engine->prepare)) (work, XMLD_ACCESS_FORMAT)) == XMLD_FAILURE) {
+    return XMLD_FAILURE;
    }
    
    work->resp=XMLDResponse_create();
@@ -107,15 +108,15 @@ short twalker_handle(XMLDWork *work) {
    ret=(*(work->res->engine->walk)) (work);
    int last_level, curr_level;
    
-   while (ret != 0) {
-    if (ret == 1) {
+   while (ret != XMLD_WALK_END) {
+    if (ret == XMLD_WALK_DOWN) {
      curr_level = XMLDList_next(work->req->where); /* curr_level is a misleading name, it's to reuse 
 						    the same variable */
     }
     else {
      XMLDList_prev(work->req->where);
     }
-    if (ret == 1) {
+    if (ret == XMLD_WALK_DOWN) {
      if (curr_level) {
       if ((*(work->res->engine->eval_cond)) (work, (XMLDCond *) XMLDList_curr(work->req->where))) {
        XMLDList_reset(work->req->retr);
@@ -133,15 +134,15 @@ short twalker_handle(XMLDWork *work) {
       else { /* the condition isn't true, loop until you reach level-1 */
        last_level = (*(work->res->engine->get_level)) (work);
        ret = (*(work->res->engine->walk)) (work);
-       while (ret != 0) {
-        if (ret == 1) {
+       while (ret != XMLD_WALK_END) {
+        if (ret == XMLD_WALK_DOWN) {
          XMLDList_next(work->req->where);
         }
         else {
          XMLDList_prev(work->req->where);
         }
         curr_level = (*(work->res->engine->get_level)) (work);
-        if (curr_level == last_level -1) {
+        if (curr_level == last_level-1) {
          break;
         }
         ret = (*(work->res->engine->walk)) (work);
@@ -152,15 +153,15 @@ short twalker_handle(XMLDWork *work) {
  	    must be eaten up as well: */
       last_level = (*(work->res->engine->get_level)) (work);
       ret = (*(work->res->engine->walk)) (work);
-      while (ret != 0) {
-       if (ret == 1) {
+      while (ret != XMLD_WALK_END) {
+       if (ret == XMLD_WALK_DOWN) {
         XMLDList_next(work->req->where);
        }
        else {
         XMLDList_prev(work->req->where);
        }
        curr_level = (*(work->res->engine->get_level)) (work);
-       if (curr_level == last_level -1) {
+       if (curr_level == last_level-1) {
         break;
        }
        ret = (*(work->res->engine->walk)) (work);
@@ -178,44 +179,44 @@ short twalker_handle(XMLDWork *work) {
    XMLDList_free(work->resp->tables);
    (*(work->res->engine->cleanup)) (work);
   break;
-  case 2: /* UPDATE */
+  case XMLD_SQL_UPDATE:
    xmld_errno=XMLD_ENOTIMPL;
-   return 0;
+   return XMLD_FAILURE;
   break;
-  case 3: /* UPDATE with WHERE */
+  case XMLD_SQL_UPDATE_WHERE:
    xmld_errno=XMLD_ENOTIMPL;
-   return 0;
+   return XMLD_FAILURE;
   break;
-  case 4: /* DELETE or (DELETE *) */
+  case XMLD_SQL_DELETE:
    xmld_errno=XMLD_ENOTIMPL;
-   return 0;
+   return XMLD_FAILURE;
   break;
-  case 5: /* DELETE with WHERE */
+  case XMLD_SQL_DELETE_WHERE:
    xmld_errno=XMLD_ENOTIMPL;
-   return 0;
+   return XMLD_FAILURE;
   break;
-  case 6: /* INSERT with column list */
+  case XMLD_SQL_INSERT_COL:
    xmld_errno=XMLD_ENOTIMPL;
-   return 0;
+   return XMLD_FAILURE;
   break;
-  case 7: /* INSERT with column list with WHERE */
+  case XMLD_SQL_INSERT_COL_WHERE :
    xmld_errno=XMLD_ENOTIMPL;
-   return 0;
+   return XMLD_FAILURE;
   break;
-  case 8: /* INSERT with WHERE */
+  case XMLD_SQL_INSERT_WHERE:
    xmld_errno=XMLD_ENOTIMPL;
-   return 0;
+   return XMLD_FAILURE;
   break;
-  case 9: /* INSERT */
+  case XMLD_SQL_INSERT:
    xmld_errno=XMLD_ENOTIMPL;
-   return 0;
+   return XMLD_FAILURE;
   break;
-  case 10: /* USE */
+  case XMLD_SQL_USE:
    xmld_errno=XMLD_ENOTIMPL;
-   return 0;
+   return XMLD_FAILURE;
   break;
-  case 11: /* DISCONNECT */
-   return -1;
+  case XMLD_SQL_DISCONNECT: /* DISCONNECT */
+   return XMLD_SPECIAL;
   break;
  } 
  return 1;

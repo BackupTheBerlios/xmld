@@ -14,39 +14,44 @@
 #ifndef __XMLD_COND_H
 #define __XMLD_COND_H
 
+/* Condition types */
+#define XMLD_CONDITION 0      /* Normal condition: expr <cond> expr   */
+#define XMLD_CONDITION_GRP 1  /* Condition group: cond <LOGICAL> cond */
+#define XMLD_CONDITION_VOID 2 /* Void condition (always true)         */
+
+/* Conditional operation types */
+#define XMLD_COND_OP_EQUAL 0 /* Equality              */
+#define XMLD_COND_OP_L 1     /* Less than             */
+#define XMLD_COND_OP_G 2     /* Greater than          */
+#define XMLD_COND_OP_NE 3    /* Not Equal             */
+#define XMLD_COND_OP_LE 4    /* Less than or equal    */
+#define XMLD_COND_OP_GE 5    /* Greater than or equal */
+#define XMLD_COND_OP_LIKE 6  /* LIKE                  */
+#define XMLD_COND_OP_BET 7   /* BETWEEN               */
+#define XMLD_COND_OP_NBET 8  /* NOT BETWEEN           */
+
+/* Conditional grouping types */
+#define XMLD_COND_GRP_AND 0 /* AND */
+#define XMLD_COND_GRP_OR  1 /* OR  */
+
 /* represents a condition */
 struct XMLDCond {
- short type;
-          /* 0 = Condition (expr <condition> expr)
-	   * 1 = Condition Group (cond <operation> cond)
-	   * 2 = void condition.
-	   */
-
+ int type;
  /*---------*/
  XMLDExpr *left; /* type 0 */
  XMLDExpr *right;
- short op; /*
-	    * 0 = '='
-	    * 1 = '<'
-	    * 2 = '>'
-	    * 3 = '<>'
-	    * 4 = '<='
-	    * 5 = '>='
-	    * 6 = LIKE
-	    * 7 = BETWEEN
-	    * 8 = NOT BETWEEN
-	    */ 
+ int op;  
  /*---------*/
  struct XMLDCond *cleft; /* type 1 */
  struct XMLDCond *cright;
- short cop;  /*
+ int cop;  /*
 	      * 0 = AND
 	      * 1 = OR
 	      */
  /*----------*/
- short negate; /* 0 = Affirmative condition
-	              * 1 = Negative condition
-	              */	
+ int negate; /* 0 = Affirmative condition
+                * 1 = Negative condition
+	        */	
 };
 
 typedef struct XMLDCond XMLDCond;

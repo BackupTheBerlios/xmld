@@ -79,13 +79,13 @@ void qp_handle(void *conn) {
   
   free(query);
   status=twalker_handle(work);
-  if (status == -1) {
+  if (status == XMLD_SPECIAL) {
    xmld_socket_write(work->conn->fd, "Disconnected");
    xmld_socket_shutdown(work->conn->fd);
    XMLDWork_free(work);
    break;
   }
-  else if (status == 0) {
+  else if (status == XMLD_FAILURE) {
    ERROR_RESPONSE;
    XMLDWork_free(work);
    continue;
