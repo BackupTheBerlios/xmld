@@ -48,6 +48,8 @@
 "=" return '=';
 "~" return '~';
 "." return '.';
+"*" return '*';
+"@" return '@';
 "\""  BEGIN STR;
 <STR>[^"]* {
 	    lvalp->qval=(char *) malloc(strlen(yytext)*sizeof(char));
@@ -73,8 +75,6 @@
         lvalp->num=atoi(yytext);
 	return NUM;
        }
-[*] return '*';
-[@] return '@';
 . {}
 
 %%

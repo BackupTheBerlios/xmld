@@ -719,13 +719,12 @@ by the client. (done)
 * wrong client layout of recordsets, putting age
 into a second row. (done)
 
-* segfault on where with !:age=10 a second time.
-
-* wrong type identification in simplify_expr.
+* wrong column type identification in simplify_expr.
 (done).
 
-* fix interrupted system call on server side on reciving
-of DISCONNECT and correction of a wrong pass.
+* Fix the column -> file association bug. (done)
+
+* Cross level operation operator has no effect.
 
 * modify INSTALL.
 
@@ -757,6 +756,8 @@ Engine-XMLD accordingly.
 
 * ptasker task queue needs maintenance.
 
+* fix recordset levelling confusion.
+
 --- Features:
 
 * Aggregate function calls support.
@@ -786,6 +787,13 @@ system unreadable).
 
 * ftostr fills the empty characters of the string
 with 0's -- spaces are better.
+
+* "select !:name, age from "file.xml" where !:age=10"
+segfaults when called two times and I don't know why.
+(as of 0.5.0).
+
+* fix interrupted system call on server side on reciving
+of DISCONNECT and correction of a wrong pass.
 
 *--------------- Start of the OpenXMLD 0.7.0 part:
 

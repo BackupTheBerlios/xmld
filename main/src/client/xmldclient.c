@@ -99,6 +99,7 @@ int main(int argc, char **argv) {
     continue;
    }
    curr_msg=protoimpl_read_sequence(fd, &status);
+   printf("%s\n", curr_msg);
    if (status == XMLD_FAILURE) {
     xmldclient_print_server_err_msg(curr_msg);
     free(curr_msg);

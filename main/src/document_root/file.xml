@@ -1,3 +1,5 @@
 <hi>
-<person name="khalid" age="10.5"/>
+	<person name="khalid" age="10">
+		<person name="ahmed" age="20"/>
+	</person>
 </hi>

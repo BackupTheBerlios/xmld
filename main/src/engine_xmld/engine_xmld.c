@@ -587,6 +587,12 @@ XMLDExpr *engine_xmld_simplify_expr(XMLDWork *work, XMLDExpr *expr, int level) {
   if (expr->file == NULL) {
    expr->file = (XMLDFile *) XMLDList_first(work->files);
   }
+  else if (expr->file->data == NULL) {
+   XMLDFile *curr_file=expr->file;
+   expr->file = XMLDFileList_search_by_name(work->files, expr->file->name);
+   XMLDFile_free(curr_file);
+  }
+  printf("%d %d\n", expr->file->level, level);
   if (level != 0 && expr->file->level != level) {
    return NULL;
   }

@@ -94,7 +94,10 @@ void qp_handle(void *conn) {
   yy_delete_buffer(buf);
   if (status == 1) {
    ERROR_RESPONSE;
-   XMLDWork_free(work);
+   XMLDResponse_free(work->resp);
+   XMLDRequest_free(work->req);
+   XMLDList_free(work->files);
+   work->req=work->resp=work->files=NULL;
    continue;
   }
   
