@@ -114,7 +114,12 @@ void engine_xmld_cleanup(XMLDWork *work) {
 void engine_xmld_destroy() {
 }
 
-/* walk function */
+/* walk function
+ * return values:
+ * -1 : shallower by one
+ * 0  : end of document
+ * 1  : deeper by one
+ */ 
 int engine_xmld_walk(XMLDWork *work) {
  short token;
  char buf;
@@ -123,7 +128,7 @@ int engine_xmld_walk(XMLDWork *work) {
  while (1) {
   token=dmstrstr((FILE *) work->res->data_source, tokens, 2);
   if (token == -1) {
-   return *((int *) work->res->store);
+   return 0;
   }
   else if (token == 0) {
    buf=getc((FILE *) work->res->data_source);
@@ -132,10 +137,14 @@ int engine_xmld_walk(XMLDWork *work) {
     if ((*((int *) work->res->store)) == 0) {
      return 0;
     }
+    else {
+     return -1;
+    }
    }
    else {
     fseek((FILE *) work->res->data_source, -1, SEEK_CUR);
-    return ++(*((int *) work->res->store));
+    (*((int *) work->res->store))++;
+    return 1;
    } 
   }
   else if (token == 1) {
@@ -143,8 +152,16 @@ int engine_xmld_walk(XMLDWork *work) {
    if ((*((int *) work->res->store)) == 0) {
     return 0;
    }
+   else {
+    return -1;
+   }
   }
  }
+}
+
+/* get_level function*/
+int engine_xmld_get_level(XMLDWork *work) {
+ return *((int *) work->res->store);
 }
 
 /* eval_expr function */

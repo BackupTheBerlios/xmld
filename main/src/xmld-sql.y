@@ -175,19 +175,19 @@ cond_list: cond {
                  $$=XMLDCond_create_list();
 		 XMLDCond *cond=XMLDCond_add_to_list($$);
 		 XMLDCond_copy($1, cond);
-		 XMLDCond_free($1);
+		 free($1);
                 }
            | cond_list ':' cond {
                                  $$=$1;
 		                 XMLDCond *cond=XMLDCond_add_to_list($$);
 		                 XMLDCond_copy($3, cond);
-		                 XMLDCond_free($3);
+		                 free($3);
 	                        }
 	   | cond_list "," cond { /* for UPDATE support */
                                  $$=$1;
 		                 XMLDCond *cond=XMLDCond_add_to_list($$);
 		                 XMLDCond_copy($3, cond);
-		                 XMLDCond_free($3);
+		                 free($3);
 	                        }
 ;
 
@@ -195,13 +195,13 @@ expr_list: expr {
                  $$=XMLDExpr_create_list();
 		 XMLDExpr *expr=XMLDExpr_add_to_list($$);
 		 XMLDExpr_copy($1, expr);
-		 XMLDExpr_free($1);
+		 free($1);
                 }
            | expr_list ',' expr {
                                  $$=$1;
 		                 XMLDExpr *expr=XMLDExpr_add_to_list($$);
 		                 XMLDExpr_copy($3, expr);
-		                 XMLDExpr_free($3);
+		                 free($3);
 	                        }
 ;
 

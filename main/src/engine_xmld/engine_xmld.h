@@ -19,6 +19,7 @@ short engine_xmld_prepare (XMLDWork *);
 void engine_xmld_cleanup (XMLDWork *);
 void engine_xmld_destroy (void);
 int engine_xmld_walk (XMLDWork *);
+int engine_xmld_get_level (XMLDWork *);
 char *engine_xmld_eval_expr (XMLDWork *, XMLDExpr *);
 short engine_xmld_eval_cond (XMLDWork *, XMLDCond *);
 char *engine_xmld_get_column_value (XMLDWork *, char *);

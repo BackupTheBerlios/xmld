@@ -93,24 +93,21 @@ void XMLDExpr_copy(XMLDExpr *src, XMLDExpr *dest) {
    dest->op=src->op;
   break;
   case 2:
-   dest->ident=(char *) malloc((strlen(src->ident)+1)*sizeof(char));
-   strcpy(dest->ident, src->ident);
+   dest->ident=src->ident;
   break;
   case 3:
    dest->func=src->func;
    dest->arg_list=src->arg_list;
   break;
   case 4:   
-   dest->qval=(char *) malloc((strlen(src->qval)+1)*sizeof(char));
-   strcpy(dest->qval, src->qval);
+   dest->qval=src->qval;
   break;
   case 5:
    dest->wildcard=src->wildcard;
   break;
  }
  if (src->alias != NULL) {
-  dest->alias=(char *) malloc((strlen(src->alias)+1)*sizeof(char));
-  strcpy(dest->alias, src->alias);
+  dest->alias=src->alias;
  }
 }
 

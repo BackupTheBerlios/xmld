@@ -32,9 +32,15 @@ struct XMLDEngine {
  
  int (*walk) (XMLDWork *); /* The function which the tree walker
 			    * calls for the engine to give a next
-			    * result from its data source. 
+			    * result from its data source.
+			    * return values:
+			    * -1: shallower by one
+			    * 0 : end of document
+			    * 1 : deeper by one
 			    */
- 
+ int (*get_level) (XMLDWork *); /* The function which gets the current
+				 *  level in the document.
+				 */ 
  char *(*eval_expr) (XMLDWork *, XMLDExpr *); /* The function which
 					       * the tree walker calls
 					       * to get the value of

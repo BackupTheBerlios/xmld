@@ -93,7 +93,7 @@ char *XMLDWork_get_full_file(XMLDWork *work) {
   work->conn->curr_dir++;
  }
  
- full_file=(char *) malloc(strlen(document_root)+strlen((work->conn->curr_dir)+strlen(work->req->file)+1)*sizeof(char));
+ full_file=(char *) malloc((strlen(document_root)+strlen(work->conn->curr_dir)+strlen(work->req->file)+1)*sizeof(char));
  strcpy(full_file, document_root);
  strcat(full_file, work->conn->curr_dir);
  strcat(full_file, work->req->file);

@@ -12,8 +12,8 @@
  */
 
 #include <stdlib.h>
+#include <string.h>
 #include "mutils.h"
-#include "string.h"
 #include "xmld_sockets.h"
 #include "xmld_list.h"
 #include "xmld_col.h"
@@ -234,7 +234,7 @@ XMLDCol *XMLDResponse_curr_col(XMLDResponse *resp) {
 void XMLDResponse_flush(XMLDResponse *resp, int fd) {
  char *response=(char *) malloc(sizeof(char));
  response[0]='\0';
- int resp_len=0;
+ int resp_len=1;
  XMLDList_reset(resp->rows);
  XMLDRow *curr_row;
  XMLDCol *curr_col;
@@ -243,15 +243,17 @@ void XMLDResponse_flush(XMLDResponse *resp, int fd) {
   XMLDList_reset(curr_row->cols);
   while (XMLDList_next(curr_row->cols)) {
    curr_col=(XMLDCol *) XMLDList_curr(curr_row->cols);
-   resp_len+=strlen(curr_col->val)+1;
+   resp_len+=((curr_col->val != NULL) ? strlen(curr_col->val) : 0)+1;
    response=(char *) realloc(response, resp_len*sizeof(char));
-   strcat(response, curr_col->val);
-   response[resp_len-1]=col_sep;
-   response[resp_len]='\0';
+   if (curr_col->val != NULL) {
+    strcat(response, curr_col->val);
+   } 
+   response[resp_len-2]=col_sep;
+   response[resp_len-1]='\0';
   }
   response=(char *) realloc(response, (++resp_len) * sizeof(char));
-  response[resp_len-1]=row_sep;
-  response[resp_len]='\0';
+  response[resp_len-2]=row_sep;
+  response[resp_len-1]='\0';
  }
  xmld_socket_write(fd, response);
 }

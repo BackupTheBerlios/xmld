@@ -69,6 +69,8 @@ struct XMLDEngine;
 "not between" return NBETWEEN;
 ":" return ':';
 "," return ',';
+"!" return '!';
+"=" return '=';
 \" BEGIN STR;
 <STR>[^\n"]* {
          lvalp->qval=(char *) malloc((strlen(yytext)+1)*sizeof(char));
