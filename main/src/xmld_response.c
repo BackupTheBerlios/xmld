@@ -13,6 +13,7 @@
 
 #include <stdlib.h>
 #include "string.h"
+#inlucde "xmld_sockets.h"
 #include "xmld_list.h"
 #include "xmld_col.h"
 #include "xmld_row.h"
@@ -190,4 +191,22 @@ XMLDResponse *XMLDResponse_add_to_list(XMLDList *list) {
  resp->rows=XMLDRow_create_list();
  resp->tables=XMLDAggrTable_create_list();
  return resp;
+i}
+
+/*
+ * : Flushes contents of the given response
+ * structures to the given fd (should be socket)
+ * resp: The response structure whose contents
+ * are to be flushed.
+ * fd: The file descriptor of the socket to which
+ * the contents are to be flushed.
+ */
+void XMLDResponse_flush(XMLDResponse *resp, int fd) {
+ XMLDList_reset(resp->rows);
+ while (XMLDList_next(resp->rows)) {
+  XMLDList_reset(((XMLDRow *) XMLDList_curr(resp->rows))->cols);
+  while (XMLDList_next(((XMLDRow *) XMLDList_curr(resp->rows))->cols)) {
+   xmld_socket_write(fd, ((XMLDCol *) XMLDList_curr(((XMLDRow *)XMLDList_curr(resp->rows))->cols))->val);
+  }
+ }
 }
