@@ -89,9 +89,10 @@ in Engine-XMLD (done), XMLDResponse [...?]. (done)
 order to be able to resolve wildcards correctly. (done)
 
 * Every column must have a name:
-  * XMLDExpr_to_string: support operation translation.
+  * XMLDExpr_to_string: support whatever kind of expressions.
+    XMLD_OPERATION: (done)    
   * twalker_simplify_expr: use XMLDExpr_to_string and fill ret->ident.
-  (done)
+    XMLD_OPERATION: (done)
 
 * There Ain't No Such Function As XMLDExpr_simplify. (done)
 

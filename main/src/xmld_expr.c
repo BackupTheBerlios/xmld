@@ -167,9 +167,79 @@ void XMLDExpr_apply_type(XMLDExpr *expr, char *type) {
  */
 char *XMLDExpr_to_string(XMLDExpr *expr) {
  char *ret;
- if (expr->type == XMLD_INTEGER) {
+ if (expr == NULL) {
+  return NULL;
+ }
+ else if (expr->type == XMLD_INTEGER) {
   return itostr(expr->nval, 0);
- } 
+ }
+ else if (expr->type == XMLD_OPERATION) {
+  ret = XMLDExpr_to_string(expr->left);
+  if (ret == NULL) {
+   ret = (char *) malloc(sizeof(char));
+   ret[0]='\0';
+  }
+  if (expr->op == XMLD_OP_ADD) {
+   ret = (char *) realloc(ret, (strlen(ret) + 2) * sizeof(char));
+   strcat(ret, "+");
+  }
+  else if (expr->op == XMLD_OP_BNEG || expr->op == XMLD_OP_UNEG) {
+   ret = (char *) realloc(ret, (strlen(ret) + 2) * sizeof(char));
+   strcat(ret, "-");
+  }
+  else if (expr->op == XMLD_OP_MULTIP) {
+   ret = (char *) realloc(ret, (strlen(ret) + 2) * sizeof(char));
+   strcat(ret, "*");
+  }
+  else if (expr->op == XMLD_OP_DIV) {
+   ret = (char *) realloc(ret, (strlen(ret) + 2) * sizeof(char));
+   strcat(ret, "/");
+  }
+  else if (expr->op == XMLD_OP_EXPO) {
+   ret = (char *) realloc(ret, (strlen(ret) + 2) * sizeof(char));
+   strcat(ret, "^");
+  }
+  else if (expr->op == XMLD_OP_EQUAL) {
+   ret = (char *) realloc(ret, (strlen(ret) + 2) * sizeof(char));
+   strcat(ret, "=");
+  }
+  else if (expr->op == XMLD_OP_L) {
+   ret = (char *) realloc(ret, (strlen(ret) + 2) * sizeof(char));
+   strcat(ret, "<");
+  }
+  else if (expr->op == XMLD_OP_G) {
+   ret = (char *) realloc(ret, (strlen(ret) + 2) * sizeof(char));
+   strcat(ret, ">");
+  }
+  else if (expr->op == XMLD_OP_NE) {
+   ret = (char *) realloc(ret, (strlen(ret) + 3) * sizeof(char));
+   strcat(ret, "<>");
+  }
+  else if (expr->op == XMLD_OP_LE) {
+   ret = (char *) realloc(ret, (strlen(ret) + 3) * sizeof(char));
+   strcat(ret, "<=");
+  }
+  else if (expr->op == XMLD_OP_GE) {
+   ret = (char *) realloc(ret, (strlen(ret) + 3) * sizeof(char));
+   strcat(ret, ">=");
+  }
+  else if (expr->op == XMLD_OP_LIKE) {
+   ret = (char *) realloc(ret, (strlen(ret) + 7) * sizeof(char));
+   strcat(ret, " LIKE ");
+  }
+  else if (expr->op == XMLD_OP_AND) {
+   ret = (char *) realloc(ret, (strlen(ret) + 6) * sizeof(char));
+   strcat(ret, " AND ");
+  }
+  else if (expr->op == XMLD_OP_OR) {
+   ret = (char *) realloc(ret, (strlen(ret) + 5) * sizeof(char));
+   strcat(ret, " OR ");
+  }
+  else if (expr->op == XMLD_OP_NOT) {
+   ret = (char *) realloc(ret, (strlen(ret) + 6) * sizeof(char));
+   strcat(ret, " NOT ");
+  }
+ }
  else if (expr->type == XMLD_QVAL) {
   if (expr->qval == NULL) {
    return NULL;
