@@ -11,19 +11,19 @@
  * -------------------------------------------------------------- * 
  */
 
-#ifndef __XMLD_PARSER_H
-#define __XMLD_PARSER_H
+#ifndef __XMLD_INTERFACE_H
+#define __XMLD_INTERFACE_H
 
-/* Represents a query parser */
+/* Represents a user interface */
 struct XMLDInterafce {
- char *name; /* Parser name */
+ char *name; /* Interface name */
  void (*init) (void);
  void (*destroy) (void);
  XMLDStatus (*prepare_conn) (XMLDWork *);
  void (*cleanup_conn) (XMLDWork *);
  XMLDStatus (*prepare) (XMLDWork *);
  void (*cleanup) (XMLDWork *);
- XMLDStatus (*parse) (XMLDWork *, char *query);
+ XMLDStatus (*parse) (XMLDWork *, char *);
  XMLDStatus (*walk) (XMLDWork *);
  char *(*get_response) (XMLDWork *);
 };
@@ -40,4 +40,4 @@ void XMLDInterface_free_content(void *);
 XMLDInterfaceList *XMLDInterfaceList_create(void);
 XMLDInterface *XMLDInterfaceList_add(XMLDInterfaceList *);
 
-#endif /* __XMLD_PARSER_H */
+#endif /* __XMLD_INTERFACE_H */

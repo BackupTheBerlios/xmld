@@ -15,23 +15,23 @@
 #include "interface_list.h"
 
 #ifdef USE_XMLD_SQL
-#include "xmld-sql/xmld-sql.h"
+#include "xmldsql/xmldsql.h"
 #endif /* USE_XMLD_SQL */
  
 XMLDStatus interface_list_init() {
  interface_list=XMLDinterfaceList_create();
  XMLDInterface *curr_interface;
 #ifdef USE_XMLD_SQL
- curr_interface=XMLDInterfaceList_add(interface_list, "XMLD-SQL");
- curr_interface->init=xmld_sql_is_valid_mime;
- curr_interface->destroy=xmld_sql_destroy;
- curr_interface->prepare_conn=xmld_sql_prepare_conn;
- curr_interface->cleanup_conn=xmld_sql_cleanup_conn;
- curr_interface->prepare=xmld_sql_prepare;
- curr_interface->destroy=xmld_sql_destroy;
- curr_interface->parse=xmld_sql_parse;
- curr_interface->walk=xmld_sql_walk;
- curr_interface->get_response=xmld_sql_get_response;
+ curr_interface=XMLDInterfaceList_add(interface_list, "XMLDSQL");
+ curr_interface->init=xmldsql_init;
+ curr_interface->destroy=xmldsql_destroy;
+ curr_interface->prepare_conn=xmldsql_prepare_conn;
+ curr_interface->cleanup_conn=xmldsql_cleanup_conn;
+ curr_interface->prepare=xmldsql_prepare;
+ curr_interface->destroy=xmldsql_destroy;
+ curr_interface->parse=xmldsql_parse;
+ curr_interface->walk=xmldsql_walk;
+ curr_interface->get_response=xmldsql_get_response;
 #endif /* USE_XMLD_SQL */
  XMLDList_reset(interface_list);
  while (XMLDList_next(interface_list)) {
