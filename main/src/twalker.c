@@ -31,10 +31,10 @@ struct XMLDEngine;
 #define XMLDENGINE_TYPE_DEFINED
  typedef struct XMLDEngine XMLDEngine;
 #endif /* XMLDENGINE_TYPE_DEFINED */
-#include "xmld_resource.h"
 #include "xmld_response.h"
 #include "xmld_request.h"
 #include "xmld_connection.h"
+#include "xmld_file.h"
 #include "xmld_work.h"
 #include "xmld_engine.h"
 #include "cfg.h"
@@ -48,23 +48,27 @@ struct XMLDEngine;
 XMLDStatus twalker_handle(XMLDWork *work) {
  switch(work->req->type) {
   case XMLD_SQL_SELECT:
-   work->res=XMLDResource_create();
-  
-   char *full_file=XMLDWork_get_full_file(work);
-   int priv=authman_get_priv(work->conn->user, full_file);
+   XMLDList_reset(work->files);
+   XMLDFile *curr_file;
    
-   if (!BIT_ISSET(priv, XMLD_PRIV_READ)) {
+   while (XMLDList_next(work->files)) {
+    curr_file=(XMLDFile *) XMLDList_curr(work->files);
+    char *full_file=XMLDFile_get_full_name(curr_file, work);
+    int priv=authman_get_priv(work->conn->user, full_file);
+   
+    if (!BIT_ISSET(priv, XMLD_PRIV_READ)) {
+     free(full_file);
+     xmld_errno=XMLD_ENORPRIV;
+     return XMLD_FAILURE;
+    }
+   
+    curr_file->engine=XMLDEngineList_search_by_name(engine_list, cfg_get_engine(full_file));
     free(full_file);
-    xmld_errno=XMLD_ENORPRIV;
-    return XMLD_FAILURE;
-   }
    
-   work->res->engine=XMLDEngineList_search_by_name(engine_list, cfg_get_engine(full_file));
-   free(full_file);
-   
-   if (work->res->engine == NULL) {
-    xmld_errno=XMLD_ENOENGINE;
-    return XMLD_FAILURE;
+    if (curr_file->engine == NULL) {
+     xmld_errno=XMLD_ENOENGINE;
+     return XMLD_FAILURE;
+    }
    }
    
    if (((*(work->res->engine->prepare)) (work, XMLD_ACCESS_NOTHING)) == XMLD_FAILURE) {
@@ -73,13 +77,24 @@ XMLDStatus twalker_handle(XMLDWork *work) {
 
    work->resp=XMLDResponse_create();
    XMLDList_reset(work->req->retr);
-   int ret=(*(work->res->engine->walk)) (work);
+   int ret=0;
+   int curr_max_level=1;
    XMLDBool retr=XMLD_TRUE;
-   int num_up, num_down;
+   int num_up, num_down, ret_all=XMLD_WALK_DOWN;
    num_up=num_down=0;
-
-   while (ret != XMLD_WALK_END) {
-    if (ret == XMLD_WALK_DOWN) {
+   
+   XMLDList_reset(work->files);
+   while (XMLDList_next(work->files)) {
+    curr_file=(XMLDFile *) XMLDList_curr(work->files);
+    ret=(*(curr_file->engine->walk)) (work, curr_file);
+    if (ret == XMLD_WALK_END) {
+     ret_all=XMLD_WALK_END;
+     break;
+    }
+   }
+   
+   while (ret_all != XMLD_WALK_END) {
+    if (ret_all == XMLD_WALK_DOWN) {
      num_down++;
      retr=XMLDList_next(work->req->retr);
      if (((XMLDExpr *) XMLDList_curr(work->req->retr))->cross_level == XMLD_TRUE) {
@@ -98,10 +113,10 @@ XMLDStatus twalker_handle(XMLDWork *work) {
         XMLDResponse_add_col(work->resp);
         if (((XMLExpr *) XMLDList_curr(expr_list))->aggr == XMLD_TRUE) {
          XMLDAggrTable *curr_table=XMLDResponse_assoc_col_to_aggr(work->resp, (XMLDExpr *) XMLDList_curr(expr_list), XMLDResponse_curr_col(work->resp));
-         (*(work->res->engine->eval_expr)) (work, (XMLDExpr *) XMLDList_curr(expr_list), curr_table);
+         (*(work->res->engine->eval_expr)) (work, (XMLDExpr *) XMLDList_curr(expr_list), curr_table, curr_max_level);
         }
         else {
-         XMLDResponse_fill_col(work->resp, (*(work->res->engine->eval_expr)) (work, (XMLDExpr *) XMLDList_curr(expr_list), NULL));
+         XMLDResponse_fill_col(work->resp, (*(work->res->engine->eval_expr)) (work, (XMLDExpr *) XMLDList_curr(expr_list), NULL, curr_max_level));
         } 
        }
       }
@@ -109,10 +124,10 @@ XMLDStatus twalker_handle(XMLDWork *work) {
        XMLDResponse_add_col(work->resp);
        if (((XMLExpr *) XMLDList_curr(work->req->retr))->aggr == XMLD_TRUE) {
         XMLDAggrTable *curr_table=XMLDResponse_assoc_col_to_aggr(work->resp, (XMLDExpr *) XMLDList_curr(work->req->retr), XMLDResponse_curr_col(work->resp));
-        (*(work->res->engine->eval_expr)) (work, (XMLDExpr *) XMLDList_curr(work->req->retr), curr_table);
+        (*(work->res->engine->eval_expr)) (work, (XMLDExpr *) XMLDList_curr(work->req->retr), curr_table, curr_max_level);
        }
        else {
-        XMLDResponse_fill_col(work->resp, (*(work->res->engine->eval_expr)) (work, (XMLDExpr *) XMLDList_curr(work->req->retr), NULL));
+        XMLDResponse_fill_col(work->resp, (*(work->res->engine->eval_expr)) (work, (XMLDExpr *) XMLDList_curr(work->req->retr), NULL, curr_max_level));
        } 
       }
      } 
@@ -121,13 +136,31 @@ XMLDStatus twalker_handle(XMLDWork *work) {
      num_up++;
      XMLDList_prev(work->req->retr);
     }
-    ret=(*(work->res->engine->walk)) (work);
+    
+    XMLDList_reset(work->files);
+    ret_all=XMLD_WALK_UP;
+    while (XMLDList_next(work->files)) {
+     curr_file=(XMLDFile *) XMLDList_curr(work->files);
+     if (curr_file->level == curr_max_level) {
+      ret=(*(work->res->engine->walk)) (work, curr_file);
+      if (ret == XMLD_WALK_END) {
+       ret_all=XMLD_WALK_END;
+       break;
+      }
+      else if (ret == XMLD_WALK_DOWN) {
+       ret_all=XMLD_WALK_DOWN;
+      }
+     } 
+    }
+    if (ret_all != XMLD_WALK_END) {
+     curr_max_level == XMLDFileList_get_max_level(work->files);
+    }
    }
    
    /* Filling columns associated to aggregate expressions with values */
    XMLDResponse_reset_aggr(work->resp);
    while (XMLDResponse_next_aggr(work->resp)) {
-    XMLDResponse_fill_curr_aggr(work->resp, (*(work->res->engine->eval_expr)) (work, XMLDResponse_curr_aggr_expr(work->resp), XMLDResponse_curr_aggr_table(work->resp)));
+    XMLDResponse_fill_curr_aggr(work->resp, (*(work->res->engine->eval_expr)) (work, (XMLDResponse_curr_aggr_table(work->resp))->value, NULL, curr_max_level));
    }
    
    /* Handling of level changes not followed by row retrieval */
@@ -146,39 +179,54 @@ XMLDStatus twalker_handle(XMLDWork *work) {
    (*(work->res->engine->cleanup)) (work);
   break;
   case XMLD_SQL_SELECT_WHERE:
-   work->res=XMLDResource_create();
-  
-   full_file=XMLDWork_get_full_file(work);
-   priv=authman_get_priv(work->conn->user, full_file);
+   XMLDList_reset(work->files);
+   while (XMLDList_next(work->files)) {
+    curr_file=(XMLDFile *) XMLDList_curr(work->files);
+    full_file=XMLDFile_get_full_name(curr_file, work);
+    priv=authman_get_priv(work->conn->user, full_file);
    
-   if (!BIT_ISSET(priv, XMLD_PRIV_READ)) {
+    if (!BIT_ISSET(priv, XMLD_PRIV_READ)) {
+     free(full_file);
+     xmld_errno=XMLD_ENORPRIV;
+     return XMLD_FAILURE;
+    }
+   
+    curr_file->engine=XMLDEngineList_search_by_name(engine_list, cfg_get_engine(full_file));
     free(full_file);
-    xmld_errno=XMLD_ENORPRIV;
-    return XMLD_FAILURE;
+   
+    if (curr_file->engine == NULL) {
+     xmld_errno=XMLD_ENOENGINE;
+     return XMLD_FAILURE;
+    }
    }
-   
-   work->res->engine=XMLDEngineList_search_by_name(engine_list, cfg_get_engine(full_file));
-   free(full_file);
-   
-   if (work->res->engine == NULL) {
-    xmld_errno=XMLD_ENOENGINE;
-    return XMLD_FAILURE;
-   }
-   
+
    if (((*(work->res->engine->prepare)) (work, XMLD_ACCESS_FORMAT)) == XMLD_FAILURE) {
     return XMLD_FAILURE;
    }
    
    work->resp=XMLDResponse_create();
    XMLDList_reset(work->req->where);
-   ret=(*(work->res->engine->walk)) (work);
+   ret=0;
+   ret_all=XMLD_WALK_DOWN;
    retr=XMLD_TRUE;
    XMLDBool where=XMLD_TRUE;
    num_up=num_down=0;
+   curr_max_level=1;
    int curr_level=0;
 
-   while (ret != XMLD_WALK_END) {
-    if (ret == XMLD_WALK_DOWN) {
+   
+   XMLDList_reset(work->files);
+   while (XMLDList_next(work->files)) {
+    curr_file=(XMLDFile *) XMLDList_curr(work->files);
+    ret=(*(curr_file->engine->walk)) (work, curr_file);
+    if (ret == XMLD_WALK_END) {
+     ret_all=XMLD_WALK_END;
+     break;
+    }
+   }
+   
+   while (ret_all != XMLD_WALK_END) {
+    if (ret_all == XMLD_WALK_DOWN) {
      curr_level++;
      num_down++;
      retr=XMLDList_next(work->req->retr);
@@ -191,7 +239,7 @@ XMLDStatus twalker_handle(XMLDWork *work) {
      }
      retr = retr && where;
      if (retr && !(((XMLDExpr *) XMLDList_curr(work->req->retr))->type == XMLD_VOID_LIST)) {
-      if ((*(work->res->engine->eval_cond)) (work, (XMLDCond *) XMLDList_curr(work->req->where))) {
+      if ((*(work->res->engine->eval_cond)) (work, (XMLDCond *) XMLDList_curr(work->req->where), curr_max_level)) {
        XMLDResponse_add_row(work->resp);
        XMLDResponse_curr_row(work->resp)->num_down=num_down;
        XMLDResponse_curr_row(work->resp)->num_up=num_up;
@@ -204,10 +252,10 @@ XMLDStatus twalker_handle(XMLDWork *work) {
 	 XMLDResponse_add_col(work->resp);
 	 if (((XMLExpr *) XMLDList_curr(expr_list))->aggr == XMLD_TRUE) {
 	  XMLDAggrTable *curr_table=XMLDResponse_assoc_col_to_aggr(work->resp, (XMLDExpr *) XMLDList_curr(expr_list), XMLDResponse_curr_col(work->resp));
-	  (*(work->res->engine->eval_expr)) (work, (XMLDExpr *) XMLDList_curr(expr_list), curr_table);
+	  (*(work->res->engine->eval_expr)) (work, (XMLDExpr *) XMLDList_curr(expr_list), curr_table, curr_max_level);
 	 }
 	 else {
-          XMLDResponse_fill_col(work->resp, (*(work->res->engine->eval_expr)) (work, (XMLDExpr *) XMLDList_curr(expr_list), NULL));
+          XMLDResponse_fill_col(work->resp, (*(work->res->engine->eval_expr)) (work, (XMLDExpr *) XMLDList_curr(expr_list), NULL, curr_max_level));
 	 } 
         }
        }
@@ -215,10 +263,10 @@ XMLDStatus twalker_handle(XMLDWork *work) {
 	XMLDResponse_add_col(work->resp);
 	if (((XMLExpr *) XMLDList_curr(work->req->retr))->aggr == XMLD_TRUE) {
 	 XMLDAggrTable *curr_table=XMLDResponse_assoc_col_to_aggr(work->resp, (XMLDExpr *) XMLDList_curr(work->req->retr), XMLDResponse_curr_col(work->resp));
-	 (*(work->res->engine->eval_expr)) (work, (XMLDExpr *) XMLDList_curr(work->req->retr), curr_table);
+	 (*(work->res->engine->eval_expr)) (work, (XMLDExpr *) XMLDList_curr(work->req->retr), curr_table, curr_max_level);
 	}
 	else {
-         XMLDResponse_fill_col(work->resp, (*(work->res->engine->eval_expr)) (work, (XMLDExpr *) XMLDList_curr(work->req->retr), NULL));
+         XMLDResponse_fill_col(work->resp, (*(work->res->engine->eval_expr)) (work, (XMLDExpr *) XMLDList_curr(work->req->retr), NULL, curr_max_level));
 	} 
        }
       }
@@ -226,7 +274,18 @@ XMLDStatus twalker_handle(XMLDWork *work) {
        if (((XMLDCond *) XMLDList_curr(work->req->where))->cross_level != XMLD_TRUE) {
         int tmp_level=curr_level;
         do {
-         ret = (*(work->res->engine->walk)) (work);
+         XMLDList_reset(work->files);
+         ret_all=XMLD_WALK_UP;
+         while (XMLDList_next(work->files)) {
+          curr_file=(XMLDFile *) XMLDList_curr(work->files);
+          if (curr_file->level == curr_max_level) {
+           ret=(*(work->res->engine->walk)) (work, curr_file);
+           else if (ret == XMLD_WALK_DOWN) {
+            ret_all=XMLD_WALK_DOWN;
+           }
+          } 
+         }
+         curr_max_level == XMLDFileList_get_max_level(work->files);
   	 if (ret == XMLD_WALK_DOWN) {
 	  XMLDList_next(work->req->where);
 	  XMLDList_next(work->req->retr);
@@ -251,13 +310,30 @@ XMLDStatus twalker_handle(XMLDWork *work) {
      XMLDList_prev(work->req->retr);
      XMLDList_prev(work->req->where);
     }
-    ret=(*(work->res->engine->walk)) (work);   
+    XMLDList_reset(work->files);
+    ret_all=XMLD_WALK_UP;
+    while (XMLDList_next(work->files)) {
+     curr_file=(XMLDFile *) XMLDList_curr(work->files);
+     if (curr_file->level == curr_max_level) {
+      ret=(*(work->res->engine->walk)) (work, curr_file);
+      if (ret == XMLD_WALK_END) {
+       ret_all=XMLD_WALK_END;
+       break;
+      }
+      else if (ret == XMLD_WALK_DOWN) {
+       ret_all=XMLD_WALK_DOWN;
+      }
+     } 
+    }
+    if (ret_all != XMLD_WALK_END) {
+     curr_max_level == XMLDFileList_get_max_level(work->files);
+    }
    }
    
    /* Filling columns associated to aggregate expressions with values */
    XMLDResponse_reset_aggr(work->resp);
    while (XMLDResponse_next_aggr(work->resp)) {
-    XMLDResponse_fill_curr_aggr(work->resp, (*(work->res->engine->eval_expr)) (work, XMLDResponse_curr_aggr_expr(work->resp), XMLDResponse_curr_aggr_table(work->resp)));
+    XMLDResponse_fill_curr_aggr(work->resp, (*(work->res->engine->eval_expr)) (work, XMLDResponse_curr_aggr_table(work->resp)->value, NULL, curr_max_level));
    }
 
    /* Handling of level changes not followed by row retrieval */

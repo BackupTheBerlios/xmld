@@ -18,7 +18,7 @@ struct XMLDWork {
  XMLDRequest *req;
  XMLDResponse *resp;
  XMLDConnection *conn;
- XMLDResource *res;
+ XMLDFileList *files;
 };
 
 typedef struct XMLDWork XMLDWork;

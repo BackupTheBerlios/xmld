@@ -48,7 +48,7 @@ XMLDWork *XMLDWork_create() {
  XMLDWork *work=(XMLDWork *) malloc(sizeof(XMLDWork));
  work->req=NULL;
  work->resp=NULL;
- work->res=NULL;
+ work->files=NULL;
  work->conn=NULL;
  return work;
 }
@@ -70,38 +70,9 @@ void XMLDWork_free(XMLDWork *work) {
  */
 void XMLDWork_free_content(void *work) {
  XMLDRequest_free(((XMLDWork *) work)->req);
- XMLDResource_free(((XMLDWork *) work)->res);
+ XMLDList_free(((XMLDWork *) work)->files);
  XMLDConnection_free(((XMLDWork *) work)->conn);
  XMLDResponse_free(((XMLDWork *) work)->resp); 
-}
-
-/*
- * : Returns the full file name of the request structure
- * associated with the given work structure.
- * work: The work structure mentioned.
- * returns: The full file location from the root of the server.
- */
-char *XMLDWork_get_full_file(XMLDWork *work) {
- char *full_file;
- if (*(work->req->file) == '/') {
-  full_file=(char *) malloc((strlen(work->req->file)+strlen(document_root)+1)*sizeof(char));
-  strcpy(full_file, document_root);
-  strcat(full_file, work->req->file);
-  return full_file;
- }
- char *lcurr=work->conn->curr_dir;
- if (*(work->conn->curr_dir) == '/') {
-  work->conn->curr_dir++;
- }
- 
- full_file=(char *) malloc((strlen(document_root)+strlen(work->conn->curr_dir)+strlen(work->req->file)+1)*sizeof(char));
- strcpy(full_file, document_root);
- strcat(full_file, work->conn->curr_dir);
- strcat(full_file, work->req->file);
- if (work->conn->curr_dir - lcurr == 1) {
-  work->conn->curr_dir--;
- }
- return full_file;
 }
 
 /*
@@ -123,7 +94,7 @@ XMLDWork *XMLDWorkList_add(XMLDWorkList *list) {
  XMLDWork *work=(XMLDWork *) XMLDList_add(list);
  work->req=NULL;
  work->resp=NULL;
- work->res=NULL;
+ work->files=NULL;
  work->conn=NULL;
  return work;
 }

@@ -602,16 +602,29 @@ message. (done)
  -- done)
  * XMLDFile (creation -- void* -> filename association, store, level
  -- done)
+ * Add XMLDEngine to XMLDFile (per-file engine specification).
+ (done)
+ * remove XMLDResource, add XMLDFileList in XMLDWork. (done)
  * XMLDResource (remove data_source and store, add XMLDFileList
  instead -- done).
  * XMLDExpr (ident should have a XMLDFile with it -- done)
  * XMLDEngine (walk, get_level should receive XMLDFile* -- done)
+ * XMLWork_get_full_file -> XMLDFile_get_full_name (wrt XMLDWork -- done).
+ * xmld-sql.y (XMLDResource -> XMLDFileList. -- done)
  * twalker
+   * cfg_get_engine, authman_get_priv for each file. (done)
+   * XMLDWork_get_full_file -> XMLDFile_get_full_name for each file. (done)
+   * if privileges fail for one of the files -> XMLD_E(R|W)PRIV. (done)
+   * Implement XMLDFileList_get_max_level. (done)
+   * Add a level variable to eval_expr and eval_cond to check if the
+   expression/condition's associated file is in the named level. (done)
+   * XMLDList_(next|prev)((retr|where)) whensever one of the files reaches
+   the next/previous level. (done)
 
 * sync includes across all code according to the editions
 above.
 
-* remove "proposed" from query, proto.
+* remove "proposed" from query, proto. (done)
 
 * Engine-XMLD must be rewritten with consideration of
 [1] availablity of column types [2] access levels.
@@ -629,7 +642,8 @@ should evaluate only the first condition of a given
 condition list. [18] aggregate expression should 
 return a pointer to the last value expression in
 the given aggregate expression table. [19] NULL
-file checks.
+file checks. [20] eval_expr and eval_cond level
+checks.
 
 * Define and implement the exec_assign engine
 function and the UPDATE and UPDATE with
@@ -642,6 +656,8 @@ WHERE request types in twalker.
 ectory "functions" for them. (one aggregate and one scalar).
 
 * A very basic capability-demonstrating client in src/client.
+
+* \n is the end-of-line in proto.
 
 --------------- Start of The OpenXMLD 0.6.0 part:
 
@@ -682,6 +698,12 @@ form:
 XMLDEngineHashtable_create(...)
 
 * Full per-file user privilege system.
+
+* When multiple files are in a query, the query parser
+can't distinguish between the privileges needed for each
+and treats all with the highest available privilege.
+Fix that by providing per-file privilege requestions and
+specifications.
 
 * ptasker task queue maintenance.
 

@@ -107,7 +107,7 @@ struct XMLDEngine;
 
 query: SELECT expr_list FROM expr {
 				   ((XMLDWork *) work)->req->type=XMLD_SQL_SELECT;
-                                   ((XMLDWork *) work)->res->files=XMLDFileList_create();
+                                   ((XMLDWork *) work)->files=XMLDFileList_create();
                                    if ($4->type == XMLD_QVAL) {
                                     XMLDFileList_add(((XMLDWork *) work)->res->files, $4->qval);
                                    }
@@ -123,7 +123,7 @@ query: SELECT expr_list FROM expr {
                                   }
        | SELECT expr_list FROM expr WHERE cond_list {
 			     	                     ((XMLDWork *) work)->req->type=XMLD_SQL_SELECT_WHERE;
-                                                     ((XMLDWork *) work)->res->files=XMLDFileList_create();
+                                                     ((XMLDWork *) work)->files=XMLDFileList_create();
                                                      if ($4->type == XMLD_QVAL) {
                                                       XMLDFileList_add(((XMLDWork *) work)->res->files, $4->qval);
                                                      }
@@ -140,7 +140,7 @@ query: SELECT expr_list FROM expr {
                                                     }
        | UPDATE expr SET cond_list {
 				    ((XMLDWork *) work)->req->type=XMLD_SQL_UPDATE;
-                                    ((XMLDWork *) work)->res->files=XMLDFileList_create();
+                                    ((XMLDWork *) work)->files=XMLDFileList_create();
                                     if ($2->type == XMLD_QVAL) {
                                      XMLDFileList_add(((XMLDWork *) work)->res->files, $2->qval);
                                     }
@@ -156,7 +156,7 @@ query: SELECT expr_list FROM expr {
                                    }
        | UPDATE expr SET cond_list WHERE cond_list {
 				                    ((XMLDWork *) work)->req->type=XMLD_SQL_UPDATE_WHERE;
-	                                            ((XMLDWork *) work)->res->files=XMLDFileList_create();
+	                                            ((XMLDWork *) work)->files=XMLDFileList_create();
 	                                            if ($2->type == XMLD_QVAL) {
                                                      XMLDFileList_add(((XMLDWork *) work)->res->files, $2->qval);
 	                                            }
@@ -173,7 +173,7 @@ query: SELECT expr_list FROM expr {
                                                    }
        | DELETE FROM expr {
  		           ((XMLDWork *) work)->req->type=XMLD_SQL_DELETE;
-	                   ((XMLDWork *) work)->res->files=XMLDFileList_create();
+	                   ((XMLDWork *) work)->files=XMLDFileList_create();
 	                   if ($3->type == XMLD_QVAL) {
                             XMLDFileList_add(((XMLDWork *) work)->res->files, $3->qval);
 	                   }
@@ -188,7 +188,7 @@ query: SELECT expr_list FROM expr {
                           }
        | DELETE FROM expr WHERE cond_list {
  		                           ((XMLDWork *) work)->req->type=XMLD_SQL_DELETE_WHERE;
-			                   ((XMLDWork *) work)->res->files=XMLDFileList_create();
+			                   ((XMLDWork *) work)->files=XMLDFileList_create();
 			                   if ($3->type == XMLD_QVAL) {
                                             XMLDFileList_add(((XMLDWork *) work)->res->files, $3->qval);
 			                   }
@@ -204,7 +204,7 @@ query: SELECT expr_list FROM expr {
                                           }
        | DELETE '*' FROM expr {
  		               ((XMLDWork *) work)->req->type=XMLD_SQL_DELETE;
-			       ((XMLDWork *) work)->res->files=XMLDFileList_create();
+			       ((XMLDWork *) work)->files=XMLDFileList_create();
 			       if ($4->type == XMLD_QVAL) {
                                 XMLDFileList_add(((XMLDWork *) work)->res->files, $4->qval);				
 			       }
@@ -219,7 +219,7 @@ query: SELECT expr_list FROM expr {
                               }
        | INSERT INTO expr '(' expr_list ')' VALUES '(' expr_list ')' {
                                                                       ((XMLDWork *) work)->req->type=XMLD_SQL_INSERT_COL;
-								      ((XMLDWork *) work)->res->files=XMLDFileList_create();
+								      ((XMLDWork *) work)->files=XMLDFileList_create();
 		                                                      char *name=NULL;
 						                      if ($3->type == XMLD_QVAL) {
 						                       name=$3->qval;
@@ -235,7 +235,7 @@ query: SELECT expr_list FROM expr {
 								     }								     
        | INSERT INTO expr VALUES '(' expr_list ')' {
                                                     ((XMLDWork *) work)->req->type=XMLD_SQL_INSERT;
-					            ((XMLDWork *) work)->res->files=XMLDFileList_create();
+					            ((XMLDWork *) work)->files=XMLDFileList_create();
 		                                    char *name=NULL;
 						    if ($3->type == XMLD_QVAL) {
 						     name=$3->qval;
@@ -250,7 +250,7 @@ query: SELECT expr_list FROM expr {
                                                    }
        | INSERT INTO expr '(' expr_list ')' VALUES '(' expr_list ')' WHERE cond_list {
                                                                                       ((XMLDWork *) work)->req->type=XMLD_SQL_INSERT_COL_WHERE;
-										      ((XMLDWork *) work)->res->files=XMLDFileList_create();
+										      ((XMLDWork *) work)->files=XMLDFileList_create();
 								                      char *name=NULL;
 								                      if ($3->type == XMLD_QVAL) {
 								                       name=$3->qval;
@@ -267,7 +267,7 @@ query: SELECT expr_list FROM expr {
 										     }
        | INSERT INTO expr VALUES '(' expr_list ')' WHERE cond_list {
                                                                     ((XMLDWork *) work)->req->type=XMLD_SQL_INSERT_WHERE;
-						                    ((XMLDWork *) work)->res->files=XMLDFileList_create();
+						                    ((XMLDWork *) work)->files=XMLDFileList_create();
 								    char *name=NULL;
 								    if ($3->type == XMLD_QVAL) {
 								     name=$3->qval;

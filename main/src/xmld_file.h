@@ -18,6 +18,7 @@ struct XMLDFile {
  char *name;  /* The name of the file       */
  void *data;  /* File's data representation */
  void *store; /* Additional storage field   */
+ XMLDEngine *engine; /* The engine to be used for this file */
  int level; /* The current level in the file */
 };
 
@@ -25,6 +26,7 @@ typedef struct XMLDFile XMLDFile;
 typedef XMLDList XMLDFileList;
 
 XMLDFile *XMLDFile_create(char *);
+char *XMLDFile_get_full_name(XMLDFile *, XMLDWork *);
 void XMLDFile_free(XMLDFile *);
 void XMLDFile_free_content(void *);
 
@@ -33,5 +35,6 @@ void XMLDFile_free_content(void *);
 XMLDFileList *XMLDFileList_create(void);
 XMLDFile *XMLDFileList_add(XMLDFileList *, char *);
 XMLDFile *XMLDFileList_search_by_name(XMLDFileList *, char *);
+int XMLDFileList_get_max_level(XMLDFileList *);
 
 #endif /* __XMLD_FILE_H */
