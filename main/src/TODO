@@ -605,6 +605,7 @@ message. (done)
 
 * use "[text]" and "[tagname]" instead of "(text)" and
 "(tagname)" for less confusion and easier parsing.
+(done)
 
 * simplify_expr returns a simplified version of the given 
 expression.
@@ -612,11 +613,15 @@ expression.
 * column resolution and NULL file checking goes inside
 simplify expr.
 
-* edit eval_expr and eval_cond to follow the changes simplify 
-expr. (done)
+* edit eval_expr and eval_cond to follow the changes in
+simplify_expr. (done)
 
 * remove support for between and not between statements
 for now. (done)
+
+* expect NULL from simplify_expr in all of engine_xmld.
+
+* A function should report failure by returning NULL.
 
 * Engine-XMLD must be rewritten with consideration of
 [1] availablity of column types [2] access levels.
@@ -644,12 +649,19 @@ WHERE request types in twalker.
  * Handle assignment lists in an assignment-per-
  assignment basis.
 
-* Add two SQL functions in func_list and create a dir-
-ectory "functions" for them. (one aggregate and one scalar).
+* Implement a first SQL function (LENGTH) in a separate source 
+directory.
 
-* A very basic capability-demonstrating client in src/client.
+* A capability-demonstrating client in src/client.
 
 * \n is the end-of-line in proto. (done)
+
+* Erase STRCAT and STRLEN from QUERY.html examples, those aren't 
+existent in SQL. Add LENGTH and CONCAT instead. (done)
+
+* A make script:
+ * make 
+ * make client
 
 --------------- Start of The OpenXMLD 0.6.0 part:
 
@@ -702,6 +714,9 @@ and treats all with the highest available privilege.
 Fix that by providing per-file privilege requestions and
 specifications.
 
+* create a configure script:
+ * --use-ptasker
+ 
 * ptasker task queue maintenance.
 
 * values returned from cfg must be checked for being NULLs.

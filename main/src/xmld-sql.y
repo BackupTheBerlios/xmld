@@ -550,6 +550,13 @@ expr: '(' expr ')' {
 				      $$->aggr=$$->func->aggr;
 				      free($1);
                                      }
+      | IDENTIFIER '(' ')' {
+                            $$=XMLDExpr_create();
+		            $$->type=XMLD_FUNCTION;
+			    $$->func=XMLDFuncList_search_by_name(func_list, $1);
+			    $$->aggr=$$->func->aggr;
+			    free($1);
+                           }
       | QVAL {
               $$=XMLDExpr_create();
 	      $$->aggr=XMLD_FALSE;

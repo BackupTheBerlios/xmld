@@ -85,7 +85,7 @@ struct XMLDEngine;
 		   strcpy(lvalp->qval, yytext);
 		   return IDENTIFIER;
                   }
-([(]{1})(("text"|"tagname"){1})([)]{1}) {
+([[]{1})(("text"|"tagname"){1})([]]{1}) {
                                          lvalp->qval=(char *) malloc((strlen(yytext)+1)*sizeof(char));
 		                         strcpy(lvalp->qval, yytext);
 		                         return IDENTIFIER;

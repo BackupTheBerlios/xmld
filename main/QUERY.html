@@ -9,7 +9,7 @@
 Author(s):
 Khalid Al-Kary
 
-Revision: 1.3
+Revision: 1.4
 ------------------------------------------------------------------		  
 Introduction:
 -------------
@@ -46,27 +46,29 @@ An expression can be:
 Note: a column in XML is generally an XML element's attribute,
 in addition to these two special values:
   
- [*] "(text)" is the text of an element.
- [*] "(tagname)" is the name of an element's tag.
+ [*] "[text]" is the text of an element.
+ [*] "[tagname]" is the name of an element's tag.
 
 Note that accodring to XML an attribute name can't have a bracket in
-it -- so (text) and (tagname) never conflict with normal attribute
+it -- so [text] and [tagname] never conflict with normal attribute
 names.
+
+A sequence of characters normally has to be double-quoted, single
+quotes have no special meaning in XMLD-SQL. 
 
 A wildcard can be:
 
  [*] * -- All columns
- [*] @ -- All attributes (All columns execluding "(text)" and "(tagname)")
+ [*] @ -- All attributes (All columns execluding "[text]" and "[tagname]")
  
 According to that specification, the following are valid XMLD-SQL 
 expressions:
   
 name
 age
-STRCAT(UCASE((text)),UCASE(age))
-STRLEN(name)+5
-SIN(5+6)
-COUNT(*)
+CONCAT([text], name)
+LENGTH(name)+5
+SIN(5)
 age-1
 "my name is a name"
 

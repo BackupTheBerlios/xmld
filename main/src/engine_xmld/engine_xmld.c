@@ -312,7 +312,7 @@ char *engine_xmld_get_column_value(XMLDFile *file, char *col_name) {
  fgetpos((FILE *) file->data, &pos);
  char *ret;
  
- if (strcasecmp(col_name, "(text)") == 0) {
+ if (strcasecmp(col_name, "[text]") == 0) {
   if (engine_xmld_locate_text((FILE *) file->data)) {
    ret=engine_xmld_get_text_value((FILE *) file->data);
   }
@@ -320,12 +320,12 @@ char *engine_xmld_get_column_value(XMLDFile *file, char *col_name) {
    ret=NULL;
   }
  }
- else if (strcasecmp(col_name, "(tagname)") == 0) {
+ else if (strcasecmp(col_name, "[tagname]") == 0) {
   ret=engine_xmld_get_tagname((FILE *) file->data);
  }
  else if (strcmp(col_name, "*") == 0) {
   char *atts=engine_xmld_get_column_value(file, "@");
-  char *text=engine_xmld_get_column_value(file, "(text)");
+  char *text=engine_xmld_get_column_value(file, "[text]");
   if (text != NULL) {
    ret=(char *) malloc((strlen(atts)+strlen(text)+2)*sizeof(char));
   }
@@ -390,9 +390,9 @@ XMLDStatus engine_xmld_set_column_value(XMLDWork *work, char *col_name, char *va
  if (*((int *) work->res->store+2)) { /* we have got a format file */
   int stat;
   char *tag_name=engine_xmld_get_tagname((FILE *) work->res->data_source);
-  if (strcasecmp(col_name, "(text)") == 0) {
+  if (strcasecmp(col_name, "[text]") == 0) {
    if (engine_xmld_locate_text((FILE *) work->res->data_source)) {
-    int len=engine_xmld_get_element_att_length((FILE *) work->res->store+1, *((int*) work->res->store, "(text)"),
+    int len=engine_xmld_get_element_att_length((FILE *) work->res->store+1, *((int*) work->res->store, "[text]"),
 		    tag_name);
     fgetc((FILE *) work->res->data_source); /* Eat the quote up */
     if (strlen(value) >= len) {
@@ -426,7 +426,7 @@ XMLDStatus engine_xmld_set_column_value(XMLDWork *work, char *col_name, char *va
   free(tag_name);
  }
  else {
-  if (strcasecmp(col_name, "(text)") == 0) {
+  if (strcasecmp(col_name, "[text]") == 0) {
    if (engine_xmld_locate_text((FILE *) (work->res->data_source))) {
     ret=engine_xmld_set_text_value((FILE *) (work->res->data_source), value);
    }
