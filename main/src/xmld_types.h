@@ -14,39 +14,109 @@
 #ifndef HAVE_XMLD_TYPES_H
 #define HAVE_XMLD_TYPES_H
 
-/* represents a single-level conditional statement */
-struct XMLDCond {
- struct XMLDCond *left;
- struct XMLDCond *right;
- int connector; /* connector values:
-                 * 0 = terminal conditional
-                 * 1 = AND
-                 * 2 = OR
-                 * 3 = XOR
-                 */ 
- char *ident;
- char *val; /* if =0 then use nval (numeric val) instead */
- long nval;
- int op; /* op values:
-	  * 0 = '='
-	  * 1 = '<'
-	  * 2 = '>'
-	  * 3 = '<='
-	  * 4 = '>='
-	  * 5 = LIKE
-	  * 6 = '<>'
-	  */
- int negate;     /* if =1 then it checks for false instead of true */
+/* represents an expression */
+struct expr {
+ short type; /* 0 = numeric 
+	    * 1 = containing an operation
+	    * 2 = IDENTIFIER (column name)
+	    * 3 = function call
+	    * 4 = quoted value
+	    * 5 = wildcard
+	    */
+ 
+ short aggr; /* whether or not it's an aggregate expression
+	      * aggregate if type = 5 (wildcard) or if type
+	      * = 3 (function call) with this function being
+	      * an aggregate one.
+	      * ------
+	      * NOTE:
+	      *   1 = aggregate
+	      *   0 = scalar
+	      */
+ 
+ int nval; /* type 0 */
+ 
+ /*--------------------*/
+ struct expr *left; /* type 1:
+		     * to represent an expression 
+		     * containing an operation op
+		     */
+ struct expr *right;
+ short op; /* 0 = '+'
+	    * 1 = '-' (binary negative)
+	    * 2 = '*'
+	    * 3 = '/'
+	    * 4 = '^'
+	    * 5 = '-' (unary negative)
+	    */ 
+ /*-------------------*/
+ char *ident; /* type 2 */
+ /*-------------------*/
+ /* FIXME: replace this with an XMLDFunc struct
+  * that carries whether the function is aggregate 
+  */
+ void *(*func) (struct expr *); /* type 3:
+				 * a function call
+				 * with an exprssion array
+				 * being passed as an argument
+				 */
+ struct expr *arg_list;
+ /*-------------------*/
+ char *qval; /* type 4: Quoted value */
+ /*-------------------*/
+ short wildcard; /* type 5: wildcard 
+		  * 0 = '*'
+		  * 1 = '@'
+		  */
+ /*------------------*/
+ char *alias;
+};
+
+/* represents a condition */
+struct cond {
+ short type; /*
+	      * 0 = Condition (expr <condition> expr)
+	      * 1 = Condition Group (cond <operation> cond)
+	      */
+
+ /*---------*/
+ struct expr *left; /* type 0 */
+ struct expr *right;
+ short op; /*
+	    * 0 = '='
+	    * 1 = '<'
+	    * 2 = '>'
+	    * 3 = '<>'
+	    * 4 = '<='
+	    * 5 = '>='
+	    * 6 = LIKE
+	    * 7 = BETWEEN
+	    * 8 = NOT BETWEEN
+	    */ 
+ /*---------*/
+ struct cond *cleft; /* type 1 */
+ struct cond *cright;
+ short cop;  /*
+	      * 0 = AND
+	      * 1 = OR
+	      */
+ /*----------*/
+ short negate; /* 0 = Affirmative condition
+	        * 1 = Negative condition
+	        */	
 };
 
 /* carries the parsed query */
 struct XMLDRequest {
  char *file;
- char **retr;  /* when = 0, look for wildcard */
- int wildcard; /* 0 = *
-		* 1 = @
-		*/ 
- struct XMLDCond **cond; /* the conditional for each level */
+ short type; /* type of the query
+	      * 0 = SELECT query
+	      * 1 = SELECT with WHERE
+	      */
+ struct expr **retr;  /* the list of expressions to be
+		      * retrieved 
+		      */
+ struct cond **where; /* A condition for each level */
 };
 
 /* carries the response to be sent */
@@ -72,8 +142,4 @@ struct XMLDWork {
  struct XMLDConnection *conn;
 };
 
-/* FIXME: add functions that free (and create) each of the above struct-
- * ures whensever required, and create a file xmld_types.c to carry
- * the functions' implementations.
- */ 
 #endif

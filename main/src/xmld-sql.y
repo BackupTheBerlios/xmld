@@ -1,225 +1,303 @@
-/* FIXME: check how yylval would be cleaned after a realloc in the lexer
-   that involves yylval */
 %{
+/*                                                                *
+ * -------------------------------------------------------------- *
+ * The OpenXMLD                                                   *
+ * -------------------------------------------------------------- *
+ * This source file is subject to the GNU General Public licence, *
+ * which can be obtained through the world-wide-web at:           *
+ *                                                                *
+ *  http://www.gnu.org/copyleft/gpl.html                          *
+ * -------------------------------------------------------------- *
+ * Authors: Khalid Al-Kary (khalid_kary@hotmail.com)              *
+ * -------------------------------------------------------------- * 
+ */
+
 #include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
-#include <math.h>
 #include "xmld_types.h"
-int yylex(void);
+#include "xmld_mempool.h"
+struct XMLDMemPool *expr_pool=XMLDMemPool_create(sizeof(struct expr), 20);
+struct XMLDMemPool *cond_pool=XMLDMemPool_create(sizeof(struct cond), 10);
 int yyerror(char *);
-void printout(char *);
-int num_ident;
+int yylex(void);
+int num_expr;
 int num_cond;
+struct XMLDRequest *request;
 %}
 
 %union {
- char *str;
- struct XMLDCond *cond_t;
- struct XMLDCond **cond_arr;
- struct XMLDRequest *request;
- char **str_arr;
  int num;
+ char *str;
+ struct expr *expression;
+ struct expr **expression_list;
+ struct cond *condition;
+ struct cond **condition_list;
 }
 
-%token SELECT /* flex: "select" */
-%token <str> IDENTIFIER    /* flex [A-Z][A-Z0-9]+ | "(tagname)" | "(text)" */
-%token FROM   /* flex: "from"   */
-%token <cond_arr> WHERE  /* flex: "where"  */
-%token <str> QUOTED_VAL /* flex: "\"[a-z]+\"" | "'[a-z]+'" */
-%token <num> NUM /* flex: [0-9]* */
-%type <cond_t> cond
-%type <num> expr
-%type <str_arr> retr
-%type <num> wildcard
-%type <str_arr> where
-%type <cond_t> '='
-%type <cond_t> '<'
-%type <cond_t> '>'
-%token <cond_t> AND /* flex: "AND" */
-%token <cond_t> OR /* flex: "OR" */
-%token <cond_t> XOR /* flex: "XOR" */
-%token NOT /* flex "NOT" */
-%token <cond_t> LE /* flex: "<=" */
-%token <cond_t> GE /* flex: ">=" */
-%token <cond_t> NE /* flex: "<>" */
-%token <cond_t> LIKE /* flex "like" */
+%token SELECT
+%token FROM
+%token <str> QUOTED_VAL
+%token WHERE
+%type <num> query
+%type <condition> cond
+%type <expression> expr
+%type <condition_list> cond_list
+%type <expression_list> expr_list
+%token LIKE
+%token BETWEEN
+%token <num> NUM
+%token <str> IDENTIFIER
+%token AS
+%right NOT
+%left AND OR
+%nonassoc NE
+%nonassoc LE
+%nonassoc GE
+%nonassoc '>'
+%nonassoc '<'
+%nonassoc '='
 %left '-' '+'
 %left '*' '/'
 %left NEG
 %right '^'
+
 %%
+
 
 query: /* empty */
-       | SELECT retr FROM QUOTED_VAL { 
-                                       $$=(struct XMLDRequest *) malloc(sizeof(struct XMLDRequest));
-                                       $$->file=(char*)  malloc(strlen($4)*sizeof(char));
-				       strcpy($$->file, $4);
-				       $$->retr=$2;
-				       $$->cond=0;
-				     }
-       | SELECT wildcard FROM QUOTED_VAL {                                          
-                                          $$=(struct XMLDRequest *) malloc(sizeof(struct XMLDRequest));
-                                          $$->file=(char*)  malloc(strlen($4)*sizeof(char));
-				          strcpy($$->file, $4);
-				          $$->retr=0;
-					  $$->wildcard=$2;
-				          $$->cond=0;
-                                         }
-       | SELECT retr FROM QUOTED_VAL WHERE where {                                          
-                                                  $$=(struct XMLDRequest *) malloc(sizeof(struct XMLDRequest));
-                                                  $$->file=(char*)  malloc(strlen($4)*sizeof(char));
-				                  strcpy($$->file, $4);
-				                  $$->retr=$2;
-				                  $$->cond=$6;
-                                                 }
-       | SELECT wildcard FROM QUOTED_VAL WHERE where {                                          
-                                                      $$=(struct XMLDRequest *) malloc(sizeof(struct XMLDRequest));
-                                                      $$->file=(char*)  malloc(strlen($4)*sizeof(char));
-				                      strcpy($$->file, $4);
-				                      $$->retr=0;
-						      $$->wildcard=$2;
-				                      $$->cond=$6;
-                                                     }
-
+       | SELECT expr_list FROM QUOTED_VAL {
+                                           $$=1;
+					   request=(struct XMLDRequest *) malloc(sizeof(XMLDRequest));
+					   request->file=(char *) malloc(strlen($4)*sizeof(char));
+					   strcpy(request->file, $4);
+					   request->type=0;
+					   request->retr=$2;					  
+                                          }
+       | SELECT expr_list FROM QUOTED_VAL WHERE cond_list {
+                                                           $$=1;
+							   request=(struct XMLDRequest *) malloc(sizeof(XMLDRequest));
+							   request->file=(char*) malloc(strlen($4)*sizeof(char));
+							   strcpy(request->file, $4);
+							   request->type=1;
+							   request->retr=$2;
+							   request->where=$6;
+                                                          }
 ;
 
-wildcard: '*' { $$ = 0; }
-          | '@' { $$ = 1; }
+cond_list: cond { 
+                 $$=(struct cond **) malloc(2*sizeof(struct cond *));
+                 $$[0]=$1;
+		 $$[1]=(struct cond *) 0;
+		 num_cond=2;
+		}
+           | cond_list ':' cond {
+	                         $$=$1;
+				 num_cond++;
+				 $$=realloc($$, num_cond*sizeof(struct cond*));
+				 $$[num_cond-2]=$3;
+				 $$[num_cond-1]=(struct cond *) 0;
+	                        }
 ;
 
-retr: IDENTIFIER { $$=(char**) malloc(2*sizeof(char*));
-                   num_ident=2;
-		   $$[0]=(char*) malloc(strlen($1)*sizeof(char));
-		   $$[1]=(char*) 0;
-		   strcpy($$[0], $1);
-                 }
-      | retr ',' IDENTIFIER {
-                             num_ident++;
-                             $$=(char**) realloc(num_ident*sizeof(char*));
-			     $$[num_ident-2]=(char*) malloc(strlen($3)*sizeof(char));
-			     $$[num_ident-1]=(char*) 0;
-			     strcpy($$[num_ident-2], $3);
-                            }
-;
-
-where: cond { $$=(struct XMLDCond **) malloc(2*sizeof(struct XMLDCond*));
-             num_cond=2;
-	     $$[0]=$1;
-	     $$[1]=(struct XMLDCond*) 0;
-            }
-       | where ':' cond {
-                         num_ident++;
-                         $$=(struct XMLDCond **) realloc(num_ident*sizeof(struct XMLDCond *));
-			 $$[num_ident-2]=$3;
-			 $$[num_ident-1]=(struct XMLDCond*) 0;
-                        }
-;
-
-cond: '(' cond ')' { $$ = $2; }
-      | NOT cond   { $$ = $2;
-                     $$->negate=($$->negate==1) ? 0 : 1; }
-      | cond AND cond { $$=$2;
-                        $$->left=$1;
+cond: expr '=' expr {
+                     $$=(struct cond *) XMLDMemPool_get_segment(cond_expr);
+		     $$->type=0;
+		     $$->negate=0;
+		     $$->left=$1;
+		     $$->right=$3;
+		     $$->op=0;
+                    }
+      | expr '<' expr {
+                       $$=(struct cond *) XMLDMemPool_get_segment(cond_expr);
+		       $$->type=0;
+		       $$->negate=0;
+		       $$->left=$1;
+		       $$->right=$3;
+		       $$->op=1;
+                      }  
+      | expr '>' expr {
+                       $$=(struct cond *) XMLDMemPool_get_segment(cond_expr);
+		       $$->type=0;
+		       $$->negate=0;
+		       $$->left=$1;
+		       $$->right=$3;
+		       $$->op=2;
+                      } 
+      | expr NE expr {
+                      $$=(struct cond *) XMLDMemPool_get_segment(cond_expr);
+		      $$->type=0;
+		      $$->negate=0;
+		      $$->left=$1;
+		      $$->right=$3;
+		      $$->op=3;
+                     }
+      | expr LE expr {
+                      $$=(struct cond *) XMLDMemPool_get_segment(cond_expr);
+		      $$->type=0;
+		      $$->negate=0;
+		      $$->left=$1;
+		      $$->right=$3;
+		      $$->op=4;
+                     }
+      | expr GE expr {
+                      $$=(struct cond *) XMLDMemPool_get_segment(cond_expr);
+		      $$->type=0;
+		      $$->negate=0;
+		      $$->left=$1;
+		      $$->right=$3;
+		      $$->op=5;
+                     }
+      | expr LIKE expr {
+                        $$=(struct cond *) XMLDMemPool_get_segment(cond_expr);
+			$$->type=0;
+			$$->negate=0;
+			$$->left=$1;
 			$$->right=$3;
-			$$->connector=1;}
-      | cond OR cond { $$=$2;
-                       $$->left=$1;
-		       $$->right=$3;
-		       $$->connector=2;}
-      | cond XOR cond {$$=$2;
-                       $$->left=$1;
-		       $$->right=$3;
-		       $$->connector=3;}
-      | '?'             { $$=0; }
-      | IDENTIFIER '=' QUOTED_VAL {
-                             $$=$2;
-			     $$->ident=(char*)malloc(strlen($1)*sizeof(char));
-			     strcpy($$->ident, $1);
-			     $$->val=(char*)malloc(strlen($3)*sizeof(char));
-			     strcpy($$->val, $3);
-			     $$->op=0;
-                            }
-      | IDENTIFIER '=' expr {
-                             $$=$2;
-			     $$->ident=(char*)malloc(strlen($1)*sizeof(char));
-			     strcpy($$->ident,$1);
-			     $$->val=0;
-			     $$->nval=$3;
-			     $$->op=0;
-                             }
-      | IDENTIFIER '<' expr {
-                             $$=$2;
-			     $$->ident=(char*)malloc(strlen($1)*sizeof(char));
-			     strcpy($$->ident, $1);
-			     $$->val=0;
-			     $$->nval=$3;
-			     $$->op=1;
-                            }
-      | IDENTIFIER '>' expr {
-                             $$=$2;
-			     $$->ident=(char*)malloc(strlen($1)*sizeof(char));
-			     strcpy($$->ident, $1);
-			     $$->val=0;
-			     $$->nval=$3;
-			     $$->op=2;
-                            }
-      | IDENTIFIER LE expr {
-                           $$=$2;
-			   $$->ident=(char*)malloc(strlen($1)*sizeof(char));
-			   strcpy($$->ident, $1);
-			   $$->val=0;
-			   $$->nval=$3;
-			   $$->op=3;
-                          }
-      | IDENTIFIER GE expr {
-                            $$=$2;
-			    $$->ident=(char*)malloc(strlen($1)*sizeof(char));
-			    strcpy($$->ident, $1);
-			    $$->val=0;
-			    $$->nval=$3;
-			    $$->op=4;
-                           }
-      | IDENTIFIER LIKE QUOTED_VAL  {
-                                     $$=$2;
-			             $$->ident=(char*)malloc(strlen($1)*sizeof(char));
-			             strcpy($$->ident, $1);
-			             $$->val=(char*)malloc(strlen($3)*sizeof(char));
-			             strcpy($$->val, $3);
-			             $$->op=5;
-                                    }
-      | IDENTIFIER NE expr {
-                            $$=$2;
-			    $$->ident=(char*)malloc(strlen($1)*sizeof(char));
-			    strcpy($$->ident,$1);
-			    $$->val=0;
-			    $$->nval=$3;
-			    $$->op=6;
-                           }
-      | IDENTIFIER NE QUOTED_VAL {
-                                  $$=$2;
-				  $$->ident=(char*)malloc(strlen($1)*sizeof(char));
-				  strcpy($$->ident,$1);
-				  $$->val=(char*)malloc(strlen($3)*sizeof(char));
-				  strcpy($$->val, $3);
-				  $$->op=6;
-                                 }
+			$$->op=6;
+                       }
+      /* FIXME: how should BETWEEN and NOT BETWEEN be manipulated ?
+       * Add an op to expr (6) = AND ?? */
+      | expr BETWEEN expr AND expr
+      | expr NOT BETWEEN expr AND expr
+      | NOT cond {
+                  $$=$2;
+		  $$->negate=(!$$->negate);
+		 }
+      | cond AND cond {
+                       $$=(struct cond *) XMLDMemPool_get_segment(cond_pool);
+		       $$->type=1;
+		       $$->negate=0;
+		       $$->cleft=$1;
+		       $$->cright=$3;
+		       $$->coop=0;
+                      }
+      | cond OR cond {
+                      $$=(struct cond *) XMLDMemPool_get_segment(cond_pool);
+		      $$->type=1;
+		      $$->negate=0;
+		      $$->cleft=$1;
+		      $$->cright=$3;
+		      $$->coop=1;
+                     }
+      | '(' cond ')' {
+                      $$=$2;
+                     }
 ;
 
-expr: NUM 
-      | expr '+' expr {$$ = $1 + $3; }
-      | expr '-' expr {$$ = $1 - $3; }
-      | expr '*' expr {$$ = $1 * $3; }
-      | expr '/' expr {$$ = $1 / $3; }
-      | expr '^' expr {$$ = pow($1,$3); }
-      | '-' expr %prec NEG {$$ = -$2}
-      | '(' expr ')' { $$ = $2; }
+expr: NUM {
+           $$=(struct expr *) XMLDMemPool_get_segment(expr_pool);
+	   $$->type=0;
+	   $$->aggr=0;
+	   $$->nval=$1;
+          }
+      | QUOTED_VAL {
+                    $$=(struct expr *) XMLDMemPool_get_segment(expr_pool);
+		    $$->type=4;
+		    $$->aggr=0;
+		    $$->qval=(char *) malloc(strlen($1)*sizeof(char));
+		    strcpy($$->qval, $1);
+                   }
+      | IDENTIFIER {
+                    $$=(struct expr *) XMLDMemPool_get_segment(expr_pool);
+		    $$->type=2;
+		    $$->aggr=0;
+		    $$->ident=(char *) malloc(strlen($1)*sizeof(char));
+		    strcpy($$->ident, $1);
+                   }
+      | IDENTIFIER '(' expr_list ')' {
+                                      $$=(struct expr *) XMLDMemPool_get_segment(expr_pool);
+				      $$->type=3;
+				      $$->func=0/* get the XMLDFunc pointer 
+				                  from the sumbol table*/;
+				      $$->aggr=$$->func->aggr;
+				      $$->arg_list=$3;				      
+                                     }
+      | expr '+' expr {
+                       $$=(struct expr *) XMLDMemPool_get_segment(expr_pool);
+		       $$->type=1;
+		       $$->aggr=($1->aggr && $3->aggr);
+		       $$->left=$1;
+		       $$->right=$3;
+		       $$->op=0;
+                      }
+      | expr '-' expr {
+                       $$=(struct expr *) XMLDMemPool_get_segment(expr_pool);
+		       $$->type=1;
+		       $$->aggr=($1->aggr && $3->aggr);
+		       $$->left=$1;
+		       $$->right=$3;
+		       $$->op=1;
+                      }
+      | expr '*' expr {
+                       $$=(struct expr *) XMLDMemPool_get_segment(expr_pool);
+		       $$->type=1;
+		       $$->aggr=($1->aggr && $3->aggr);
+		       $$->left=$1;
+		       $$->right=$3;
+		       $$->op=2;
+                      }
+      | expr '/' expr {
+                       $$=(struct expr *) XMLDMemPool_get_segment(expr_pool);
+		       $$->type=1;
+		       $$->aggr=($1->aggr && $3->aggr);
+		       $$->left=$1;
+		       $$->right=$3;
+		       $$->op=3;
+                      }
+      | expr '^' expr {
+                       $$=(struct expr *) XMLDMemPool_get_segment(expr_pool);
+		       $$->type=1;
+		       $$->aggr=($1->aggr && $3->aggr);
+		       $$->left=$1;
+		       $$->right=$3;
+		       $$->op=4;
+                      }
+      | '-' expr %prec NEG {
+                            $$=(struct expr *) XMLDMemPool_get_segment(expr_pool);
+			    $$->type=1;
+			    $$->aggr=$2->aggr;
+			    $$->left=(struct expr *)0;
+			    $$->right=$2;
+			    $$->op=5;
+			   }
+      | '(' expr ')' { $$=$2; }
+      | expr AS QUOTED_VAL /* alias */
+                           {
+			    $$=$1;
+			    /* FIXME: check if it's neccessary to strcpy */
+			    $$->alias=(char *) malloc(strlen($3)*sizeof(char));
+			    strcpy($$->alias, $3);
+			   }
+      | '*' {
+             $$=(struct expr *) XMLDMemPool_get_segment(expr_pool);
+	     $$->type=5;
+	     $$->aggr=1;
+	     $$->wildcard=0;
+            }
+      | '@' { 
+             $$=(struct expr *) XMLDMemPool_get_segment(expr_pool);
+             $$->type=5;
+	     $$->aggr=1;
+	     $$->wildcard=1;
+	    }
+;
+
+expr_list: expr { 
+                 $$=(struct expr **) malloc(2*sizeof(struct expr *));
+                 $$[0]=$1;
+		 $$[1]=(struct expr *) 0;
+		 num_expr=2;
+		}
+           | expr_list ',' expr {
+	                         $$=$1;
+				 num_expr++;
+				 $$=realloc($$, num_expr*sizeof(struct expr*));
+				 $$[num_expr-2]=$3;
+				 $$[num_expr-1]=(struct expr *) 0;
+	                        }
 ;
 %%
 
-void printout(char *s) {
- printf("%s\n",s);
-}
 int yyerror(char *s) {
  printf("%s\n",s);
  return 0;
