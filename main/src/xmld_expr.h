@@ -38,8 +38,6 @@ i * -------------------------------------------------------------- *
 #define XMLD_WILDCARD_ALL 0  /* All columns     */
 #define XMLD_WILDCARD_ATTS 1 /* Only attributes */
 
-typedef XMLDList XMLDExprList;
-
 struct XMLDExpr {
  int type; 
  XMLDBool aggr, cross_level; /* Whether it's an aggregate expression */
@@ -60,7 +58,7 @@ struct XMLDExpr {
 		  * with an exprssion list
 		  * being passed as an argument
 		  */
- XMLDExprList *arg_list;
+ XMLDList *arg_list;
  /*-------------------*/
  char *qval; /* type 4: Quoted value */
  /*-------------------*/
@@ -73,7 +71,11 @@ struct XMLDExpr {
  char *alias;
 };
 
-typedef struct XMLDExpr XMLDExpr;
+#ifndef XMLDEXPR_TYPE_DEFINED
+#define XMLDEXPR_TYPE_DEFINED
+ typedef struct XMLDExpr XMLDExpr;
+ typedef XMLDList XMLDExprList;
+#endif /* XMLDEXPR_TYPE_DEFINED */
 
 XMLDExpr *XMLDExpr_create(void);
 void XMLDExpr_copy(XMLDExpr *, XMLDExpr *);

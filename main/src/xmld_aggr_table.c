@@ -88,7 +88,7 @@ void XMLDAggrTable_add_col(XMLDAggrTable *table, XMLDCol *col) {
  * to be determined.
  * eval_expr: the function used for expression evaluation.
  */
-void XMLDAggrTable_fill(XMLDAggrTable *table, XMLDWork *work, char *(*eval_expr) (XMLDWork *, XMLDExpr *, int)) {
+/*void XMLDAggrTable_fill(XMLDAggrTable *table, XMLDWork *work, char *(*eval_expr) (XMLDWork *, XMLDExpr *, int)) {
  XMLDList_reset(table->col_ptrs);
  XMLDList_reset(table->values);
  char *val;
@@ -97,7 +97,7 @@ void XMLDAggrTable_fill(XMLDAggrTable *table, XMLDWork *work, char *(*eval_expr)
   val=(*eval_expr) (work, (XMLDExpr *) XMLDList_curr(table->values), 0);
   XMLDCol_fill(*col_ptr, val);
  }
-}
+}*/
 
 /*
  * : Creates a XMLDList of aggregate expression tables.

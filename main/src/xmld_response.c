@@ -185,12 +185,12 @@ XMLDStatus XMLDResponse_next_aggr(XMLDResponse *resp) {
  * resp: the response structre to work on.
  * val: the value to fill the response structure with.
  */
-void XMLDResponse_fill_curr_aggr(XMLDResponse *resp, XMLDWork *work, char *(*eval_expr) (XMLDWork *, XMLDExpr *, int)) {
+/*void XMLDResponse_fill_curr_aggr(XMLDResponse *resp, XMLDWork *work, char *(*eval_expr) (XMLDWork *, XMLDExpr *, int)) {
  XMLDAggrTable *table=(XMLDAggrTable *) XMLDList_curr(resp->tables);
  if (table!=NULL) {
   XMLDAggrTable_fill(table, work, eval_expr);
  }
-}
+}*/
 
 /*
  * : Creates a list of response structres.

@@ -18,6 +18,6 @@ XMLDFuncList *func_list;
 
 XMLDStatus func_list_init();
 XMLDStatus func_list_shutdown();
-XMLDExpr *foo_func(XMLDExprList *);
+XMLDExpr *foo_func(XMLDExprList *, XMLDFile *);
 
 #endif /* __FUNC_LIST_H */

@@ -11,33 +11,37 @@
  * -------------------------------------------------------------- * 
  */
 
-#ifndef __XMLD_FILE_H
-#define __XMLD_FILE_H
-
-struct XMLDFile {
- char *name;  /* The name of the file       */
- void *data;  /* File's data representation */
- void *store; /* Additional storage field   */
- XMLDEngine *engine; /* The engine to be used for this file */
- int level; /* The current level in the file */
-};
-
+#include <stdlib.h>
+#include <string.h>
+#include "xmlddef.h"
+#include "mutils.h"
+#include "xmld_list.h"
+#include "xmld_col.h"
+#include "xmld_row.h"
+struct XMLDExpr;
+#ifndef XMLDEXPR_TYPE_DEFINED
+#define XMLDEXPR_TYPE_DEFINED
+ typedef struct XMLDExpr XMLDExpr;
+ typedef XMLDList XMLDExprList;
+#endif /* XMLDEXPR_TYPE_DEFINED */
+#include "xmld_aggr_table.h"
+#include "xmld_response.h"
+#include "xmld_connection.h"
+#include "xmld_request.h"
+struct XMLDFile;
 #ifndef XMLDFILE_TYPE_DEFINED
 #define XMLDFILE_TYPE_DEFINED
  typedef struct XMLDFile XMLDFile;
  typedef XMLDList XMLDFileList;
 #endif /* XMLDFILE_TYPE_DEFINED */
-
-XMLDFile *XMLDFile_create(char *);
-char *XMLDFile_get_full_name(XMLDFile *, XMLDWork *);
-void XMLDFile_free(XMLDFile *);
-void XMLDFile_free_content(void *);
-
-/* List functions */
-
-XMLDFileList *XMLDFileList_create(void);
-XMLDFile *XMLDFileList_add(XMLDFileList *, char *);
-XMLDFile *XMLDFileList_search_by_name(XMLDFileList *, char *);
-int XMLDFileList_get_max_level(XMLDFileList *);
-
-#endif /* __XMLD_FILE_H */
+#include "xmld_work.h"
+#include "xmld_cond.h"
+#include "xmld_engine.h"
+#include "xmld_file.h"
+struct XMLDFunc;
+#ifndef XMLD_FUNC_TYPE_DEFINED
+#define XMLD_FUNC_TYPE_DEFINED
+ typedef struct XMLDFunc XMLDFunc;
+#endif /* XMLD_FUNC_TYPE_DEFINED */
+#include "xmld_expr.h"
+#include "xmld_func.h"
