@@ -19,5 +19,6 @@ int xmld_socket_bind(int, int);
 int xmld_socket_listen(int);
 int xmld_socket_shutdown(int);
 int xmld_socket_accept(int);
+int xmld_socket_write(int, char *);
 
 #endif /* HAVE_XMLD_SOCKETS_H */
