@@ -11,8 +11,8 @@
  * -------------------------------------------------------------- * 
  */
  
-#ifndef HAVE_SOSEL_H
-#define HAVE_SOSEL_H
+#ifndef __SOSEL_H
+#define __SOSEL_H
 
 short sosel_init(void);
 short sosel_shutdown(void);
@@ -26,4 +26,4 @@ struct connection_table {
  XMLDConnection *conn;
 };
 
-#endif /* HAVE_SOSEL_H */
+#endif /* __SOSEL_H */

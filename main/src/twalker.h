@@ -11,9 +11,9 @@
  * -------------------------------------------------------------- * 
  */
 
-#ifndef HAVE_TWALKER_H
-#define HAVE_TWALKER_H
+#ifndef __TWALKER_H
+#define __TWALKER_H
 
 short twalker_handle(struct XMLDWork *);
 
-#endif /* HAVE_TWALKER_H */
+#endif /* __TWALKER_H */

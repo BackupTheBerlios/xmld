@@ -11,8 +11,8 @@
  * -------------------------------------------------------------- * 
  */
 
-#ifndef HAVE_XMLD_AGGR_TABLE_h
-#define HAVE_XMLD_AGGR_TABLE_h
+#ifndef __XMLD_AGGR_TABLE_h
+#define __XMLD_AGGR_TABLE_h
 
 /* represents an (aggregate expression -> set of columns) assocsiation */
 struct XMLDAggrTable {
@@ -34,4 +34,4 @@ XMLDList *XMLDAggrTable_create_list(void);
 XMLDAggrTable *XMLDAggrTable_add_to_list(XMLDList *);
 XMLDAggrTable *XMLDAggrTable_search_list_by_expr(XMLDList *, XMLDExpr *);
 
-#endif /* HAVE_XMLD_AGGR_TABLE_h */
+#endif /* __XMLD_AGGR_TABLE_h */

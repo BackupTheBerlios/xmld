@@ -11,8 +11,8 @@
  * -------------------------------------------------------------- * 
  */
 
-#ifndef HAVE_XMLD_FUNC_H
-#define HAVE_XMLD_FUNC_H
+#ifndef __XMLD_FUNC_H
+#define __XMLD_FUNC_H
 
 struct XMLDFunc { /* represents a SQL function */
  char *name;
@@ -38,4 +38,4 @@ XMLDList *XMLDFunc_create_list(void);
 XMLDFunc *XMLDFunc_add_to_list(XMLDList *);
 XMLDFunc *XMLDFunc_search_list_by_name(XMLDList *, char *);
 
-#endif /* HAVE_XMLD_FUNC_H */
+#endif /* __XMLD_FUNC_H */

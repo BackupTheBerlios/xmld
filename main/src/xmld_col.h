@@ -11,8 +11,8 @@
  * -------------------------------------------------------------- * 
  */
  
-#ifndef HAVE_XMLD_COL_H
-#define HAVE_XMLD_COL_H
+#ifndef __XMLD_COL_H
+#define __XMLD_COL_H
 
 struct XMLDCol {
  char *val;
@@ -30,4 +30,4 @@ void XMLDCol_free_content(void *);
 XMLDList *XMLDCol_create_list(void);
 XMLDCol *XMLDCol_add_to_list(XMLDList *);
 
-#endif /* HAVE_XMLD_COL_H */
+#endif /* __XMLD_COL_H */

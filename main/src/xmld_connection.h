@@ -11,8 +11,8 @@
  * -------------------------------------------------------------- * 
  */
  
-#ifndef HAVE_XMLD_CONNECTION_H
-#define HAVE_XMLD_CONNECTION_H
+#ifndef __XMLD_CONNECTION_H
+#define __XMLD_CONNECTION_H
 
 /* carries connection-specific information */
 struct XMLDConnection {
@@ -32,4 +32,4 @@ void XMLDConnection_free_content(void *);
 XMLDList *XMLDConnection_create_list(void);
 XMLDConnection *XMLDConnection_add_to_list(XMLDList *, int, char *);
 
-#endif /* HAVE_XMLD_CONNECTION_H */
+#endif /* __XMLD_CONNECTION_H */

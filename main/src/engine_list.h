@@ -11,12 +11,12 @@
  * -------------------------------------------------------------- * 
  */
  
-#ifndef HAVE_ENGINE_LIST_H
-#define HAVE_ENGINE_LIST_H
+#ifndef __ENGINE_LIST_H
+#define __ENGINE_LIST_H
 
 XMLDList *engine_list;
 
 short engine_list_init();
 short engine_list_shutdown();
 
-#endif /* HAVE_ENGINE_LIST_H */
+#endif /* __ENGINE_LIST_H */

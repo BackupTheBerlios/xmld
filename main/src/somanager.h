@@ -11,11 +11,11 @@
  * -------------------------------------------------------------- * 
  */
  
-#ifndef HAVE_SOMANAGER_H
-#define HAVE_SOMANAGER_H
+#ifndef __SOMANAGER_H
+#define __SOMANAGER_H
 
 short somanager_init();
 short somanager_shutdown();
 void somanager_handle(void*);
 
-#endif /* HAVE_SOMANAGER_H */
+#endif /* __SOMANAGER_H */

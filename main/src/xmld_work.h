@@ -11,8 +11,8 @@
  * -------------------------------------------------------------- * 
  */
 
-#ifndef HAVE_XMLD_WORK_H
-#define HAVE_XMLD_WORK_H
+#ifndef __XMLD_WORK_H
+#define __XMLD_WORK_H
 
 struct XMLDWork {
  XMLDRequest *req;
@@ -33,4 +33,4 @@ void XMLDWork_free_content(void *);
 XMLDList *XMLDWork_create_list(void);
 XMLDWork *XMLDWork_add_to_list(XMLDList *);
 
-#endif
+#endif /* __XMLD_WORK_H */

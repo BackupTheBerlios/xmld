@@ -11,8 +11,8 @@
  * -------------------------------------------------------------- * 
  */
  
-#ifndef HAVE_XMLD_ENGINE_H
-#define HAVE_XMLD_ENGINE_H
+#ifndef __XMLD_ENGINE_H
+#define __XMLD_ENGINE_H
 
 struct XMLDEngine {
  char *name; /* The engine's name */
@@ -49,12 +49,6 @@ struct XMLDEngine {
 					       * dition.
 					       */
  
- char *(*eval_aggr_expr) (XMLDWork *, XMLDExpr *); /* The function which
-						    * the tree walker calls
-						    * when it needs the en-
-						    * gine to evaluate an 
-						    * aggregate expression.                                                   *
-						    */  
 };
 
 #ifndef XMLDENGINE_TYPE_DEFINED
@@ -72,4 +66,4 @@ XMLDList *XMLDEngine_create_list(void);
 XMLDEngine *XMLDEngine_add_to_list(XMLDList *, char *);
 XMLDEngine *XMLDEngine_search_list_by_name(XMLDList *, char *);
 
-#endif /* HAVE_XMLD_ENGINE_H */
+#endif /* __XMLD_ENGINE_H */

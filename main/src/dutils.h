@@ -15,7 +15,7 @@
 #define __DUTILS_H
 
 struct buf_t {
- char *val;
+ char val[BUFFER_SIZE+1];
  char *curr;
 };
 

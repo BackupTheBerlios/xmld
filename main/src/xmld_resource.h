@@ -11,8 +11,8 @@
  * -------------------------------------------------------------- * 
  */
  
-#ifndef HAVE_XMLD_RESOURCE_H
-#define HAVE_XMLD_RESOURCE_H
+#ifndef __XMLD_RESOURCE_H
+#define __XMLD_RESOURCE_H
 
 /* carries per-request resources */
 struct XMLDResource {
@@ -33,4 +33,4 @@ void XMLDResource_free_content(void *);
 XMLDList *XMLDResource_create_list(void);
 XMLDResource *XMLDResource_add_to_list(XMLDList *);
 
-#endif /* HAVE_XMLD_RESOURCE_H */
+#endif /* __XMLD_RESOURCE_H */

@@ -11,8 +11,8 @@
  * -------------------------------------------------------------- * 
  */
  
-#ifndef HAVE_XMLD_EXPR_H
-#define HAVE_XMLD_EXPR_H
+#ifndef __XMLD_EXPR_H
+#define __XMLD_EXPR_H
 
 struct XMLDExpr {
  short type; /* 0 = numeric 
@@ -80,4 +80,4 @@ void XMLDExpr_free_content(void *);
 XMLDList *XMLDExpr_create_list(void);
 XMLDExpr *XMLDExpr_add_to_list(XMLDList *);
 
-#endif /* HAVE_XMLD_EXPR_H */
+#endif /* __XMLD_EXPR_H */

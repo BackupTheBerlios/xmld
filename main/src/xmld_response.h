@@ -11,8 +11,8 @@
  * -------------------------------------------------------------- * 
  */
  
-#ifndef HAVE_XMLD_RESPONSE_H
-#define HAVE_XMLD_RESPONSE_H
+#ifndef __XMLD_RESPONSE_H
+#define __XMLD_RESPONSE_H
 
 struct XMLDResponse {
  XMLDList *rows;
@@ -45,4 +45,4 @@ void XMLDResponse_free_content(void *);
 XMLDList *XMLDResoponse_create_list(void);
 XMLDResponse *XMLDResponse_add_to_list(XMLDList *);
 
-#endif /* HAVE_XMLD_RESPONSE_H */
+#endif /* __XMLD_RESPONSE_H */

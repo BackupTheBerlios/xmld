@@ -11,8 +11,8 @@
  * -------------------------------------------------------------- * 
  */
  
-#ifndef HAVE_XMLD_REQUEST_H
-#define HAVE_XMLD_REQUEST_H
+#ifndef __XMLD_REQUEST_H
+#define __XMLD_REQUEST_H
 
 /* carries the parsed query */
 struct XMLDRequest {
@@ -46,4 +46,4 @@ void XMLDRequest_free_content(void *);
 XMLDList *XMLDRequest_create_list(void);
 XMLDRequest *XMLDRequest_add_to_list(XMLDList *);
 
-#endif /* HAVE_XMLD_REQUEST_H */
+#endif /* __XMLD_REQUEST_H */

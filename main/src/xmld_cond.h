@@ -11,8 +11,8 @@
  * -------------------------------------------------------------- * 
  */
 
-#ifndef HAVE_XMLD_COND_H
-#define HAVE_XMLD_COND_H
+#ifndef __XMLD_COND_H
+#define __XMLD_COND_H
 
 /* represents a condition */
 struct XMLDCond {
@@ -61,4 +61,4 @@ void XMLDCond_free_content(void*);
 XMLDList *XMLDCond_create_list(void);
 XMLDCond *XMLDCond_add_to_list(XMLDList *);
 
-#endif /* HAVE_XMLD_COND_H */
+#endif /* __XMLD_COND_H */

@@ -11,8 +11,8 @@
  * -------------------------------------------------------------- * 
  */
  
-#ifndef HAVE_INIT_H
-#define HAVE_INIT_H
+#ifndef __INIT_H
+#define __INIT_H
 
 /* A structure representing a part that needs initialization */
 struct xmld_part {
@@ -23,5 +23,5 @@ struct xmld_part {
 
 void init_create_part(struct xmld_part*, short (*) (void), short (*) (void));
 void init_shutdown_parts(void);
-#endif /* HAVE_INIT_H */
+#endif /* __INIT_H */
 

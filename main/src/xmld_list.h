@@ -11,8 +11,8 @@
  * -------------------------------------------------------------- * 
  */
  
-#ifndef HAVE_XMLD_LIST_H
-#define HAVE_XMLD_LIST_H
+#ifndef __XMLD_LIST_H
+#define __XMLD_LIST_H
 
 struct XMLDList {
  void *content;
@@ -35,4 +35,4 @@ short XMLDList_prev(XMLDList *);
 void *XMLDList_curr(XMLDList *);
 void default_free_func(void *);
 
-#endif /* HAVE_XMLD_LIST_H */
+#endif /* __XMLD_LIST_H */

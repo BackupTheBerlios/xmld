@@ -11,8 +11,8 @@
  * -------------------------------------------------------------- * 
  */
  
-#ifndef HAVE_XMLD_ROW_H
-#define HAVE_XMLD_ROW_H
+#ifndef __XMLD_ROW_H
+#define __XMLD_ROW_H
 
 /* Represents a row of response */
 struct XMLDRow {
@@ -32,4 +32,4 @@ void XMLDRow_free_content(void *);
 XMLDList *XMLDRow_create_list(void);
 XMLDRow *XMLDRow_add_to_list(XMLDList *);
 
-#endif /* HAVE_XMLD_ROW_H */
+#endif /* __XMLD_ROW_H */

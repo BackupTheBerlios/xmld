@@ -11,12 +11,12 @@
  * -------------------------------------------------------------- * 
  */
  
-#ifndef HAVE_QP_H
-#define HAVE_QP_H
+#ifndef __QP_H
+#define __QP_H
 
 void qp_handle(void *conn);
 int yyparse(void *);
 int yy_scan_string(const char *);
 int yywrap(void);
 
-#endif /* HAVE_QP_H */
+#endif /* __QP_H */
