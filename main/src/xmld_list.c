@@ -13,6 +13,7 @@
 
 #include <stdlib.h>
 #include "xmld_list.h"
+#include "xmld_directive.h"
 
 /*
  * : Creates a new list
@@ -50,9 +51,20 @@ void XMLDList_free(XMLDList *list) {
  * returns: a pointer to the newly added item.
  */
 void *XMLDList_add(XMLDList *list) {
- list->content=realloc(list->content, (list->last_element - list->content + 1)*list->item_size);
- list->last_element=list->content + (list->last_element - list->content);
- return list->last_element;
+ if (list->content == 0) {
+  list->content=malloc(list->item_size);
+  list->last_element=list->content;
+  return list->last_element;
+ }
+ else {
+  void *lcontent=list->content;
+  list->content=realloc(list->content, (list->last_element - lcontent + 2)*list->item_size);
+  list->last_element=list->content + (list->last_element - lcontent + 1);
+  if (list->curr_element != 0) {
+   list->curr_element=list->content + (list->curr_element - lcontent);
+  }
+  return list->last_element;
+ } 
 }
 
 /*
@@ -83,7 +95,7 @@ short XMLDList_next(XMLDList *list) {
   return 0;
  }
  else if (list->curr_element == 0) {
-  list->curr_element = list->content;
+  list->curr_element=list->content;
   return 1;
  }
  else {
