@@ -124,8 +124,8 @@ order to be able to resolve wildcards correctly. (done)
  * No special treatment for auth/priv files in authman. (use
    the normal file operation cycle) (done)
  * Engine configuration files should be put inside the xmld
-   database.
- * Real implementation of auth_get_priv. 
+   database. (done)
+ * Real implementation of auth_get_priv. (done)
 
 * walk no longer receives a work structure parameter.
   * twalker.
@@ -134,6 +134,7 @@ order to be able to resolve wildcards correctly. (done)
   of a non-existent attribute.
 
 * XMLDFile->data should be set to NULL upon failure.
+
 * Correct required privilege specification.
  * twalker (Remove initial privilege checking)
  * XMLDFile (store the priv of each file inside it)
