@@ -75,7 +75,7 @@ void *cfg_get(char *key) {
  */
 
 char *cfg_get_engine(char *file) {
- return (char *) NULL;
+ return "Engine-XMLD";
 }
 
 /*
