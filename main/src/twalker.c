@@ -129,6 +129,13 @@ XMLDStatus twalker_handle(XMLDWork *work) {
     }
    }
    
+   /* Handling of level changes not followed by row retrieval */
+   XMLDRow *last_row=XMLDResponse_curr_row(work->resp);
+   if (last_row != NULL) {
+    last_row->num_up += num_up;
+    last_row->num_down += num_down;
+   }
+   
    char *resp=resptrans_handle(work);
    if (protoimpl_write_sequence(work->conn->fd, resp, 1) == XMLD_FAILURE) {
     free(resp);
@@ -287,6 +294,13 @@ XMLDStatus twalker_handle(XMLDWork *work) {
     if (ret_all != XMLD_WALK_END) {
      curr_max_level = XMLDFileList_get_max_level(work->files);
     }
+   }
+   
+   /* Handling of level changes not followed by row retrieval */
+   XMLDRow *last_row=XMLDResponse_curr_row(work->resp);
+   if (last_row != NULL) {
+    last_row->num_up += num_up;
+    last_row->num_down += num_down;
    }
    
    resp=resptrans_handle(work);
