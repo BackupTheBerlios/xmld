@@ -26,8 +26,7 @@
 
 short fmanager_handle(struct XMLDWork *work) {
  work->res=(struct XMLDResource *) malloc(sizeof(struct XMLDResource));
- char *engine_name=cfg_get_engine(work->req->full_file);
- work->res->engine=XMLDEngine_search_list_by_name(engine_list, engine_name);
+ work->res->engine=XMLDEngine_search_list_by_name(engine_list, cfg_get_engine(XMLDWork_get_full_file(work)));
 
  if (work->res->engine == NULL) {
   /* Ooooops! couldn't find an engine with the given name */
