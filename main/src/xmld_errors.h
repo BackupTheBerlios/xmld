@@ -15,12 +15,12 @@
 #define HAVE_XMLD_ERRORS_H
 
 enum xmld_error {
- XMLD_EFNOTFOUND,
+ XMLD_ENOFILE,
  XMLD_ENOENGINE,
- XMLD_EINVALFILE;
+ XMLD_EINVALFILE
 } xmld_errno;
 
-char *err_str[2] = {
+char *err_str[3] = {
  "The request file was not found.",
  "The given engine does not exist.",
  "Invalid file type."
