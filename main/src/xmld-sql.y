@@ -54,6 +54,7 @@ struct XMLDEngine;
 
 /* We may have a multi-threaded mtasker later */
 %pure_parser
+%expect 7
 
 /* Keywords */
 %token SELECT
