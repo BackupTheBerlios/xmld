@@ -39,12 +39,8 @@ struct XMLDEngine;
  * conn (optional): an initial connection structure.
  * returns: the newly created work structure.
  */
-XMLDWork *XMLDWork_create(XMLDRequest *req, XMLDResponse *resp, XMLDConnection *conn, XMLDResource *res) {
+XMLDWork *XMLDWork_create() {
  XMLDWork *work=(XMLDWork *) malloc(sizeof(XMLDWork));
- work->req=req;
- work->resp=resp;
- work->conn=conn;
- work->res=res;
  return work;
 }
 
@@ -95,11 +91,7 @@ XMLDList *XMLDWork_create_list() {
  * req, resp, conn, res: see XMLDWork_create
  * returns: a pointer to the newly added element.
  */
-XMLDWork *XMLDWork_add_to_list(XMLDList *list, XMLDRequest *req, XMLDResponse *resp, XMLDConnection *conn, XMLDResource *res) {
+XMLDWork *XMLDWork_add_to_list(XMLDList *list) {
  XMLDWork *work=(XMLDWork *) XMLDList_add(list);
- work->req=req;
- work->resp=resp;
- work->conn=conn;
- work->res=res;
  return work;
 }

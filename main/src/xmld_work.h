@@ -23,7 +23,7 @@ struct XMLDWork {
 
 typedef struct XMLDWork XMLDWork;
 
-XMLDWork *XMLDWork_create(XMLDRequest *, XMLDResponse *, XMLDConnection *, XMLDResource *);
+XMLDWork *XMLDWork_create(void);
 char *XMLDWork_get_full_file(XMLDWork *);
 void XMLDWork_free(XMLDWork *);
 void XMLDWork_free_content(void *);
@@ -31,6 +31,6 @@ void XMLDWork_free_content(void *);
 /* List functions */
 
 XMLDList *XMLDWork_create_list(void);
-XMLDWork *XMLDWork_add_to_list(XMLDList *, XMLDRequest *, XMLDResponse *, XMLDConnection *, XMLDResource *);
+XMLDWork *XMLDWork_add_to_list(XMLDList *);
 
 #endif
