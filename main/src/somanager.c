@@ -128,39 +128,7 @@ void somanager_user_connection(void *conn) {
  int fd=((XMLDConnection *) conn)->fd;
 #endif
  
- /* writing the init msg */
- char *arg_carry[8]={COL_SEP_FIELD, COL_SEP_ENC_FIELD, ROW_SEP_FIELD, ROW_SEP_ENC_FIELD, DOWN_LEVEL_FIELD
-                     , DOWN_LEVEL_ENC_FIELD, UP_LEVEL_FIELD, UP_LEVEL_ENC_FIELD};
- char *val_carry[8];
- 
- /* NUL attachment to the end of single characters */
- char col_sep_str[2];
- char row_sep_str[2];
- char down_level_str[2];
- char up_level_str[2];
- col_sep_str[0]=col_sep;
- row_sep_str[0]=row_sep;
- down_level_str[0]=down_level;
- up_level_str[0]=up_level;
- col_sep_str[1]=row_sep_str[1]=down_level_str[1]=up_level_str[1]='\0';
- 
- val_carry[0]=col_sep_str;
- val_carry[1]=col_sep_enc;
- val_carry[2]=row_sep_str;
- val_carry[3]=row_sep_enc;
- val_carry[4]=down_level_str;
- val_carry[5]=down_level_enc;
- val_carry[6]=up_level_str;
- val_carry[7]=up_level_enc;
- char *init_msg=protoimpl_compose_msg(arg_carry, val_carry, 8, 0);
- 
- if (protoimpl_write_sequence(fd, init_msg, 1) == XMLD_FAILURE) {
-  free(init_msg);
-  xmld_socket_shutdown(fd);
-  free(((XMLDConnection *) conn)->user);
-  return;
- }
- free(init_msg);
+ char *val_carry[2];
  
  if (authman_handle(fd, val_carry) == XMLD_FAILURE) {
   xmld_socket_shutdown(fd);

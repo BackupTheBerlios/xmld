@@ -102,14 +102,17 @@ Foundation:
   specific, must be wholly removed from protoimpl and somanager.
   Each interface will have a predefined set of rules the client
   knows about.
+   * Erase defines in protoimpl (done).
+   * No init message in XMLDSQL. (done)
+   * Remove them from the protocol document. (done)
   
 * Implement an EchoServer interface for demonstration.
 
-* Implement a file retrieval engine with a file retrieval interface.
-
-* The communication protocol should be more flexible, allowing
-  for open messaging without headers (support for other protocols
-  such as http).
+* Rewrite (or maybe remove) the generic communication protocol
+  -- each interface should contain handling of authentication
+  for itself in order to allow for non-authentication-based
+  protocols, such as HTTP.
+  * Maybe take the current protocol inside XMLDSQL ?
 
 * Usage of autoconf to decide on the modules to be compiled.
 
