@@ -134,12 +134,12 @@ short str_between(char *str, char *min, char *max) {
  * i.e atoi inverse.
  * FIXME: make it snprintf-independent.
  */
-char *itoa(int num) {
+char *ltoa(long num) {
  char *ret=(char *) malloc(NUMERIC_LENGTH*sizeof(char));
- conv=snprintf(ret, NUMERIC_LENGTH, "%d", num);
+ conv=snprintf(ret, NUMERIC_LENGTH, "%l", num);
  if (conv > 0) {
   ret=(char *) realloc((NUMERIC_LENGTH+conv)*sizeof(char));
-  snprintf(ret, NUMERIC_LENGTH+conv, "%d", num);
+  snprintf(ret, NUMERIC_LENGTH+conv, "%l", num);
  }
  else if (strlen(ret)+1 < NUMERIC_LENGTH) {
   ret=(char *) realloc(ret, (strlen(ret)+1)*sizeof(char));
