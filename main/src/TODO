@@ -717,12 +717,12 @@ by the client. (done)
 * fix dmstrstr confusion bug. (done)
 
 * wrong client layout of recordsets, putting age
-into a second row.
+into a second row. (done)
 
-* attachment of &#11 to name when using * instead
-of "name, age".
+* segfault on where with !:age=10 a second time.
 
-* segfault on where with !:age=10
+* wrong type identification in simplify_expr.
+(done).
 
 * fix interrupted system call on server side on reciving
 of DISCONNECT and correction of a wrong pass.
@@ -766,8 +766,8 @@ search speed is important.
 
 * Full per-file user privilege system. (auth_get_priv)
 
-* Shell-like treatment of the forward arrow key in
-the client.
+* Shell-like treatment of the forward and backward arrow keys 
+in the client.
 
 --- Cleanups:
 
@@ -783,6 +783,9 @@ system unreadable).
 * handle special character decoding in the client.
 
 * Hide the password during input in the client (getch).
+
+* ftostr fills the empty characters of the string
+with 0's -- spaces are better.
 
 *--------------- Start of the OpenXMLD 0.7.0 part:
 

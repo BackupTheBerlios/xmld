@@ -16,8 +16,6 @@
 #include <string.h>
 #include "xmlddef.h"
 #include "sutils.h"
-#define INTEGER_LENGTH 10
-#define FLOAT_LENGTH 10
 
 /*
  * : Returns an array of strings extracted
@@ -161,7 +159,7 @@ char *ftostr(float num, int len) {
  if (len == 0) {
   len = FLOAT_LENGTH;
  }
- char *ret=(char *) malloc(len*sizeof(char));
+ char *ret=(char *) calloc(len, sizeof(char));
  snprintf(ret, len, "%f", num);
  return ret;
 }

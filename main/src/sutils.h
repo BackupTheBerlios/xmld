@@ -14,6 +14,9 @@
 #ifndef __SUTILS_H
 #define __SUTILS_H
 
+#define INTEGER_LENGTH 10
+#define FLOAT_LENGTH 10
+
 char **str_split(char *, char);
 char *str_prepend(char *, char *);
 XMLDBool str_like(char *, char *);

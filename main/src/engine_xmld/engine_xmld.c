@@ -170,7 +170,7 @@ XMLDBool engine_xmld_eval_cond(XMLDWork *work, XMLDCond *cond, int level) {
   if (left == NULL || right == NULL) {
    return XMLD_FALSE;
   }
- 
+  
   switch(cond->op) {
    case XMLD_COND_OP_EQUAL:
     if (left->type == right->type) {
@@ -603,7 +603,6 @@ XMLDExpr *engine_xmld_simplify_expr(XMLDWork *work, XMLDExpr *expr, int level) {
    fsetpos((FILE *) expr->file->data, &pos);
    char *type=engine_xmld_get_element_att_type((FILE *) expr->file->store, level, tagname, expr->ident);
    free(tagname);
-  
    if (type == NULL) {
     ret=XMLDExpr_create();
     ret->type = XMLD_QVAL;
@@ -614,7 +613,7 @@ XMLDExpr *engine_xmld_simplify_expr(XMLDWork *work, XMLDExpr *expr, int level) {
     ret->type = XMLD_QVAL;
     ret->qval=engine_xmld_get_column_value(expr->file, expr->ident);
    }
-   else if (strcasecmp(type, XMLD_TYPE_INT)) {
+   else if (strcasecmp(type, XMLD_TYPE_INT) == 0) {
     ret=XMLDExpr_create();
     ret->type = XMLD_INTEGER;
     ret->qval=engine_xmld_get_column_value(expr->file, expr->ident);
@@ -622,7 +621,7 @@ XMLDExpr *engine_xmld_simplify_expr(XMLDWork *work, XMLDExpr *expr, int level) {
     free(ret->qval);
     ret->qval=NULL;
    }
-   else if (strcasecmp(type, XMLD_TYPE_FLOAT)) {
+   else if (strcasecmp(type, XMLD_TYPE_FLOAT) == 0) {
     ret=XMLDExpr_create();
     ret->type = XMLD_FLOAT;
     ret->qval=engine_xmld_get_column_value(expr->file, expr->ident);

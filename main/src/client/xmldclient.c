@@ -303,7 +303,7 @@ void xmldclient_print_record_set(char *rs, struct conn_info *info) {
  while (*curr != '\0') {
   if (*curr == info->row_sep) {
    if (curr_col != NULL) {
-    printf("%s\n", curr_col);
+    printf("%s", curr_col);
     free(curr_col);
     curr_col=NULL;
     curr_col_len=0;
@@ -315,7 +315,7 @@ void xmldclient_print_record_set(char *rs, struct conn_info *info) {
   }
   else if (*curr == info->col_sep) {
    if (curr_col != NULL) {
-    printf("%s\n", curr_col);
+    printf("%s", curr_col);
     free(curr_col);
     curr_col=NULL;
     curr_col_len=0;
@@ -324,7 +324,7 @@ void xmldclient_print_record_set(char *rs, struct conn_info *info) {
   }
   else if (*curr == info->down_level) {
    if (curr_col != NULL) {
-    printf("%s\n", curr_col);
+    printf("%s", curr_col);
     free(curr_col);
     curr_col=NULL;
     curr_col_len=0;
@@ -333,7 +333,7 @@ void xmldclient_print_record_set(char *rs, struct conn_info *info) {
   }
   else if (*curr == info->up_level) {
    if (curr_col != NULL) {
-    printf("%s\n", curr_col);
+    printf("%s", curr_col);
     free(curr_col);
     curr_col=NULL;
     curr_col_len=0;
@@ -349,7 +349,7 @@ void xmldclient_print_record_set(char *rs, struct conn_info *info) {
   curr++;
  }
  if (curr_col != NULL) {
-  printf("%s\n", curr_col);
+  printf("%s", curr_col);
   free(curr_col);
   curr_col=NULL;
   curr_col_len=0;
