@@ -15,10 +15,16 @@
 #include "xmld_mempool.h"
 
 int i;
-struct XMLDMemPool *XMLDMemPool_create(int segsize, int num_seg) {
+struct XMLDMemPool *XMLDMemPool_create(int segsize, int num_seg, void (*free_func) (void *)) {
  struct XMLDMemPool *pool=(struct XMLDMemPool *)malloc(sizeof(struct XMLDMemPool));
  pool->num_seg=num_seg;
  pool->segsize=segsize;
+ if (free_func != NULL) {
+  pool->free_func=free_func;
+ }
+ else { /* a free_func wasn't provided */
+  pool->free_func=default_free_func;
+ }
  pool->pool=(void**) malloc(num_seg*sizeof(void*));
  pool->status=(short*) calloc(num_seg,sizeof(short));
  for (num_seg=0; num_seg < pool->num_seg; num_seg++) {
@@ -30,6 +36,7 @@ struct XMLDMemPool *XMLDMemPool_create(int segsize, int num_seg) {
 
 void XMLDMemPool_free(struct XMLDMemPool *pool) {
  for (i=0;i<pool->num_seg;i++) {
+  (*(pool->free_func)) (pool->pool[i]);
   free(pool->pool[i]);
  }
  free(pool->pool);
@@ -64,9 +71,21 @@ void *XMLDMemPool_get_segment(struct XMLDMemPool *pool) {
 void XMLDMemPool_unget_segment(struct XMLDMemPool *pool, void *segment) {
  for (i=0;i<pool->num_seg;i++) {
   if (pool->pool[i] == segment) {
+   (*(pool->free_func)) (pool->pool[i]);
    pool->status[i]=0;
    pool->num_used--;
    break;
   }
  }
+}
+
+void XMLDMemPool_unget_all(struct XMLDMemPool *pool) {
+ for (i=0;i<pool->num_seg;i++) {
+  (*(pool->free_func)) (pool->pool[i]);
+  pool->status[i]=0;
+  pool->num_used--;
+ }
+}
+
+void default_free_func(void *segment) {
 }
