@@ -12,6 +12,7 @@
  */
 
 #include <stdlib.h>
+#include <string.h>
 #include "xmld_list.h"
 struct XMLDFunc;
 #ifndef XMLD_FUNC_TYPE_DEFINED
@@ -55,7 +56,6 @@ void XMLDExpr_free_content(void *expr) {
    free(((XMLDExpr *)expr)->ident);
    break;
   case 3:
-   XMLDFunc_free(((XMLDExpr *)expr)->func);
    XMLDList_free(((XMLDExpr *)expr)->arg_list);
    break;
   case 4:
@@ -71,6 +71,36 @@ void XMLDExpr_free_content(void *expr) {
  * : Copies an expression into another expression.
  */
 void XMLDExpr_copy(XMLDExpr *src, XMLDExpr *dest) {
+ dest->type=src->type;
+ switch (src->type) {
+  case 0:
+   dest->nval=src->nval;
+  break;
+  case 1:
+   dest->left=src->left;
+   dest->right=src->right;
+   dest->op=src->op;
+  break;
+  case 2:
+   dest->ident=(char *) malloc((strlen(src->ident)+1)*sizeof(char));
+   strcpy(dest->ident, src->ident);
+  break;
+  case 3:
+   dest->func=src->func;
+   dest->arg_list=src->arg_list;
+  break;
+  case 4:   
+   dest->qval=(char *) malloc((strlen(src->qval)+1)*sizeof(char));
+   strcpy(dest->qval, src->qval);
+  break;
+  case 5:
+   dest->wildcard=src->wildcard;
+  break;
+ }
+ if (src->alias != NULL) {
+  dest->alias=(char *) malloc((strlen(src->alias)+1)*sizeof(char));
+  strcpy(dest->alias, src->alias);
+ }
 }
 
 /*
