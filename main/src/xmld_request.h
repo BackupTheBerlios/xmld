@@ -18,23 +18,23 @@
 struct XMLDRequest {
  char *file;
  short type; /* type of the query
-	            * 0 = SELECT query
-	            * 1 = SELECT with WHERE
-	            */
- XMLDExprTable *retr;  /* the list of expressions to be
-		                    * retrieved 
-		                    */
- XMLDCondTable *where; /* A condition for each level */
+              * 0 = SELECT query
+              * 1 = SELECT with WHERE
+              */
+ XMLDList *retr;  /* the list of expressions to be
+	           * retrieved */
+ XMLDList *where; /* A condition for each level */
 };
 
 typedef struct XMLDRequest XMLDRequest;
 
-XMLDRequest *XMLDRequest_create(char *, short, XMLDList *, XMLDList *);
+XMLDRequest *XMLDRequest_create(void);
 void XMLDRequest_free(XMLDRequest *);
+void XMLDRequest_free_content(void *);
 
 /* List functions */
 
 XMLDList *XMLDRequest_create_list(void);
-void XMLDRequest_add_to_list(XMLDList *, char *, short, XMLDList *, XMLDList *);
+XMLDRequest *XMLDRequest_add_to_list(XMLDList *);
 
 #endif /* HAVE_XMLD_REQUEST_H */
