@@ -54,7 +54,7 @@ void XMLDRow_free_content(void *row) {
  * row: the row to which the column is to be added.
  */
 void XMLDRow_add_col(XMLDRow *row) {
- XMLDCol_add_to_list(row->cols, NULL, 0);
+ XMLDCol_add_to_list(row->cols, NULL);
 }
 
 /*
@@ -63,9 +63,9 @@ void XMLDRow_add_col(XMLDRow *row) {
  * val: the value with which the row is going to be filled.
  * copy: whether to copy the given val.
  */
-void XMLDRow_fill_col(XMLDRow *row, char *val, short cpy) {
+void XMLDRow_fill_col(XMLDRow *row, char *val) {
  XMLDCol *col=(XMLDCol *) XMLDList_last(row->cols);
- XMLDCol_fill(col, val, cpy);
+ XMLDCol_fill(col, val);
 }
 
 /*
