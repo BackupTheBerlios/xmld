@@ -143,18 +143,47 @@ void XMLDExpr_apply_type(XMLDExpr *expr, char *type) {
  else if (strcasecmp(type, XMLD_TYPE_INT) == 0) {
   expr->type = XMLD_INTEGER;
   expr->nval=atoi(expr->qval);
-  free(expr->qval);
-  expr->qval=NULL;
+  if (expr->qval != NULL) {
+   free(expr->qval);
+   expr->qval=NULL;
+  } 
  }
  else if (strcasecmp(type, XMLD_TYPE_FLOAT) == 0) {
   expr->type = XMLD_FLOAT;
   expr->fnval=atof(expr->qval);
-  free(expr->qval);
-  expr->qval=NULL;
+  if (expr->qval != NULL) {
+   free(expr->qval);
+   expr->qval=NULL;
+  } 
  }
  else {
   expr->type = XMLD_QVAL;
  }
+}
+
+/*
+ * Returns a string representation of the given simple 
+ * expression.
+ */
+char *XMLDExpr_to_string(XMLDExpr *expr) {
+ char *ret;
+ if (expr->type == XMLD_INTEGER) {
+  return itostr(expr->nval, 0);
+ } 
+ else if (expr->type == XMLD_QVAL) {
+  if (expr->qval == NULL) {
+   return NULL;
+  }
+  ret=(char *) malloc((strlen(expr->qval)+1)*sizeof(char));
+  strcpy(ret, expr->qval);
+  return ret;
+ }
+ else if (expr->type == XMLD_FLOAT) {
+  return ftostr(expr->fnval, 0);
+ }
+ else {
+  return NULL;
+ }  
 }
 
 /*

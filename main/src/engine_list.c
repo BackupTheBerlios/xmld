@@ -28,8 +28,16 @@ XMLDStatus engine_list_init() {
  curr_engine->cleanup=engine_xmld_cleanup;
  curr_engine->walk=engine_xmld_walk;
  curr_engine->destroy=engine_xmld_destroy;
- curr_engine->eval_expr=engine_xmld_eval_expr;
- curr_engine->eval_cond=engine_xmld_eval_cond;
+ curr_engine->get_attribute_type=engine_xmld_get_attribute_type;
+ curr_engine->get_attribute=engine_xmld_get_attribute;
+ curr_engine->get_text_type=engine_xmld_get_text_type;
+ curr_engine->get_text=engine_xmld_get_text;
+ curr_engine->get_tagname=engine_xmld_get_tagname;
+ curr_engine->reset_element=engine_xmld_reset_element;
+ curr_engine->next_attribute=engine_xmld_next_attribute;
+ curr_engine->get_curr_attribute_type=engine_xmld_get_curr_attribute_type;
+ curr_engine->get_curr_attribute_name=engine_xmld_get_curr_attribute_name;
+ curr_engine->get_curr_attribute_value=engine_xmld_get_curr_attribute_value;
 #endif /* USE_ENGINE_XMLD */
  XMLDList_reset(engine_list);
  while (XMLDList_next(engine_list)) {

@@ -764,21 +764,31 @@ useful as something useful.
    values with NULL values of the qval field.
 
  * XMLDEngine (Modify according to requirements
- of twalker_simplify_expr)
- * engine_list (Modify according to XMLDEngine changes)
+ of twalker_simplify_expr) (done)
+ * engine_list (Modify according to XMLDEngine changes -- done)
  * XMLDCol (must contain a XMLDExpr field such that
- _is_complex returns XMLD_FALSE).
- * XMLDExpr (Implement XMLDExpr_to_string)
+ _is_complex returns XMLD_FALSE -- done).
+ * XMLDExpr (Implement XMLDExpr_to_string -- done)
  * twalker (call twalker_simplify_expr if is_complex returns
  true)
  * twalker (twalker_handle must resolve XMLD_LIST recursively
  using twalker_simplify_expr)
  * resptrans (call XMLDExpr_to_string on each column).
+ * Engine-XMLD (Implement the required functions)
+ * XMLDResponse_fill_col/XMLDCol_fill might need to fill the
+ expr and not the string.
 
-* Merge XMLDCond and XMLDExpr!
-
-* Condition tree walking must happen at twalker.
- * XMLDCond (Implement XMLDCond_to_boolean)
+* Merge XMLDCond and XMLDExpr:
+ * XMLDExpr (Put XMLDCond along with its macros and stuff into it)
+ * XMLDCond (remove)
+ * xmld-sql.(y|lex) (resolve condition rules as expressions)
+   * Notes:
+    * conditional operators must be left associative.
+    * Care about operator priority.
+ * twalker_simplify_expr (Merge XMLDCond constructs)
+ * twalker_handle (SELECT with WHERE needs modification)
+ * XMLDExpr_to_string (resolve conditions as well)
+ * XMLDExpr_to_boolean (remeber to resolve expression correctly)
 
 * If the above gets stabilized, remove unused functions
 in Engine-XMLD, XMLDResponse [...?].
@@ -790,7 +800,7 @@ in Engine-XMLD, XMLDResponse [...?].
  element text)
 
 * Implement a sequential column retrieval API in the engine in
-order to be able to resolve wildcards correctly.
+order to be able to resolve wildcards correctly. (done)
 
 * Response must contain a record set header (update PROTO).
 

@@ -16,6 +16,7 @@
 
 struct XMLDCol {
  char *val;
+ XMLDExpr *expr;
 };
 
 typedef struct XMLDCol XMLDCol;

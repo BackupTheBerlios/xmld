@@ -25,6 +25,7 @@
 XMLDCol *XMLDCol_create() {
  XMLDCol *col=(XMLDCol *) malloc(sizeof(XMLDCol));
  col->val=NULL;
+ col->expr=NULL;
  return col;
 }
 
@@ -45,6 +46,7 @@ void XMLDCol_free(XMLDCol *col) {
  */
 void XMLDCol_free_content(void *col) {
  cfree(((XMLDCol *) col)->val);
+ XMLDExpr_free(((XMLDCol *) col)->expr);
 }
 
 /*
@@ -75,5 +77,6 @@ XMLDColList *XMLDColList_create() {
 XMLDCol *XMLDColList_add(XMLDColList *list) {
  XMLDCol *col=(XMLDCol *) XMLDList_add(list);
  col->val=NULL;
+ col->expr=NULL;
  return col;
 }

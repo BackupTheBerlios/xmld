@@ -726,6 +726,7 @@ XMLDExpr *twalker_simplify_expr(XMLDExpr *expr, XMLDWork *work, int level) {
    ret->type = XMLD_LIST;
    ret->exprs = XMLDExprList_create();   
    XMLDExpr *tmp;
+   (*(expr->file->engine->reset_element)) (expr->file);
    while ((*(expr->file->engine->next_attribute)) (expr->file) == XMLD_TRUE) {
     char *type = (*(expr->file->engine->get_curr_attribute_type)) (expr->file);
     tmp = XMLDExprList_add(ret->exprs);

@@ -48,15 +48,18 @@ struct XMLDEngine {
  int (*walk) (XMLDWork *, XMLDFile *); /* The function which makes the engine
 			                * give a next result from the given file.
 			                */
- char *(*eval_expr) (XMLDWork *, XMLDExpr *, int); /* The function used for
-					            * getting the value of
-					            * an expression. 	 
-					            */
- 
- XMLDBool (*eval_cond) (XMLDWork *, XMLDCond *, int); /* The function used for
-					               * evaluation of a con-
-					               * dition.
-					               */
+ char *(*get_attribute_type) (XMLDFile *, char *);
+ char *(*get_attribute) (XMLDFile *, char *);
+ char *(*get_text_type) (XMLDFile *);
+ char *(*get_text) (XMLDFile *);
+ char *(*get_tagname) (XMLDFile *);
+
+ /* Sequential attribute selection API */
+ void (*reset_element) (XMLDFile *);
+ XMLDBool (*next_attribute) (XMLDFile *);
+ char *(*get_curr_attribute_type) (XMLDFile *);
+ char *(*get_curr_attribute_name) (XMLDFile *);
+ char *(*get_curr_attribute_value) (XMLDFile *);
 };
 
 #ifndef XMLDENGINE_TYPE_DEFINED
