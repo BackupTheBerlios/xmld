@@ -135,10 +135,7 @@ cfg_parser_parse, and in cfg_get. (done)
 
 * sosel should read MULTI_PROC_MTASKER to decide whether
 to use a shared memory segment for storing connection
-information and whether to obey the sosel.max_conn
-configuration option.
-
-* Find a good way of reporting out-of-request errors.
+information. (done)
 
 * macros inside mtasker -> ptasker ;-) (done)
 
@@ -151,19 +148,9 @@ twalker) (done)
 * Implement XMLDResponse_curr_col/row which returns the current column/row.
 (done)
 
-* Remove/Secure usage of SIGUSR1 in mtasker.
-
-* Create a hash table implementation for places where
-search speed is important (XMLDHashTable), and provide
-APIs in XMLDEngine and XMLDFunc (...?) in that form:
-
-XMLDEngine_create_hashtable(...)
-XMLDEngine_add_to_hashtable(...)
-XMLDEngine_search_hashtable(...)
-
 * Rewrite the query parser (xmld-sql.y) to [1] fit the 
 new query specification and [2] to respect the object-
-oriented foundation.
+oriented foundation. (done)
 
 * Check all the code for realloc() while iterators are
 on the realloc'd memory segment. These iterators must
@@ -192,6 +179,7 @@ rce.
 * short return values that indiciate
 success/failure must use 0 for failure
 and 1 for success in all the code.
+(done)
 
 * In all places where XMLDFunc/XMLDExpr
 were used maintain correct dependency 
@@ -241,9 +229,6 @@ format_manip.(c|h): which contains
 functions for direct .format file
 manipulation. (done)
 
-* Implement a multi-threaded multi-
-tasker (Macro: USE_TTASKER).
-
 * fmanager_get_read_fd -> *_get_sh_fd, fmanager_
 get_write_fd -> *_get_ex_fd. (done)
 
@@ -264,9 +249,10 @@ get_write_fd -> *_get_ex_fd. (done)
 * Check for replacement of '\0' and usage of strlen
 to refer to its new position.
 
-* Implement read buffering in dutils.
+* Implement read buffering in dutils. (done)
 
-* Implement eval_aggr_expr.
+* Remove eval_aggr_expr from everywhere because
+it's not needed anymore. (done)
 
 * Implement engine_xmld_eval_cond (done)
 
@@ -274,16 +260,12 @@ to refer to its new position.
 XMLDWork shouldn't concatenate it to
 curr_dir in such a case. (done)
 
-* Compile the OpenXMLD.
-
 * Implement str_like, str_between in sutils. (done)
 
 * Add the AND operator type to expr to handle
 between and not between conditionals. (done)
 
 * eval_cond atoi -> atol. (done)
-
-* Implement alphabetical comparsion in str_between.
 
 * itoa -> sutils. (done)
 
@@ -306,4 +288,72 @@ statements. (done)
 * Make consideration of the new types in
 Engine-XMLD's fmanager_get_*_fd calls. (done)
 
-* Implement request types in twalker.
+* Implement actions for rest of query types in xmld-sql.y (done)
+
+* Fix qp's usage of the query parser. (done)
+
+* Implement xmld_socket_read.
+
+* In twalker ERROR_RESPONSE for all the not implemented types. (done)
+
+* Add XMLD_ENOTIMPL to xmld_errors.h. (done)
+
+* Write a xmld.conf file. (done)
+
+* Respect 'xmld.document_root' configuration directive when
+using XMLDWork_get_full_file. In addition cfg_init must
+put it in a global variable. (done)
+
+* cfg_parser_parse must ignore the white space at the beginning
+of value.
+
+* Fix the cfg_parser won't accept values containing ';'
+
+* Eliminate the need for somanager.num_listeners by
+conventionally filling the last array element in
+sosel.listeners with a NULL.
+
+--------------- Start of The OpenXMLD 0.5.0 part:
+
+* Implement the XMLD_ENOIMPL things in twalker,
+and specify the corresponding engine functions
+and implement them in Engine-XMLD.
+
+* Implement CREATE FILE/TABLE.
+
+* Implement alphabetical comparsion in str_between.
+
+* Find a way of correct resolution of aggregate
+expressions.
+
+* Add and implement SQL functions in func_list.
+
+* Create a hash table implementation for places where
+search speed is important (XMLDHashTable), and provide
+APIs in XMLDEngine and XMLDFunc (...?) in that form:
+
+XMLDEngine_create_hashtable(...)
+XMLDEngine_add_to_hashtable(...)
+XMLDEngine_search_hashtable(...)
+
+* Remove/Secure usage of SIGUSR1 in ptasker.
+
+* Find a good way of reporting out-of-request errors.
+
+* in 0.5.x releases, exapnd QUERY.html, and offer support for
+whatever added there.
+
+*--------------- Start of The OpenXMLD 0.6.0 part:
+
+* Implement a multi-threaded multi-
+tasker (Macro: USE_TTASKER).
+
+* Implement an in-memory parser (libxml2-based)
+
+* Re-implement fmanager using a flock-independent way
+once MULTI_THREAD_MTASKER is on.
+
+* Implement multiple query parsers support and switching
+on the fly.
+
+

@@ -11,9 +11,9 @@
  * -------------------------------------------------------------- * 
  */
  
-#ifndef HAVE_MFIGURE_H
-#define HAVE_MFIGURE_H
+#ifndef __MFIGURE_H
+#define __MFIGURE_H
 
 char *mfigure_get_mime(char *);
 
-#endif /* HAVE_MFIGURE_H */
+#endif /* __MFIGURE_H */
