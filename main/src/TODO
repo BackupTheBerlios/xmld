@@ -428,7 +428,7 @@ useful as something useful.
   * Remove the simple check from prepare. (done)
   * Add the is_valid_mime to XMLDEngine. (done)
   * Update engine_list to conform. (done)
-  * Implement is_valid_mime in engine_xmld.
+  * Implement is_valid_mime in engine_xmld. (done)
 
 * Engine functions should never know about the XMLDWork structure,
   XMLDFile one MUST be enough. (done)

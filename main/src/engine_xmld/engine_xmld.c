@@ -60,7 +60,12 @@ XMLDStatus engine_xmld_prepare(XMLDWork *work, XMLDFile *file, int level) {
 }
 
 XMLDBool engine_xmld_is_valid_mime(char *mime) {
- return XMLD_TRUE;
+ if (strcmp(mime, "text/xml") == 0) {	 
+  return XMLD_TRUE;
+ }
+ else {
+  return XMLD_FALSE;
+ }
 }
 
 /* load_format_file function */
