@@ -780,10 +780,10 @@ useful as something useful.
     - Notes:
      - conditional operators must be left associative. (done)
      - Care about operator priority. (done)
-  - twalker_simplify_expr (Merge XMLDCond constructs)
+  - twalker_simplify_expr (Merge XMLDCond constructs -- done)
     - Use XMLDExpr_to_boolean in AND, OR, NOT implementations.
   - XMLDExpr_to_string (resolve conditions as well)
-  - XMLDExpr_to_boolean (remeber to resolve expression correctly)
+  - XMLDExpr_to_boolean (remeber to resolve expressions correctly)
  * twalker (call twalker_simplify_expr if is_complex returns
  true)
  * twalker_simplify_expr (if alias is not NULL copy it into ret instead of the 

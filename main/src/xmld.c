@@ -64,6 +64,8 @@ int main() {
  err_str[14]="Not allowed division by zero value.";
  err_str[15]="Invalid usage of the exponential operator with string operand(s).";
  err_str[16]="Invalid usage of the unary substraction operator with a string operand.";
+ err_str[17]="Invalid comparsion between string and numberic value.";
+ err_str[18]="Invalid usage of LIKE with numberic values.";
 
  init_create_part(&parts[0], cfg_init, cfg_shutdown);
  init_create_part(&parts[1], engine_list_init, engine_list_shutdown);

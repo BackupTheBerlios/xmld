@@ -669,24 +669,270 @@ XMLDExpr *twalker_simplify_expr(XMLDExpr *expr, XMLDWork *work, int level) {
     } 
    break;
    case XMLD_OP_EQUAL:
+    if (left->type == right->type) {
+     ret = XMLDExpr_create();
+     ret->type = XMLD_INTEGER;
+     switch(left->type) {
+      case XMLD_INTEGER:
+       ret->nval = (left->nval == right->nval);
+      break;
+      case XMLD_FLOAT:
+       ret->nval = (left->fnval == right->fnval);
+      break;
+      case XMLD_QVAL:
+       ret->nval = (strcmp(left->qval, right->qval) == 0);
+      break;
+     }
+    }
+    else {
+     if (left->type == XMLD_INTEGER && right->type == XMLD_FLOAT) {
+      ret = XMLDExpr_create();
+      ret->type = XMLD_INTEGER;
+      ret->nval = (left->nval == right->fnval);
+     }
+     else if (left->type == XMLD_FLOAT && right->type == XMLD_INTEGER) {
+      ret = XMLDExpr_create();
+      ret->type = XMLD_INTEGER;
+      ret->nval = (left->fnval == right->nval);
+     }
+     else {
+      xmld_errno = XMLD_ESTRNUMCMP;
+      if (XMLDExpr_is_complex(expr->left)) {
+       XMLDExpr_free(left);
+      }
+      if (XMLDExpr_is_complex(expr->right)) {
+       XMLDExpr_free(right);
+      }
+      return NULL;
+     }
+    }
    break;
    case XMLD_OP_L:
+    if (left->type == right->type) {
+     ret = XMLDExpr_create();
+     ret->type = XMLD_INTEGER;
+     switch(left->type) {
+      case XMLD_INTEGER:
+       ret->nval = (left->nval < right->nval);
+      break;
+      case XMLD_FLOAT:
+       ret->nval = (left->fnval < right->fnval);
+      break;
+      case XMLD_QVAL:
+       ret->nval = (strcmp(left->qval, right->qval) < 0);
+      break;
+     }
+    }
+    else {
+     if (left->type == XMLD_INTEGER && right->type == XMLD_FLOAT) {
+      ret = XMLDExpr_create();
+      ret->type = XMLD_INTEGER;
+      ret->nval = (left->nval < right->fnval);
+     }
+     else if (left->type == XMLD_FLOAT && right->type == XMLD_INTEGER) {
+      ret = XMLDExpr_create();
+      ret->type = XMLD_INTEGER;
+      ret->nval = (left->fnval < right->nval);
+     }
+     else {
+      xmld_errno = XMLD_ESTRNUMCMP;
+      if (XMLDExpr_is_complex(expr->left)) {
+       XMLDExpr_free(left);
+      }
+      if (XMLDExpr_is_complex(expr->right)) {
+       XMLDExpr_free(right);
+      }
+      return NULL;
+     }
+    }
    break;
    case XMLD_OP_G:
+    if (left->type == right->type) {
+     ret = XMLDExpr_create();
+     ret->type = XMLD_INTEGER;
+     switch(left->type) {
+      case XMLD_INTEGER:
+       ret->nval = (left->nval > right->nval);
+      break;
+      case XMLD_FLOAT:
+       ret->nval = (left->fnval > right->fnval);
+      break;
+      case XMLD_QVAL:
+       ret->nval = (strcmp(left->qval, right->qval) > 0);
+      break;
+     }
+    }
+    else {
+     if (left->type == XMLD_INTEGER && right->type == XMLD_FLOAT) {
+      ret = XMLDExpr_create();
+      ret->type = XMLD_INTEGER;
+      ret->nval = (left->nval > right->fnval);
+     }
+     else if (left->type == XMLD_FLOAT && right->type == XMLD_INTEGER) {
+      ret = XMLDExpr_create();
+      ret->type = XMLD_INTEGER;
+      ret->nval = (left->fnval > right->nval);
+     }
+     else {
+      xmld_errno = XMLD_ESTRNUMCMP;
+      if (XMLDExpr_is_complex(expr->left)) {
+       XMLDExpr_free(left);
+      }
+      if (XMLDExpr_is_complex(expr->right)) {
+       XMLDExpr_free(right);
+      }
+      return NULL;
+     }
+    }
    break;
    case XMLD_OP_NE:
+    if (left->type == right->type) {
+     ret = XMLDExpr_create();
+     ret->type = XMLD_INTEGER;
+     switch(left->type) {
+      case XMLD_INTEGER:
+       ret->nval = (left->nval != right->nval);
+      break;
+      case XMLD_FLOAT:
+       ret->nval = (left->fnval != right->fnval);
+      break;
+      case XMLD_QVAL:
+       ret->nval = (strcmp(left->qval, right->qval) != 0);
+      break;
+     }
+    }
+    else {
+     if (left->type == XMLD_INTEGER && right->type == XMLD_FLOAT) {
+      ret = XMLDExpr_create();
+      ret->type = XMLD_INTEGER;
+      ret->nval = (left->nval != right->fnval);
+     }
+     else if (left->type == XMLD_FLOAT && right->type == XMLD_INTEGER) {
+      ret = XMLDExpr_create();
+      ret->type = XMLD_INTEGER;
+      ret->nval = (left->fnval != right->nval);
+     }
+     else {
+      xmld_errno = XMLD_ESTRNUMCMP;
+      if (XMLDExpr_is_complex(expr->left)) {
+       XMLDExpr_free(left);
+      }
+      if (XMLDExpr_is_complex(expr->right)) {
+       XMLDExpr_free(right);
+      }
+      return NULL;
+     }
+    }
    break;
    case XMLD_OP_LE:
+    if (left->type == right->type) {
+     ret = XMLDExpr_create();
+     ret->type = XMLD_INTEGER;
+     switch(left->type) {
+      case XMLD_INTEGER:
+       ret->nval = (left->nval <= right->nval);
+      break;
+      case XMLD_FLOAT:
+       ret->nval = (left->fnval <= right->fnval);
+      break;
+      case XMLD_QVAL:
+       ret->nval = (strcmp(left->qval, right->qval) <= 0);
+      break;
+     }
+    }
+    else {
+     if (left->type == XMLD_INTEGER && right->type == XMLD_FLOAT) {
+      ret = XMLDExpr_create();
+      ret->type = XMLD_INTEGER;
+      ret->nval = (left->nval <= right->fnval);
+     }
+     else if (left->type == XMLD_FLOAT && right->type == XMLD_INTEGER) {
+      ret = XMLDExpr_create();
+      ret->type = XMLD_INTEGER;
+      ret->nval = (left->fnval <= right->nval);
+     }
+     else {
+      xmld_errno = XMLD_ESTRNUMCMP;
+      if (XMLDExpr_is_complex(expr->left)) {
+       XMLDExpr_free(left);
+      }
+      if (XMLDExpr_is_complex(expr->right)) {
+       XMLDExpr_free(right);
+      }
+      return NULL;
+     }
+    }
    break;
    case XMLD_OP_GE:
+    if (left->type == right->type) {
+     ret = XMLDExpr_create();
+     ret->type = XMLD_INTEGER;
+     switch(left->type) {
+      case XMLD_INTEGER:
+       ret->nval = (left->nval >= right->nval);
+      break;
+      case XMLD_FLOAT:
+       ret->nval = (left->fnval >= right->fnval);
+      break;
+      case XMLD_QVAL:
+       ret->nval = (strcmp(left->qval, right->qval) >= 0);
+      break;
+     }
+    }
+    else {
+     if (left->type == XMLD_INTEGER && right->type == XMLD_FLOAT) {
+      ret = XMLDExpr_create();
+      ret->type = XMLD_INTEGER;
+      ret->nval = (left->nval >= right->fnval);
+     }
+     else if (left->type == XMLD_FLOAT && right->type == XMLD_INTEGER) {
+      ret = XMLDExpr_create();
+      ret->type = XMLD_INTEGER;
+      ret->nval = (left->fnval >= right->nval);
+     }
+     else {
+      xmld_errno = XMLD_ESTRNUMCMP;
+      if (XMLDExpr_is_complex(expr->left)) {
+       XMLDExpr_free(left);
+      }
+      if (XMLDExpr_is_complex(expr->right)) {
+       XMLDExpr_free(right);
+      }
+      return NULL;
+     }
+    }
    break;
    case XMLD_OP_LIKE:
+    if (left->type == XMLD_QVAL && right->type = XMLD_QVAL) {
+     ret = XMLDExpr_create();
+     ret->type = XMLD_INTEGER;
+     ret->nval = str_like(left->qval, right->qval);
+    }
+    else {
+     xmld_errno = XMLD_ENUMLIKE;
+     if (XMLDExpr_is_complex(expr->left)) {
+      XMLDExpr_free(left);
+     }
+     if (XMLDExpr_is_complex(expr->right)) {
+      XMLDExpr_free(right);
+     }
+     return NULL;
+    }
    break;
    case XMLD_OP_AND:
+    ret = XMLDExpr_create();
+    ret->type = XMLD_INTEGER;
+    ret->nval = (XMLDExpr_to_boolean(left) && XMLDExpr_to_boolean(right));
    break;
    case XMLD_OP_OR:
+    ret = XMLDExpr_create();
+    ret->type = XMLD_INTEGER;
+    ret->nval = (XMLDExpr_to_boolean(left) || XMLDExpr_to_boolean(right));
    break;
    case XMLD_OP_NOT:
+    ret = XMLDExpr_create();
+    ret->type = XMLD_INTEGER;
+    ret->nval = (!XMLDExpr_to_boolean(right));
    break;
   }
   

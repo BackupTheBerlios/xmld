@@ -56,9 +56,11 @@ enum xmld_error {
  XMLD_ESTRMULTIP,
  XMLD_ESTRDIV,
  XMLD_EZERODIV,
- XMLD_ESTREXPO
+ XMLD_ESTREXPO,
+ XMLD_ESTRNUMCMP,
+ XMLD_ENUMLIKE
 } xmld_errno;
 
-char *err_str[10];
+char *err_str[19];
 
 #endif /* __XMLDDEF_H */
