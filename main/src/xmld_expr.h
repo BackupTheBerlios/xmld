@@ -56,7 +56,7 @@ struct XMLDExpr {
 				      * with an exprssion array
 				      * being passed as an argument
 				      */
- struct XMLDExpr *arg_list;
+ XMLDExprTable *arg_list;
  /*-------------------*/
  char *qval; /* type 4: Quoted value */
  /*-------------------*/
