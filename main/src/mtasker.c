@@ -45,9 +45,9 @@ short mtasker_init() {
  ttable.num_tasks=0;
  ttable.tasks=0;
  
- init_proc=cfg_get("mtasker.init_proc");
- max_proc=cfg_get("mtasker.max_proc");
- max_idle_proc=cfg_get("mtasker.max_idle_proc");
+ init_proc=*((int *) cfg_get("mtasker.init_proc"));
+ max_proc=*((int *) cfg_get("mtasker.max_proc"));
+ max_idle_proc=((int *) cfg_get("mtasker.max_idle_proc"));
 
  if (init_proc>max_proc) {
   init_proc=max_proc;
