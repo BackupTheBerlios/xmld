@@ -306,6 +306,25 @@ char *XMLDExpr_to_string(XMLDExpr *expr) {
  else if (expr->type == XMLD_FLOAT) {
   return ftostr(expr->fnval, 0);
  }
+ else if (expr->type == XMLD_LIST) {
+  ret = (char *) malloc(sizeof(char));
+  ret[0] = '\0';
+  XMLDList_reset(expr->exprs);
+  while (XMLDList_next(expr->exprs)) {
+   char *expr_str = XMLDExpr_to_string(XMLDList_curr(expr->exprs));
+   if (XMLDList_last(expr->exprs) == XMLDList_curr(expr->exprs)) {
+    ret = (char *) realloc(ret, (strlen(ret) + strlen(expr_str) + 1) * sizeof(char));
+    strcat(ret, expr_str);
+   }
+   else {
+    ret = (char *) realloc(ret, (strlen(ret) + strlen(expr_str) + 2) * sizeof(char));
+    strcat(ret, expr_str);
+    strcat(ret, ",");
+   }
+   free(expr_str);
+  }
+  return ret;
+ }
  else if (expr->type == XMLD_VOID_LIST) {
   ret = (char *) malloc(2*sizeof(char));
   strcpy(ret, "!");
