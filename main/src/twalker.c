@@ -184,6 +184,7 @@ XMLDStatus twalker_handle(XMLDWork *work) {
 
    work->resp=XMLDResponse_create();
    XMLDList_reset(work->req->where);
+   XMLDList_reset(work->req->retr);
    ret=0;
    ret_all=XMLD_WALK_DOWN;
    retr=XMLD_TRUE;

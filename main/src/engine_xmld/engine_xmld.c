@@ -170,7 +170,7 @@ XMLDBool engine_xmld_eval_cond(XMLDWork *work, XMLDCond *cond, int level) {
   if (left == NULL || right == NULL) {
    return XMLD_FALSE;
   }
-  
+ 
   switch(cond->op) {
    case XMLD_COND_OP_EQUAL:
     if (left->type == right->type) {

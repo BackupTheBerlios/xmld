@@ -104,7 +104,6 @@ int main(int argc, char **argv) {
     free(curr_msg);
     continue;
    }
-   printf("%s\n", curr_msg);
    xmldclient_print_record_set(curr_msg, &info);
    free(curr_msg);
   } 

@@ -513,7 +513,7 @@ and use them everywhere. (done)
 
 * Hook authman_get_priv in twalker. (done)
 
-* Add a length argument to xmld_socket_read/write. (done)
+* Add a length argument to xmld_socket_read. (done)
 
 * Handle the authentication sequence in authman_handle. (done)
 
@@ -559,9 +559,6 @@ esponse_flush. and remove XMLDResponse_flush. (done)
 * add down-level up-level to init msg (done)
 
 * Individual expression resolution within twalker. (done)
-
-* Fix xmld_socket_accept: Interupted system call on DISC
-ONNECT. (check how of xmld_socket_shutdown).
 
 * Attach NULLs at the end of -sep characters in qp's init
 message. (done)
@@ -676,7 +673,7 @@ statements that must not be mixed with normal conditions. (done)
 
 * run (done)
 
-* in somanager. print out each port the OpenXMLD 
+* in somanager. print out each port the OpenXMLD is
 listening to under the PID. (done)
 
 * create auth.xml and add a single user to it. (done)
@@ -699,22 +696,36 @@ server on receiving it. (done)
 * simplify expr may return NULL, eval_expr must check.
 (done)
 
-* why doesn't the up-level of zero show in the response.
+* up-level of zero doesn't show in the response.
 (done)
 
 * col_sep and row_sep come before the values and not 
 after them. (done)
 
 * why does the server segfault just after serving
-up the request. (done)
+up the request. (done -- because XMLDWork_free
+tries to free work->files while work->files is
+freed on a per request basis -- fixed)
 
 * fix that a second query isn't sent correctly
 by the client. (done)
 
+* fix the segfault on twalker error. (done)
+
+* fix format_manip bugs. (done)
+
+* fix dmstrstr confusion bug. (done)
+
+* wrong client layout of recordsets, putting age
+into a second row.
+
+* attachment of &#11 to name when using * instead
+of "name, age".
+
+* segfault on where with !:age=10
+
 * fix interrupted system call on server side on reciving
 of DISCONNECT and correction of a wrong pass.
-
-* fix 
 
 * modify INSTALL.
 
@@ -754,6 +765,9 @@ Engine-XMLD accordingly.
 search speed is important.
 
 * Full per-file user privilege system. (auth_get_priv)
+
+* Shell-like treatment of the forward arrow key in
+the client.
 
 --- Cleanups:
 

@@ -273,7 +273,7 @@ cond_list: cond {
 		 XMLDCond_copy($1, cond);
 		 free($1);
                 }
-	   | cond_list ":" cond {
+	   | cond_list ':' cond {
                                  $$=$1;
 		                 XMLDCond *cond=XMLDCondList_add($$);
 		                 XMLDCond_copy($3, cond);

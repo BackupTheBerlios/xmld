@@ -65,7 +65,7 @@ int engine_xmld_get_element_att_length(FILE *fd, int level, char *tagname, char 
  char *stroke=strchr(format, '|');
  *stroke='\0';
  int ret;
- sscanf(stroke, "%d", &ret);
+ sscanf(format, "%d", &ret);
  free(format);
  return ret;
 }
@@ -79,10 +79,14 @@ char *engine_xmld_get_element_att_type(FILE *fd, int level, char *tagname, char 
   return NULL;
  } 
  char *stroke=strchr(format, '|');
- strcpy(format, stroke+1);
- format[strlen(stroke+1)]='\0';
- format=(char *) realloc(format, (strlen(format)+1)*sizeof(char));
- return format;
+ if (stroke == NULL) {
+  return NULL;
+ }
+ stroke++;
+ char *ret=(char *) malloc((strlen(stroke)+1) * sizeof(char));
+ strcpy(ret, stroke);
+ free(format);
+ return ret;
 }
 
 /*
@@ -90,6 +94,7 @@ char *engine_xmld_get_element_att_type(FILE *fd, int level, char *tagname, char 
  * or the length. (attribute form: attname="length|type").
  */ 
 char *engine_xmld_get_element_att_format(FILE *fd, int level, char *tagname, char *attribute) {
+ rewind(fd);
  char *tokens[]={"<level>", "</level>"};
  int curr_level=0;
  XMLDBool proceed=XMLD_FALSE;
@@ -98,7 +103,7 @@ char *engine_xmld_get_element_att_format(FILE *fd, int level, char *tagname, cha
  
  while (1) {
   fgetpos(fd, &pos);
-  tok=dmstrstr(fd, tokens, 3);
+  tok=dmstrstr(fd, tokens, 2);
   if (tok == -1) {
    return NULL;
   }
@@ -111,9 +116,8 @@ char *engine_xmld_get_element_att_format(FILE *fd, int level, char *tagname, cha
   else if (tok == 1) {
    fsetpos(fd, &pos);
    proceed = XMLD_TRUE;
-   curr_level--;
   }
-  if (proceed) {
+  if (proceed == XMLD_TRUE) {
    char *tname=str_prepend(tagname, "<");
    char *tokens2[2];
    tokens2[0]=tname;

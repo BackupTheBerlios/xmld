@@ -102,9 +102,8 @@ void qp_handle(void *conn) {
   status = twalker_handle(work);
   if (status == XMLD_FAILURE) {
    ERROR_RESPONSE;
-   XMLDWork_free(work);
-   continue;
   }
+
   XMLDResponse_free(work->resp);
   XMLDRequest_free(work->req);
   XMLDList_free(work->files);

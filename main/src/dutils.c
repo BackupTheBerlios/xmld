@@ -95,6 +95,9 @@ int dmstrstr(FILE *fd, char **tokens, int num) {
      return i;
     }
    }
+   else {
+    cur[i]=0;
+   }
   }
  }
 }
