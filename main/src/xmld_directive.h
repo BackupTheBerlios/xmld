@@ -24,7 +24,8 @@ union cfg_value {
 struct XMLDDirective {
  char *name;
  union cfg_value value;
- short type; /* 0 = int
+ short type; /* -1 = error
+              * 0 = int
               * 1 = int*
 	      * 2 = char*
 	      */
