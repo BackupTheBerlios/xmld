@@ -25,10 +25,10 @@
  * col_ptrs (optional): the initial XMLDList of column pointers attached to aggr.
  * returns: the newly created aggregate expression table.
  */
-XMLDAggrTable *XMLDAggrTable_create(XMLDExpr *aggr, XMLDList *col_ptrs) {
+XMLDAggrTable *XMLDAggrTable_create() {
  XMLDAggrTable *table=(XMLDAggrTable *) malloc(sizeof(XMLDAggrTable));
- table->aggr=aggr;
- table->col_ptrs=col_ptrs;
+ table->aggr=NULL;
+ table->col_ptrs=NULL;
  return table;
 }
 
@@ -74,8 +74,7 @@ void XMLDAggrTable_fill(XMLDAggrTable *table, char *val) {
  XMLDList_reset(table->col_ptrs);
  while (XMLDList_next(table->col_ptrs)) {
   XMLDCol **col_ptr=(XMLDCol **) XMLDList_curr(table->col_ptrs);
-  (*col_ptr)->val=realloc((*col_ptr)->val, (strlen(val)+1)*sizeof(char));
-  strcpy((*col_ptr)->val, val);
+  XMLDCol_fill(*col_ptr, val);
  }
 }
 
@@ -96,10 +95,10 @@ XMLDList *XMLDAggrTable_create_list() {
  * col_ptrs (optional): the list of column pointers of the new element.
  * returns: a pointer to the newly added aggregate expression table.
  */
-XMLDAggrTable *XMLDAggrTable_add_to_list(XMLDList *list, XMLDExpr *aggr, XMLDList *col_ptrs) {
+XMLDAggrTable *XMLDAggrTable_add_to_list(XMLDList *list) {
  XMLDAggrTable *table=(XMLDAggrTable *) XMLDList_add(list);
- table->aggr=aggr;
- table->col_ptrs=col_ptrs;
+ table->aggr=NULL;
+ table->col_ptrs=NULL;
  return table;
 }
 
