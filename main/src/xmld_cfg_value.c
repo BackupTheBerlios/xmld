@@ -46,7 +46,9 @@ void XMLDCfgValue_free(XMLDCfgValue *value) {
 void XMLDCfgValue_free_content(void *value) {
  XMLDCfgValue *val = (XMLDCfgValue *) value;
  if (val->type == XMLD_CFG_STRING) {
-  cfree((char *) val->value);
+  if ( val->value != NULL) {
+   free(value->value);
+  }
  }
 }
 

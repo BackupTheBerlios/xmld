@@ -26,7 +26,6 @@
 #define AUTH_PATH "path"
 #define AUTH_PRIV "priv"
 
-XMLDStatus authman_handle(int , char **);
 XMLDStatus authman_auth_user(char *, char **ret);
 int authman_get_priv(char *, char *); /* priv = privileges */
 

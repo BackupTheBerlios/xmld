@@ -47,7 +47,9 @@ void XMLDFile_free(XMLDFile *file) {
  * Frees the memory internally allocated by a file structure.
  */
 void XMLDFile_free_content(void *file) {
- cfree(((XMLDFile *) file)->name);
+ if (((XMLDFile *) file)->name != NULL) {
+  free(((XMLDFile *) file)->name);
+ }
 }
 
 /*

@@ -19,7 +19,6 @@
 XMLDWork *XMLDWork_create() {
  XMLDWork *work=(XMLDWork *) malloc(sizeof(XMLDWork));
  work->files=NULL;
- work->conn=NULL;
  work->interface=NULL;
  work->req=NULL;
  work->resp=NULL;
@@ -43,7 +42,6 @@ void XMLDWork_free(XMLDWork *work) {
  */
 void XMLDWork_free_content(void *work) {
  XMLDList_free(((XMLDWork *) work)->files);
- XMLDConnection_free(((XMLDWork *) work)->conn);
 }
 
 /*
@@ -64,7 +62,6 @@ XMLDWorkList *XMLDWorkList_create() {
 XMLDWork *XMLDWorkList_add(XMLDWorkList *list) {
  XMLDWork *work=(XMLDWork *) XMLDList_add(list);
  work->files=NULL;
- work->conn=NULL;
  work->interface=NULL;
  work->req=NULL;
  work->resp=NULL;

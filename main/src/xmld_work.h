@@ -15,7 +15,6 @@
 #define __XMLD_WORK_H
 
 struct XMLDWork {
- XMLDConnection *conn;
  XMLDInterface *interface;
  XMLDFileList *files;
  void *req;

@@ -53,7 +53,9 @@ void XMLDList_free_content(void *list) {
  while (XMLDList_next((XMLDList *) list)) {
   (*(((XMLDList *) list)->free_func)) (XMLDList_curr((XMLDList *) list));
  }
- cfree(((XMLDList *) list)->content);
+ if (((XMLDList *) list)->content != NULL) {
+  free(((XMLDList *) list)->content);
+ }
 }
 
 /*

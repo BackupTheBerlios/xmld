@@ -62,7 +62,9 @@ void XMLDCfgDirective_free(XMLDCfgDirective *directive) {
  */
 void XMLDCfgDirective_free_content(void *directive) {
  XMLDCfgDirective *dir = (XMLDCfgDirective *) directive;
- cfree(dir->name);
+ if (dir->name != NULL) {
+  free(dir->name);
+ } 
  XMLDList_free(dir->values);
 }
 

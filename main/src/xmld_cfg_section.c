@@ -90,7 +90,9 @@ void XMLDCfgSection_free_content(void *section) {
  XMLDCfgSection *section = (XMLDCfgSection *) section;
  XMLDList_free(section->directives);
  XMLDList_free(section->sections);
- cfree(section->name);
+ if (section->name != NULL) {
+  free(section->name);
+ }
 }
 
 /*
