@@ -12,9 +12,6 @@
  */
 
 #include "includes.h"
-#include "xmld_cfg_value.h"
-#include "xmld_cfg_directive.h"
-#include "xmld_cfg_section.h"
 #include "cfg.h"
 
 int yyparse(void *);
@@ -44,13 +41,44 @@ XMLDStatus cfg_init() {
   return XMLD_FAILURE;
  }
  else {
-  XMLDCfgDirective *tmp = XMLDCfgDirectiveList_search_by_name(cfg_tree->directives, "DocumentRoot");
-  if (tmp == NULL) {
+  document_root = (char *) ((XMLDList_first(cfg_get(NULL, "DocumentRoot", NULL)))->value);
+  if (document_root == NULL) {
    return XMLD_FAILURE;
   }
-  document_root = ((char *) ((XMLDCfgValue *) XMLDList_first(tmp->values))->value);
   return XMLD_SUCCESS;
  }
+}
+
+/*
+ * Gets the value of the given directive in the given
+ * configuration subsection of the given tree
+ * structure.
+ *
+ * NULL for section means getting a directive from 
+ * the given tree's root.
+ *
+ * NULL for the tree means getting the directive from
+ * cfg_tree.
+ */
+XMLDCfgValueList *cfg_get(char *section, char *directive, XMLDCfgSection *tree) {
+ if (tree == NULL) {
+  tree = cfg_tree;
+ }
+ XMLDCfgSection *tmp;
+ if (section == NULL) {
+  tmp = cfg_tree;
+ }
+ else {
+  tmp = XMLDCfgSectionList_search_by_name(tree->sections, section);
+ }
+ if (tmp == NULL) {
+  return NULL;
+ }
+ XMLDCfgDirective *tmp_dir = XMLDCfgDirectiveList_search_by_name(tmp->directives, directive);
+ if (tmp_dir == NULL) {
+  return NULL;
+ }
+ return tmp_dir->values;
 }
 
 /*

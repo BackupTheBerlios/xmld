@@ -41,3 +41,6 @@ struct XMLDInterface;
 #include "interface_list.h"
 #include "protoimpl.h"
 #include "authman.h"
+#include "xmld_cfg_value.h"
+#include "xmld_cfg_directive.h"
+#include "xmld_cfg_section.h"

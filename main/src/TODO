@@ -41,8 +41,14 @@ Foundation:
   * Modify cfg_parser.y such that it takes a prepared parse
     tree as input and fills it. (done)
   * Each part should manipulate cfg data structures directly.
+    * Reimplement cfg_get that supports a section name and
+      a parent section structure arguments (NULL in case of
+      cfg_tree). (done -- returns XMLDCfgValueList)
     * Modify all parts.
+      * ptasker
     * modify initialization of document_root. (done)
+    * XMLDList_first and XMLDList_last should return NULL in case of
+      receiving NULL as an argument. (done)
   * Engine association functions should be put in engine list. (done)
   * cfg_parser.(c|h) -> cfg.(c|h) (done)
   * Global configuration variables should remain initialized
@@ -67,10 +73,18 @@ Foundation:
 * Error messages:
   * Try to provide routines of error reporting in engines
     and interfaces.
+  * Error numbers relate only to the module in which the
+    error occured.
   * Error messages subsystem (gettext ?) such that modules
     (engines/interfaces/whatever) only have to call a core
     function and put their own error messages file somewhere ?
 
+* col_sep, row_sep ... etc are response translator (interface)
+  specific, must be wholly removed from protoimpl and somanager.
+  Each interface will have a predefined set of rules the client
+  knows about.
+  
+  
 * Usage of autoconf to decide the modules to be compiled.
 
 * Separate make files for XMLDSQL, Engine-XMLD and ptasker.

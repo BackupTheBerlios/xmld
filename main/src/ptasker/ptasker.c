@@ -20,8 +20,7 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <stdio.h>
-#include "../xmlddef.h"
-#include "../cfg.h"
+#include "../includes.h"
 #include "../passfd.h"
 #include "ptasker.h"
 

@@ -84,6 +84,9 @@ void *XMLDList_add(XMLDList *list) {
  * returns: a poiner to the first element in list.
  */
 void *XMLDList_first(XMLDList *list) {
+ if (list == NULL) {
+  return NULL;
+ }
  return list->content;
 }
 
@@ -93,6 +96,9 @@ void *XMLDList_first(XMLDList *list) {
  * returns: a poiner to the last element in list.
  */
 void *XMLDList_last(XMLDList *list) {
+ if (list == NULL) {
+  return NULL;
+ }
  return list->last_element;
 }
 
