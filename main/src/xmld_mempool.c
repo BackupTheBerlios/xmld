@@ -20,6 +20,7 @@ void XMLDMemPool_free(struct XMLDMemPool *pool) {
   free(pool->pool[i]);
  }
  free(pool->pool);
+ free(pool->status);
  free(pool);
 }
 
