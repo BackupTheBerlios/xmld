@@ -19,7 +19,7 @@
  */
 XMLDInterface *XMLDInterface_create(char *name) {
  XMLDInterface *interface=(XMLDInterface *) malloc(sizeof(XMLDInterface));
- interface->name = name
+ interface->name = name;
  return interface;
 }
 
@@ -58,7 +58,7 @@ XMLDInterfaceList *XMLDInterfaceList_create() {
 XMLDInterface *XMLDInterfaceList_add(XMLDInterfaceList *list, char *name) {
  XMLDInterface *interface=(XMLDInterface *) XMLDList_add(list);
  interface->name = name;
- return req;
+ return interface;
 }
 
 /*
@@ -75,7 +75,7 @@ XMLDInterface *XMLDInterfaceList_search_by_name(XMLDInterfaceList *list, char *n
  XMLDInterface *interface=NULL;
  while (XMLDList_next(list)) {
   if (strcmp(((XMLDInterface *) XMLDList_curr(list))->name, name)==0) {
-   engine = (XMLDInterface *) XMLDList_curr(list);
+   interface = (XMLDInterface *) XMLDList_curr(list);
    break;
   }
  }

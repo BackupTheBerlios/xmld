@@ -11,12 +11,7 @@
  * -------------------------------------------------------------- * 
  */
 
-#include <stdlib.h>
-#include "xmlddef.h"
-#include "mutils.h"
-#include "xmld_list.h"
-#include "xmld_col.h"
-#include "xmld_row.h"
+#include "includes.h"
 
 /*
  * : Creates a new row.
@@ -56,17 +51,6 @@ void XMLDRow_free_content(void *row) {
  */
 void XMLDRow_add_col(XMLDRow *row) {
  XMLDColList_add(row->cols);
-}
-
-/*
- * : Fills the last added column.
- * row: the row whose column is to be filled.
- * val: the value with which the row is going to be filled.
- * copy: whether to copy the given val.
- */
-void XMLDRow_fill_col(XMLDRow *row, char *val) {
- XMLDCol *col=(XMLDCol *) XMLDList_last(row->cols);
- XMLDCol_fill(col, val);
 }
 
 /*

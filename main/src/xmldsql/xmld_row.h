@@ -26,7 +26,6 @@ typedef XMLDList XMLDRowList;
 
 XMLDRow *XMLDRow_create();
 void XMLDRow_add_col(XMLDRow *);
-void XMLDRow_fill_col(XMLDRow *, char *);
 void XMLDRow_free(XMLDRow *);
 void XMLDRow_free_content(void *);
 

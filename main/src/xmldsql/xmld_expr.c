@@ -11,9 +11,9 @@
  * -------------------------------------------------------------- * 
  */
 
+#include "includes.h"
 #include <limits.h>
 #include <math.h>
-#include "includes.h"
 
 /*
  * : Creates a new expression.
@@ -137,10 +137,10 @@ XMLDBool XMLDExpr_is_complex(XMLDExpr *expr) {
  * expression to it.
  */ 
 void XMLDExpr_apply_type(XMLDExpr *expr, char *type) {
- if (type == NULL || strcasecmp(type, XMLD_TYPE_CHAR) == 0) {
+ if (type == NULL || strcasecmp(type, XMLDSQL_TYPE_CHAR) == 0) {
   expr->type = XMLD_QVAL;
  }
- else if (strcasecmp(type, XMLD_TYPE_INT) == 0) {
+ else if (strcasecmp(type, XMLDSQL_TYPE_INT) == 0) {
   expr->type = XMLD_INTEGER;
   expr->nval=atoi(expr->qval);
   if (expr->qval != NULL) {
@@ -148,7 +148,7 @@ void XMLDExpr_apply_type(XMLDExpr *expr, char *type) {
    expr->qval=NULL;
   } 
  }
- else if (strcasecmp(type, XMLD_TYPE_FLOAT) == 0) {
+ else if (strcasecmp(type, XMLDSQL_TYPE_FLOAT) == 0) {
   expr->type = XMLD_FLOAT;
   expr->fnval=atof(expr->qval);
   if (expr->qval != NULL) {
@@ -265,14 +265,14 @@ char *XMLDExpr_to_string(XMLDExpr *expr) {
   strcpy(ret, expr->ident);
   return ret;
  }
- else if (expr->type == XMLD_SPECIAL_IDENTIFER) {
+ else if (expr->type == XMLD_SPECIAL_IDENTIFIER) {
   if (expr->sident == XMLD_SIDENT_TEXT) {
-   ret = (char *) malloc((strlen(XMLD_SIDENT_TEXT)+1) * sizeof(char));
+   ret = (char *) malloc(7 * sizeof(char));
    strcpy(ret, "[text]");
    return ret;
   }
   else if (expr->sident == XMLD_SIDENT_TAGNAME) {
-   ret = (char *) malloc((strlen(XMLD_SIDENT_TAGNAME)+1) * sizeof(char));
+   ret = (char *) malloc(10 * sizeof(char));
    strcpy(ret, "[tagname]");
    return ret;
   }  
@@ -289,7 +289,7 @@ char *XMLDExpr_to_string(XMLDExpr *expr) {
    strcpy("*", ret);
    return ret;
   }
-  else if (expr->wildcard == XMLD_WILDCARD_ATTS) {
+  else {
    ret = (char *) malloc(2*sizeof(char));
    strcpy("@", ret);
    return ret;
@@ -330,9 +330,7 @@ char *XMLDExpr_to_string(XMLDExpr *expr) {
   strcpy(ret, "!");
   return ret;
  }
- else {
-  return NULL;
- }
+ return NULL; 
 }
 
 /*
@@ -385,7 +383,7 @@ XMLDStatus XMLDExpr_to_columns(XMLDExpr *expr, XMLDWork *work, int level) {
  if (expr->type == XMLD_LIST) {
   XMLDList_reset(expr->exprs);
   while (XMLDList_next(expr->exprs)) {
-   if (XMLDExpr_to_columns((XMLDExpr *) XMLDList_curr(expr->exprs), work) == XMLD_FAILURE) {
+   if (XMLDExpr_to_columns((XMLDExpr *) XMLDList_curr(expr->exprs), work, level) == XMLD_FAILURE) {
     return XMLD_FAILURE;
    }
   }
@@ -397,10 +395,11 @@ XMLDStatus XMLDExpr_to_columns(XMLDExpr *expr, XMLDWork *work, int level) {
   }
   else {
    XMLDResponse_add_col(work->resp);
-   XMLDResponse_fill_col(simple);
+   XMLDResponse_fill_col(work->resp, simple);
    return XMLD_SUCCESS;
   }
  }
+ return XMLD_FAILURE;
 }
 
 /*

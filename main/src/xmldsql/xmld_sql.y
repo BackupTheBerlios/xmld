@@ -12,11 +12,8 @@
  * -------------------------------------------------------------- * 
  */
 
-#include "includes.h"
-#include "func_list.h"
+#include "xmldsql/includes.h"
 #define YYPARSE_PARAM work
-#include "qp.h"
-#include "xmld-sql.h"
 %}
 
 %union {
@@ -48,7 +45,7 @@
 %type <list> expr_list
 
 /* Other Tokens  */
-%token <qval> QVAL IDENTIFIER
+%token <qval> QVAL IDENTIFIER SPECIAL_IDENTIFIER
 %token <num> NUM
 %token <fnum> FNUM
 
@@ -69,7 +66,7 @@
 %%
 
 query: SELECT expr_list FROM expr {
-				   ((XMLDWork *) work)->req->type=XMLD_SQL_SELECT;
+				   ((XMLDRequest *) (((XMLDWork *) work)->req))->type=XMLD_SQL_SELECT;
                                    ((XMLDWork *) work)->files=XMLDFileList_create();
                                    if ($4->type == XMLD_QVAL) {
                                     XMLDFileList_add(((XMLDWork *) work)->files, $4->qval);
@@ -81,11 +78,11 @@ query: SELECT expr_list FROM expr {
                                     }
                                    }
 	                           XMLDExpr_free($4);
-				   ((XMLDWork *) work)->req->retr=$2;
+				   ((XMLDRequest *) (((XMLDWork *) work)->req))->retr=$2;
 				   YYACCEPT;
                                   }
        | SELECT expr_list FROM expr WHERE expr_list {
-			     	                     ((XMLDWork *) work)->req->type=XMLD_SQL_SELECT_WHERE;
+			     	                     ((XMLDRequest *) (((XMLDWork *) work)->req))->type=XMLD_SQL_SELECT_WHERE;
                                                      ((XMLDWork *) work)->files=XMLDFileList_create();
                                                      if ($4->type == XMLD_QVAL) {
                                                       XMLDFileList_add(((XMLDWork *) work)->files, $4->qval);
@@ -97,8 +94,8 @@ query: SELECT expr_list FROM expr {
                                                       }
 			                             }
 			                             XMLDExpr_free($4);
-				                     ((XMLDWork *) work)->req->retr=$2;
-						     ((XMLDWork *) work)->req->where=$6;
+				                     ((XMLDRequest *) (((XMLDWork *) work)->req))->retr=$2;
+						     ((XMLDRequest *) (((XMLDWork *) work)->req))->where=$6;
 						     YYACCEPT;
                                                     }
 /*       | UPDATE expr SET cond_list {
@@ -505,5 +502,6 @@ expr: '(' expr ')' {
 
 %%
 
-void yyerror(char *s) {
+int yyerror(char *s) {
+ return 0;
 }

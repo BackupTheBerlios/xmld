@@ -15,16 +15,16 @@ i * -------------------------------------------------------------- *
 #define __XMLD_EXPR_H
 
 /* Expression types */
-#define XMLD_INTEGER 0          /* Integer type              */
-#define XMLD_OPERATION 1        /* Operation type            */
-#define XMLD_IDENTIFIER 2       /* Identifier type           */
-#define XMLD_FUNCTION 3         /* Function call type        */
-#define XMLD_QVAL 4             /* Quoted value type         */ 
-#define XMLD_WILDCARD 5         /* Wildcard type             */
-#define XMLD_FLOAT 6            /* Floating point type       */
-#define XMLD_LIST 7             /* Expression list type      */
-#define XMLD_VOID_LIST 8        /* Void Expression list type */
-#define XMLD_SPECIAL_IDENTIFIER /* Special Identifier type   */
+#define XMLD_INTEGER 0            /* Integer type              */
+#define XMLD_OPERATION 1          /* Operation type            */
+#define XMLD_IDENTIFIER 2         /* Identifier type           */
+#define XMLD_FUNCTION 3           /* Function call type        */
+#define XMLD_QVAL 4               /* Quoted value type         */ 
+#define XMLD_WILDCARD 5           /* Wildcard type             */
+#define XMLD_FLOAT 6              /* Floating point type       */
+#define XMLD_LIST 7               /* Expression list type      */
+#define XMLD_VOID_LIST 8          /* Void Expression list type */
+#define XMLD_SPECIAL_IDENTIFIER 9 /* Special Identifier type   */
 
 /* XMLD-SQL Operation Types */
 /* Arithmetic: */
@@ -57,6 +57,11 @@ i * -------------------------------------------------------------- *
 /* XMLD-SQL Wildcard types */
 #define XMLD_WILDCARD_ALL 0  /* All columns     */
 #define XMLD_WILDCARD_ATTS 1 /* Attributes only */
+
+/* Types */
+#define XMLDSQL_TYPE_CHAR "CHAR"
+#define XMLDSQL_TYPE_INT  "INT"
+#define XMLDSQL_TYPE_FLOAT "FLOAT"
 
 struct XMLDExpr {
  int type; 

@@ -15,9 +15,9 @@
 #define __XMLD_ENGINE_H
 
 /* Access level bits */
-#define XMLD_ACCESS_NOTHING 0    /* Nothing special                                */
-#define XMLD_ACCESS_FORMAT 1     /* Whether to open a format file                  */
-#define XMLD_ACCESS_EX 2         /* Whether to execlusively access the file        */
+#define XMLD_ACCESS_NOTHING 0 /* Nothing special */
+#define XMLD_ACCESS_FORMAT 1     /* Whether to open a format file */
+#define XMLD_ACCESS_EX 2         /* Whether to execlusively access the file */
 #define XMLD_ACCESS_FORMAT_EX 4  /* Whether to execlusively access the format file */
 
 /* walk return values */
@@ -53,7 +53,7 @@ struct XMLDEngine {
  int (*get_attribute_length) (XMLDFile *, char *);
  char *(*get_attribute) (XMLDFile *, char *);
  char *(*get_text_type) (XMLDFile *);
- int (*get_text_length (XMLDFile *);
+ int (*get_text_length) (XMLDFile *);
  char *(*get_text) (XMLDFile *);
  char *(*get_tagname) (XMLDFile *);
 

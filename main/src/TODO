@@ -92,7 +92,7 @@ order to be able to resolve wildcards correctly. (done)
   * XMLDExpr_to_string: support whatever kind of expressions.
     XMLD_OPERATION: (done)
     XMLD_IDENTIFIER: (done)
-    XMLD_FUNCTION:
+    XMLD_FUNCTION: (done - without argument list)
     XMLD_WILDCARD: (done)
     XMLD_LIST: (done)
     XMLD_VOID_LIST: (done)
@@ -177,29 +177,17 @@ order to be able to resolve wildcards correctly. (done)
    * twalker_handle should no longer do the response translation step.
      (done)
 
-* ERROR_RESPONSE should be interface and engine specific.
+--- Finishing:
 
---- Features:
+* Fix includes across all code. (done)
+* Compile. (done)
+  * Modify the make script (done)
+* Run. (done)
+* Fix blocking bugs.
 
-* Shell-like treatment of the up and down arrow keys 
-in the client.
+*--------------- Start of the OpenXMLD 0.7.0 part:
 
---- Cleanups:
-
-* XMLDFile's store should be freed by the engine cleanup function
-  and not XMLDFile_free_content. (done)
-
-* Erase redundancy in somanager.num_listeners.
-
-* XMLDFile.element_pos and XMLDFile.level should be generalized -
-  not all files have levels and not all files should have 
-  element_pos.
-  
-* Try to use generic naming in engine functions. (with specific
-  engine correspondants ?)
-
-* cfg_get_engine should fall back to a default engine if the
-  required engine name was not found.
+Goal: Features with slight fixing.
 
 * Stabilize recordset levelling confusion.
 
@@ -217,10 +205,20 @@ of DISCONNECT and correction of a wrong pass.
 
 * Should we have a openxmld user with separate system privileges.
 
-*--------------- Start of the OpenXMLD 0.7.0 part:
+* XMLDFile's store should be freed by the engine cleanup function
+  and not XMLDFile_free_content. (done)
 
-Goal: Features with slight fixing.
+* Erase redundancy in somanager.num_listeners.
 
+* XMLDFile.element_pos and XMLDFile.level should be generalized -
+  not all files have levels and not all files should have 
+  element_pos.
+  
+* Try to use generic naming in engine functions. (with specific
+  engine correspondants ?)
+
+* Shell-like treatment of the up and down arrow keys 
+in the client.
 
 * Response must contain a record set header (update PROTO).
 

@@ -26,7 +26,7 @@
 #include "somanager.h"
 #include "init.h"
 #include "engine_list.h"
-#include "func_list.h"
+#include "interface_list.h"
 #define NUM_PARTS 5
  
 struct xmld_part parts[NUM_PARTS];
@@ -69,7 +69,7 @@ int main() {
 
  init_create_part(&parts[0], cfg_init, cfg_shutdown);
  init_create_part(&parts[1], engine_list_init, engine_list_shutdown);
- init_create_part(&parts[2], func_list_init, func_list_shutdown);
+ init_create_part(&parts[2], interface_list_init, interface_list_shutdown);
  init_create_part(&parts[3], mtasker_init, mtasker_shutdown);
  init_create_part(&parts[4], somanager_init, somanager_shutdown);
  
@@ -98,7 +98,7 @@ void init_create_part(struct xmld_part *part, XMLDStatus (*init_func) (void), XM
 void init_shutdown_parts(int signum) {
  mtasker_shutdown();
  somanager_shutdown();
- func_list_shutdown();
+ interface_list_shutdown();
  engine_list_shutdown();
  cfg_shutdown();
  exit(0);

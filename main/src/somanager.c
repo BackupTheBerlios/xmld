@@ -11,16 +11,11 @@
  * -------------------------------------------------------------- * 
  */
  
-#include <stdlib.h>
-#include <stdio.h>
+#include "includes.h"
 #include <sys/types.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include "xmlddef.h"
 #include "xmld_sockets.h"
-#include "xmld_list.h"
-#include "xmld_connection.h"
-#include "cfg.h"
 
 #ifdef USE_PTASKER
  #include <sys/types.h>
@@ -30,7 +25,6 @@
 #endif /* USE_PTASKER */
 
 #include "somanager.h"
-#include "qp.h"
 
 int *fds;
 int *ports;
@@ -92,7 +86,7 @@ void somanager_handle(void *sockindex) {
 #ifdef MULTI_PROC_MTASKER
   s = xmld_socket_accept(passed_fd);
 #else
-  s = xmld_socket_accept(fds[*((int *) sockfd)]);
+  s = xmld_socket_accept(fds[*((int *) sockindex)]);
 #endif /* MULTI_PROC_MTASKER */
 
   if (s == -1) {
@@ -102,7 +96,7 @@ void somanager_handle(void *sockindex) {
   
   XMLDConnection conn;
   conn.fd = s;
-  conn.user = cfg_get_interface_name(ports[*((int *) sockfd)]);
+  conn.user = cfg_get_interface_name(ports[*((int *) sockindex)]);
   mtasker_handle(somanager_user_connection, (void *) &conn, s);
  } 
 }
@@ -147,27 +141,27 @@ void somanager_user_connection(void *conn) {
  if (protoimpl_write_sequence(fd, init_msg, 1) == XMLD_FAILURE) {
   free(init_msg);
   xmld_socket_shutdown(fd);
-  free(conn->user);
+  free(((XMLDConnection *) conn)->user);
   return;
  }
  free(init_msg);
  
  if (authman_handle(fd, val_carry) == XMLD_FAILURE) {
   xmld_socket_shutdown(fd);
-  free(conn->user);
+  free(((XMLDConnection *) conn)->user);
   return;
  }
  
  XMLDWork *work=XMLDWork_create();
- work->interface = XMLDInterfaceList_search_by_name(interface_list, conn->user);
- free(conn->user);
+ work->interface = XMLDInterfaceList_search_by_name(interface_list, ((XMLDConnection *) conn)->user);
+ free(((XMLDConnection *) conn)->user);
  
  if (work->interface == NULL) {
   xmld_socket_shutdown(fd);
   return;
  }
 
- if (*(work->interface->prepare_conn) (work) == XMLD_FAILURE) {
+ if ((*(work->interface->prepare_conn)) (work) == XMLD_FAILURE) {
   xmld_socket_shutdown(fd);
   return;
  }
@@ -175,7 +169,7 @@ void somanager_user_connection(void *conn) {
  work->conn=XMLDConnection_create(fd, val_carry[1], val_carry[0]);
  
  while (1) {
-  if (*(work->interface->prepare) (work) == XMLD_FAILURE) {
+  if ((*(work->interface->prepare)) (work) == XMLD_FAILURE) {
    break;
   }
   char *query=protoimpl_read_sequence(work->conn->fd, NULL);
@@ -184,26 +178,26 @@ void somanager_user_connection(void *conn) {
    break;
   }
 
-  if (*(work->interface->parse) (work, query) == XMLD_FAILURE) {
+  if ((*(work->interface->parse)) (work, query) == XMLD_FAILURE) {
    free(query);
    ERROR_RESPONSE;
-   *(work->interface->cleanup) (work);
+   (*(work->interface->cleanup)) (work);
    continue;
   }
  
   free(query);
-  if (*(work->interface->walk) (work) == XMLD_FAILURE) {
+  if ((*(work->interface->walk)) (work) == XMLD_FAILURE) {
    ERROR_RESPONSE;
-   *(work->interface->cleanup) (work);
+   (*(work->interface->cleanup)) (work);
    continue;
   }
   
-  query = *(work->interface->get_response) (work); /* The response and NOT the query */
+  query = (*(work->interface->get_response)) (work); /* The response and NOT the query */
   protoimpl_write_sequence(work->conn->fd, query, 1);
   free(query);
-  *(work->interface->cleanup) (work);
+  (*(work->interface->cleanup)) (work);
  }
- *(work->interface->cleanup_conn) (work);
+ (*(work->interface->cleanup_conn)) (work);
  xmld_socket_shutdown(work->conn->fd);
  XMLDWork_free(work);
 }

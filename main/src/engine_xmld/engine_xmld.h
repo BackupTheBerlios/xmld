@@ -36,7 +36,7 @@ char *engine_xmld_get_tagname (XMLDFile *);
 void engine_xmld_reset_element (XMLDFile *);
 XMLDBool engine_xmld_next_attribute (XMLDFile *);
 char *engine_xmld_get_curr_attribute_type (XMLDFile *);
-int engine_xmld_get_curr_attribue_length (XMLDFile *);
+int engine_xmld_get_curr_attribute_length (XMLDFile *);
 char *engine_xmld_get_curr_attribute_name (XMLDFile *);
 char *engine_xmld_get_curr_attribute_value (XMLDFile *);
 
@@ -44,8 +44,8 @@ char *engine_xmld_get_curr_attribute_value (XMLDFile *);
 /* Internal functions */
 
 char *_get_attribute_format (XMLDFile *, char *);
-char *_get_text_format (XMLDFile *, char *);
+char *_get_text_format (XMLDFile *);
 char *_get_format_type (char *);
-int *_get_format_length (char *);
+int _get_format_length (char *);
 
 #endif /* __ENGINE_XMLD_H */

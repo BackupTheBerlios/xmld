@@ -12,7 +12,6 @@
  */
 
 #include "includes.h"
-#include "cfg.h"
 #include "resptrans.h"
 
 /*
@@ -23,7 +22,7 @@ char *resptrans_handle(XMLDWork *work) {
  char *response=(char *) malloc(sizeof(char));
  response[0]='\0';
  int resp_len=1;
- XMLDList_reset(work->resp->rows);
+ XMLDList_reset(((XMLDResponse *) work->resp)->rows);
  XMLDRow *curr_row;
  XMLDCol *curr_col;
  int i;
@@ -40,8 +39,8 @@ char *resptrans_handle(XMLDWork *work) {
  repl_tok_enc[2]=down_level_enc;
  repl_tok_enc[3]=up_level_enc;
  
- while (XMLDList_next(work->resp->rows)) {
-  curr_row=(XMLDRow *) XMLDList_curr(work->resp->rows);
+ while (XMLDList_next(((XMLDResponse *) work->resp)->rows)) {
+  curr_row=(XMLDRow *) XMLDList_curr(((XMLDResponse *) work->resp)->rows);
   
   for (i = 0; i < curr_row->num_down; i++) {
    response=(char *) realloc(response, (++resp_len) * sizeof(char));

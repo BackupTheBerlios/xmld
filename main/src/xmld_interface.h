@@ -15,7 +15,7 @@
 #define __XMLD_INTERFACE_H
 
 /* Represents a user interface */
-struct XMLDInterafce {
+struct XMLDInterface {
  char *name; /* Interface name */
  void (*init) (void);
  void (*destroy) (void);
@@ -28,16 +28,19 @@ struct XMLDInterafce {
  char *(*get_response) (XMLDWork *);
 };
 
-typedef struct XMLDInterface XMLDInterface;
-typedef struct XMLDList XMLDInterfaceList;
+#ifndef XMLDINTERFACE_TYPE_DEFINED
+#define XMLDINTERFACE_TYPE_DEFINED
+ typedef struct XMLDInterface XMLDInterface;
+ typedef struct XMLDList XMLDInterfaceList;
+#endif /* XMLDINTERFACE_TYPE_DEFINED */
 
-XMLDInterface *XMLDInterface_create(void);
-void XMLDInterface_free(XMLDParser *);
+XMLDInterface *XMLDInterface_create(char *);
+void XMLDInterface_free(XMLDInterface *);
 void XMLDInterface_free_content(void *);
 
 /* List functions */
 
 XMLDInterfaceList *XMLDInterfaceList_create(void);
-XMLDInterface *XMLDInterfaceList_add(XMLDInterfaceList *);
+XMLDInterface *XMLDInterfaceList_add(XMLDInterfaceList *, char *);
 XMLDInterface *XMLDInterfaceList_search_by_name(XMLDInterfaceList *, char *);
 #endif /* __XMLD_INTERFACE_H */

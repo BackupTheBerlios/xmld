@@ -1,8 +1,4 @@
-<user>
- <name>khalid</name>
- <password>pass</password> <!-- will be crypted later -->
- <directory>/</directory>
- <privileges>
-  <path name="/file1.xml" priv="2" />
- </privileges>
+<user pass="pass" dir="/">
+ <!-- pass should be crypted later -->
+ <path name="/file1.xml" priv="2" />
 </user>

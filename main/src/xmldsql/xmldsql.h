@@ -23,5 +23,15 @@ void xmldsql_cleanup(XMLDWork *);
 XMLDStatus xmldsql_parse(XMLDWork *, char *);
 XMLDStatus xmldsql_walk(XMLDWork *);
 char *xmldsql_get_response(XMLDWork *);
-	
+
+int yyparse(void *);
+int yywrap(void);
+int yerror(char *);
+
+struct yy_buffer_state;
+typedef struct yy_buffer_state *YY_BUFFER_STATE;
+YY_BUFFER_STATE yy_scan_string(const char *);
+void yy_switch_to_buffer(YY_BUFFER_STATE);
+void yy_delete_buffer(YY_BUFFER_STATE);
+
 #endif /* __XMLDSQL_H */

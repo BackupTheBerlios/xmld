@@ -49,6 +49,8 @@ void XMLDConnection_free(XMLDConnection *conn) {
  * conn: the connection structure to free.
  */
 void XMLDConnection_free_content(void *conn) {
+ free(((XMLDConnection *) conn)->user);
+ free(((XMLDConnection *) conn)->curr_dir); 
 }
 
 /*

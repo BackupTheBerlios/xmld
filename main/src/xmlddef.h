@@ -16,9 +16,9 @@
 
 /* Version defines */
 #define XMLD_VERSION_MAJOR "0"
-#define XMLD_VERSION_MINOR "5"
+#define XMLD_VERSION_MINOR "6"
 #define XMLD_VERSION_REVIEW "0"
-#define XMLD_VERSION "0.5.0"
+#define XMLD_VERSION "0.6.0"
 
 /* XMLDStatus values */
 #define XMLD_SUCCESS 1
@@ -30,11 +30,6 @@
 
 #define BIT_ISSET(bitmask, bit) ((bitmask) & (bit))
 #define ERROR_RESPONSE protoimpl_write_error_sequence(work->conn->fd, xmld_errno, err_str[xmld_errno])
-
-/* Data types */
-#define XMLD_TYPE_CHAR "CHAR"
-#define XMLD_TYPE_INT "INT"
-#define XMLD_TYPE_FLOAT "FLOAT"
 
 typedef int XMLDBool;
 typedef int XMLDStatus;
@@ -57,6 +52,7 @@ enum xmld_error {
  XMLD_ESTRDIV,
  XMLD_EZERODIV,
  XMLD_ESTREXPO,
+ XMLD_ESTRUNEG,
  XMLD_ESTRNUMCMP,
  XMLD_ENUMLIKE
 } xmld_errno;

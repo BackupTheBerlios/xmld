@@ -16,7 +16,6 @@
 #include "../mfigure.h"
 #include "../fmanager.h"
 #include "engine_xmld.h"
-#include "format_manip.h"
 
 /* init function */
 void engine_xmld_init() {
@@ -43,12 +42,12 @@ XMLDStatus engine_xmld_prepare(char *full_name, XMLDFile *file, int level) {
  }
  
  file->level=0;
- if (BIT_ISSET(level, XMLD_ACCESS_FORMAT)) {	 
+ if (BIT_ISSET(level, XMLD_ACCESS_FORMAT)) {
   if (engine_xmld_load_format_file(file, full_name, BIT_ISSET(level, XMLD_ACCESS_FORMAT_EX)) == XMLD_FAILURE) {
    xmld_errno = XMLD_ENOFORMAT;
    return XMLD_FAILURE;
-  }  
- }
+  }
+ } 
  else {
   file->store = NULL;
  }
@@ -66,24 +65,26 @@ XMLDBool engine_xmld_is_valid_mime(char *mime) {
 
 /* load_format_file function */
 XMLDStatus engine_xmld_load_format_file(XMLDFile *file, char *name, XMLDBool ex) {
- full_file=(char *) realloc(full_file, (strlen(full_file)+8)*sizeof(char));
- strcat(full_file, ".format");
+ name = (char *) realloc(name, (strlen(name) + 8) * sizeof(char));
+ strcat(name, ".format");
  FILE *fd;
  
  if (ex == XMLD_FALSE) {
-  fd=fmanager_get_sh_fd(full_file);
+  fd=fmanager_get_sh_fd(name);
  }
  else {
-  fd=fmanager_get_ex_fd(full_file);
+  fd=fmanager_get_ex_fd(name);
  }
 
  if (fd != NULL) {
-  file->store = XMLDFile_create();
+  file->store = XMLDFile_create(name);
+  free(name);
   file->store->data = (void *) fd;
   file->store->level = 0;
   return XMLD_SUCCESS;
  }
  else {
+  free(name);
   return XMLD_FAILURE;
  }
 } 
@@ -171,7 +172,7 @@ char *_get_attribute_format(XMLDFile *file, char *attribute) {
 int _get_format_length(char *format) {
  char *stroke=strchr(format, '|');
  if (stroke == NULL) {
-  return NULL;
+  return 0;
  }
  *stroke='\0';
  int ret;
@@ -206,7 +207,7 @@ int engine_xmld_get_attribute_length(XMLDFile *file, char *attribute) {
   return _get_format_length(format);
  }
  else {
-  return NULL;
+  return 0;
  }
 }
 
@@ -247,7 +248,7 @@ int engine_xmld_get_text_length(XMLDFile *file) {
   return _get_format_length(format);
  }
  else {
-  return NULL;
+  return 0;
  }
 }
 
@@ -262,7 +263,7 @@ void engine_xmld_reset_element(XMLDFile *file) {
  fsetpos((FILE *) file->data, &file->element_pos);
 }
 
-XMLDBool *engine_xmld_next_attribute(XMLDFile *file) {
+XMLDBool engine_xmld_next_attribute(XMLDFile *file) {
  int tok = dmstrchr((FILE *) file->data, " >", 2);
  if (tok == 1) {
   engine_xmld_reset_element(file);
@@ -279,7 +280,7 @@ char *engine_xmld_get_curr_attribute_type(XMLDFile *file) {
  if (file->store == NULL) {
   return NULL;
  }
- char *att = engine_xmld_get_curr_attribute_name(XMLDFile *file);
+ char *att = engine_xmld_get_curr_attribute_name(file);
  return engine_xmld_get_attribute_type(file, att);
 }
 

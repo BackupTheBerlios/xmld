@@ -18,32 +18,26 @@
 #include "mutils.h"
 #include "sutils.h"
 #include "dutils.h"
+#include "cfg.h"
 #include "xmld_list.h"
-#include "xmld_col.h"
-#include "xmld_row.h"
-struct XMLDExpr;
-#ifndef XMLDEXPR_TYPE_DEFINED
-#define XMLDEXPR_TYPE_DEFINED
- typedef struct XMLDExpr XMLDExpr;
- typedef XMLDList XMLDExprList;
-#endif /* XMLDEXPR_TYPE_DEFINED */
-#include "xmld_aggr_table.h"
-#include "xmld_response.h"
 #include "xmld_connection.h"
-#include "xmld_request.h"
 struct XMLDFile;
 #ifndef XMLDFILE_TYPE_DEFINED
 #define XMLDFILE_TYPE_DEFINED
  typedef struct XMLDFile XMLDFile;
  typedef XMLDList XMLDFileList;
 #endif /* XMLDFILE_TYPE_DEFINED */
+struct XMLDInterface;
+#ifndef XMLDINTERFACE_TYPE_DEFINED
+#define XMLDINTERFACE_TYPE_DEFINED
+ typedef struct XMLDInterface XMLDInterface;
+ typedef XMLDList XMLDInterfaceList;
+#endif /* XMLDINTERFACE_TYPE_DEFINED */
 #include "xmld_work.h"
+#include "xmld_interface.h"
 #include "xmld_engine.h"
 #include "xmld_file.h"
-struct XMLDFunc;
-#ifndef XMLD_FUNC_TYPE_DEFINED
-#define XMLD_FUNC_TYPE_DEFINED
- typedef struct XMLDFunc XMLDFunc;
-#endif /* XMLD_FUNC_TYPE_DEFINED */
-#include "xmld_expr.h"
-#include "xmld_func.h"
+#include "engine_list.h"
+#include "interface_list.h"
+#include "protoimpl.h"
+#include "authman.h"

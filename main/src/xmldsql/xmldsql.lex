@@ -12,10 +12,8 @@
  * -------------------------------------------------------------- * 
  */
 
-#include "includes.h"
-#include "func_list.h"
-#include "xmld-sql.tab.h"
-#include "qp.h"
+#include "xmldsql/includes.h"
+#include "xmldsql.tab.h"
 #define YY_DECL int yylex(YYSTYPE *lvalp)
 %}
 %x STR

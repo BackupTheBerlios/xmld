@@ -11,12 +11,25 @@
  * -------------------------------------------------------------- * 
  */
 
-#ifndef __FORMAT_MANIP_H
-#define __FORMAT_MANIP_H
-
-FILE *engine_xmld_load_format_file(char *, XMLDBool);
-char *engine_xmld_get_element_att_format(FILE *, int, char *, char *);
-int engine_xmld_get_element_att_length(FILE *, int, char *, char *);
-char *engine_xmld_get_element_att_type(FILE *, int, char *, char *);
-
-#endif /* __FORMAT_MANIP_H */
+#include "../includes.h"
+struct XMLDExpr;
+#ifndef XMLDEXPR_TYPE_DEFINED
+#define XMLDEXPR_TYPE_DEFINED
+ typedef struct XMLDExpr XMLDExpr;
+ typedef XMLDList XMLDExprList;
+#endif /* XMLDEXPR_TYPE_DEFINED */
+#include "xmld_col.h"
+#include "xmld_row.h"
+#include "xmld_aggr_table.h"
+#include "xmld_response.h"
+#include "xmld_request.h"
+struct XMLDFunc;
+#ifndef XMLD_FUNC_TYPE_DEFINED
+#define XMLD_FUNC_TYPE_DEFINED
+ typedef struct XMLDFunc XMLDFunc;
+#endif /* XMLD_FUNC_TYPE_DEFINED */
+#include "xmld_expr.h"
+#include "xmld_func.h"
+#include "twalker.h"
+#include "func_list.h"
+#include "resptrans.h"

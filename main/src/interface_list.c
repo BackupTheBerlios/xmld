@@ -14,14 +14,14 @@
 #include "includes.h"
 #include "interface_list.h"
 
-#ifdef USE_XMLD_SQL
+#ifdef USE_XMLDSQL
 #include "xmldsql/xmldsql.h"
-#endif /* USE_XMLD_SQL */
+#endif /* USE_XMLDSQL */
  
 XMLDStatus interface_list_init() {
- interface_list=XMLDinterfaceList_create();
+ interface_list=XMLDInterfaceList_create();
  XMLDInterface *curr_interface;
-#ifdef USE_XMLD_SQL
+#ifdef USE_XMLDSQL
  curr_interface=XMLDInterfaceList_add(interface_list, "XMLDSQL");
  curr_interface->init=xmldsql_init;
  curr_interface->destroy=xmldsql_destroy;
@@ -32,7 +32,7 @@ XMLDStatus interface_list_init() {
  curr_interface->parse=xmldsql_parse;
  curr_interface->walk=xmldsql_walk;
  curr_interface->get_response=xmldsql_get_response;
-#endif /* USE_XMLD_SQL */
+#endif /* USE_XMLDSQL */
  XMLDList_reset(interface_list);
  while (XMLDList_next(interface_list)) {
   (*(((XMLDInterface *) XMLDList_curr(interface_list))->init)) ();

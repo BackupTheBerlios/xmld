@@ -11,12 +11,7 @@
  * -------------------------------------------------------------- * 
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include "xmlddef.h"
-#include "dutils.h"
-#include "engine_xmld/element_op.h"
+#include "includes.h"
 #include "protoimpl.h"
 #include "authman.h"
 
