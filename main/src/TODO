@@ -422,7 +422,13 @@ useful as something useful.
    * Add the new format functions to engine_list and XMLDEngine (done)
  * XMLDResponse_fill_col/XMLDCol_fill might need to fill the
  expr and not the string. (done)
- * wisely remove mime checking from prepare for performance (if possible!).
+ 
+ 
+* wisely remove mime checking from prepare for performance (if possible!).
+  * Remove the simple check from prepare. (done)
+  * Add the is_valid_mime to XMLDEngine. (done)
+  * Update engine_list to conform. (done)
+  * Implement is_valid_mime in engine_xmld.
 
 * Engine functions should never know about the XMLDWork structure,
   XMLDFile one MUST be enough. (done)

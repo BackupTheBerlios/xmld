@@ -22,6 +22,7 @@ void engine_xmld_unload_format_file (XMLDFile *);
 void engine_xmld_destroy (void);
 
 int engine_xmld_walk (XMLDFile *);
+XMLDBool engine_xmld_is_valid_mime(char *);
 char *engine_xmld_get_attribute_type (XMLDFile *, char *);
 int engine_xmld_get_attribute_length (XMLDFile *, char *);
 char *engine_xmld_get_attribute (XMLDFile *, char *);

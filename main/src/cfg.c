@@ -84,6 +84,9 @@ void *cfg_get(char *key) {
 /* ATTENTION: cfg_get_engine, whensever written
  * must free the string returned from mfigure_get
  * _mime explicitly if it uses it
+ * ATTENTION again: it must check for mime compaitability
+ * using is_valid_mime and try to reuse mfigure_get_mime
+ * if it was used. If checking fails return NULL.
  */
 char *cfg_get_engine(char *file) { 
  return "Engine-XMLD";

@@ -23,6 +23,7 @@ XMLDStatus engine_list_init() {
  XMLDEngine *curr_engine;
 #ifdef USE_ENGINE_XMLD
  curr_engine=XMLDEngineList_add(engine_list, "Engine-XMLD");
+ curr_engine->is_valid_mime=engine_xmld_is_valid_mime;
  curr_engine->init=engine_xmld_init;
  curr_engine->prepare=engine_xmld_prepare;
  curr_engine->cleanup=engine_xmld_cleanup;

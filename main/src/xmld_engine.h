@@ -30,6 +30,7 @@ struct XMLDEngine {
  void (*init) (void); /* The function that's called once the engine
 		       * is added to the engine_list.
 		       */
+ XMLDBool (*is_valid_mime) (char *);
  XMLDStatus (*prepare) (XMLDWork *, XMLDFile *, int); /* The function called before each
 				                       * request the engine serves.
 				                       * The integer argument is named level

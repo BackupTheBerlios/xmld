@@ -31,16 +31,7 @@ void engine_xmld_init() {
  * */
 XMLDStatus engine_xmld_prepare(XMLDWork *work, XMLDFile *file, int level) {
  char *full_name=XMLDFile_get_full_name(file, work);
- char *mime=mfigure_get_mime(full_name);
  
- if (strcmp(mime, "text/xml") != 0) { /* A XML-only engine! */
-  xmld_errno=XMLD_EINVALFILE;
-  free(mime);
-  free(full_name);
-  return XMLD_FAILURE;
- }
- 
- free(mime);
  if (BIT_ISSET(level, XMLD_ACCESS_EX)) {
   file->data=(void *) fmanager_get_ex_fd(full_name);
  }
@@ -66,6 +57,10 @@ XMLDStatus engine_xmld_prepare(XMLDWork *work, XMLDFile *file, int level) {
  }
  free(full_name);
  return XMLD_SUCCESS;
+}
+
+XMLDBool engine_xmld_is_valid_mime(char *mime) {
+ return XMLD_TRUE;
 }
 
 /* load_format_file function */
