@@ -681,6 +681,12 @@ editions are put online. (done)
 
 * run (done)
 
+* in somanager. print out each port the OpenXMLD 
+listening to under the PID.
+
+* handle SIGINT in client and send disconnet to the
+server on receiving it.
+
 * fix 
 --------------- Start of The OpenXMLD 0.6.0 part:
 
@@ -777,6 +783,8 @@ system unreadable).
 
 * simplify_expr NULL return values must indiciate errors
 and xmld_errno must be set appropriately.
+
+* handle special character decoding in the client.
 
 *--------------- Start of the OpenXMLD 0.7.0 part:
 
