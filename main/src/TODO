@@ -1,26 +1,10 @@
-* Make a unified <what ever>Table API for: (done)
- 
-   * XMLDExprTable
-   * XMLDCondTable
-   * XMLDFuncTable
-   * XMLDAggrTableTable
-   * XMLDConnectionTable ?
+* Implement XMLDList mechanism instead of XMLD*Table for
+  each structure. (done)
 
-* After making the above mentioned unified API and creating
-  a header file for each structure of the mentioned above, 
-  check for places where the API isn't used, and use it.
-   
-   * Like sosel -> XMLDConnectionTable
+* Implement new structures:
 
-* HAVE_XMLD_MEMPOOL_H -> HAVE_XMLD_MEM_POOL_H
-* Edit xmld_*.h so they contain creation methods. (done)
-* Create corresponding XMLD*Table structures for:
+  * XMLDContext: to represent a thread/process for the
+    mtasker. (with usage of XMLDList instead of proc
+    table).
 
-  * XMLDCol
-  * XMLDRow
-  * XMLDEngine
-  * and check for others that may need so.
-* XMLD*Table -> XMLD*List
-* Add XMLD*Table_last() and rename XMLD*Table_reset() to 
-  XMLD*Table_first().
-* _next and _prev should return int (whether successful).
+* Use XMLDList (of XMLDConnection) in sosel.
