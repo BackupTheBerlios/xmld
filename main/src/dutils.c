@@ -14,14 +14,33 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "dutils.h"
 #define BUFFER_SIZE 100
+#include "dutils.h"
 
 char getc_buf(FILE *fd, buf_t *buf) {
- return getc(fd);
+ if (buf == NULL) {
+  buff=(buf_t *) malloc(sizeof(buf_t));
+  buff->val=fread((void *) buff->val, sizeof(char), BUFFER_SIZE, fd);
+  buff->val[100]='\0';
+  buff->curr=buff->val;
+ }
+ else if (buff->curr == (buff->val)+BUFFER_SIZE) {
+  buff->val=fread((void *) buff->val, sizeof(char), BUFFER_SIZE, fd);
+  buff->curr=buff->val;
+ }
+ else {
+  buff->curr++;
+ }
+ return buff->curr;
 }
 
-void buf_dump(FILE *fd, buf_t *buf) { 
+void buf_dump(FILE *fd, buf_t *buf) {
+ char *last=buff->curr;
+ while (last != '\0' && last != EOF) {
+  last++;
+ }
+ fseek(fd, buff->curr -  last, SEEK_CUR);
+ free(buf);
 }
 
 int dmstrstr(FILE *fd, char **tokens, int num) {
@@ -113,7 +132,7 @@ short dmwstrchr(FILE *fd, char *tokens, int num, char *write) {
     return 1;
    }
   }
-  ungetc(fd);
+  fseek(fd, -1, SEEK_CUR);
   putc(*curr, fd);
   if (*(++curr) == '\0') {
    break;
