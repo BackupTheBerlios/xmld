@@ -22,7 +22,7 @@ struct XMLDList {
 
 typedef struct XMLDList XMLDList;
 
-XMLDList *XMLDList_create(void, int);
+XMLDList *XMLDList_create(int);
 void XMLDList_free(XMLDList *);
 void *XMLDList_add(XMLDList *);
 void XMLDList_first(XMLDList *);
