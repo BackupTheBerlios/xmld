@@ -17,7 +17,8 @@
 /* Represents a user interface */
 struct XMLDInterface {
  char *name; /* Interface name */
- void (*init) (void);
+ int port;
+ void (*init) (XMLDInterface *, XMLDCfgDirective *);
  void (*destroy) (void);
  XMLDStatus (*prepare_conn) (XMLDWork *);
  void (*cleanup_conn) (XMLDWork *);
@@ -35,6 +36,7 @@ struct XMLDInterface {
 #endif /* XMLDINTERFACE_TYPE_DEFINED */
 
 XMLDInterface *XMLDInterface_create(char *);
+void XMLDInterface_copy(XMLDInterface *, XMLDInterface *);
 void XMLDInterface_free(XMLDInterface *);
 void XMLDInterface_free_content(void *);
 
@@ -43,4 +45,5 @@ void XMLDInterface_free_content(void *);
 XMLDInterfaceList *XMLDInterfaceList_create(void);
 XMLDInterface *XMLDInterfaceList_add(XMLDInterfaceList *, char *);
 XMLDInterface *XMLDInterfaceList_search_by_name(XMLDInterfaceList *, char *);
+XMLDInterface *XMLDInterfaceList_search_by_port(XMLDInterfaceList *, int);
 #endif /* __XMLD_INTERFACE_H */

@@ -77,8 +77,24 @@ Foundation:
 
 * Real implementation of interface specification according
   to the configuration file with support for interface parameters.
-  * interface_list_init uses cfg to clone the interfaces.
-  * Iterative port API in cfg ?
+  * interface_list creates a list according to defines at first.
+    (done)
+  * XMLDInterface_copy (done)
+  * XMLDInteface.init should receive parameters. (done)
+  * interface_list_init uses cfg in creation of a second list
+    by copying interfaces from the first list and assigns each one 
+    to its port and sends it the parameters. (done)
+  * XMLDInterface.port (done)
+  * XMLDInterface_search_by_port (done)
+  * somanager should search for the interface assigned to the
+    port from which the user connects. (done)
+
+* Rewrite (or maybe remove) the generic communication protocol
+  -- each interface should contain handling of authentication
+  for itself in order to allow for non-authentication-based
+  protocols, such as HTTP.
+  * Maybe take the current protocol inside XMLDSQL ?
+  * Optional usage of the authentication API ?
 
 * Support for re-parsing of the configuration on the fly.
   * Signal each of the child processes so it reparses the configuration for
@@ -107,12 +123,6 @@ Foundation:
    * Remove them from the protocol document. (done)
   
 * Implement an EchoServer interface for demonstration.
-
-* Rewrite (or maybe remove) the generic communication protocol
-  -- each interface should contain handling of authentication
-  for itself in order to allow for non-authentication-based
-  protocols, such as HTTP.
-  * Maybe take the current protocol inside XMLDSQL ?
 
 * Usage of autoconf to decide on the modules to be compiled.
 

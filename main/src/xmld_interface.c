@@ -24,6 +24,23 @@ XMLDInterface *XMLDInterface_create(char *name) {
 }
 
 /*
+ * : Copies the src interface to the dest interface.
+ */
+void XMLDInterface_copy(XMLDInterface *src, XMLDInterface *dest) {
+ dest->name = src->name;
+ dest->port = src->port;
+ dest->init = src->init;
+ dest->destroy = src->destroy;
+ dest->prepare_conn = src->prepare_conn;
+ dest->cleanup_conn = src->cleanup_conn;
+ dest->prepare = src->prepare;
+ dest->cleanup = src->cleanup;
+ dest->parse = src->parse;
+ dest->walk = src->walk;
+ dest->get_response = src->get_response;
+}
+
+/*
  * : Frees a created interface structure.
  * req: the interface structure to be freed.
  */
@@ -82,3 +99,23 @@ XMLDInterface *XMLDInterfaceList_search_by_name(XMLDInterfaceList *list, char *n
  return interface;
 }
 
+/*
+ * : Searches a list of interface structures for an interface that
+ * has a particular port.
+ * list: the list to search.
+ * port: the port to look for.
+ * returns: a pointer to the interface that has the given port or NULL
+ * if not found. If there was more than one interface having the same
+ * port, a pointer to the first one is returned.
+ */
+XMLDInterface *XMLDInterfaceList_search_by_port(XMLDInterfaceList *list, int port) {
+ XMLDList_reset(list);
+ XMLDInterface *interface=NULL;
+ while (XMLDList_next(list)) {
+  if (((XMLDInterface *) XMLDList_curr(list))->port == port) {
+   interface = (XMLDInterface *) XMLDList_curr(list);
+   break;
+  }
+ }
+ return interface;
+}

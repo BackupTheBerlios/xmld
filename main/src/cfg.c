@@ -55,38 +55,6 @@ XMLDStatus cfg_init() {
 }
 
 /*
- * Gets the value of the given directive in the given
- * configuration subsection of the given tree
- * structure.
- *
- * NULL for section means getting a directive from 
- * the given tree's root.
- *
- * NULL for the tree means getting the directive from
- * cfg_tree.
- */
-XMLDCfgValue *cfg_get(char *section, char *directive, XMLDCfgSection *tree) {
- if (tree == NULL) {
-  tree = cfg_tree;
- }
- XMLDCfgSection *tmp;
- if (section == NULL) {
-  tmp = cfg_tree;
- }
- else {
-  tmp = XMLDCfgSectionList_search_by_name(tree->sections, section);
- }
- if (tmp == NULL) {
-  return NULL;
- }
- XMLDCfgDirective *tmp_dir = XMLDCfgDirectiveList_search_by_name(tmp->directives, directive);
- if (tmp_dir == NULL) {
-  return NULL;
- }
- return tmp_dir->values;
-}
-
-/*
  * Finalizes and cleans up the parse tree of the conf.
  * returns: whether successful.
  */

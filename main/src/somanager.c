@@ -112,7 +112,7 @@ void somanager_handle(void *sockindex) {
   
   XMLDConnection conn;
   conn.fd = s;
-  conn.user = cfg_get_interface_name(ports[*((int *) sockindex)]);
+  conn.user = XMLDInterfaceList_search_by_port(interface_list, ports[*((int *) sockindex)]);
   mtasker_handle(somanager_user_connection, (void *) &conn, s);
  } 
 }
