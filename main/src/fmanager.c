@@ -13,65 +13,40 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include "xmld_list.h"
-#include "xmld_file_assoc.h"
+#include <sys/file.h>
 
 /*
- * Initializes the fmanager.
+ *
  */
-short fmanager_init() {
+FILE *fmanager_get_sh_fd(char *file) {
+ FILE *ret=fopen(file, "r+");
+ if (ret == NULL) {
+  return NULL;
+ }
+ if (flock(fileno(ret), LOCK_SH) == 0) {
+  return 1;
+ }
+ else {
+  fclose(ret);
+  return NULL;
+ }
 }
 
 /*
- * : Adds a new element to file_list and sets
- * its file_name filed to the given file_name
- * and associates the given fd to it.
+ *
  */
-void fmanager_assoc_file_to_fd(char *file_name, FILE *fd) {
-}
-
-/*
- * : Returns the file descriptor associated
- * with the given file name in the file_list.
- * file: The file for which a file descriptor is
- * to be returned.
- * returns: the named file descriptor.
- * 
- * Note: this function blocks until the named file
- * is not locked for reading.
- */
-FILE *fmanager_get_read_fd(char *file) { 
-}
-
-/*
- * : Returns the file descriptor associated
- * with the given file name in the file_list.
- * file: The file for which a file descriptor is
- * to be returned.
- * returns: the named file descriptor.
- * 
- * Note: this function blocks until the named file
- * is not locked for writing.
- */
-FILE *fmanager_get_write_fd(char *file) {
-}
-
-/*
- * : Read-locks the given file descriptor.
- * fd: The file descriptor to lock.
- * returns: Whether successful.
- */
-short fmanager_lock_read_fd(FILE *fd) {
-}
-
-/*
- * : Write-locks the given file descriptor.
- * fd: The file descriptor to lock.
- * returns: Whether successful.
- */
-short fmanager_lock_write_fd(FILE *fd) {
+FILE *fmanager_get_ex_fd(char *file) {
+ FILE *ret=fopen(file, "r+");
+ if (ret == NULL) {
+  return NULL;
+ }
+ if (flock(fileno(ret), LOCK_EX) == 0) {
+  return ret;
+ }
+ else {
+  fclose(ret);
+  return NULL;
+ }
 }
 
 /*
@@ -80,12 +55,10 @@ short fmanager_lock_write_fd(FILE *fd) {
  * returns: Whether successful.
  */
 short fmanager_unlock_fd(FILE *fd) {
-}
-
-/*
- * Shutdowns fmanager.
- * Note: This function fclose()'s each of
- * the file descriptors in file_list.
- */
-short fmanager_shutdown() {
+ if (flock(fd, LOCK_UN) == 0) {
+  return 1;
+ }
+ else {
+  return 0;
+ }
 }
