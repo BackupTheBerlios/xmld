@@ -25,5 +25,7 @@ char *engine_xmld_eval_aggr_expr (XMLDWork *, XMLDExpr *);
 char *engine_xmld_get_column_value (XMLDWork *, char *);
 short engine_xmld_set_column_value (XMLDWork *, char *, char *);
 void engine_xmld_simplify_expr (XMLDExpr *);
+short engine_xmld_like(XMLDExpr *, XMLExpr *);
+short engine_xmld_between(XMLDExpr *, XMLDExpr *);
 
 #endif /* __ENGINE_XMLD_H */
