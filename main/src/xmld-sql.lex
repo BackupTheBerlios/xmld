@@ -72,12 +72,12 @@ struct XMLDEngine;
 "," return ',';
 "!" return '!';
 "=" return '=';
-\" BEGIN STR;
-<STR>[^\n"]* {
-         lvalp->qval=(char *) malloc((strlen(yytext)+1)*sizeof(char));
-         strcpy(lvalp->qval, yytext);
-         return QVAL;
-        }
+"\""  BEGIN STR;
+<STR>[^"]* {
+	   lvalp->qval=(char *) malloc(strlen(yytext)*sizeof(char));
+           strcpy(lvalp->qval, yytext);
+           return QVAL;
+          }
 <STR>\" BEGIN INITIAL;
 [A-Z_]([A-Z0-9_]*) {
                    lvalp->qval=(char *) malloc((strlen(yytext)+1)*sizeof(char));
