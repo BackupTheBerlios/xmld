@@ -18,7 +18,15 @@
 #define XMLD_PRIV_READ 0  /* Read  */
 #define XMLD_PRIV_WRITE 1 /* Write */
 
-XMLDStatus authman_handle(fd, char **);
+#define AUTH_USER_NAME "name"
+#define AUTH_USER_PASS "pass"
+#define AUTH_USER_DIR "dir"
+#define AUTH_FILE "auth.xml"
+#define AUTH_TAG "<user"
+#define AUTH_USER_HEADER_FIELD "user-name"
+#define AUTH_PASS_HEADER_FIELD "pass"
+
+XMLDStatus authman_handle(int , char **);
 XMLDStatus authman_auth_user(char *, char **ret);
 int authman_get_priv(char *, char *); /* priv = privileges */
 

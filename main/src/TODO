@@ -489,12 +489,16 @@ error. (done)
 
 * Add void conditions to QUERY.html (done)
 
+* Rewrite protoimpl. (done)
+
 * Write a communication protocol document. (done)
 
 * Implement the communication protocol. (protoimpl
 part).
 
 * Attach the communication protocol everywhere else.
+
+* Add "Notes on record sets" to PROTO.html.
 
 * resptrans in twalker instead of XMLDResponse_flush. (done)
 
@@ -505,8 +509,8 @@ part) with skeleton support for per-file user privileges.
 * authman_auth_user should return XMLDStatus and inform us about
 the curr_dir of the user as well. (done)
 
-* protect the auth.xml document in any way. (priv it to
-root only, and make it system unreadable).
+* protect the auth.xml document. (priv it to root only, and make it 
+system unreadable).
 
 * define XMLD*List macros as XMLDList for clearity of code
 and use them everywhere.
@@ -515,12 +519,11 @@ and use them everywhere.
 
 * Add a length argument to xmld_socket_read/write. (done)
 
-* Handle the authentication sequence in authman_handle.
+* Handle the authentication sequence in authman_handle. (done)
 
 * Handle DISCONNECT out of the query parser.
 
-* Add XMLD_ENOUSER, XMLD_EBADPASS, XMLD_ENORPRIV and XMLD_
-ENOWPRIV errors.
+* Add XMLD_ENORPRIV and XMLD_ENOWPRIV errors.
 
 * itostr and ftostr should take a max length parameter 
 that if provided as 0 the defaults are used. (done)
