@@ -18,6 +18,7 @@
 #include <limits.h>
 #include <math.h>
 #include "../xmlddef.h"
+#include "../mutils.h"
 #include "../dutils.h"
 #include "../sutils.h"
 #include "../xmld_list.h"
@@ -228,10 +229,10 @@ XMLDBool engine_xmld_eval_cond(XMLDWork *work, XMLDCond *cond, int level) {
    break;
   }
  
-  if (XMLDExpr_is_complext(expr->left)) {
+  if (XMLDExpr_is_complex(expr->left)) {
    XMLDExpr_free(left);
   }
-  if (XMLDExpr_is_complext(expr->right)) {
+  if (XMLDExpr_is_complex(expr->right)) {
    XMLDExpr_free(right);
   }	  
  }
@@ -261,8 +262,8 @@ else if (cond->type == XMLD_CONDITION_VOID) {
 /*
  * Simplifies a XMLDExpr to a basic type.
  */
-XMLDExpr *engine_xmld_simplify_expr(XMLDWork * work, XMLDExpr *expr, int level) {
- XMLDExpr *ret=XMLDExpr_create();
+XMLDExpr *engine_xmld_simplify_expr(XMLDWork *work, XMLDExpr *expr, int level) {
+ XMLDExpr *ret;
  if (expr->type == XMLD_OPERATION) {
   XMLDExpr *left, right;
   if (XMLDExpr_is_complex(expr->left)) {
@@ -278,12 +279,33 @@ XMLDExpr *engine_xmld_simplify_expr(XMLDWork * work, XMLDExpr *expr, int level) 
    right=expr->right;
   }
   
-  /* type checking and evaluation */
+  if (left == NULL ||  right == NULL) {
+   cfree(left);
+   cfree(right);
+   return NULL;   
+  }
+
+  switch (expr->op) {
+   case XMLD_OP_ADD:
+   break;
+   case XMLD_OP_BNEG:
+   break;
+   case XMLD_OP_MULTIP:
+   break;
+   case XMLD_OP_DIV:
+   break;
+   case XMLD_OP_EXPO;
+   break;
+   case XMLD_OP_UNEG:
+   break;
+   case XMLD_OP_AND:
+   break;
+  }
   
-  if (XMLDExpr_is_complext(expr->left)) {
+  if (XMLDExpr_is_complex(expr->left)) {
    XMLDExpr_free(left);
   }
-  if (XMLDExpr_is_complext(expr->right)) {
+  if (XMLDExpr_is_complex(expr->right)) {
    XMLDExpr_free(right);
   }	  
  }
@@ -291,9 +313,53 @@ XMLDExpr *engine_xmld_simplify_expr(XMLDWork * work, XMLDExpr *expr, int level) 
   if (expr->file == NULL) {
    expr->file = (XMLDFile *) XMLDList_first(work->files);
   }
+  if (expr->file->store == NULL) {
+   return NULL;
+  }
+  fpos_t pos;
+  fgetpos((FILE *) expr->file->data, &pos);
+  char *tagname=engine_xmld_get_tagname((FILE *) expr->file->data);
+  fsetpos((FILE *) expr->file->data, &pos);
+  char *type=engine_xmld_get_element_att_type((FILE *) expr->file->store, level, tagname, expr->ident);
+  free(tagname);
   
+  if (strcasecmp(type, XMLD_TYPE_CHAR) == 0) {
+   ret=XMLDExpr_create();
+   ret->type = XMLD_QVAL;
+   ret->qval=engine_xmld_get_column_value(expr->file, expr->ident);
+  }
+  else if (strcasecmp(type, XMLD_TYPE_INT)) {
+   ret=XMLDExpr_create();
+   ret->type = XMLD_INTEGER;
+   ret->qval=engine_xmld_get_column_value(expr->file, expr->ident);
+   ret->nval=atoi(ret->qval);
+   free(ret->qval);
+   ret->qval=NULL;
+  }
+  else if (strcasecmp(type, XMLD_TYPE_FLOAT)) {
+   ret=XMLDExpr_create();
+   ret->type = XMLD_FLOAT;
+   ret->qval=engine_xmld_get_column_value(expr->file, expr->ident);
+   ret->fnval=atof(ret->qval);
+   free(ret->qval);
+   ret->qval=NULL;
+  }
+  else {
+   return NULL;
+  }
+  
+  free(type);
  }
  else if (expr->type == XMLD_FUNCTION) {
+  ret=(*(expr->func->func)) (expr->arg_list, expr->file);
+ }
+ else if (expr->type == XMLD_WILDCARD) {
+  if (expr->file == NULL) {
+   expr->file = (XMLDFile *) XMLDList_first(work->files);
+  }
+  ret=XMLDExpr_create();
+  ret->type=XMLD_QVAL;
+  ret->qval=engine_xmld_get_column_value(expr->file, (expr->wildcard == XMLD_WILDCARD_ALL) ? 0 : 1);
  }
  return ret;
 }

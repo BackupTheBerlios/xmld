@@ -31,6 +31,11 @@
 #define BIT_ISSET(bitmask, bit) ((bitmask) & (bit))
 #define ERROR_RESPONSE xmld_socket_write(work->conn->fd, err_str[xmld_errno], strlen(err_str[xmld_errno])+1)
 
+/* Data types */
+#define XMLD_TYPE_CHAR "CHAR"
+#define XMLD_TYPE_INT "INT"
+#define XMLD_TYPE_FLOAT "FLOAT"
+
 typedef int XMLDBool;
 typedef int XMLDStatus;
 

@@ -64,7 +64,7 @@ struct XMLDExpr {
  /*-------------------*/
  char *qval; /* type 4: Quoted value */
  /*-------------------*/
- short wildcard; /* type 5: wildcard */
+ int wildcard; /* type 5: wildcard */
  /*------------------*/
  float fnval; /* type 6: floating point number */
  /*------------------*/
