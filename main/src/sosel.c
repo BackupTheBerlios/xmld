@@ -24,15 +24,13 @@
 #include "xmld_types.h"
 #include "sosel.h"
 #include "mtasker.h"
-
+#include "qp.h"
 /*
  * Organize XMLDConnection removal (somanager_remove and sosel_shutdown) so
  * they don't cause segfaults or conflicts.
  */
-xmld_status_t stat;
 int max_conn;
 struct XMLDConnection *conn_table;
-int j;
 
 xmld_status_t sosel_init() {
  max_conn=cfg_get("sosel.max_conn");
@@ -40,8 +38,7 @@ xmld_status_t sosel_init() {
  int id=shmget(key, max_conn*sizeof(struct XMLDConnection), IPC_CREAT);
  conn_table=(struct XMLDConnection*)shmat(id, 0, 0); 
  shmctl(id, IPC_RMID, 0);
- void *k;
- stat=mtasker_handle(sosel_run, k);
+ xmld_status_t stat=mtasker_handle(sosel_run, (void *) 0);
  if (stat!=XMLD_SUCCESS) {
   return XMLD_FAILURE;
  }
@@ -67,7 +64,6 @@ void sosel_run(void *data) {
  struct XMLDConnection **conns=(struct XMLDConnection **)malloc(max_conn*sizeof(struct XMLDConnection*));
  int maxfd=0,ret,i,j=1;
  j=1;
- int maxfd;
  
  while (j!=0) {
   FD_ZERO(&fds);
@@ -96,7 +92,7 @@ void sosel_run(void *data) {
    for (i=0;i<=j;i++) {
     if (FD_ISSET(conns[i]->fd, &fds)) {
      conns[i]->sfd=0;
-     mtasker_handle(qparser_handle, (void*) conns[i]);
+     mtasker_handle(qp_handle, (void*) conns[i]);
     }
    }
   }
@@ -105,7 +101,7 @@ void sosel_run(void *data) {
 }
 xmld_status_t sosel_sremove(int fd) {
  int i;
- stat=XMLD_FAILURE;
+ xmld_status_t stat=XMLD_FAILURE;
  for (i=0;i<max_conn;i++) {
   if (conn_table[i].fd==fd) {
    conn_table[i].sfd=0;
@@ -117,7 +113,7 @@ xmld_status_t sosel_sremove(int fd) {
 }
 xmld_status_t sosel_sadd(int fd) {
  int i;
- stat=XMLD_FAILURE;
+ xmld_status_t stat=XMLD_FAILURE;
  for (i=0;i<max_conn;i++) {
   if (conn_table[i].fd==fd) {
    conn_table[i].sfd=1;
@@ -128,10 +124,11 @@ xmld_status_t sosel_sadd(int fd) {
  return stat;
 }
 xmld_status_t sosel_add(int fd, char*dir) {
- stat=XMLD_FAILURE;
+ xmld_status_t stat=XMLD_FAILURE;
+ int j;
  for (j=0;j<max_conn;j++) {
    if (conn_table[j].fd==0 && conn_table[j].sfd==0) {
-      conn_table[j].curr_dir=(char*)malloc(strlen(dir)*sizeof(char));
+      conn_table[j].curr_dir=(char*) malloc(strlen(dir)*sizeof(char));
       strcpy(conn_table[j].curr_dir, dir);
       conn_table[j].fd=fd;
       conn_table[j].sfd=1;
@@ -142,7 +139,8 @@ xmld_status_t sosel_add(int fd, char*dir) {
  return stat;
 }
 xmld_status_t sosel_remove(int fd) {
- stat=XMLD_FAILURE;
+ xmld_status_t stat=XMLD_FAILURE;
+ int j;
  for (j=0;j<max_conn;j++) {
   if (conn_table[j].fd==fd) {
    free(conn_table[j].curr_dir);
