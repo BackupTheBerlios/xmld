@@ -57,6 +57,26 @@ void XMLDCond_free_content(void *cond) {
 }
 
 /*
+ * : Copies a condition structure into another condition structure. 
+ */
+void XMLDCond_copy(XMLDCond *src, XMLDCond *dest) {
+ dest->type=src->type;
+ dest->negate=src->negate;
+ switch (src->type) {
+  case 0:
+   dest->left=src->left;
+   dest->right=src->right;
+   dest->op=src->op;
+  break;
+  case 1:
+   dest->cleft=src->cleft;
+   dest->cright=src->cright;
+   dest->cop=src->cop;
+  break;
+ }
+}
+
+/*
  * : Creates a list of condition structures.
  * returns: the newly created list.
  */
