@@ -13,11 +13,12 @@
 
 #include <stdlib.h>
 #include "xmld_list.h"
-struct XMLDExpr;
-#ifndef XMLD_EXPR_TYPE_DEFINED
-#define XMLD_EXPR_TYPE_DEFINED
- typedef struct XMLDExpr XMLDExpr;
-#endif /* XMLD_EXPR_TYPE_DEFINED */
+struct XMLDFunc;
+#ifndef XMLD_FUNC_TYPE_DEFINED
+#define XMLD_FUNC_TYPE_DEFINED
+ typedef struct XMLDFunc XMLDFunc;
+#endif /* XMLD_FUNC_TYPE_DEFINED */
+#include "xmld_expr.h"
 #include "xmld_func.h"
 #include "func_list.h"
 
@@ -26,8 +27,7 @@ short func_list_init() {
  XMLDFunc *curr_func=XMLDFunc_add_to_list(func_list);
  curr_func->name="Foo";
  curr_func->func=foo_func;
- curr_func->return_type=0;
- curr_func->aggr=1;
+ curr_func->aggr=0;
  /* rest of function entries */
  return 1;
 }
