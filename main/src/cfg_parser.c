@@ -13,6 +13,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 #include "str_split.h"
 #include <stdio.h>
 #include <errno.h>
@@ -151,6 +152,9 @@ void cfg_parser_parse_token(char *token, short mode) {
   else if (strcmp(token, "char**") == 0) {
    curr_dir->type=3;
   }
+  else if (strcmp(token, "char") == 0) {
+   curr_dir->type=4;
+  }
   else {
    curr_dir->type=-1;
   }
@@ -197,6 +201,9 @@ void cfg_parser_parse_token(char *token, short mode) {
   }
   else if (curr_dir->type == 3) {
    curr_dir->value.string_array_value=str_split(token, ',');
+  }
+  else if (curr_dir->type == 4) {
+   sscanf(token, "%c", &curr_dir->value.char_value);
   }
  }
 }
