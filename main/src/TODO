@@ -556,21 +556,42 @@ esponse_flush. and remove XMLDResponse_flush. (done)
 
 * Implement read buffering in dutils. (done)
 
-* Handle quotes inside strings in xmld-sql.lex
+* add down-level up-level to init msg (done)
+
+* Individual expression resolution within twalker:
+ 
+ * Expression lists are resolved in an expression
+ by expression basis. (done)
 
 * Correct aggregate expression resolution:
   
-  * The aggregate expression is to be evaluated in a per-row
-  basis relative to a last value stored in XMLDAggrTable.
-  * XMLDResponse_assoc_col_to_aggr should return the XMLDAggrTable
-  to which the column was assigned.
-  * how to pass the Expr to the function ?
+ * Aggregate expressions are to be evaluated normally
+ (done)
+ * Association to columns is the only optional step
+ after checking for expr->aggr. (done)
+ * eval_expr should take a XMLDAggrTable that's passed
+ to a function (if any). (done)
+ * XMLDResponse_assoc_col_to_aggr should return the selected
+ aggregate expression table. (done)
+ * XMLDAggrTable should contain a XMLDExpr field to maintain
+ last value. (done)
+ * Generally, a function whether it's aggregate or
+ not, should have access to the work structure, and have
+ a third argument to which the aggregate expression table
+ is to be passed (NULL if the function is not aggregate).
+ (done)
+ * do the former filling technique again. (done)
+ * XMLDResponse_curr_aggr_table (done)
+ * XMLDResponse_next_aggr returns success/failure. (done)
+
+* Typing is now loose within xmld-sql.y, twalker should be
+a hard checker.
 
 * Fix xmld_socket_accept: Interupted system call on DISC
 ONNECT. (check how of xmld_socket_shutdown).
 
-* check if it's neccessary to put \0 at end of &col_sep
-in val_carry in qp_handle initialization sequence.
+* check if it's neccessary to put \0 at end of &col_sep 
+(...) in val_carry in qp_handle initialization sequence.
 
 * protect the auth.xml document. (priv it to root only, and make it 
 system unreadable).
@@ -589,11 +610,20 @@ manipulation functions may return NULL or 0 (issue
 XMLD_EMALFORMAT in that case. [11] itostr and ftostr.
 [12] tagname/attribute name conflicts. [13] XMLD*List 
 changes. [14] Expression grouping. [15] condition
-grouping.
+grouping. [16] hard type checking. [17] eval_cond
+should evaluate only the first condition of a given
+condition list. [18] aggregate expression should 
+return a pointer to the last value expression in
+the given aggregate expression table.
+
+* Handle quotes inside strings in xmld-sql.lex
 
 * Define and implement the exec_assign engine
 function and the UPDATE and UPDATE with
 WHERE request types in twalker.
+ 
+ * Handle assignment lists in an assignment-per-
+ assignment basis.
 
 * Add two SQL functions in func_list and create a dir-
 ectory "functions" for them. (one aggregate and one scalar).
@@ -639,13 +669,10 @@ XMLDEngineHashtable_create(...)
 
 * Full per-file user privilege system.
 
-* itostr, ftostr use snprintf with a fixed INTEGER_LENGTH
-size of output string, that is--integers bigger than
-that are ignored! fix that please.
-
 * ptasker task queue maintenance.
 
 * values returned from cfg must be checked for being NULLs.
+
 *--------------- Start of The OpenXMLD 0.7.0 part:
 
 Goal: Confromance and high-usability.
@@ -653,6 +680,8 @@ Goal: Confromance and high-usability.
 * Make it a robust XMLD-SQL implementation!
 
 * XML compliance and Unicode support.
+
+* XPATH/XQuery support.
 
 *--------------- Start of The OpenXMLD 1.0.0 part:
 

@@ -90,8 +90,31 @@ XMLDStatus twalker_handle(XMLDWork *work) {
       XMLDResponse_curr_row(work->resp)->num_down=num_down;
       XMLDResponse_curr_row(work->resp)->num_up=num_up;
       num_up=num_down=0;
-      XMLDResponse_add_col(work->resp);
-      XMLDResponse_fill_col(work->resp, (*(work->res->engine->eval_expr)) (work, (XMLDExpr *) XMLDList_curr(work->req->retr)));
+      /* Handle expressions of type "expression list" */
+      if (((XMLDExpr *) XMLDList_curr(work->req->retr))->type == XMLD_LIST) {
+       XMLDExprList *expr_list=((XMLDExpr *) XMLDList_curr(work->req->retr))->exprs;
+       XMLDList_reset(expr_list);
+       while (XMLDList_next(expr_list)) {
+        XMLDResponse_add_col(work->resp);
+        if (((XMLExpr *) XMLDList_curr(expr_list))->aggr == XMLD_TRUE) {
+         XMLDAggrTable *curr_table=XMLDResponse_assoc_col_to_aggr(work->resp, (XMLDExpr *) XMLDList_curr(expr_list), XMLDResponse_curr_col(work->resp));
+         (*(work->res->engine->eval_expr)) (work, (XMLDExpr *) XMLDList_curr(expr_list), curr_table);
+        }
+        else {
+         XMLDResponse_fill_col(work->resp, (*(work->res->engine->eval_expr)) (work, (XMLDExpr *) XMLDList_curr(expr_list), NULL));
+        } 
+       }
+      }
+      else {	      
+       XMLDResponse_add_col(work->resp);
+       if (((XMLExpr *) XMLDList_curr(work->req->retr))->aggr == XMLD_TRUE) {
+        XMLDAggrTable *curr_table=XMLDResponse_assoc_col_to_aggr(work->resp, (XMLDExpr *) XMLDList_curr(work->req->retr), XMLDResponse_curr_col(work->resp));
+        (*(work->res->engine->eval_expr)) (work, (XMLDExpr *) XMLDList_curr(work->req->retr), curr_table);
+       }
+       else {
+        XMLDResponse_fill_col(work->resp, (*(work->res->engine->eval_expr)) (work, (XMLDExpr *) XMLDList_curr(work->req->retr), NULL));
+       } 
+      }
      } 
     }
     else {
@@ -99,6 +122,12 @@ XMLDStatus twalker_handle(XMLDWork *work) {
      XMLDList_prev(work->req->retr);
     }
     ret=(*(work->res->engine->walk)) (work);
+   }
+   
+   /* Filling columns associated to aggregate expressions with values */
+   XMLDResponse_reset_aggr(work->resp);
+   while (XMLDResponse_next_aggr(work->resp)) {
+    XMLDResponse_fill_curr_aggr(work->resp, (*(work->res->engine->eval_expr)) (work, XMLDResponse_curr_aggr_expr(work->resp), XMLDResponse_curr_aggr_table(work->resp)));
    }
    
    /* Handling of level changes not followed by row retrieval */
@@ -166,8 +195,32 @@ XMLDStatus twalker_handle(XMLDWork *work) {
        XMLDResponse_add_row(work->resp);
        XMLDResponse_curr_row(work->resp)->num_down=num_down;
        XMLDResponse_curr_row(work->resp)->num_up=num_up;
-       XMLDResponse_add_col(work->resp);
-       XMLDResponse_fill_col(work->resp, (*(work->res->engine->eval_expr)) (work, (XMLDExpr *) XMLDList_curr(work->req->retr)));
+       num_up=num_down=0;
+       /* Handle expressions of type "expression list" */
+       if (((XMLDExpr *) XMLDList_curr(work->req->retr))->type == XMLD_LIST) {
+        XMLDExprList *expr_list=((XMLDExpr *) XMLDList_curr(work->req->retr))->exprs;
+        XMLDList_reset(expr_list);
+        while (XMLDList_next(expr_list)) {
+	 XMLDResponse_add_col(work->resp);
+	 if (((XMLExpr *) XMLDList_curr(expr_list))->aggr == XMLD_TRUE) {
+	  XMLDAggrTable *curr_table=XMLDResponse_assoc_col_to_aggr(work->resp, (XMLDExpr *) XMLDList_curr(expr_list), XMLDResponse_curr_col(work->resp));
+	  (*(work->res->engine->eval_expr)) (work, (XMLDExpr *) XMLDList_curr(expr_list), curr_table);
+	 }
+	 else {
+          XMLDResponse_fill_col(work->resp, (*(work->res->engine->eval_expr)) (work, (XMLDExpr *) XMLDList_curr(expr_list), NULL));
+	 } 
+        }
+       }
+       else {
+	XMLDResponse_add_col(work->resp);
+	if (((XMLExpr *) XMLDList_curr(work->req->retr))->aggr == XMLD_TRUE) {
+	 XMLDAggrTable *curr_table=XMLDResponse_assoc_col_to_aggr(work->resp, (XMLDExpr *) XMLDList_curr(work->req->retr), XMLDResponse_curr_col(work->resp));
+	 (*(work->res->engine->eval_expr)) (work, (XMLDExpr *) XMLDList_curr(work->req->retr), curr_table);
+	}
+	else {
+         XMLDResponse_fill_col(work->resp, (*(work->res->engine->eval_expr)) (work, (XMLDExpr *) XMLDList_curr(work->req->retr), NULL));
+	} 
+       }
       }
       else {
        if (((XMLDCond *) XMLDList_curr(work->req->where))->cross_level != XMLD_TRUE) {
@@ -201,6 +254,12 @@ XMLDStatus twalker_handle(XMLDWork *work) {
     ret=(*(work->res->engine->walk)) (work);   
    }
    
+   /* Filling columns associated to aggregate expressions with values */
+   XMLDResponse_reset_aggr(work->resp);
+   while (XMLDResponse_next_aggr(work->resp)) {
+    XMLDResponse_fill_curr_aggr(work->resp, (*(work->res->engine->eval_expr)) (work, XMLDResponse_curr_aggr_expr(work->resp), XMLDResponse_curr_aggr_table(work->resp)));
+   }
+
    /* Handling of level changes not followed by row retrieval */
    last_row=XMLDResponse_curr_row(work->resp);
    if (last_row != NULL) {

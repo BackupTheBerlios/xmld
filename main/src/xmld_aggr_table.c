@@ -34,6 +34,7 @@ struct XMLDFunc;
 XMLDAggrTable *XMLDAggrTable_create() {
  XMLDAggrTable *table=(XMLDAggrTable *) malloc(sizeof(XMLDAggrTable));
  table->aggr=NULL;
+ table->value=NULL;
  table->col_ptrs=NULL;
  return table;
 }
@@ -55,6 +56,7 @@ void XMLDAggrTable_free(XMLDAggrTable *table) {
  */
 void XMLDAggrTable_free_content(void *table) {
  XMLDExpr_free(((XMLDAggrTable *) table)->aggr);
+ XMLDExpr_free(((XMLDAggrTable *) table)->value);
  XMLDList_free(((XMLDAggrTable *) table)->col_ptrs);
 }
 

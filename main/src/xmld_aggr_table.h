@@ -17,6 +17,7 @@
 /* represents an (aggregate expression -> set of columns) assocsiation */
 struct XMLDAggrTable {
  XMLDExpr *aggr;
+ XMLDExpr *value;
  XMLDList *col_ptrs; /* list of "XMLDCol*" */
 };
 

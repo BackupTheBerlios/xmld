@@ -29,12 +29,13 @@ void XMLDResponse_add_col(XMLDResponse *);
 void XMLDResponse_fill_col(XMLDResponse *, char *);
 
 /* Aggregate expression tables manipulation functions */
-void XMLDResponse_assoc_col_to_aggr(XMLDResponse *, XMLDExpr *, XMLDCol *);
+XMLDAggrTable *XMLDResponse_assoc_col_to_aggr(XMLDResponse *, XMLDExpr *, XMLDCol *);
 XMLDAggrTable *XMLDResponse_search_aggr_tables_by_expr(XMLDResponse *, XMLDExpr *);
 void XMLDResponse_reset_aggr(XMLDResponse *);
 XMLDExpr *XMLDResponse_curr_aggr_expr(XMLDResponse *);
+XMLDAggrTable *XMLDResponse_curr_aggr_table(XMLDResponse *);
 void XMLDResponse_fill_curr_aggr(XMLDResponse *, char *);
-void XMLDResponse_next_aggr(XMLDResponse *);
+XMLDStatus XMLDResponse_next_aggr(XMLDResponse *);
 XMLDRow *XMLDResponse_curr_row(XMLDResponse *);
 XMLDCol *XMLDResponse_curr_col(XMLDResponse *);
 void XMLDResponse_free(XMLDResponse *);

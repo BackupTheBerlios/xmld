@@ -52,12 +52,12 @@ struct XMLDEngine {
  int (*get_level) (XMLDWork *); /* The function which gets the current
 				 * level in the document.
 				 */ 
- char *(*eval_expr) (XMLDWork *, XMLDExpr *); /* The function which
-					       * the tree walker calls
-					       * to get the value of
-					       * an expression from the
-					       * engine. 	 
-					       */
+ char *(*eval_expr) (XMLDWork *, XMLDExpr *, XMLDAggrTable *); /* The function which
+					                        * the tree walker calls
+					                        * to get the value of
+					                        * an expression from the
+					                        * engine. 	 
+					                        */
  
  XMLDBool (*eval_cond) (XMLDWork *, XMLDCond *); /* The function which
 					          * the tree walker calls

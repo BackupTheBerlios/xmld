@@ -168,7 +168,7 @@ int engine_xmld_get_level(XMLDWork *work) {
 }
 
 /* eval_expr function */
-char *engine_xmld_eval_expr(XMLDWork *work, XMLDExpr *expr) {
+char *engine_xmld_eval_expr(XMLDWork *work, XMLDExpr *expr, XMLDAggrTable *aggr_table) {
  char *ret;
  if (expr->type == 0) { /* expr is of a numeric type */
   return ltoa(expr->nval);

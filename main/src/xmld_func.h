@@ -16,7 +16,7 @@
 
 struct XMLDFunc { /* represents a SQL function */
  char *name;
- XMLDExpr *(*func) (XMLDExprList *); 
+ XMLDExpr *(*func) (XMLDExprList *, XMLDWork *, XMLDAggrTable *); 
  XMLDBool aggr; /* Whether it's an aggregate function */
 };
 

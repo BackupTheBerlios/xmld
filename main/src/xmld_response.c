@@ -99,8 +99,9 @@ void XMLDResponse_fill_col(XMLDResponse *resp, char *val) {
  * expr: the expression structure to which the given column is going to be
  * associated.
  * col: the column to be associated.
+ * returns: the aggregate expression table to which the given column was associated.
  */
-void XMLDResponse_assoc_col_to_aggr(XMLDResponse *resp, XMLDExpr *expr, XMLDCol *col) {
+XMLDAggrTable *XMLDResponse_assoc_col_to_aggr(XMLDResponse *resp, XMLDExpr *expr, XMLDCol *col) {
  XMLDAggrTable *table=NULL;
  if (XMLDResponse_curr_aggr_expr(resp) == expr) {
   table=(XMLDAggrTable *) XMLDList_curr(resp->tables);
@@ -114,6 +115,7 @@ void XMLDResponse_assoc_col_to_aggr(XMLDResponse *resp, XMLDExpr *expr, XMLDCol 
   resp->tables->curr_element=XMLDList_last(resp->tables);
  }
  XMLDAggrTable_add_col(table, col);
+ return table;
 }
 
 /*
@@ -159,12 +161,19 @@ XMLDExpr *XMLDResponse_curr_aggr_expr(XMLDResponse *resp) {
 }
 
 /*
+ * Returns the current aggregate expression table.
+ */
+XMLDAggrTable *XMLDResponse_curr_aggr_table(XMLDResponse *resp) {
+ return (XMLDAggrTable *) XMLDList_curr(resp->tables);
+}
+
+/*
  * : Points the internal list pointer of the list of aggregate expression tables
  * in the given response structure to the next aggregate expression table.
  * resp: the mentioned response structure. 
  */
-void XMLDResponse_next_aggr(XMLDResponse *resp) {
- XMLDList_next(resp->tables);
+XMLDStatus XMLDResponse_next_aggr(XMLDResponse *resp) {
+ return XMLDList_next(resp->tables);
 }
 
 /*

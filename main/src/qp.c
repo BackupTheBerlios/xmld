@@ -66,13 +66,18 @@ void qp_handle(void *conn) {
 #endif
  
  /* writing the init msg */
- char *arg_carry[4]={QP_COL_SEP_FIELD, QP_COL_SEP_ENC_FIELD, QP_ROW_SEP_FIELD, QP_ROW_SEP_ENC_FIELD};
- char *val_carry[4];
+ char *arg_carry[8]={QP_COL_SEP_FIELD, QP_COL_SEP_ENC_FIELD, QP_ROW_SEP_FIELD, QP_ROW_SEP_ENC_FIELD, QP_DOWN_LEVEL_FIELD
+                     , QP_DOWN_LEVEL_ENC_FIELD, QP_UP_LEVEL_FIELD, QP_UP_LEVEL_ENC_FIELD};
+ char *val_carry[8];
  val_carry[0]=&col_sep;
  val_carry[1]=col_sep_enc;
  val_carry[2]=&row_sep;
  val_carry[3]=row_sep_enc;
- char *init_msg=protoimpl_compose_msg(arg_carry, val_carry, 4, 0);
+ val_carry[4]=&down_level;
+ val_carry[5]=down_level_enc;
+ val_carry[6]=&up_level;
+ val_carry[7]=up_level_enc;
+ char *init_msg=protoimpl_compose_msg(arg_carry, val_carry, 8, 0);
  
  if (protoimpl_write_sequence(fd, init_msg, 1) == XMLD_FAILURE) {
   free(init_msg);

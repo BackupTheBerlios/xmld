@@ -22,8 +22,23 @@ struct XMLDFunc;
  typedef struct XMLDFunc XMLDFunc;
 #endif /* XMLD_FUNC_TYPE_DEFINED */
 #include "xmld_expr.h"
+#include "xmld_cond.h"
+#include "xmld_col.h"
+#include "xmld_row.h"
+#include "xmld_aggr_table.h"
+struct XMLDEngine;
+#ifndef XMLDENGINE_TYPE_DEFINED
+#define XMLDENGINE_TYPE_DEFINED
+ typedef struct XMLDEngine XMLDEngine;
+#endif /* XMLDENGINE_TYPE_DEFINED */
+#include "xmld_request.h"
+#include "xmld_response.h"
+#include "xmld_resource.h"
+#include "xmld_connection.h"
+#include "xmld_work.h"
+#include "xmld_engine.h"
 #include "xmld_func.h"
-
+ 
 /*
  * : Creates a new function structure.
  * returns: the newly created function structure.
