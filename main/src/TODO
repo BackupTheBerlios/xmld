@@ -620,9 +620,8 @@ message. (done)
    expression/condition's associated file is in the named level. (done)
    * XMLDList_(next|prev)((retr|where)) whensever one of the files reaches
    the next/previous level. (done)
-
-* sync includes across all code according to the editions
-above.
+   * prepare and cleanup calls are per-file. (done)
+   * prepare and cleanup receive XMLDFile argument. (done)
 
 * remove "proposed" from query, proto. (done)
 
@@ -639,11 +638,13 @@ XMLD_EMALFORMAT in that case. [11] itostr and ftostr.
 changes. [14] Expression grouping. [15] condition
 grouping. [16] hard type checking. [17] eval_cond
 should evaluate only the first condition of a given
-condition list. [18] aggregate expression should 
-return a pointer to the last value expression in
-the given aggregate expression table. [19] NULL
+condition list. [18] eval_expr should return NULL
+if the expression was aggregate. [19] NULL
 file checks. [20] eval_expr and eval_cond level
 checks.
+
+* sync includes across all code according to the editions
+above.
 
 * Define and implement the exec_assign engine
 function and the UPDATE and UPDATE with
@@ -657,7 +658,7 @@ ectory "functions" for them. (one aggregate and one scalar).
 
 * A very basic capability-demonstrating client in src/client.
 
-* \n is the end-of-line in proto.
+* \n is the end-of-line in proto. (done)
 
 --------------- Start of The OpenXMLD 0.6.0 part:
 

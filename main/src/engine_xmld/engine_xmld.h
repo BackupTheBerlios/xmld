@@ -15,8 +15,8 @@
 #define __ENGINE_XMLD_H
 
 void engine_xmld_init (void);
-XMLDStatus engine_xmld_prepare (XMLDWork *, int);
-void engine_xmld_cleanup (XMLDWork *);
+XMLDStatus engine_xmld_prepare (XMLDWork *, XMLDFile *, int);
+void engine_xmld_cleanup (XMLDWork *, XMLDFile *);
 void engine_xmld_destroy (void);
 int engine_xmld_walk (XMLDWork *);
 int engine_xmld_get_level (XMLDWork *);

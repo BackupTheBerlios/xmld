@@ -69,12 +69,20 @@ XMLDStatus twalker_handle(XMLDWork *work) {
      xmld_errno=XMLD_ENOENGINE;
      return XMLD_FAILURE;
     }
+
+    if (((*(curr_file->engine->prepare)) (work, curr_file, XMLD_ACCESS_NOTHING)) == XMLD_FAILURE) {
+     XMLDList_reset(work->files) 
+     while (XMLDList_next(work->files)) {
+      XMLDFile *cur_file=(XMLDFile *) XMLDList_curr(work->files);
+      if (cur_file == curr_file) {
+       break;
+      }
+      (*(cur_file->engine->cleanup)) (work, cur_file);
+     }
+     return XMLD_FAILURE;
+    }
    }
    
-   if (((*(work->res->engine->prepare)) (work, XMLD_ACCESS_NOTHING)) == XMLD_FAILURE) {
-    return XMLD_FAILURE;
-   }
-
    work->resp=XMLDResponse_create();
    XMLDList_reset(work->req->retr);
    int ret=0;
@@ -176,7 +184,11 @@ XMLDStatus twalker_handle(XMLDWork *work) {
     return XMLD_FAILURE;
    }
    free(resp);
-   (*(work->res->engine->cleanup)) (work);
+   XMLDList_reset(work->files);
+   while (XMLDList_next(work->files)) {
+    XMLDFile *curr_file=(XMLDFile *) XMLDList_curr(work->files);
+    (*(curr_file->engine->cleanup)) (work, curr_file);
+   }	   
   break;
   case XMLD_SQL_SELECT_WHERE:
    XMLDList_reset(work->files);
@@ -198,12 +210,20 @@ XMLDStatus twalker_handle(XMLDWork *work) {
      xmld_errno=XMLD_ENOENGINE;
      return XMLD_FAILURE;
     }
+    
+    if (((*(curr_file->engine->prepare)) (work, curr_file, XMLD_ACCESS_FORMAT)) == XMLD_FAILURE) {
+     XMLDList_reset(work->files);
+     while (XMLDList_next(work->files)) {
+      XMLDFile *cur_file=(XMLDFile *) XMLDList_curr(work->files);
+      if (cur_file == curr_file) {
+       break;
+      }
+      (*(cur_file->engine->cleanup)) (work, cur_file);
+     }
+     return XMLD_FAILURE;
+    }
    }
 
-   if (((*(work->res->engine->prepare)) (work, XMLD_ACCESS_FORMAT)) == XMLD_FAILURE) {
-    return XMLD_FAILURE;
-   }
-   
    work->resp=XMLDResponse_create();
    XMLDList_reset(work->req->where);
    ret=0;
@@ -349,7 +369,11 @@ XMLDStatus twalker_handle(XMLDWork *work) {
     return XMLD_FAILURE;
    }
    free(resp);
-   (*(work->res->engine->cleanup)) (work);
+   XMLDList_reset(work->files);
+   while (XMLDList_next(work->files)) {
+    XMLDFile *curr_file=(XMLDFile *) XMLDList_curr(work->files);
+    (*(curr_file->engine->cleanup)) (work, curr_file);
+   }
   break;
   case XMLD_SQL_UPDATE:
    xmld_errno=XMLD_ENOTIMPL;

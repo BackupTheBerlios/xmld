@@ -61,8 +61,8 @@ void engine_xmld_init() {
 /* prepare function 
  * level: consult xmld_engine.h
  * */
-XMLDStatus engine_xmld_prepare(XMLDWork *work, int level) {
- char *full_name=XMLDWork_get_full_file(work);
+XMLDStatus engine_xmld_prepare(XMLDWork *work, XMLDFile *file, int level) {
+ char *full_name=XMLDFile_get_full_name(file, work);
  char *mime=mfigure_get_mime(full_name);
  
  if (strcmp(mime, "text/xml") != 0) { /* A XML-only engine! */
@@ -74,43 +74,40 @@ XMLDStatus engine_xmld_prepare(XMLDWork *work, int level) {
  
  free(mime);
  if (BIT_ISSET(level, XMLD_ACCESS_EX)) {
-  work->res->data_source=(void *) fmanager_get_ex_fd(full_name);
+  file->data=(void *) fmanager_get_ex_fd(full_name);
  }
  else {
-  work->res->data_source=(void *) fmanager_get_sh_fd(full_name);
+  file->data=(void *) fmanager_get_sh_fd(full_name);
  }
  
- if (work->res->data_source == NULL) {
+ if (file->data == NULL) {
   xmld_errno = XMLD_ENOFILE;
   free(full_name);
   return XMLD_FAILURE;
  }
  
- work->res->store=malloc(3*sizeof(int));
- *((int *) work->res->store)=0; /* <-- the current level in the document */
-                                /* store + 1 is FILE pointer to the format file */
+ file->level=0;
  if (BIT_ISSET(level, XMLD_ACCESS_FORMAT)) {	 
-  *((int *) work->res->store+1)=engine_xmld_load_format_file(full_name, BIT_ISSET(level, XMLD_ACCESS_FORMAT_EX));
-  if (*((int *) work->res->store+1) == NULL) {
+  file->store=(void *) engine_xmld_load_format_file(full_name, BIT_ISSET(level, XMLD_ACCESS_FORMAT_EX));
+  if (file->store == NULL) {
    xmld_errno = XMLD_ENOFORMAT;
    return XMLD_FAILURE;
   }  
  }
  else {
-  *((int *) work->res->store+1) = NULL;
+  file->store = NULL;
  }
  free(full_name);
  return XMLD_SUCCESS;
 }
 /* cleanup function */
-void engine_xmld_cleanup(XMLDWork *work) {
- if (*((int *) work->res->store+1) != NULL) {
-  fmanager_unlock_fd((FILE *) (work->res->store+1));
-  fclose((FILE *) (work->res->store+1));
+void engine_xmld_cleanup(XMLDWork *work, XMLDFile *file) {
+ if (file->store != NULL) {
+  fmanager_unlock_fd((FILE *) file->store);
+  fclose((FILE *) file->store);
  }
- free(work->res->store);
- fmanager_unlock_fd((FILE *) (work->res->data_source));
- fclose((FILE *) work->res->data_source);
+ fmanager_unlock_fd((FILE *) file->data);
+ fclose((FILE *) file->data);
 }
 
 /* destroy function */

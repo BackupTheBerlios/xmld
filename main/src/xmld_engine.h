@@ -30,17 +30,17 @@ struct XMLDEngine {
  void (*init) (void); /* The function that's called once the engine
 		       * is added to the engine_list.
 		       */
- XMLDStatus (*prepare) (XMLDWork *, int); /* The function called before each
-				           * request the engine serves.
-				           * The integer argument is named level
-				           * and determines access levels of the
-				           * request. (see the access level bits
-				           * above)
-				           */
+ XMLDStatus (*prepare) (XMLDWork *, XMLDFile *, int); /* The function called before each
+				                       * request the engine serves.
+				                       * The integer argument is named level
+				                       * and determines access levels of the
+				                       * request. (see the access level bits
+				                       * above)
+				                       */
  
- void (*cleanup) (XMLDWork *); /* The function called after each
-				*  request the engine serves.
-				*/
+ void (*cleanup) (XMLDWork *, XMLDFile *); /* The function called after each
+				            *  request the engine serves.
+				            */
  void (*destroy) (void); /* The function called before the engine
 			  * is removed from engine_list.
 			  */
