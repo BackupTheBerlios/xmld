@@ -59,7 +59,7 @@ void XMLDResponse_free_content(void *resp) {
  */
 void XMLDResponse_add_row(XMLDResponse *resp) {
  XMLDList_add(resp->rows);
- XMLDList_last(resp->rows);
+ resp->rows->curr_element=XMLDList_last(resp->rows);
 }
 
 /*
@@ -70,7 +70,7 @@ void XMLDResponse_add_row(XMLDResponse *resp) {
 void XMLDResponse_add_col(XMLDResponse *resp) {
  XMLDRow *row=(XMLDRow *) XMLDList_curr(resp->rows);
  XMLDCol_add_to_list(row->cols);
- XMLDList_last(row->cols);
+ row->cols->curr_element=XMLDList_last(row->cols);
 }
 
 /*
@@ -79,9 +79,7 @@ void XMLDResponse_add_col(XMLDResponse *resp) {
  * val: the content with which the last added column is to be filled. (copied)
  */
 void XMLDResponse_fill_col(XMLDResponse *resp, char *val) {
- XMLDRow *row=(XMLDRow *) XMLDList_curr(resp->rows);
- XMLDCol *col=(XMLDCol *) XMLDList_curr(row->cols);
- XMLDCol_fill(col, val);
+ XMLDCol_fill(XMLDResponse_curr_col(resp), val);
 }
 
 /*
@@ -106,7 +104,7 @@ void XMLDResponse_assoc_col_to_aggr(XMLDResponse *resp, XMLDExpr *expr, XMLDCol 
  if (table == NULL) {
   table=XMLDAggrTable_add_to_list(resp->tables);
   table->aggr=expr;
-  XMLDList_last(resp->tables);
+  resp->tables->curr_element=XMLDList_last(resp->tables);
  }
  XMLDAggrTable_add_col(table, col);
 }
@@ -145,7 +143,7 @@ void XMLDResponse_reset_aggr(XMLDResponse *resp) {
  */
 XMLDExpr *XMLDResponse_curr_aggr_expr(XMLDResponse *resp) {
  XMLDAggrTable *table=(XMLDAggrTable *) XMLDList_curr(resp->tables);
- if (table!=NULL) {
+ if (table != NULL) {
   return table->aggr;
  }
  else {
@@ -192,6 +190,29 @@ XMLDResponse *XMLDResponse_add_to_list(XMLDList *list) {
  resp->rows=XMLDRow_create_list();
  resp->tables=XMLDAggrTable_create_list();
  return resp;
+}
+
+
+/*
+ * : Returns the current row in the given response
+ * structure.
+ * resp: The named response structure.
+ * returns: A pointer to the current row in the given
+ * response strucutre.
+ */
+XMLDRow *XMLDResponse_curr_row(XMLDResponse *resp) {
+ return (XMLDRow *) XMLDList_curr(resp->rows);
+}
+
+/*
+ * : Returns the current column in the current row
+ * in the given response structure.
+ * resp: The named response structure.
+ * returns: A pointer to the current column in the
+ * current row in the given resopnse structure.
+ */
+XMLDCol *XMLDResponse_curr_col(XMLDResponse *resp) {
+  return (XMLDCol *) XMLDList_curr((XMLDResponse_curr_row(resp))->cols);
 }
 
 /*
