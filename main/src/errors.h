@@ -13,6 +13,8 @@
  
 #ifndef HAVE_ERRORS_H
 #define HAVE_ERRORS_H
+#define ERROR_RESPONSE(s)
+
 enum xmld_status_t {
  XMLD_SUCCESS=0,
  XMLD_FAILURE,
