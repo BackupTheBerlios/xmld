@@ -37,8 +37,7 @@ short cfg_parser_parse() {
  }
  
  char buf;
- char *curr_data=(char *) malloc(sizeof(char));
- *curr_data='\0';
+ char *curr_data=NULL;
  int data_len=1;
  short mode=0; /* 0  = looking for type
                 * 1  = looking for directive
@@ -57,7 +56,7 @@ short cfg_parser_parse() {
    continue;
   }
   else {
-   if (ign_ws == 1 || (buf == ' ' || buf == '\t')) {
+   if (ign_ws == 1 && (buf == ' ' || buf == '\t')) {
     continue;
    }
    else {
@@ -65,11 +64,14 @@ short cfg_parser_parse() {
      if (buf != ' ' && buf != '\t') {
       ign_ws=0;
       curr_data=(char *) realloc(curr_data, (++data_len)*sizeof(char));
-      curr_data[data_len-1]=buf;
-      curr_data[data_len]='\0';
+      curr_data[data_len-2]=buf;
+      curr_data[data_len-1]='\0';
      }
      else {
       cfg_parser_parse_token(curr_data, 0);
+      free(curr_data);
+      curr_data=NULL;
+      data_len=1;
       mode=1;
       ign_ws=1;      
      }
@@ -78,11 +80,17 @@ short cfg_parser_parse() {
      if (buf != ' ' && buf != '\t' && buf != '=') {
       ign_ws=0;
       curr_data=(char *) realloc(curr_data, (++data_len)*sizeof(char));
-      curr_data[data_len-1]=buf;
-      curr_data[data_len]='\0';
+      curr_data[data_len-2]=buf;
+      curr_data[data_len-1]='\0';
      }
      else {
+      if (buf == '=') {
+       fseek(conf, -1, SEEK_CUR);
+      }
       cfg_parser_parse_token(curr_data, 1);
+      free(curr_data);
+      curr_data=NULL;
+      data_len=1;
       ign_ws=1;
       mode=2;      
      }
@@ -95,18 +103,21 @@ short cfg_parser_parse() {
     else if (mode == 3) {
      if (buf == ';') {
       cfg_parser_parse_token(curr_data, 3);
+      free(curr_data);
+      curr_data=NULL;
+      data_len=1;
       ign_ws=1;
-      mode=0;
+      mode=4;
      }
      else {
       ign_ws=0;
       curr_data=(char *) realloc(curr_data, (++data_len)*sizeof(char));
-      curr_data[data_len-1]=buf;
-      curr_data[data_len]='\0';
+      curr_data[data_len-2]=buf;
+      curr_data[data_len-1]='\0';
      }
     }
     else if (mode == 4) {
-     if (buf == '\n') {	     
+     if (buf == '\n' || buf == '\r') {
       mode=0;
      }
     }
@@ -150,18 +161,19 @@ void cfg_parser_parse_token(char *token, short mode) {
    return;
   }
   else {
-   curr_dir->name=(char *) malloc(strlen(token)*sizeof(char));
-   strcpy(curr_dir->name, token);   
+   curr_dir->name=(char *) malloc((strlen(token)+1)*sizeof(char));
+   strcpy(curr_dir->name, token);
   }
  }
  else if (mode == 3) {
+  curr_dir=(XMLDDirective *) XMLDList_curr(cfg_tree);
   if (curr_dir->type == -1) {
    return;
   }
-  else if (curr_dir->type == 0) { /* integer value */
+  else if (curr_dir->type == 0) {
    curr_dir->value.int_value=atoi(token);
   }
-  else if (curr_dir->type == 1) { /* integer array value */
+  else if (curr_dir->type == 1) {
    char **str_array=str_split(token, ',');
    int num=1;
    while (*str_array != NULL) {
@@ -179,11 +191,11 @@ void cfg_parser_parse_token(char *token, short mode) {
    }
    free(str_array);
   }
-  else if (curr_dir->type == 2) { /* string value */
-   curr_dir->value.string_value=(char *) malloc(strlen(token)*sizeof(char));
+  else if (curr_dir->type == 2) {
+   curr_dir->value.string_value=(char *) malloc((strlen(token)+1)*sizeof(char));
    strcpy(curr_dir->value.string_value, token);
   }
-  else if (curr_dir->type == 3) { /* string array value */
+  else if (curr_dir->type == 3) {
    curr_dir->value.string_array_value=str_split(token, ',');
   }
  }
@@ -196,5 +208,6 @@ void cfg_parser_parse_token(char *token, short mode) {
  * returns: whether successful.
  */
 short cfg_parser_clean() {
+ XMLDList_free(cfg_tree);
  return 1;
 }
