@@ -14,9 +14,9 @@
 #ifndef HAVE_XMLD_FUNC_H
 #define HAVE_XMLD_FUNC_H
 
-struct XMLDFunc {
+struct XMLDFunc { /* represents a SQL function */
  char *name;
- void *(*func) (XMLDExprTable *);
+ void *(*func) (XMLDList *);
  short aggr; /*
                * 1 = Aggregate function
                * 0 = Scalar function
@@ -25,13 +25,14 @@ struct XMLDFunc {
 
 typedef struct XMLDFunc XMLDFunc;
 
-XMLDFunc *XMLDFunc_create(char *, void *(*) (XMLDExprTable *), short);
+XMLDFunc *XMLDFunc_create(void);
 void XMLDFunc_free(XMLDFunc *);
+void XMLDFunc_free_content(void*);
 
 /* List functions */
 
 XMLDList *XMLDFunc_create_list(void);
-void XMLDFunc_add_to_list(XMLDList *, char *, void *(*) (XMLDExprTable *), short);
+XMLDFunc *XMLDFunc_add_to_list(XMLDList *);
 XMLDFunc *XMLDFunc_search_list_by_name(XMLDList *, char *);
 
 #endif /* HAVE_XMLD_FUNC_H */
