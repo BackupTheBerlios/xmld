@@ -187,6 +187,39 @@ char *XMLDExpr_to_string(XMLDExpr *expr) {
 }
 
 /*
+ * Returns the boolean representation of the given expression.
+ */
+XMLDBool XMLDExpr_to_boolwan(XMLDExpr *expr) {
+ if (expr->type == XMLD_INTEGER) {
+  if (expr->nval == 0) {
+   return XMLD_FALSE;
+  }
+  else {
+   return XMLD_TRUE;
+  }
+ }
+ else if (expr->type == XMLD_FLOAT) {
+  if (expr->fnval == 0) {
+   return XMLD_FALSE;
+  }
+  else {
+   return XMLD_TRUE;
+  }
+ }
+ else if (expr->type == XMLD_QVAL) {
+  if (expr->qval == NULL || strcmp(expr->qval, "") == 0) {
+   return XMLD_FALSE;
+  }
+  else {
+   return XMLD_TRUE;
+  }
+ }
+ else {
+  return XMLD_FALSE;
+ }
+}
+
+/*
  * : Create a list of expressions.
  * returns: the newly created expression list.
  */

@@ -782,15 +782,14 @@ useful as something useful.
      - Care about operator priority. (done)
   - twalker_simplify_expr (Merge XMLDCond constructs -- done)
     - Use XMLDExpr_to_boolean in AND, OR, NOT implementations.
-  - XMLDExpr_to_string (resolve conditions as well)
-  - XMLDExpr_to_boolean (remeber to resolve expressions correctly)
+  - XMLDExpr_to_string (done)
+  - XMLDExpr_to_boolean (done)
  * twalker (call twalker_simplify_expr if is_complex returns
- true)
+ true):
+  - resolve XMLD_LIST recursively.
+  - No special resolution for conditions in twalker.
  * twalker_simplify_expr (if alias is not NULL copy it into ret instead of the 
  real column's  name).
- * twalker (twalker_handle must resolve XMLD_LIST recursively
- using twalker_simplify_expr)
- * No special resolution for conditions in twalker.
  * resptrans (call XMLDExpr_to_string on each column).
  * Engine-XMLD (Implement the required functions)
  * XMLDResponse_fill_col/XMLDCol_fill might need to fill the
@@ -812,7 +811,7 @@ order to be able to resolve wildcards correctly. (done)
 
 * ptasker task queue needs maintenance.
 
-* fix recordset levelling confusion.
+* Stabilize recordset levelling confusion.
 
 --- Features:
 
@@ -860,7 +859,7 @@ segfaults when called two times and I don't know why.
 * fix interrupted system call on server side on reciving
 of DISCONNECT and correction of a wrong pass.
 
-* Should we have a openxmld user with separate previliges.
+* Should we have a openxmld user with separate system privileges.
 
 *--------------- Start of the OpenXMLD 0.7.0 part:
 

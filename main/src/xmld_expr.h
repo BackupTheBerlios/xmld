@@ -104,6 +104,7 @@ void XMLDExpr_copy(XMLDExpr *, XMLDExpr *);
 XMLDBool XMLDExpr_is_complex(XMLDExpr *);
 void XMLDExpr_apply_type(XMLDExpr *, char *);
 char *XMLDExpr_to_string(XMLDExpr *);
+XMLDBool XMLDExpr_to_boolean(XMLDExp *);
 void XMLDExpr_free(XMLDExpr *);
 void XMLDExpr_free_content(void *);
 
