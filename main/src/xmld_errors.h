@@ -15,13 +15,15 @@
 #define HAVE_XMLD_ERRORS_H
 
 enum xmld_error {
- XMLD_EPREPAREFAIL,
- XMLD_ENOENGINE, 
+ XMLD_EFNOTFOUND,
+ XMLD_ENOENGINE,
+ XMLD_EINVALFILE;
 } xmld_errno;
 
 char *err_str[2] = {
- "An error has occured while preparing the engine.",
- "The given engine does not exist."
+ "The request file was not found.",
+ "The given engine does not exist.",
+ "Invalid file type."
 };
 
 #define ERROR_RESPONSE xmld_socket_write(work->conn->fd, err_str[xmld_errno])
