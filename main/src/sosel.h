@@ -16,8 +16,6 @@
 
 short sosel_init(void);
 short sosel_shutdown(void);
-short sosel_sadd(int);
-short sosel_sremove(int);
 short sosel_add(int, char*);
 short sosel_remove(XMLDConnection *);
 void sosel_run(void*);
