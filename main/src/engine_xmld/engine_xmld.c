@@ -400,3 +400,11 @@ short engine_xmld_set_column_value(XMLDWork *work, char *col_name, char *value) 
   }
  }
 }
+
+short engine_xmld_like(XMLDExpr *left, XMLDExpr *right) {
+ return 0;
+}
+
+short engine_xmld_between(XMLDExpr *left, XMLDExpr *right) {
+ return 0;
+}
