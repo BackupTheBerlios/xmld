@@ -123,6 +123,8 @@ struct XMLDRequest {
 struct XMLDResponse {
 };
 
+struct XMLDWork;
+
 /* carries an engine's information */
 struct XMLDEngine {
  void *(*init) (struct XMLDWork *);
