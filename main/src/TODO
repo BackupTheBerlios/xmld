@@ -279,4 +279,16 @@ implement eval_aggr_expr and eval_cond.
 XMLDWork shouldn't concatenate it to
 curr_dir in such a case.
 
-* Implement engine_xmld_like and engine_xmld_between.
+* Write a skeleton parser that returns the same XMLDRequest
+each time.
+
+* Compile the OpenXMLD.
+
+* Implement str_like, str_between in sutils. (done)
+
+* Add the AND operator type to expr to handle
+between and not between conditionals.
+
+* eval_cond atoi -> atol. (done)
+
+* Implement alphabetical comparsion in str_between.
