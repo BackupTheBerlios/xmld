@@ -191,7 +191,7 @@ int authman_get_priv(char *user, char *file) {
  
  XMLDFile *priv = XMLDFile_create(NULL);
  priv->engine = XMLDEngineList_search_by_name(engine_list, cfg_get_engine(full_file));
- (*(priv->engine->prepare)) (full_file, priv, XMLD_ACCESS_NOTHING);
+ (*(priv->engine->prepare)) (full_file, priv, XMLD_ACCESS_FORMAT);
  int walk = (*(priv->engine->walk)) (priv);
  int level = 0;
  int ret;

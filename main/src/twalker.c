@@ -38,7 +38,7 @@ XMLDStatus twalker_handle(XMLDWork *work) {
      return XMLD_FAILURE;
     }
 
-    if (((*(curr_file->engine->prepare)) (full_file, curr_file, XMLD_ACCESS_NOTHING)) == XMLD_FAILURE) {
+    if (((*(curr_file->engine->prepare)) (full_file, curr_file, XMLD_ACCESS_FORMAT)) == XMLD_FAILURE) {
      free(full_file);
      XMLDList_reset(work->files);
      while (XMLDList_next(work->files)) {
@@ -348,6 +348,10 @@ XMLDExpr *twalker_simplify_expr(XMLDExpr *expr, XMLDWork *work, int level) {
    XMLDFile *curr_file=expr->file;
    expr->file = XMLDFileList_search_by_name(work->files, expr->file->name);
    XMLDFile_free(curr_file);
+  }
+  if (!BIT_ISSET(expr->file->priv, XMLD_PRIV_READ)) {
+   xmld_errno = XMLD_ENORPRIV;
+   return NULL;
   }
   if (level != 0 && expr->file->level != level) {
    ret = XMLDExpr_create();
