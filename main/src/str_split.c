@@ -12,6 +12,7 @@
  */
 
 #include <stdlib.h>
+#include <string.h>
 #include "str_split.h"
 
 /*
@@ -23,6 +24,40 @@
  * string.
  * returns: An array of the extracted tokens.
  */ 
+
+/*
+ * Not important FIXME:
+ * handle delim being the first or the last
+ * character in str. (this will not occur
+ * in config!)
+ */ 
 char **str_split(char *str, char delim) {
- return (char **) NULL;
+ char *ptr;
+ char *lptr=NULL;
+ int num=1;
+ ptr=strchr(str, (int) delim);
+
+ char **ret; 
+ 
+ do {
+  ret=(char **) realloc(ret, ++num*sizeof(char *));
+  ret[num-1]=NULL;
+  
+  if (ptr == NULL) {
+   ret[num-2]=(char *) malloc((strlen(str) - ((lptr==NULL) ? 0 : (++lptr - str)) + 1)*sizeof(char));
+   strcpy(ret[num-2], (lptr==NULL) ? str : lptr);
+   break;
+  }
+  else {
+   ret[num-2]=(char *) malloc((ptr - ((lptr==NULL) ? str : lptr)  + 1)*sizeof(char));
+   strncpy(ret[num-2], (lptr==NULL) ? str : lptr, ptr - ((lptr==NULL) ? str : lptr));
+   ret[num-2][ptr - ((lptr==NULL) ? str : lptr)]='\0';
+  } 
+  
+  lptr=ptr;
+  ptr=strchr(++ptr, (int) delim);
+ }
+ while (1);
+ 
+ return ret;
 }
