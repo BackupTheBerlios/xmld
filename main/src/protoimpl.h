@@ -11,14 +11,16 @@
  * -------------------------------------------------------------- * 
  */
 
-#ifndef __AUTHMAN_H
-#define __AUTHMAN_H
+#ifndef __PROTOIMPL_H
+#define __PROTOIMPL_H
 
-/* Bitmask returned bye authman_get_priv -- for now! */
-#define XMLD_PRIV_READ 0  /* Read  */
-#define XMLD_PRIV_WRITE 1 /* Write */
+XMLDStatus protoimpl_parse_header(char *, char **);
+char *protoimpl_create_header(char **, int);
+int protoimpl_parse_err_msg(char *, char **);
+char *protoimpl_create_err_msg(int, char *);
+char *protoimpl_parse_user_msg(char *);
+char *protoimpl_create_user_msg(char *);
+char *protoimpl_parse_pass_msg(char *);
+char *protoimpl_create_pass_msg(char *);
 
-XMLDStatus authman_auth_user(char *, char **ret);
-int authman_get_priv(char *, char *); /* priv = privileges */
-
-#endif /* __AUTHMAN_H */
+#endif /* __PROTOIMPL_H */

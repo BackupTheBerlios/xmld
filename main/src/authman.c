@@ -19,10 +19,11 @@
 #include "engine_xmld/element_op.h"
 
 /*
- * Returns the password of user or NULL
- * if such a user is non-existent.
+ * Returns whether user is existent. and fills
+ * ret[0] with his password and ret[1] with his
+ * start directory only if ret is not NULL.
  */ 
-char *authman_auth_user(char *user) {
+XMLDStatus authman_auth_user(char *user, char **ret) {
  FILE *auth=fopen("auth.xml", "r");
  char *token[1]={"<user"};
  int tok;
@@ -30,7 +31,7 @@ char *authman_auth_user(char *user) {
  while (1) {
   tok=dmstrstr(fd, token, 1);
   if (tok == -1) {
-   return NULL;
+   return XMLD_FAILURE;
   }
   else if (tok == 0) {
    engine_xmld_locate_att(auth, "name");
@@ -38,7 +39,10 @@ char *authman_auth_user(char *user) {
    if (strcmp(name, user) == 0) {
     free(name);
     engine_xmld_locate_att(auth, "pass");
-    return engine_xmld_get_curr_att_value(auth);
+    ret[0]=engine_xmld_get_curr_att_value(auth);
+    engine_xmld_locate_att(auth, "dir");
+    ret[1]=engine_xmld_get_curr_att_value(auth);
+    return XMLD_SUCCESS;
    }
    free(name);
   }

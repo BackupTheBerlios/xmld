@@ -494,15 +494,33 @@ error. (done)
 
 * Write a communication protocol document. (done)
 
-* Implement the communication protocol.
+* Implement the communication protocol. (protoimpl
+part). (done)
+
+* Attach the communication protocol everywhere else.
 
 * resptrans in twalker instead of XMLDResponse_flush. (done)
 
+* authman_auth_user should return XMLDStatus and inform us about
+the curr_dir of the user as well. (done)
+
 * Add a basic client authentication support (an authman 
-part) without support for per-file user previliges. 
+part) with skeleton support for per-file user privileges. 
 (done)
 
-* protect the auth.xml document in any way.
+* protect the auth.xml document in any way. (priv it to
+root only, and make it system unreadable).
+
+* define XMLD*List macros as XMLDList for clearity of code
+and use them everywhere.
+
+* Hook authman_get_priv in twalker.
+
+* Add XMLD_ENOUSER, XMLD_EBADPASS, XMLD_ENORPRIV and XMLD_
+ENOWPRIV errors.
+
+* itostr and ftostr should take a max length parameter 
+that if provided as 0 the defaults are used.
 
 * Handle quotes inside strings in xmld-sql.lex
 
@@ -544,8 +562,6 @@ manipulation functions may return NULL or 0 (issue
 XMLD_EMALFORMAT in that case. [10] Multiple
 query parsers support. [11] itostr and ftostr.
 [12] tagname/attribute name conflicts.
-
-* Hook authman_get_priv somewhere (?).
 
 * Define and implement the exec_assign engine
 function, implement the UPDATE and UPDATE with

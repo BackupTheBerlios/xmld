@@ -101,8 +101,8 @@ doesn't mean an actual additional '\n' but means two separate socket messages,
 message and the rest in the second one.
 
 
-After sending the user name client must wait until the server sends a header
-with a 0 value of message-length. If status equaled 0 the client should
+After sending the user name, the client must wait until the server sends a 
+header with a 0 value of message-length. If status equaled 0 the client should
 restart the authentication sequence by sending the user name message again
 or send a disconnection message (described later). If status is 1 the client
 continues by sending the following message:
@@ -139,10 +139,10 @@ message-length <whatever>
 status 0
 
 ERR <numeric value>
-<error message>
+MSG <error message>
 
 For queries that don't pull data out of the server a status 1 message or a status 0
-plus an ERR and an error message-message are sent in case of success or failure
+plus an ERR and MSG message are sent in case of success or failure
 respectively.
 
 Disconnection:
