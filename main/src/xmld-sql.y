@@ -29,6 +29,8 @@ int num_cond;
 struct XMLDRequest *request;
 %}
 
+%pure_parser
+
 %union {
  int num;
  char *str;
