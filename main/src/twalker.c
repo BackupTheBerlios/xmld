@@ -668,6 +668,26 @@ XMLDExpr *twalker_simplify_expr(XMLDExpr *expr, XMLDWork *work, int level) {
      break;
     } 
    break;
+   case XMLD_OP_EQUAL:
+   break;
+   case XMLD_OP_L:
+   break;
+   case XMLD_OP_G:
+   break;
+   case XMLD_OP_NE:
+   break;
+   case XMLD_OP_LE:
+   break;
+   case XMLD_OP_GE:
+   break;
+   case XMLD_OP_LIKE:
+   break;
+   case XMLD_OP_AND:
+   break;
+   case XMLD_OP_OR:
+   break;
+   case XMLD_OP_NOT:
+   break;
   }
   
   if (XMLDExpr_is_complex(expr->left)) {

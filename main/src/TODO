@@ -754,13 +754,13 @@ useful as something useful.
  out of XMLDExpr and put them in xmld-sql.h because
  they are query parser specific. (done)
  * twalker (Implement twalker_simplify_expr -- done)
-  * Notes:
-   * lists must be returned without resolution.
-   * column names must be put in the ident field after 
+  - Notes:
+   - lists must be returned without resolution.
+   - column names must be put in the ident field after 
    getting their values.
-   * in case of error, NULL is returned with setting 
+   - in case of error, NULL is returned with setting 
    of xmld_errno to something useful.
-   * NULL columns are indiciated by XMLD_QVAL return
+   - NULL columns are indiciated by XMLD_QVAL return
    values with NULL values of the qval field.
 
  * XMLDEngine (Modify according to requirements
@@ -771,20 +771,23 @@ useful as something useful.
  * XMLDExpr (Implement XMLDExpr_to_string -- done)
  * XMLDRequest, XMLDExpr and XMLDCond are XMLD-SQL specific
  structures: (done)
-  * put request types in xmld_request.h
-  * put XMLDExpr macros back into xmld_expr.h
+  - put request types in xmld_request.h
+  - put XMLDExpr macros back into xmld_expr.h
  * Merge XMLDCond and XMLDExpr:
-  * XMLDExpr (Put XMLDCond along with its macros and stuff into it -- done)
-  * XMLDCond (remove -- done)
-  * xmld-sql.(y|lex) (resolve condition rules as expressions -- done)
-    * Notes:
-     * conditional operators must be left associative. (done)
-     * Care about operator priority. (done)
-  * twalker_simplify_expr (Merge XMLDCond constructs)
-  * XMLDExpr_to_string (resolve conditions as well)
-  * XMLDExpr_to_boolean (remeber to resolve expression correctly)
+  - XMLDExpr (Put XMLDCond along with its macros and stuff into it -- done)
+  - XMLDCond (remove -- done)
+  - xmld-sql.(y|lex) (resolve condition rules as expressions -- done)
+    - Notes:
+     - conditional operators must be left associative. (done)
+     - Care about operator priority. (done)
+  - twalker_simplify_expr (Merge XMLDCond constructs)
+    - Use XMLDExpr_to_boolean in AND, OR, NOT implementations.
+  - XMLDExpr_to_string (resolve conditions as well)
+  - XMLDExpr_to_boolean (remeber to resolve expression correctly)
  * twalker (call twalker_simplify_expr if is_complex returns
  true)
+ * twalker_simplify_expr (if alias is not NULL copy it into ret instead of the 
+ real column's  name).
  * twalker (twalker_handle must resolve XMLD_LIST recursively
  using twalker_simplify_expr)
  * No special resolution for conditions in twalker.
