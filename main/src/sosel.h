@@ -22,4 +22,10 @@ xmld_status_t sosel_add(int, char*);
 xmld_status_t sosel_remove(int);
 void sosel_run(void*);
 
+/* represents a connection table */
+struct connection_table {
+ short used; /* Number of used XMLDConnection's */
+ struct XMLDConnection *conn;
+};
+
 #endif /* HAVE_SOSEL_H */

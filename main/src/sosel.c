@@ -30,13 +30,19 @@
  * they don't cause segfaults or conflicts.
  */
 int max_conn;
-struct XMLDConnection *conn_table;
+struct connection_table *conn_table;
 
 xmld_status_t sosel_init() {
  max_conn=cfg_get("sosel.max_conn");
- key_t key=ftok("errors.h", 'X');
- int id=shmget(key, max_conn*sizeof(struct XMLDConnection), IPC_CREAT);
- conn_table=(struct XMLDConnection*)shmat(id, 0, 0); 
+ /* FIXME: should check ftok's usage */
+ key_t key=ftok("cfg.h", 'X');
+ int id=shmget(key, sizeof(struct connection_table), IPC_CREAT);
+ conn_table=(struct connection_table*) shmat(id, 0, 0);
+ shmctl(id, IPC_RMID, 0);
+ conn_table->used=0;
+ key=ftok("errors.h", 'X');
+ id=shmget(key, max_conn*sizeof(struct XMLDConnection), IPC_CREAT);
+ conn_table->conn=(struct XMLDConnection*)shmat(id, 0, 0); 
  shmctl(id, IPC_RMID, 0);
  xmld_status_t stat=mtasker_handle(sosel_run, (void *) 0);
  if (stat!=XMLD_SUCCESS) {
@@ -49,10 +55,10 @@ xmld_status_t sosel_init() {
 xmld_status_t sosel_shutdown() {
  int i;
  for (i=0;i<max_conn;i++) {
-  conn_table[i].sfd=0;
-  conn_table[i].fd=0;
-  if (conn_table[i].curr_dir!=0) {
-   free(conn_table[i].curr_dir);
+  conn_table->conn[i].sfd=0;
+  conn_table->conn[i].fd=0;
+  if (conn_table->conn[i].curr_dir!=0) {
+   free(conn_table->conn[i].curr_dir);
   } 
  }
  shmdt((void *)conn_table);
@@ -71,12 +77,12 @@ void sosel_run(void *data) {
   timeout.tv_sec=0;
   timeout.tv_usec=100; /* FIXME: this value should depend on cfg */
   for (i=0;i<max_conn;i++) {
-   if (conn_table[i].sfd==1) {
-    FD_SET(conn_table[i].fd, &fds);
-    conns[j]=&conn_table[i];
+   if (conn_table->conn[i].sfd==1) {
+    FD_SET(conn_table->conn[i].fd, &fds);
+    conns[j]=&conn_table->conn[i];
     j++;
-    if (conn_table[i].fd>maxfd) {
-     maxfd=conn_table[i].fd;
+    if (conn_table->conn[i].fd>maxfd) {
+     maxfd=conn_table->conn[i].fd;
     }
    }
   }
@@ -103,8 +109,8 @@ xmld_status_t sosel_sremove(int fd) {
  int i;
  xmld_status_t stat=XMLD_FAILURE;
  for (i=0;i<max_conn;i++) {
-  if (conn_table[i].fd==fd) {
-   conn_table[i].sfd=0;
+  if (conn_table->conn[i].fd==fd) {
+   conn_table->conn[i].sfd=0;
    stat=XMLD_SUCCESS;
    break;
   }
@@ -115,8 +121,8 @@ xmld_status_t sosel_sadd(int fd) {
  int i;
  xmld_status_t stat=XMLD_FAILURE;
  for (i=0;i<max_conn;i++) {
-  if (conn_table[i].fd==fd) {
-   conn_table[i].sfd=1;
+  if (conn_table->conn[i].fd==fd) {
+   conn_table->conn[i].sfd=1;
    stat=XMLD_SUCCESS;
    break;
   }
@@ -126,12 +132,15 @@ xmld_status_t sosel_sadd(int fd) {
 xmld_status_t sosel_add(int fd, char*dir) {
  xmld_status_t stat=XMLD_FAILURE;
  int j;
+ while (conn_table->used >= max_conn) {
+ }
  for (j=0;j<max_conn;j++) {
-   if (conn_table[j].fd==0 && conn_table[j].sfd==0) {
-      conn_table[j].curr_dir=(char*) malloc(strlen(dir)*sizeof(char));
-      strcpy(conn_table[j].curr_dir, dir);
-      conn_table[j].fd=fd;
-      conn_table[j].sfd=1;
+   if (conn_table->conn[j].fd==0 && conn_table->conn[j].sfd==0) {
+      conn_table->used++;
+      conn_table->conn[j].curr_dir=(char*) malloc(strlen(dir)*sizeof(char));
+      strcpy(conn_table->conn[j].curr_dir, dir);
+      conn_table->conn[j].fd=fd;
+      conn_table->conn[j].sfd=1;
       stat=XMLD_SUCCESS;
       break;
      }
@@ -142,10 +151,11 @@ xmld_status_t sosel_remove(int fd) {
  xmld_status_t stat=XMLD_FAILURE;
  int j;
  for (j=0;j<max_conn;j++) {
-  if (conn_table[j].fd==fd) {
-   free(conn_table[j].curr_dir);
-   conn_table[j].fd=0;
-   conn_table[j].sfd=0;
+  if (conn_table->conn[j].fd==fd) {
+   free(conn_table->conn[j].curr_dir);
+   conn_table->conn[j].fd=0;
+   conn_table->conn[j].sfd=0;
+   conn_table->used--;
    stat=XMLD_SUCCESS;
    break;
   }
