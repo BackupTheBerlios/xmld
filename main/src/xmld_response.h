@@ -15,16 +15,13 @@
 #define HAVE_XMLD_RESPONSE_H
 
 struct XMLDResponse {
- XMLDRow *rows;
- XMLDRow *last_row; /* the last row in _rows_ */
- XMLDAggrTable *tables; /* the list of aggregate expressions -> columns association */
- XMLDAggrTable *last_table; /* the last table in _tables_ */
- XMLDAggrTable *curr_table; /* the current table in _tables_ */
+ XMLDRowTable *rows;
+ XMLDAggrTableTable *tables;
 };
 
 typedef struct XMLDResponse XMLDResponse;
 
-void XMLDResponse_init(XMLDResponse *);
+XMLDResponse *XMLDResponse_create(void);
 void XMLDResponse_add_row(XMLDResponse *);
 void XMLDResponse_fill_col(XMLDResponse *, char *); /*
 						     * Note the given string isn't copied.
