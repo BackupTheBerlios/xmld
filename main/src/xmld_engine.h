@@ -49,14 +49,6 @@ struct XMLDEngine {
 			                * calls for the engine to give a next
 			                * result from its data source.
 			                */
- char *(*eval_aggr_expr) (XMLDWork *, XMLDExpr *, XMLDAggrTable *, int); /* The function which
-					                                  * the tree walker calls
-					                                  * to get the value of
-					                                  * an aggregate expression 
-									  * from the
-					                                  * engine. 	 
-					                                  */
- 
  char *(*eval_expr) (XMLDWork *, XMLDExpr *, int); /* The function which
 					            * the tree walker calls
 					            * to get the value of

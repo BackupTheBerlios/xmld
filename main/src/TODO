@@ -558,34 +558,7 @@ esponse_flush. and remove XMLDResponse_flush. (done)
 
 * add down-level up-level to init msg (done)
 
-* Individual expression resolution within twalker:
- 
- * Expression lists are resolved in an expression
- by expression basis. (done)
-
-* Correct aggregate expression resolution:
-  
- * Aggregate expressions are to be evaluated normally
- (done)
- * Association to columns is the only optional step
- after checking for expr->aggr. (done)
- * eval_expr should take a XMLDAggrTable that's passed
- to a function (if any). (done)
- * XMLDResponse_assoc_col_to_aggr should return the selected
- aggregate expression table. (done)
- * XMLDAggrTable should contain a XMLDExpr field to maintain
- last value. (done)
- * Generally, a function whether it's aggregate or
- not, should have access to the work structure, and have
- a third argument to which the aggregate expression table
- is to be passed (NULL if the function is not aggregate).
- (done)
- * do the former filling technique again. (done)
- * XMLDResponse_curr_aggr_table (done)
- * XMLDResponse_next_aggr returns success/failure. (done)
-
-* Typing is now loose within xmld-sql.y, twalker should be
-a hard checker.
+* Individual expression resolution within twalker. (done)
 
 * Fix xmld_socket_accept: Interupted system call on DISC
 ONNECT. (check how of xmld_socket_shutdown).
@@ -627,38 +600,13 @@ message. (done)
 
 * remove get_level completely. (done)
 
-* Aggregate expression maintenance:
- 
- * XMLDAggrTable should contain a XMLDExprList (one expr
- for each aggregate expression). (done)
- * XMLDAggrTable's value field should be a XMLDExprList
-   that's resolved in a per row manner. (done)
- * In each column expr should be copied to a new element
- of value. (in XMLDAggrTable_add_col -- done)
- * add a value field to XMLDAggrTable and initially copy
- the expr to it. (done)
- * XMLDAggrTable_internal_assoc: scans value for aggregate
- function calls and associates each to an element in values.
- (done)
- * each aggregate expression updates its own element in
- the values. (using XMLDList_next/reset if 0 -- ok)
- * XMLDAggrTable_fill should loop through values
-   while resolving. (done)
- * XMLDAggrTable_fill no longer receives a value, the value has
- to be resolved internally, it just needs eval_expr as
- an argument. (done)
- * fix XMLDReponse_fill_curr_aggr. (done)
- * fix twalker's call of XMLDResponse_fill_curr_aggr. (done)
- * re-add eval_aggr_expr. and remove the XMLDAggrTable* arg
- from eval_expr. (done)
- * fix eval_expr calls in twalker. (done)
- * define and implement XMLDAggrTable_internal_assoc. (done)
- 
+* Erase aggregate expression resolution for now.
+(done)
+
 * Engine-XMLD must be rewritten with consideration of
 [1] availablity of column types [2] access levels.
 [3] type and access level enumerations. [4] the new
-float type [5] nval -> back to int. [6] store+1 poin
-ts out availbility of format file. [7] the major
+float type [5] nval -> back to int. [7] the major
 changes in simplify_expr. [8] Multiple file support
 and column name -> file association. [9] format
 manipulation functions may return NULL or 0 (issue
@@ -667,11 +615,9 @@ XMLD_EMALFORMAT in that case. [11] itostr and ftostr.
 changes. [14] Expression grouping. [15] condition
 grouping. [16] hard type checking. [17] eval_cond
 should evaluate only the first condition of a given
-condition list. [18] eval_expr should return NULL
-if the expression was aggregate. [19] NULL
-file checks. [20] eval_expr and eval_cond level
-checks (ignored if 0). [21] aggregate expressino resolution things
-above. [22] recursive resolution of aggregate expressions.
+condition list. [18] NULL file name checks. [19] eval_expr 
+and eval_cond level checks (ignored if 0). [20] no
+aggregate expression support.
 
 * sync includes across all code according to the editions
 above.
@@ -698,6 +644,8 @@ Goal: PUMP the features in!
 
 * Check if it's possible to use a list of XMLDExpr * and
 XMLDCond* in xmld-sql.y in order to avoid copies.
+
+* Aggregate function calls support.
 
 * Multiple query parsers support and on-the-fly query
 parser switching.

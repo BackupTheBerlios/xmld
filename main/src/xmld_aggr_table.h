@@ -35,8 +35,7 @@ void XMLDAggrTable_free(XMLDAggrTable *);
 void XMLDAggrTable_free_content(void *);
 void XMLDAggrTable_add_col(XMLDAggrTable *, XMLDCol *);
 void XMLDAggrTable_fill(XMLDAggrTable *, XMLDWork *, char *(*) (XMLDWork *, XMLDExpr *, int));
-void XMLDAggrTable_internal_assoc(XMLDAggrTable *);
-void XMLDAggrTable_resolve_expr(XMLDAggrTable *, XMLDExpr *);
+void XMLDAggrTable_internal_assoc(XMLDAggrTable *, XMLDExpr *);
 
 /* List functions */
 

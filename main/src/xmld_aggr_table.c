@@ -146,22 +146,11 @@ XMLDAggrTableList *XMLDAggrTableList_search_by_expr(XMLDAggrTableList *list, XML
 }
 
 /*
- * Copies the expr field of the given XMLDAggrTable into the value 
- * field of it and walks through the expression tree of an aggregate 
- * expression  and associates each occurence of an aggregate function 
- * call to an element in the aggrs field of the given XMLDAggrTable.
+ * Walks through the given expression and asssociates each occurence of an 
+ * aggregate function  call to an element in the aggrs field of the given 
+ * XMLDAggrTable.
  */
-void XMLDAggrTable_internal_assoc(XMLDAggrTable *table) {
- table->value=XMLDExpr_create();
- XMLDExpr_copy(table->expr, table->value);
- table->aggrs=XMLDExprList_create();
- XMLDAggrTable_resolve_expr(table, table->value);
-}
-
-/*
- * Split for reasons of recursion.
- */
-void XMLDAggrTable_resolve_expr(XMLDAggrTable *table, XMLDExpr *expr) {
+void XMLDAggrTable_internal_assoc(XMLDAggrTable *table, XMLDExpr *expr) {
  if (expr == NULL) {
   return;
  }

@@ -112,7 +112,10 @@ XMLDAggrTable *XMLDResponse_assoc_col_to_aggr(XMLDResponse *resp, XMLDExpr *expr
  if (table == NULL) {
   table=XMLDAggrTableList_add(resp->tables);
   table->expr=expr;
-  XMLDAggrTable_internal_assoc(table);
+  table->value=XMLDExpr_create();
+  XMLDExpr_copy(table->expr, table->value);
+  table->aggrs=XMLDExprList_create();
+  XMLDAggrTable_internal_assoc(table, table->value);
   resp->tables->curr_element=XMLDList_last(resp->tables);
  }
  XMLDAggrTable_add_col(table, col);
