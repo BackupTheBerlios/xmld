@@ -72,7 +72,7 @@ void XMLDEngine_free_content(void *engine) {
  * : Creates a list of engine structures.
  * returns: the newly created list.
  */
-XMLDList *XMLDEngine_create_list() {
+XMLDEngineList *XMLDEngineList_create() {
  return XMLDList_create(sizeof(XMLDEngine), XMLDEngine_free_content);
 }
 
@@ -82,8 +82,8 @@ XMLDList *XMLDEngine_create_list() {
  * name: the name of the newly added engine structure.
  * returns: a pointer to the newly added element.
  */
-XMLDEngine *XMLDEngine_add_to_list(XMLDList *list, char *name) {
- XMLDEngine *engine=(XMLDEngine *) XMLDList_add(list);
+XMLDEngine *XMLDEngineList_add(XMLDEngineList *list, char *name) {
+ XMLDEngineList *engine=(XMLDEngine *) XMLDList_add(list);
  engine->name=name;
  return engine;
 }
@@ -97,7 +97,7 @@ XMLDEngine *XMLDEngine_add_to_list(XMLDList *list, char *name) {
  * if not found. If there was more than one engine having the same
  * name, a pointer to the first one is returned.
  */
-XMLDEngine *XMLDEngine_search_list_by_name(XMLDList *list, char *name) {
+XMLDEngine *XMLDEngineList_search_by_name(XMLDEngineList *list, char *name) {
  XMLDList_reset(list);
  XMLDEngine *engine=NULL;
  while (XMLDList_next(list)) {

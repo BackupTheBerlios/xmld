@@ -44,10 +44,10 @@ struct XMLDEngine;
 #endif /* USE_ENGINE_XMLD */
  
 XMLDStatus engine_list_init() {
- engine_list=XMLDEngine_create_list();
+ engine_list=XMLDEngineList_create();
  XMLDEngine *curr_engine;
 #ifdef USE_ENGINE_XMLD
- curr_engine=XMLDEngine_add_to_list(engine_list, "Engine-XMLD");
+ curr_engine=XMLDEngineList_add(engine_list, "Engine-XMLD");
  curr_engine->init=engine_xmld_init;
  curr_engine->prepare=engine_xmld_prepare;
  curr_engine->cleanup=engine_xmld_cleanup;

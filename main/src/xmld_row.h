@@ -16,7 +16,7 @@
 
 /* Represents a row of response */
 struct XMLDRow {
- XMLDList *cols;
+ XMLDColList *cols;
 };
 
 typedef struct XMLDRow XMLDRow;
@@ -30,7 +30,7 @@ void XMLDRow_free_content(void *);
 
 /* List functions */
 
-XMLDList *XMLDRow_create_list(void);
-XMLDRow *XMLDRow_add_to_list(XMLDList *);
+XMLDRowList *XMLDRowList_create(void);
+XMLDRow *XMLDRowList_add(XMLDRowList *);
 
 #endif /* __XMLD_ROW_H */

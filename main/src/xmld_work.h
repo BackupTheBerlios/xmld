@@ -31,7 +31,7 @@ void XMLDWork_free_content(void *);
 
 /* List functions */
 
-XMLDList *XMLDWork_create_list(void);
-XMLDWork *XMLDWork_add_to_list(XMLDList *);
+XMLDWorkList *XMLDWorkList_create(void);
+XMLDWork *XMLDWorkList_add(XMLDWorkList *);
 
 #endif /* __XMLD_WORK_H */

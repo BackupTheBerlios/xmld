@@ -31,7 +31,7 @@ void XMLDResource_free_content(void *);
 
 /* List functions */
 
-XMLDList *XMLDResource_create_list(void);
-XMLDResource *XMLDResource_add_to_list(XMLDList *);
+XMLDResourceList *XMLDResourceList_create(void);
+XMLDResource *XMLDResourceList_add(XMLDResourceList *);
 
 #endif /* __XMLD_RESOURCE_H */

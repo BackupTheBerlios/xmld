@@ -34,8 +34,8 @@ struct XMLDFunc;
  */
 XMLDResponse *XMLDResponse_create() {
  XMLDResponse *resp=(XMLDResponse *) malloc(sizeof(XMLDResponse));
- resp->rows=XMLDRow_create_list();
- resp->tables=XMLDAggrTable_create_list();
+ resp->rows=XMLDRowList_create();
+ resp->tables=XMLDAggrTableList_create();
  return resp;
 }
 
@@ -65,7 +65,7 @@ void XMLDResponse_free_content(void *resp) {
  * to be added.
  */
 void XMLDResponse_add_row(XMLDResponse *resp) {
- XMLDRow_add_to_list(resp->rows);
+ XMLDRowList_add(resp->rows);
  resp->rows->curr_element=XMLDList_last(resp->rows);
 }
 
@@ -76,7 +76,7 @@ void XMLDResponse_add_row(XMLDResponse *resp) {
  */
 void XMLDResponse_add_col(XMLDResponse *resp) {
  XMLDRow *row=XMLDResponse_curr_row(resp);
- XMLDCol_add_to_list(row->cols);
+ XMLDColList_add(row->cols);
  row->cols->curr_element=XMLDList_last(row->cols);
 }
 
@@ -109,7 +109,7 @@ void XMLDResponse_assoc_col_to_aggr(XMLDResponse *resp, XMLDExpr *expr, XMLDCol 
   table=XMLDResponse_search_aggr_tables_by_expr(resp, expr);
  }
  if (table == NULL) {
-  table=XMLDAggrTable_add_to_list(resp->tables);
+  table=XMLDAggrTableList_add(resp->tables);
   table->aggr=expr;
   resp->tables->curr_element=XMLDList_last(resp->tables);
  }
@@ -127,7 +127,7 @@ void XMLDResponse_assoc_col_to_aggr(XMLDResponse *resp, XMLDExpr *expr, XMLDCol 
  * a match was found, and NULL if a match was not found.
  */
 XMLDAggrTable *XMLDResponse_search_aggr_tables_by_expr(XMLDResponse *resp, XMLDExpr *expr) {
- return XMLDAggrTable_search_list_by_expr(resp->tables, expr);
+ return XMLDAggrTableList_search_by_expr(resp->tables, expr);
 }
 
 /*
@@ -183,7 +183,7 @@ void XMLDResponse_fill_curr_aggr(XMLDResponse *resp, char *val) {
  * : Creates a list of response structres.
  * returns: the newly created list.
  */
-XMLDList *XMLDResponse_create_list() {
+XMLDResponseList *XMLDResponseList_create() {
  return XMLDList_create(sizeof(XMLDResponse), XMLDResponse_free_content);
 }
 
@@ -192,10 +192,10 @@ XMLDList *XMLDResponse_create_list() {
  * list: the list to whose elements the new response structure is to be added.
  * returns: a pointer to the newly added element.
  */
-XMLDResponse *XMLDResponse_add_to_list(XMLDList *list) {
+XMLDResponse *XMLDResponseList_add(XMLDResponseList *list) {
  XMLDResponse *resp=(XMLDResponse *) XMLDList_add(list);
- resp->rows=XMLDRow_create_list();
- resp->tables=XMLDAggrTable_create_list();
+ resp->rows=XMLDRowList_create();
+ resp->tables=XMLDAggrTableList_create();
  return resp;
 }
 

@@ -23,9 +23,11 @@ struct XMLDList {
 };
 
 typedef struct XMLDList XMLDList;
+typedef XMLDList XMLDListList;
 
 XMLDList *XMLDList_create(int, void (*) (void*));
 void XMLDList_free(XMLDList *);
+void XMLDList_free_content(void *);
 void *XMLDList_add(XMLDList *);
 void XMLDList_reset(XMLDList *);
 void *XMLDList_first(XMLDList *);
@@ -34,5 +36,9 @@ XMLDStatus XMLDList_next(XMLDList *);
 XMLDStatus XMLDList_prev(XMLDList *);
 void *XMLDList_curr(XMLDList *);
 void default_free_func(void *);
+
+/* List functions */
+XMLDListList *XMLDListList_create();
+XMLDList *XMLDListList_add(XMLDListList *, int, void (*) (void*));
 
 #endif /* __XMLD_LIST_H */

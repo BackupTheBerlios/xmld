@@ -133,11 +133,11 @@ XMLDStatus cfg_parser_parse() {
  */
 void cfg_parser_parse_token(char *token, int mode) {
  if (cfg_tree == NULL) {
-  cfg_tree=XMLDDirective_create_list();
+  cfg_tree=XMLDDirectiveList_create();
  }
  XMLDDirective *curr_dir;
  if (mode == XMLD_CFG_MODE_TYPE) {
-  curr_dir=XMLDDirective_add_to_list(cfg_tree);
+  curr_dir=XMLDDirectiveList_add(cfg_tree);
   XMLDList_next(cfg_tree);
   if (strcmp(token, "int") == 0) {
    curr_dir->type=XMLD_DIR_INT;

@@ -177,34 +177,34 @@ query: SELECT expr_list FROM QVAL {
 ;
 
 cond_list: cond {
-                 $$=XMLDCond_create_list();
-		 XMLDCond *cond=XMLDCond_add_to_list($$);
+                 $$=XMLDCondList_create();
+		 XMLDCond *cond=XMLDCondList_add($$);
 		 XMLDCond_copy($1, cond);
 		 free($1);
                 }
            | cond_list ':' cond {
                                  $$=$1;
-		                 XMLDCond *cond=XMLDCond_add_to_list($$);
+		                 XMLDCond *cond=XMLDCondList_add($$);
 		                 XMLDCond_copy($3, cond);
 		                 free($3);
 	                        }
 	   | cond_list "," cond { /* for UPDATE support */
                                  $$=$1;
-		                 XMLDCond *cond=XMLDCond_add_to_list($$);
+		                 XMLDCond *cond=XMLDCondList_add($$);
 		                 XMLDCond_copy($3, cond);
 		                 free($3);
 	                        }
 ;
 
 expr_list: expr {
-                 $$=XMLDExpr_create_list();
-		 XMLDExpr *expr=XMLDExpr_add_to_list($$);
+                 $$=XMLDExprList_create();
+		 XMLDExpr *expr=XMLDExprList_add($$);
 		 XMLDExpr_copy($1, expr);
 		 free($1);
                 }
            | expr_list ',' expr {
                                  $$=$1;
-		                 XMLDExpr *expr=XMLDExpr_add_to_list($$);
+		                 XMLDExpr *expr=XMLDExprList_add($$);
 		                 XMLDExpr_copy($3, expr);
 		                 free($3);
 	                        }
@@ -390,7 +390,7 @@ expr: '(' expr ')' {
       | IDENTIFIER '(' expr_list ')' {
                                       $$=XMLDExpr_create();
 				      $$->type=XMLD_FUNCTION;
-				      $$->func=XMLDFunc_search_list_by_name(func_list, $1);
+				      $$->func=XMLDFuncList_search_by_name(func_list, $1);
 				      $$->arg_list=$3;
 				      $$->aggr=$$->func->aggr;
 				      free($1);

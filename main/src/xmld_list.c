@@ -40,13 +40,20 @@ XMLDList *XMLDList_create(int item_size, void (*free_func) (void *)) {
  */
 void XMLDList_free(XMLDList *list) {
  if (list != NULL) {
-  XMLDList_reset(list);
-  while (XMLDList_next(list)) {
-   (*(list->free_func)) (XMLDList_curr(list));
-  }
-  cfree(list->content);
+  XMLDList_free_content((void *) list);
   free(list);
  } 
+}
+
+/*
+ * Frees the memory internally used by a list.
+ */
+void XMLDList_free_content(void *list) {
+ XMLDList_reset((XMLDList *) list);
+ while (XMLDList_next((XMLDList *) list)) {
+  (*(((XMLDList *) list)->free_func)) (XMLDList_curr((XMLDList *) list));
+ }
+ cfree(((XMLDList *) list)->content);
 }
 
 /*
@@ -150,4 +157,25 @@ void XMLDList_reset(XMLDList *list) {
  * the constructor
  */
 void default_free_func(void *seg) {
+}
+
+/*
+ * Creates a list of XMLDList's
+ */
+XMLDListList *XMLDListList_create() {
+ XMLDListList *list=XMLDList_create(sizeof(XMLDList), XMLDList_free_content);
+ return list;
+}
+
+/*
+ * Add a new element to a list of XMLDList's
+ */
+XMLDList *XMLDListList_add(XMLDListList *list, int item_size, void (*free_func) (void *)) {
+ XMLDList *curr_list=XMLDList_add(list);
+ curr_list->item_size=item_size;
+ curr_list->free_func=(free_func == NULL) ? default_free_func : free_func;
+ curr_list->content=NULL;
+ curr_list->last_element=NULL;
+ curr_list->curr_element=NULL;
+ return curr_list;
 }

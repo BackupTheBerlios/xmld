@@ -9,7 +9,7 @@
 Author(s):
 Khalid Al-Kary
 
-Revision: 1.1
+Revision: 1.2
 ------------------------------------------------------------------		  
 Introduction:
 -------------
@@ -84,10 +84,10 @@ get their value:
 COUNT(name) -- Number of rows that have non-NULL values of the
 column named "name"
 
-As you can see in the example, this functions needs to look at
+As you can see in the example, this function needs to look at
 the whole table to know the number of rows that have non-NULL 
 values of the "name" column. Aggregate functions are not
-allowed in some contexts, which are a going to be mentioned
+allowed in some contexts, which are going to be mentioned
 individually later in this document.
 
 Expression lists:
@@ -123,7 +123,7 @@ such context, but for XML this should normally mean trial
 to retrieve age, name and gender attributes from all the
 levels of the document, and this is probably not the 
 wanted behaviour. XMLD-SQL offers a per-level specification
-of the attributes to be retrieved/updated/checked/whatever
+of the columns to be retrieved/updated/checked/whatever
 using the ":" operator, which is going to be further
 explained later:
 
@@ -150,7 +150,7 @@ select name, age, gender:type, color, size from "persons.xml"
 
 Void expression lists:
 ----------------------
-Recalling multiexpression lists:
+Recalling level-sensitive expression lists:
 
 name, age, gender:type, color, size
 
@@ -213,13 +213,14 @@ age > 150 AND (gender = "male" OR haircolor = "yellow")
 
 Level-sensitive conditionals:
 -----------------------------
-Exactly the same as level-sensitive expression lists, example:
+As the name implies those evaluate differently according to the current 
+level in the document:
 
 age = 50 AND gender = "male":type = "shoes" OR size = 10
 
-Void conditionals are used for exactly the same purpose as
-void expression lists, they always evaluate to true, that is--
-keeping the level order and do nothing themselves.
+Void conditionals are used for the same purpose of void expression lists, they 
+always evaluate to true, that is--keeping the level order and do nothing 
+themselves.
 
 !:type="shoes" OR size=10
 
@@ -230,7 +231,7 @@ Assignments:
 
 Means: Assign <expression>'s value to the column named <column name>.
 
-Note: the right hand expressin must not be an aggregate one.
+Note: the right hand expression must not be an aggregate one.
 
 Assignment lists:
 -----------------
@@ -314,8 +315,8 @@ quoting:
 "/db1"
 "db2"
 
-OpenXMLD specific: '/' at the beginning in files and folders doesn't mean 
-the root of the server machine, but means the document root of the OpenXMLD.
+Note: '/' at the beginning normally means the document root of the 
+server and not the filesystem root.
 
 The USE clause:
 ---------------
@@ -323,16 +324,33 @@ The USE clause changes the current path to a particular path:
 
 USE <path>
 
-OpenXMLD specific: XMLD-SQL is case-insensitive.
+Note: XMLD-SQL is case-insensitive.
+
+The WHERE clause:
+-----------------
+
+The WHERE clause in XMLD-SQL is followed by a level-sensitive condition list,
+this level-sensitive condition list has two important things to mention.
+
+[*] That it must not contain aggregate function calls.
+[*] The WHERE statement when one level fails to match the level-sensitive 
+condition list specification doesn't check the levels nested by it, that is:
+
+select name, age:color, size from "persons.xml" where age = "11":size > 40
+
+If in one of level 1 elements age didn't equal 11, level 2 elements which are
+nested by that element are not checked against "size > 40" and therefore 
+never used to retrieve data (color and size).
+
+Exception: if the last level in a condition list was marked as cross-level
+(i.e perceded by ~) this rule doesn't apply, all the elements in levels checked 
+against that last cross-level condition list are checked independently.
 
 The SELECT clause:
 ------------------
 
 SELECT <level-sensitive expression list> FROM <file name>
 SELECT <level-sensitive expression list> FROM <file name> FILE WHERE <level sensitive condition list>
-
-Note: the level sensitive condition list of the WHERE statement (wherever WHERE is used)
-must not contain aggregate expressions.
 
 The UPDATE clause:
 ------------------

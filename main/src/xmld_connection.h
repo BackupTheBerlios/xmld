@@ -30,7 +30,7 @@ void XMLDConnection_free_content(void *);
 
 /* List functions */
 
-XMLDList *XMLDConnection_create_list(void);
-XMLDConnection *XMLDConnection_add_to_list(XMLDList *, int, char *);
+XMLDConnectionList *XMLDConnectionList_create(void);
+XMLDConnection *XMLDConnectionList_add(XMLDConnectionList *, int, char *);
 
 #endif /* __XMLD_CONNECTION_H */

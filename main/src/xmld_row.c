@@ -25,7 +25,7 @@
  */
 XMLDRow *XMLDRow_create() {
  XMLDRow *row=(XMLDRow *) malloc(sizeof(XMLDRow));
- row->cols=XMLDCol_create_list();
+ row->cols=XMLDColList_create();
  return row;
 }
 
@@ -71,8 +71,8 @@ void XMLDRow_fill_col(XMLDRow *row, char *val) {
  * : Creates a XMLDList of XMLDRow's.
  * returns: the newly created list.
  */
-XMLDList *XMLDRow_create_list() {
- XMLDList *list=XMLDList_create(sizeof(XMLDRow), XMLDRow_free_content);
+XMLDRowList *XMLDRowList_create() {
+ XMLDRowList *list=XMLDList_create(sizeof(XMLDRow), XMLDRow_free_content);
  return list;
 }
 
@@ -82,8 +82,8 @@ XMLDList *XMLDRow_create_list() {
  * cols (optional): a pointer to an already established list of columns.
  * returns: a 
  */
-XMLDRow *XMLDRow_add_to_list(XMLDList *list) {
+XMLDRow *XMLDRowList_add(XMLDRowList *list) {
  XMLDRow *row=(XMLDRow *) XMLDList_add(list);
- row->cols=XMLDCol_create_list();
+ row->cols=XMLDColList_create();
  return row;
 }

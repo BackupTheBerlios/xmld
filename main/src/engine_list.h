@@ -14,7 +14,7 @@
 #ifndef __ENGINE_LIST_H
 #define __ENGINE_LIST_H
 
-XMLDList *engine_list;
+XMLDEngineList *engine_list;
 
 XMLDStatus engine_list_init();
 XMLDStatus engine_list_shutdown();

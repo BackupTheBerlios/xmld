@@ -58,8 +58,8 @@ void XMLDFunc_free_content(void *func) {
  * : Creates a list of function structures.
  * returns: the newly created list.
  */
-XMLDList *XMLDFunc_create_list() {
- XMLDList *list=XMLDList_create(sizeof(XMLDFunc), XMLDFunc_free_content);
+XMLDFuncList *XMLDFuncList_create() {
+ XMLDFuncList *list=XMLDList_create(sizeof(XMLDFunc), XMLDFunc_free_content);
  return list;
 }
 
@@ -68,7 +68,7 @@ XMLDList *XMLDFunc_create_list() {
  * list: the list to which the new element is to be added.
  * returns: a pointer to the newly added element.
  */
-XMLDFunc *XMLDFunc_add_to_list(XMLDList *list) {
+XMLDFunc *XMLDFuncList_add(XMLDFuncList *list) {
  XMLDFunc *func=(XMLDFunc *) XMLDList_add(list);
  func->name=NULL;
  func->func=NULL;
@@ -84,7 +84,7 @@ XMLDFunc *XMLDFunc_add_to_list(XMLDList *list) {
  * returns: a pointer to the function structure that has the given
  * name or NULL if not found.
  */ 
-XMLDFunc *XMLDFunc_search_list_by_name(XMLDList *list, char *name) {
+XMLDFunc *XMLDFuncList_search_by_name(XMLDFuncList *list, char *name) {
  XMLDList_reset(list);
  XMLDFunc *func=NULL;
  while (XMLDList_next(list)) {

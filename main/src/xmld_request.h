@@ -18,10 +18,9 @@
 struct XMLDRequest {
  char *file;
  int type; /* type of the query */
- XMLDList *retr;  /* list of action expressions (query type dependent) */
- XMLDList *vals; /* A list of values for the above expressions  (query type dependent) */
- XMLDList *where; /* A condition for each level */
- XMLDList *misc; /* An additional list for other parsers to use */
+ XMLDExprList *retr;  /* list of action expressions (query type dependent) */
+ XMLDExprList *vals;  /* A list of values for the above expressions  (query type dependent) */
+ XMLDExprList *where; /* A condition for each level */
 };
 
 typedef struct XMLDRequest XMLDRequest;
@@ -33,7 +32,7 @@ void XMLDRequest_free_content(void *);
 
 /* List functions */
 
-XMLDList *XMLDRequest_create_list(void);
-XMLDRequest *XMLDRequest_add_to_list(XMLDList *);
+XMLDRequestList *XMLDRequestList_create(void);
+XMLDRequest *XMLDRequestList_add(XMLDRequestList *);
 
 #endif /* __XMLD_REQUEST_H */

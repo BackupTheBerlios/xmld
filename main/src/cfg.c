@@ -24,13 +24,15 @@
  */
 XMLDStatus cfg_init() {
  cfg_tree=NULL;
- XMLDStatus ret=cfg_parser_parse();
+ if (cfg_parser_parse() == XMLD_FAILURE) {
+  return XMLD_FAILURE;
+ }
  col_sep=*((char *) cfg_get("response.col_sep"));
  col_sep_enc=((char *) cfg_get("response.col_sep_enc"));
  row_sep=*((char *) cfg_get("response.row_sep"));
  row_sep_enc=((char *) cfg_get("response.row_sep_enc"));
  document_root=((char *) cfg_get("xmld.document_root"));
- return ret;
+ return XMLD_SUCCESS;
 }
 
 /*
@@ -43,7 +45,7 @@ XMLDStatus cfg_init() {
  * or if an error occured during retrieval.
  */ 
 void *cfg_get(char *key) {
- XMLDDirective *dir=XMLDDirective_search_list_by_name(cfg_tree, key);
+ XMLDDirective *dir=XMLDDirectiveList_search_by_name(cfg_tree, key);
  if (dir == NULL) {
   return (void *) NULL;
  }
@@ -111,7 +113,6 @@ void cfg_set_mime_engine(char *mime, char *engine) {
  * returns: whether successful.
  */
 XMLDStatus cfg_shutdown() {
- cfg_parser_clean();
- return XMLD_SUCCESS;
+ return cfg_parser_clean();
 }
  

@@ -24,8 +24,8 @@ struct XMLDFunc;
 #include "func_list.h"
 
 XMLDStatus func_list_init() {
- func_list=XMLDFunc_create_list();
- XMLDFunc *curr_func=XMLDFunc_add_to_list(func_list);
+ func_list=XMLDFuncList_create();
+ XMLDFunc *curr_func=XMLDFuncList_add(func_list);
  curr_func->name="Foo";
  curr_func->func=foo_func;
  curr_func->aggr=XMLD_FALSE;
@@ -40,7 +40,7 @@ XMLDStatus func_list_shutdown() {
 
 /* bogus function, real functions should go in the directory
  * functions */
-XMLDExpr *foo_func(XMLDList *list) {
+XMLDExpr *foo_func(XMLDExprList *list) {
  return (XMLDExpr *) NULL;
 }
 

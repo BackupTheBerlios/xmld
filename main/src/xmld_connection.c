@@ -54,7 +54,7 @@ void XMLDConnection_free_content(void *conn) {
  * : Creates a list of connection structures.
  * returns: the newly created list.
  */
-XMLDList *XMLDConnection_create_list() {
+XMLDConnectionList *XMLDConnectionList_create() {
  return XMLDList_create(sizeof(XMLDConnection), XMLDConnection_free_content);
 }
 
@@ -64,7 +64,7 @@ XMLDList *XMLDConnection_create_list() {
  * fd, curr_dir: see XMLDConnection_create
  * returns: a pointer to the newly added element.
  */
-XMLDConnection *XMLDConnection_add_to_list(XMLDList *list, int fd, char *curr_dir, char *user) {
+XMLDConnection *XMLDConnectionList_add(XMLDConnectionList *list, int fd, char *curr_dir, char *user) {
  XMLDConnection *conn=(XMLDConnection *) XMLDList_add(list);
  conn->fd=fd;
  conn->curr_dir=curr_dir;

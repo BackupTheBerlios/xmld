@@ -21,7 +21,7 @@
 #define XMLD_CFG_MODE_VAL 3   /* Value       */
 #define XMLD_CFG_MODE_END 4   /* End of line */
 
-XMLDList *cfg_tree;
+XMLDDirectiveList *cfg_tree;
 
 XMLDStatus cfg_parser_parse(void);
 void cfg_parser_parse_token(char *, int);

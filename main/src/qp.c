@@ -93,6 +93,11 @@ void qp_handle(void *conn) {
   work->req=XMLDRequest_create();
   
   char *query=protoimpl_read_sequence(work->conn->fd, NULL);
+  
+  if (strcmp(query, DISCONNECT_MESSAGE) == 0) {
+   break;
+  }
+  
   YY_BUFFER_STATE buf=yy_scan_string(query);
   printf("%s\n", query);
   XMLDStatus status=yyparse((void *) work);

@@ -53,10 +53,10 @@ struct XMLDExpr {
  /*-------------------*/
  XMLDFunc *func; /* type 3:
 	          * a function call
-		  * with an exprssion array
+		  * with an exprssion list
 		  * being passed as an argument
 		  */
- XMLDList *arg_list;
+ XMLDExprList *arg_list;
  /*-------------------*/
  char *qval; /* type 4: Quoted value */
  /*-------------------*/
@@ -76,7 +76,7 @@ void XMLDExpr_free(XMLDExpr *);
 void XMLDExpr_free_content(void *);
 /* List functions */
 
-XMLDList *XMLDExpr_create_list(void);
-XMLDExpr *XMLDExpr_add_to_list(XMLDList *);
+XMLDExprList *XMLDExprList_create(void);
+XMLDExpr *XMLDExprList_add(XMLDExprList *);
 
 #endif /* __XMLD_EXPR_H */

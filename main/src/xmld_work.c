@@ -108,8 +108,8 @@ char *XMLDWork_get_full_file(XMLDWork *work) {
  * : Creates a list of work structures.
  * returns: the newly created list.
  */
-XMLDList *XMLDWork_create_list() {
- XMLDList *list=XMLDList_create(sizeof(XMLDWork), XMLDWork_free_content);
+XMLDWorkList *XMLDWorkList_create() {
+ XMLDWorkList *list=XMLDList_create(sizeof(XMLDWork), XMLDWork_free_content);
  return list;
 }
 
@@ -119,7 +119,7 @@ XMLDList *XMLDWork_create_list() {
  * req, resp, conn, res: see XMLDWork_create
  * returns: a pointer to the newly added element.
  */
-XMLDWork *XMLDWork_add_to_list(XMLDList *list) {
+XMLDWork *XMLDWorkList_add(XMLDWorkList *list) {
  XMLDWork *work=(XMLDWork *) XMLDList_add(list);
  work->req=NULL;
  work->resp=NULL;

@@ -72,7 +72,7 @@ void XMLDDirective_free_content(void *directive) {
  * structures.
  * returns: the newly created list.
  */
-XMLDList *XMLDDirective_create_list() {
+XMLDDirectiveList *XMLDDirectiveList_create() {
  return XMLDList_create(sizeof(XMLDDirective), XMLDDirective_free_content);
 }
 
@@ -82,7 +82,7 @@ XMLDList *XMLDDirective_create_list() {
  * list: the list to which the new element is to be added.
  * returns: a pointer to the newly added element.
  */
-XMLDDirective *XMLDDirective_add_to_list(XMLDList *list) {
+XMLDDirective *XMLDDirectiveList_add_(XMLDDirectiveList *list) {
  XMLDDirective *dir=(XMLDDirective *) XMLDList_add(list);
  dir->name=NULL;
  dir->type=XMLD_DIR_STR;
@@ -98,7 +98,7 @@ XMLDDirective *XMLDDirective_add_to_list(XMLDList *list) {
  * returns: a pointer to a configuration directive having
  * the given name or NULL if not found.
  */
-XMLDDirective *XMLDDirective_search_list_by_name(XMLDList *list, char *name) {
+XMLDDirective *XMLDDirectiveList_search_by_name(XMLDDirectiveList *list, char *name) {
  XMLDList_reset(list);
  XMLDDirective *directive=NULL;
  while (XMLDList_next(list)) {

@@ -14,10 +14,10 @@
 #ifndef __FUNC_LIST_H
 #define __FUNC_LIST_H
 
-XMLDList *func_list;
+XMLDFuncList *func_list;
 
 XMLDStatus func_list_init();
 XMLDStatus func_list_shutdown();
-XMLDExpr *foo_func(XMLDList *);
+XMLDExpr *foo_func(XMLDExprList *);
 
 #endif /* __FUNC_LIST_H */

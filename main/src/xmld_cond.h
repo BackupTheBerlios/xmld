@@ -59,7 +59,7 @@ void XMLDCond_free_content(void*);
 
 /* List functions */
 
-XMLDList *XMLDCond_create_list(void);
-XMLDCond *XMLDCond_add_to_list(XMLDList *);
+XMLDCondList *XMLDCondList_create(void);
+XMLDCond *XMLDCondList_add(XMLDCondList *);
 
 #endif /* __XMLD_COND_H */

@@ -28,7 +28,7 @@ void XMLDCol_free_content(void *);
 
 /* List functions */
 
-XMLDList *XMLDCol_create_list(void);
-XMLDCol *XMLDCol_add_to_list(XMLDList *);
+XMLDColList *XMLDColList_create(void);
+XMLDCol *XMLDColList_add(XMLDColList *);
 
 #endif /* __XMLD_COL_H */

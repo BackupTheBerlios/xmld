@@ -49,7 +49,7 @@ struct XMLDEngine {
 			    * result from its data source.
 			    */
  int (*get_level) (XMLDWork *); /* The function which gets the current
-				 *  level in the document.
+				 * level in the document.
 				 */ 
  char *(*eval_expr) (XMLDWork *, XMLDExpr *); /* The function which
 					       * the tree walker calls
@@ -79,8 +79,8 @@ void XMLDEngine_free_content(void *);
 
 /* List functions */
 
-XMLDList *XMLDEngine_create_list(void);
-XMLDEngine *XMLDEngine_add_to_list(XMLDList *, char *);
-XMLDEngine *XMLDEngine_search_list_by_name(XMLDList *, char *);
+XMLDEngineList *XMLDEngineList_create(void);
+XMLDEngine *XMLDEngineList_add(XMLDEngineList *, char *);
+XMLDEngine *XMLDEngineList_search_by_name(XMLDEngineList *, char *);
 
 #endif /* __XMLD_ENGINE_H */

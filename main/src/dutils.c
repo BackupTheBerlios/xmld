@@ -20,7 +20,7 @@
 /*
  * A buffered version of the getc call.
  * buf: the buffer information object which
- * gets initialized by the user function.
+ * gets initialized by the user.
  */ 
 /*
  * FIXME: really implement getc_buf and buf_dump

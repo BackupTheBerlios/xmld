@@ -31,8 +31,8 @@ void XMLDAggrTable_fill(XMLDAggrTable *, char *);
 
 /* List functions */
 
-XMLDList *XMLDAggrTable_create_list(void);
-XMLDAggrTable *XMLDAggrTable_add_to_list(XMLDList *);
-XMLDAggrTable *XMLDAggrTable_search_list_by_expr(XMLDList *, XMLDExpr *);
+XMLDAggrTableList *XMLDAggrTableList_create(void);
+XMLDAggrTable *XMLDAggrTableList_add(XMLDAggrTableList *);
+XMLDAggrTable *XMLDAggrTableList_search_by_expr(XMLDAggrTableList *, XMLDExpr *);
 
 #endif /* __XMLD_AGGR_TABLE_h */

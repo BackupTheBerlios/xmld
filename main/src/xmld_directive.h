@@ -46,8 +46,8 @@ void XMLDDirective_free(XMLDDirective *);
 
 /* List functions */
 
-XMLDList *XMLDDirective_create_list(void);
-XMLDDirective *XMLDDirective_add_to_list(XMLDList *);
-XMLDDirective *XMLDDirective_search_list_by_name(XMLDList *, char *);
+XMLDDirectiveList *XMLDDirectiveList_create(void);
+XMLDDirective *XMLDDirectiveList_add(XMLDDirectiveList *);
+XMLDDirective *XMLDDirectiveList_search_by_name(XMLDDirectiveList *, char *);
 
 #endif /* __XMLD_DIRECTIVE_H */

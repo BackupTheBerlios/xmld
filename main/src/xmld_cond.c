@@ -87,8 +87,8 @@ void XMLDCond_copy(XMLDCond *src, XMLDCond *dest) {
  * : Creates a list of condition structures.
  * returns: the newly created list.
  */
-XMLDList *XMLDCond_create_list() {
- XMLDList *list=XMLDList_create(sizeof(XMLDCond), XMLDCond_free_content);
+XMLDCondList *XMLDCondList_create() {
+ XMLDCondList *list=XMLDList_create(sizeof(XMLDCond), XMLDCond_free_content);
  return list;
 }
 
@@ -98,7 +98,7 @@ XMLDList *XMLDCond_create_list() {
  * list: the list to which the new element is to be added.
  * returns: a pointer to the newly added element.
  */
-XMLDCond *XMLDCond_add_to_list(XMLDList *list) {
+XMLDCond *XMLDCondList_add(XMLDCondList *list) {
  XMLDCond *cond=(XMLDCond *) XMLDList_add(list);
  cond->left=NULL;
  cond->right=NULL;

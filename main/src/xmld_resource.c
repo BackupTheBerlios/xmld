@@ -75,8 +75,8 @@ void XMLDResource_free_content(void *res) {
  * : Creates a list of resource structures.
  * returns: the newly created list.
  */
-XMLDList *XMLDResource_create_list() {
- XMLDList *list=XMLDList_create(sizeof(XMLDResource), XMLDResource_free_content);
+XMLDResourceList *XMLDResourceList_create() {
+ XMLDResourceList *list=XMLDList_create(sizeof(XMLDResource), XMLDResource_free_content);
  return list;
 }
 
@@ -86,7 +86,7 @@ XMLDList *XMLDResource_create_list() {
  * list: the list to which the new element is to be added.
  * returns: a pointer to the newly added element.
  */
-XMLDResource *XMLDResource_add_to_list(XMLDList *list) {
+XMLDResource *XMLDResourceList_add(XMLDResourceList *list) {
  XMLDResource *res=(XMLDResource *) XMLDList_add(list);
  res->engine=NULL;
  res->data_source=NULL;

@@ -90,8 +90,8 @@ void XMLDAggrTable_fill(XMLDAggrTable *table, char *val) {
  * : Creates a XMLDList of aggregate expression tables.
  * returns: the newly created list.
  */
-XMLDList *XMLDAggrTable_create_list() {
- XMLDList *list=XMLDList_create(sizeof(XMLDAggrTable), XMLDAggrTable_free_content);
+XMLDAggrTableList *XMLDAggrTableList_create() {
+ XMLDAggrTableList *list=XMLDList_create(sizeof(XMLDAggrTable), XMLDAggrTable_free_content);
  return list;
 }
 
@@ -103,7 +103,7 @@ XMLDList *XMLDAggrTable_create_list() {
  * col_ptrs (optional): the list of column pointers of the new element.
  * returns: a pointer to the newly added aggregate expression table.
  */
-XMLDAggrTable *XMLDAggrTable_add_to_list(XMLDList *list) {
+XMLDAggrTable *XMLDAggrTableList_add(XMLDAggrTableList *list) {
  XMLDAggrTable *table=(XMLDAggrTable *) XMLDList_add(list);
  table->aggr=NULL;
  table->col_ptrs=NULL;
@@ -118,7 +118,7 @@ XMLDAggrTable *XMLDAggrTable_add_to_list(XMLDList *list) {
  * returns: a pointer to the aggregate expression table which has an aggregate
  * expression aggr, or NULL if not found.
  */
-XMLDAggrTable *XMLDAggrTable_search_list_by_expr(XMLDList *list, XMLDExpr *aggr) {
+XMLDAggrTableList *XMLDAggrTableList_search_by_expr(XMLDAggrTableList *list, XMLDExpr *aggr) {
  XMLDList_reset(list);
  XMLDAggrTable *table=NULL;
  while (XMLDList_next(list)) {

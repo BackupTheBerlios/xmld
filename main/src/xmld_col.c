@@ -59,8 +59,8 @@ void XMLDCol_fill(XMLDCol *col, char *val) {
  * : Creates a XMLDList of XMLDCol's.
  * returns: the newly created list.
  */
-XMLDList *XMLDCol_create_list() {
- XMLDList *list=XMLDList_create(sizeof(XMLDCol), XMLDCol_free_content);
+XMLDColList *XMLDColList_create() {
+ XMLDColList *list=XMLDList_create(sizeof(XMLDCol), XMLDCol_free_content);
  return list;
 }
 
@@ -71,7 +71,7 @@ XMLDList *XMLDCol_create_list() {
  * cpy (optional) : whether to copy val.
  * returns: a pointer to the added XMLDCol.
  */ 
-XMLDCol *XMLDCol_add_to_list(XMLDList *list) {
+XMLDCol *XMLDColList_add(XMLDColList *list) {
  XMLDCol *col=(XMLDCol *) XMLDList_add(list);
  col->val=NULL;
  return col;

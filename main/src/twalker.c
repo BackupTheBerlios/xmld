@@ -59,7 +59,7 @@ XMLDStatus twalker_handle(XMLDWork *work) {
     return XMLD_FAILURE;
    }
    
-   work->res->engine=XMLDEngine_search_list_by_name(engine_list, cfg_get_engine(full_file));
+   work->res->engine=XMLDEngineList_search_by_name(engine_list, cfg_get_engine(full_file));
    free(full_file);
    
    if (work->res->engine == NULL) {
@@ -114,7 +114,7 @@ XMLDStatus twalker_handle(XMLDWork *work) {
     return XMLD_FAILURE;
    }
    
-   work->res->engine=XMLDEngine_search_list_by_name(engine_list, cfg_get_engine(full_file));
+   work->res->engine=XMLDEngineList_search_by_name(engine_list, cfg_get_engine(full_file));
    free(full_file);
    
    if (work->res->engine == NULL) {

@@ -15,8 +15,8 @@
 #define __XMLD_RESPONSE_H
 
 struct XMLDResponse {
- XMLDList *rows;
- XMLDList *tables;
+ XMLDRowList *rows;
+ XMLDAggrTableList *tables;
 };
 
 typedef struct XMLDResponse XMLDResponse;
@@ -42,7 +42,7 @@ void XMLDResponse_free_content(void *);
 
 /* List functions */
 
-XMLDList *XMLDResoponse_create_list(void);
-XMLDResponse *XMLDResponse_add_to_list(XMLDList *);
+XMLDResponseList *XMLDResoponseList_create(void);
+XMLDResponse *XMLDResponseList_add(XMLDResponseList *);
 
 #endif /* __XMLD_RESPONSE_H */

@@ -58,8 +58,8 @@ void XMLDRequest_free_content(void *req) {
  * : Creates a new list of request structures.
  * returns: the newly created list.
  */
-XMLDList *XMLDRequest_create_list() {
- XMLDList *list=XMLDList_create(sizeof(XMLDRequest), XMLDRequest_free_content);
+XMLDRequestList *XMLDRequestList_create() {
+ XMLDRequestList *list=XMLDList_create(sizeof(XMLDRequest), XMLDRequest_free_content);
  return list;
 }
 
@@ -68,7 +68,7 @@ XMLDList *XMLDRequest_create_list() {
  * structures.
  * returns: a pointer to the newly added element.
  */
-XMLDRequest *XMLDRequest_add_to_list(XMLDList *list) {
+XMLDRequest *XMLDRequestList_add(XMLDRequestList *list) {
  XMLDRequest *req=(XMLDRequest *) XMLDList_add(list);
  req->file=NULL;
  req->retr=NULL;

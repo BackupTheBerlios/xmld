@@ -114,8 +114,8 @@ void XMLDExpr_copy(XMLDExpr *src, XMLDExpr *dest) {
  * : Create a list of expressions.
  * returns: the newly created expression list.
  */
-XMLDList *XMLDExpr_create_list() {
- XMLDList *list=XMLDList_create(sizeof(XMLDExpr), XMLDExpr_free_content);
+XMLDExprList *XMLDExprList_create() {
+ XMLDExprList *list=XMLDList_create(sizeof(XMLDExpr), XMLDExpr_free_content);
  return list;
 }
 
@@ -124,7 +124,7 @@ XMLDList *XMLDExpr_create_list() {
  * list: the list to which the element is to be added.
  * returns: a pointer to the newly added element.
  */ 
-XMLDExpr *XMLDExpr_add_to_list(XMLDList *list) {
+XMLDExpr *XMLDExprList_add(XMLDExprList *list) {
  XMLDExpr *expr=(XMLDExpr *) XMLDList_add(list);
  expr->aggr=XMLD_FALSE;
  expr->left=NULL;

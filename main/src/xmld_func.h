@@ -16,7 +16,7 @@
 
 struct XMLDFunc { /* represents a SQL function */
  char *name;
- XMLDExpr *(*func) (XMLDList *); 
+ XMLDExpr *(*func) (XMLDExprList *); 
  XMLDBool aggr; /* Whether it's an aggregate function */
 };
 
@@ -32,8 +32,8 @@ void XMLDFunc_free_content(void*);
 
 /* List functions */
 
-XMLDList *XMLDFunc_create_list(void);
-XMLDFunc *XMLDFunc_add_to_list(XMLDList *);
-XMLDFunc *XMLDFunc_search_list_by_name(XMLDList *, char *);
+XMLDFuncList *XMLDFuncList_create(void);
+XMLDFunc *XMLDFuncList_add(XMLDFuncList *);
+XMLDFunc *XMLDFuncList_search_by_name(XMLDFuncList *, char *);
 
 #endif /* __XMLD_FUNC_H */
