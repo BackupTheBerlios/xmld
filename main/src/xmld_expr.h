@@ -47,6 +47,7 @@ struct XMLDExpr {
 	    * 3 = '/'
 	    * 4 = '^'
 	    * 5 = '-' (unary negative)
+	    * 6 = AND (for between and not between)
 	    */ 
  /*-------------------*/
  char *ident; /* type 2 */
