@@ -21,7 +21,7 @@ struct XMLDRow {
 
 typedef struct XMLDRow XMLDRow;
 
-XMLDRow *XMLDRow_create(XMLDList *);
+XMLDRow *XMLDRow_create();
 void XMLDRow_add_col(XMLDRow *);
 void XMLDRow_fill_col(XMLDRow *, char *);
 void XMLDRow_free(XMLDRow *);
@@ -30,6 +30,6 @@ void XMLDRow_free_content(void *);
 /* List functions */
 
 XMLDList *XMLDRow_create_list(void);
-XMLDRow *XMLDRow_add_to_list(XMLDList *, XMLDList *);
+XMLDRow *XMLDRow_add_to_list(XMLDList *);
 
 #endif /* HAVE_XMLD_ROW_H */
