@@ -13,7 +13,7 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include <sys/types.h>
+#include "str_split.h"
 #include <stdio.h>
 #include <errno.h>
 #include "xmld_list.h"
@@ -137,11 +137,14 @@ void cfg_parser_parse_token(char *token, short mode) {
   else if (strcmp(token, "char*") == 0) {
    curr_dir->type=2;
   }
+  else if (strcmp(token, "char**") == 0) {
+   curr_dir->type=3;
+  }
   else {
    curr_dir->type=-1;
   }
  }
- if (mode == 1) {
+ else if (mode == 1) {
   curr_dir=(XMLDDirective *) XMLDList_curr(cfg_tree);
   if (curr_dir->type==-1) {
    return;
@@ -149,6 +152,39 @@ void cfg_parser_parse_token(char *token, short mode) {
   else {
    curr_dir->name=(char *) malloc(strlen(token)*sizeof(char));
    strcpy(curr_dir->name, token);   
+  }
+ }
+ else if (mode == 3) {
+  if (curr_dir->type == -1) {
+   return;
+  }
+  else if (curr_dir->type == 0) { /* integer value */
+   curr_dir->value.int_value=atoi(token);
+  }
+  else if (curr_dir->type == 1) { /* integer array value */
+   char **str_array=str_split(token, ',');
+   int num=1;
+   while (*str_array != NULL) {
+    num++;
+    curr_dir->value.int_array_value=(int *) realloc(curr_dir->value.int_array_value, 
+		    num*sizeof(int));
+    curr_dir->value.int_array_value[num-1]=0;
+    curr_dir->value.int_array_value[num-2]=atoi(*str_array);
+    free(*str_array);
+    str_array++;
+   }
+   while (num > 1) {
+    num--;
+    str_array--;
+   }
+   free(str_array);
+  }
+  else if (curr_dir->type == 2) { /* string value */
+   curr_dir->value.string_value=(char *) malloc(strlen(token)*sizeof(char));
+   strcpy(curr_dir->value.string_value, token);
+  }
+  else if (curr_dir->type == 3) { /* string array value */
+   curr_dir->value.string_array_value=str_split(token, ',');
   }
  }
 }
