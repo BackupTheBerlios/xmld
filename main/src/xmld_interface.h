@@ -15,27 +15,29 @@
 #define __XMLD_PARSER_H
 
 /* Represents a query parser */
-struct XMLDParser {
+struct XMLDInterafce {
  char *name; /* Parser name */
  void (*init) (void);
  void (*destroy) (void);
+ void (*prepare_conn) (XMLDWork *);
+ void (*cleanup_conn) (XMLDWork *);
  void (*prepare) (XMLDWork *);
+ void (*cleanup) (XMLDWork *);
  void (*parse) (XMLDWork *, char *query);
  void (*walk) (XMLDWork *);
  char *(*get_response) (XMLDWork *);
- void (*cleanup) (XMLDWork *);
 };
 
-typedef struct XMLDParser XMLDParser;
-typedef struct XMLDList XMLDParserList;
+typedef struct XMLDInterface XMLDInterface;
+typedef struct XMLDList XMLDInterfaceList;
 
-XMLDParser *XMLDParser_create(void);
-void XMLDParser_free(XMLDParser *);
-void XMLDParser_free_content(void *);
+XMLDInterface *XMLDInterface_create(void);
+void XMLDInterface_free(XMLDParser *);
+void XMLDInterface_free_content(void *);
 
 /* List functions */
 
-XMLDParserList *XMLDParserList_create(void);
-XMLDParser *XMLDParserList_add(XMLDParserList *);
+XMLDInterfaceList *XMLDInterfaceList_create(void);
+XMLDInterface *XMLDInterfaceList_add(XMLDInterfaceList *);
 
 #endif /* __XMLD_PARSER_H */
