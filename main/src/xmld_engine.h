@@ -23,14 +23,18 @@ struct XMLDEngine {
  char *(*eval_aggr_expr) (XMLDWork *, XMLDExpr *);
 };
 
-typedef struct XMLDEngine XMLDEngine;
+#ifndef XMLDENGINE_TYPE_DEFINED
+#define XMLDENGINE_TYPE_DEFINED
+ typedef struct XMLDEngine XMLDEngine;
+#endif /* XMLDENGINE_TYPE_DEFINED */
 
-XMLDEngine *XMLDEngine_create(void *(*)(XMLDWork *), void *(*)(XMLDWork *), int (*)(XMLDWork *), char *(*)(XMLDWork *, XMLDExpr *), int (*) (XMLDWork *, XMLDCond *), char *(*) (XMLDWork *, XMLDExpr *));
+XMLDEngine *XMLDEngine_create(void);
 void XMLDEngine_free(XMLDEngine *);
+void XMLDEngine_free_content(void *);
 
 /* List functions */
 
 XMLDList *XMLDEngine_create_list(void);
-void XMLDEngine_add_to_list(XMLDList *, void *(*)(XMLDWork *), void *(*)(XMLDWork *), int (*)(XMLDWork *), char *(*)(XMLDWork *, XMLDExpr *), int (*) (XMLDWork *, XMLDCond *), char *(*) (XMLDWork *, XMLDExpr *));
+XMLDEngine *XMLDEngine_add_to_list(XMLDList *);
 
 #endif /* HAVE_XMLD_ENGINE_H */
