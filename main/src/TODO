@@ -118,6 +118,9 @@ order to be able to resolve wildcards correctly. (done)
  * Create a new default database inside the document root
    name xmld which contains authentication and user privilege
    information. (done)
+ * engine_xmld_prepare should receive full_file as a string
+   instead of having to take it out of XMLDWork each time. 
+   (done)
  * No special treatment for auth/priv files in authman. (use
    the normal file operation cycle)
  * Engine configuration files should be put inside the xmld

@@ -29,9 +29,7 @@ void engine_xmld_init() {
 /* prepare function 
  * level: see xmld_engine.h
  * */
-XMLDStatus engine_xmld_prepare(XMLDWork *work, XMLDFile *file, int level) {
- char *full_name=XMLDFile_get_full_name(file, work);
- 
+XMLDStatus engine_xmld_prepare(char *full_name, XMLDFile *file, int level) {
  if (BIT_ISSET(level, XMLD_ACCESS_EX)) {
   file->data=(void *) fmanager_get_ex_fd(full_name);
  }
@@ -41,7 +39,6 @@ XMLDStatus engine_xmld_prepare(XMLDWork *work, XMLDFile *file, int level) {
  
  if (file->data == NULL) {
   xmld_errno = XMLD_ENOFILE;
-  free(full_name);
   return XMLD_FAILURE;
  }
  
@@ -55,7 +52,6 @@ XMLDStatus engine_xmld_prepare(XMLDWork *work, XMLDFile *file, int level) {
  else {
   file->store = NULL;
  }
- free(full_name);
  return XMLD_SUCCESS;
 }
 

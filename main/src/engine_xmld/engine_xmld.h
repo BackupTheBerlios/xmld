@@ -15,7 +15,7 @@
 #define __ENGINE_XMLD_H
 
 void engine_xmld_init (void);
-XMLDStatus engine_xmld_prepare (XMLDWork *, XMLDFile *, int);
+XMLDStatus engine_xmld_prepare (char *, XMLDFile *, int);
 XMLDStatus engine_xmld_load_format_file (XMLDFile *, char *, XMLDBool);
 void engine_xmld_cleanup (XMLDFile *);
 void engine_xmld_unload_format_file (XMLDFile *);

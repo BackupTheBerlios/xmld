@@ -40,14 +40,14 @@ XMLDStatus twalker_handle(XMLDWork *work) {
     }
    
     curr_file->engine=XMLDEngineList_search_by_name(engine_list, cfg_get_engine(full_file));
-    free(full_file);
    
     if (curr_file->engine == NULL) {
      xmld_errno=XMLD_ENOENGINE;
      return XMLD_FAILURE;
     }
 
-    if (((*(curr_file->engine->prepare)) (work, curr_file, XMLD_ACCESS_NOTHING)) == XMLD_FAILURE) {
+    if (((*(curr_file->engine->prepare)) (full_file, curr_file, XMLD_ACCESS_NOTHING)) == XMLD_FAILURE) {
+     free(full_file);
      XMLDList_reset(work->files);
      while (XMLDList_next(work->files)) {
       XMLDFile *cur_file=(XMLDFile *) XMLDList_curr(work->files);
@@ -58,6 +58,7 @@ XMLDStatus twalker_handle(XMLDWork *work) {
      }
      return XMLD_FAILURE;
     }
+    free(full_file);
    }
    
    work->resp=XMLDResponse_create();
@@ -152,14 +153,14 @@ XMLDStatus twalker_handle(XMLDWork *work) {
     }
    
     curr_file->engine=XMLDEngineList_search_by_name(engine_list, cfg_get_engine(full_file));
-    free(full_file);
    
     if (curr_file->engine == NULL) {
      xmld_errno=XMLD_ENOENGINE;
      return XMLD_FAILURE;
     }
     
-    if (((*(curr_file->engine->prepare)) (work, curr_file, XMLD_ACCESS_FORMAT)) == XMLD_FAILURE) {
+    if (((*(curr_file->engine->prepare)) (full_file, curr_file, XMLD_ACCESS_FORMAT)) == XMLD_FAILURE) {
+     free(full_file);
      XMLDList_reset(work->files);
      while (XMLDList_next(work->files)) {
       XMLDFile *cur_file=(XMLDFile *) XMLDList_curr(work->files);
@@ -170,6 +171,7 @@ XMLDStatus twalker_handle(XMLDWork *work) {
      }
      return XMLD_FAILURE;
     }
+    free(full_file);
    }
 
    work->resp=XMLDResponse_create();
