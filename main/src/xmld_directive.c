@@ -40,6 +40,23 @@ void XMLDDirective_free(XMLDDirective *directive) {
  * whose internal memory is to be freed.
  */
 void XMLDDirective_free_content(void *directive) {
+ XMLDDirective *dir=(XMLDDirective *) directive;
+ if (dir->type == 1) {
+  free(dir->value.int_array_value);
+ }
+ else if (dir->type == 2) {
+  free(dir->value.string_value);
+ }
+ else if (dir->type == 3) {
+  char **ptr=dir->value.string_array_value;
+  while (ptr != NULL) {
+   free(*ptr);
+  }
+  free(dir->value.string_array_value);
+ }
+ if (dir->type != -1) {
+  free(dir->name);
+ }
 }
 
 /*
@@ -70,7 +87,7 @@ XMLDDirective *XMLDDirective_add_to_list(XMLDList *list) {
  * the given name or NULL if not found.
  */
 XMLDDirective *XMLDDirective_search_list_by_name(XMLDList *list, char *name) {
- XMLDList_reset(list); 
+ XMLDList_reset(list);
  XMLDDirective *directive=NULL;
  while (XMLDList_next(list)) {
   if (strcmp(((XMLDDirective *) XMLDList_curr(list))->name, name)==0) {
