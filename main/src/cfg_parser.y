@@ -12,38 +12,49 @@
  * -------------------------------------------------------------- * 
  */
 
-#include "cfg_parser.tab.h"
-#define YY_DECL int yylex(YYSTYPE *lvalp)
+#define YYPARSE_PARAM cfg_tree
 %}
-%x STR
-%%
 
-" " return ' ';
-"#" return '#';
-"<" return '<';
-">" return '>';
-"/" return '/';
-"\n" return '\n';
-"\""  BEGIN STR;
-<STR>[^"]* {
-	    lvalp->string=(char *) malloc(strlen(yytext)*sizeof(char));
-            strcpy(lvalp->string, yytext);
-            return STRING;
-           }
-<STR>\" BEGIN INITIAL;
-[A-Z]([A-Z0-9_]*) {
-		lvalp->string = (char *) malloc(strlen(yytext) * sizeof(char));
-		strcpy(lvalp->string, yytext);
-		return IDENTIFIER;
-               }
-[0-9]+ {
-        lvalp->integer=atoi(yytext);
-	return INTEGER;
-       }
-. {}
+%union {
+ int integer;
+ char *string;
+}
+
+/* Thread-safe */
+%pure_parser
+
+/* Types */
+%token <string> IDENTIFIER STRING
+%token <integer> INTEGER
 
 %%
 
-int yywrap() {
- return 1;
+cfg_tree: directive_list
+	| section
+	| cfg_tree '\n' directive
+	| cfg_tree '\n' section
+;
+
+section: '<' IDENTIFIER '>' '\n' directive_list '\n' '<' '/' IDENTIFIER '>'
+;
+
+directive_list: directive
+	      | directive_list '\n' directive
+;
+
+directive: IDENTIFIER ' ' value_list
+;
+
+value_list: value 
+	  | value_list ' ' value
+;
+	  
+value: STRING 
+     | INTEGER
+;
+
+%%
+
+int yyerror(char *s) {
+ return 0;
 }
