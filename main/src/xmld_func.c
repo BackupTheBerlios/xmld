@@ -51,7 +51,6 @@ void XMLDFunc_free(XMLDFunc *func) {
  * func: a void pointer to the function whose memory is to be freed.
  */
 void XMLDFunc_free_content(void *func) {
- cfree(((XMLDFunc *)func)->name); 
 }
 
 /*

@@ -34,12 +34,11 @@ short func_list_init() {
 
 short func_list_shutdown() {
  XMLDList_free(func_list);
- return 0;
+ return 1;
 }
 
 /* bogus function, real functions should go here  */
 XMLDExpr *foo_func(XMLDList *list) {
- 
  return (XMLDExpr *) NULL;
 }
 

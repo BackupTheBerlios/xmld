@@ -39,37 +39,53 @@ struct XMLDEngine;
 #include "xmld_connection.h"
 #include "xmld_work.h"
 #include "xmld_engine.h"
-#include "sosel.h"
 #include "qp.h"
 #include "twalker.h"
+
+#ifdef USE_PTASKER
+ #include <sys/types.h>
+ #include "ptasker/ptasker.h"
+ #define MULTI_PROC_MTASKER
+ #undef MULTI_THREAD_MTASKER
+#endif /* USE_PTASKER */
+
+#include <sys/socket.h> /* remove that when you are done */
 struct yy_buffer_state;
 typedef struct yy_buffer_state *YY_BUFFER_STATE;
 YY_BUFFER_STATE yy_scan_string(const char *);
+void yy_switch_to_buffer(YY_BUFFER_STATE);
+void yy_delete_buffer(YY_BUFFER_STATE);
 
 void qp_handle(void *conn) {
- XMLDWork *work=XMLDWork_create();
- work->conn=XMLDConnection_create(((XMLDConnection *) conn)->fd, ((XMLDConnection *) conn)->curr_dir);
- sosel_remove(conn);
- work->req=XMLDRequest_create();
- 
- char *query=xmld_socket_read(work->conn->fd);
- yy_scan_string(query);
- int status=yyparse((void *) work);
- if (status == 1) {
-  ERROR_RESPONSE;
-  sosel_add(work->conn->fd, work->conn->curr_dir);
-  XMLDWork_free(work);
-  return;
- }
- 
- status=twalker_handle(work);
- if (status==-1) {
-  ERROR_RESPONSE;
-  sosel_add(work->conn->fd, work->conn->curr_dir);
-  XMLDWork_free(work);
-  return;
- }
+ while (1) {
+  XMLDWork *work=XMLDWork_create();
+#ifdef MULTI_PROC_MTASKER
+  work->conn=XMLDConnection_create(passed_fd, ((XMLDConnection *) conn)->curr_dir);
+#else 
+  work->conn=XMLDConnection_create(((XMLDConnection *) conn)->fd, ((XMLDConnection *) conn)->curr_dir);
+#endif /* MULTI_PROC_MTASKER */
+  work->req=XMLDRequest_create();
+  
+  char *query=xmld_socket_read(work->conn->fd);
+  YY_BUFFER_STATE buf=yy_scan_string(query);
+  /*yy_switch_to_buffer(buf);*/
+  
+  int status=yyparse((void *) work);
+  yy_delete_buffer(buf);
+  if (status == 1) {
+   ERROR_RESPONSE;
+   XMLDWork_free(work);
+   continue;
+  }
+  
+  free(query);
+  status=twalker_handle(work);
+  if (status == 0) {
+   ERROR_RESPONSE;
+   XMLDWork_free(work);
+   continue;
+  }
 
- sosel_add(work->conn->fd, work->conn->curr_dir);
- XMLDWork_free(work);
+  XMLDWork_free(work);
+ } 
 }

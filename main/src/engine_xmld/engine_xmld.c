@@ -65,12 +65,12 @@ short engine_xmld_prepare(XMLDWork *work) {
  
  if (strcmp(mime, "text/xml") != 0) { /* A XML-only engine! */
   xmld_errno=XMLD_EINVALFILE;
-  free(mime);
-  free(full_name);
+  /*free(mime);*/
+  /*free(full_name);*/ /* FIXME: This one segfaults! */
   return 0;
  }
  
- free(mime);
+ /*free(mime);*/
  if (work->req->type == 4 || work->req->type == 5 || work->req->type == 6
      || work->req->type == 7 || work->req->type == 8 || work->req->type == 9) { /* Operations that need the .format file */
   work->res->data_source=(void *) fmanager_get_ex_fd(full_name);
@@ -81,7 +81,7 @@ short engine_xmld_prepare(XMLDWork *work) {
  
  if (work->res->data_source == NULL) {
   xmld_errno = XMLD_ENOFILE;
-  free(full_name);
+  /*free(full_name);*/ /* FIXME: This one segfaults! */
   return 0;
  }
  
@@ -94,17 +94,17 @@ short engine_xmld_prepare(XMLDWork *work) {
  else {
   *((int *) work->res->store+2)=0;
  }
- free(full_name);
+ /*free(full_name);*/ /* FIXME: This one segfaults! */
 
  return 1;
 }
-
 /* cleanup function */
 void engine_xmld_cleanup(XMLDWork *work) {
  if (*((int *) work->res->store+2)) {
   fmanager_unlock_fd((FILE *) (work->res->store+1));
   fclose((FILE *) (work->res->store+1));
  }
+
  free(work->res->store);
  fmanager_unlock_fd((FILE *) (work->res->data_source));
  fclose((FILE *) work->res->data_source);

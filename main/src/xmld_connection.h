@@ -17,7 +17,6 @@
 /* carries connection-specific information */
 struct XMLDConnection {
  int fd;
- int sfd;
  char *curr_dir; /* the current directory of the connection */
 };
 

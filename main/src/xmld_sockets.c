@@ -16,6 +16,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <unistd.h>
 #include "xmld_sockets.h"
 
 int xmld_socket_create() {
@@ -38,20 +39,20 @@ int xmld_socket_accept(int sockfd) {
  return accept(sockfd, NULL, NULL);
 }
 int xmld_socket_write(int sockfd, char *str) {
- return send(sockfd, (void *) str, strlen(str)*sizeof(char), MSG_NOSIGNAL);
+ return write(sockfd, (void *) str, strlen(str)+1);
 }
 
 char *xmld_socket_read(int sockfd) {
- char *ret=(char *) malloc(1*sizeof(char));
- int curr=0;
+ char *ret=(char *) malloc(400*sizeof(char));
+ /*int curr=0;
  
- while (1) {
-  recv(sockfd, (void *) &ret[curr], 1, MSG_NOSIGNAL);
-  if (ret[curr] == '\0') {
+ while (1) {*/
+  read(sockfd, (void *) ret, 400);
+ /* if (ret[curr] == '\0') {
    break;
   }
   ret=(char *) realloc(ret, (curr + 2)*sizeof(char));
   curr++;
- }
- return ret;
+ }*/
+ return ret; 
 }

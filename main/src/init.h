@@ -22,6 +22,6 @@ struct xmld_part {
 };
 
 void init_create_part(struct xmld_part*, short (*) (void), short (*) (void));
-void init_shutdown_parts(void);
+void init_shutdown_parts(int);
 #endif /* __INIT_H */
 

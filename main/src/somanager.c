@@ -29,7 +29,7 @@
 #endif /* USE_PTASKER */
 
 #include "somanager.h"
-#include "sosel.h"
+#include "qp.h"
 
 int *fds;
 int *ports;
@@ -71,7 +71,6 @@ short somanager_shutdown() {
 
 void somanager_handle(void *sockfd) {
  int s;
-
 #ifdef MULTI_PROC_MTASKER
  s = xmld_socket_listen(passed_fd);
 #else
@@ -92,8 +91,12 @@ void somanager_handle(void *sockfd) {
 
   if (s == -1) {
    perror("xmld_socket_accept");
-   return;
+   continue;
   }
-  sosel_add(s, "/");
+  
+  XMLDConnection conn;
+  conn.fd=s;
+  conn.curr_dir="/";
+  mtasker_handle(qp_handle, (void *) &conn, s);
  } 
 }

@@ -124,16 +124,12 @@ short mtasker_init() {
 }
 short mtasker_shutdown() {
  int i;
- while (table->num_busy > 0) {
- }
- while (ttable.num_tasks > 0) {
-  mtasker_handle_idle(10);
- }
  for (i = 0; i < max_proc; i++) {
-  while (table->children[i].busy == 1) {
-  }
   shutdown(table->children[i].sp[0], 2);
   shutdown(table->children[i].sp[1], 2);
+  if (table->children[i].pid != 0) {
+   kill(table->children[i].pid, SIGTERM);
+  } 
   table->children[i].die=1;
  }
  free(ttable.tasks);
