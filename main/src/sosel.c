@@ -41,7 +41,7 @@ int wait;
 
 short sosel_init() {
  max_conn=*((int*) cfg_get("sosel.max_conn"));
- wait_period=*((int *) cfg_get("sosel.timeout"));
+ wait=*((int *) cfg_get("sosel.timeout"));
  /* FIXME: should check ftok's usage */
  key_t key=ftok("cfg.h", 'X');
  int id=shmget(key, sizeof(struct connection_table), IPC_CREAT);
@@ -83,7 +83,7 @@ void sosel_run(void *data) {
   FD_ZERO(&fds);
   j=0;
   timeout.tv_sec=0;
-  timeout.tv_usec=wait_period; /* FIXME: this value should depend on cfg */
+  timeout.tv_usec=wait;
   for (i=0;i<max_conn;i++) {
    if (conn_table->conn[i].sfd==1) {
     FD_SET(conn_table->conn[i].fd, &fds);
@@ -112,30 +112,6 @@ void sosel_run(void *data) {
   }
  }
  free(conns);
-}
-short sosel_sremove(int fd) {
- int i;
- short stat=-1;
- for (i=0;i<max_conn;i++) {
-  if (conn_table->conn[i].fd==fd) {
-   conn_table->conn[i].sfd=0;
-   stat=0;
-   break;
-  }
- }
- return stat;
-}
-short sosel_sadd(int fd) {
- int i;
- short stat=-1;
- for (i=0;i<max_conn;i++) {
-  if (conn_table->conn[i].fd==fd) {
-   conn_table->conn[i].sfd=1;
-   stat=0;
-   break;
-  }
- }
- return stat;
 }
 short sosel_add(int fd, char *dir) {
  short stat=-1;
