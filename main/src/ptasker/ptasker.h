@@ -11,8 +11,8 @@
  * -------------------------------------------------------------- * 
  */
  
-#ifndef HAVE_PTASKER_H
-#define HAVE_PTASKER_H
+#ifndef __PTASKER_H
+#define __PTASKER_H
 
 struct task {
  void (*func) (void*);
@@ -44,4 +44,5 @@ short mtasker_handle(void (*) (void*), void*);
 struct proc *mtasker_spawn();
 short mtasker_kill(int);
 void mtasker_handle_idle(int);
-#endif /* HAVE_PTASKER_H */
+
+#endif /* __PTASKER_H */

@@ -39,7 +39,7 @@ void engine_xmld_discard_curr_att_value(FILE *fd) {
 }
 
 char *engine_xmld_get_text_value(FILE *fd) {
- return dmcstrchr(fd, "<", 1, value);
+ return dmcstrchr(fd, "<", 1);
 }
 
 short engine_xmld_set_text_value(FILE *fd, char *value) {
@@ -57,12 +57,16 @@ void engine_xmld_discard_curr_att_name(FILE *fd) {
 short engine_xmld_locate_text(FILE *fd) {
  char *tok[]={"/>", ">"};
  int token=dmstrstr(fd, tok, 2);
- if (token == 0) {
+ if (token == -1) {
+  return 0;
+ }
+ else if(token == 0) {
   return 0;
  }
  else if (token == 1) {
   return 1;
  }
+ return 0;
 }
 
 short engine_xmld_locate_att(FILE *fd, char *col_name) {

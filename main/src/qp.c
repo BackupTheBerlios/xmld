@@ -42,6 +42,9 @@ struct XMLDEngine;
 #include "sosel.h"
 #include "qp.h"
 #include "twalker.h"
+struct yy_buffer_state;
+typedef struct yy_buffer_state *YY_BUFFER_STATE;
+YY_BUFFER_STATE yy_scan_string(const char *);
 
 void qp_handle(void *conn) {
  XMLDWork *work=XMLDWork_create();

@@ -136,10 +136,10 @@ short str_between(char *str, char *min, char *max) {
  */
 char *ltoa(long num) {
  char *ret=(char *) malloc(NUMERIC_LENGTH*sizeof(char));
- conv=snprintf(ret, NUMERIC_LENGTH, "%l", num);
+ int conv=snprintf(ret, NUMERIC_LENGTH, "%li", num);
  if (conv > 0) {
-  ret=(char *) realloc((NUMERIC_LENGTH+conv)*sizeof(char));
-  snprintf(ret, NUMERIC_LENGTH+conv, "%l", num);
+  ret=(char *) realloc(ret, (NUMERIC_LENGTH+conv)*sizeof(char));
+  snprintf(ret, NUMERIC_LENGTH+conv, "%li", num);
  }
  else if (strlen(ret)+1 < NUMERIC_LENGTH) {
   ret=(char *) realloc(ret, (strlen(ret)+1)*sizeof(char));

@@ -13,9 +13,10 @@
 
 #ifndef __DUTILS_H
 #define __DUTILS_H
+#define BUFFER_SIZE 100
 
 struct buf_t {
- char val[BUFFER_SIZE+1];
+ char val[BUFFER_SIZE];
  char *curr;
 };
 

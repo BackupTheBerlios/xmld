@@ -103,6 +103,6 @@ XMLDCond *XMLDCond_add_to_list(XMLDList *list) {
  cond->left=NULL;
  cond->right=NULL;
  cond->cleft=NULL;
- cond->crigt=NULL;
+ cond->cright=NULL;
  return cond;
 }

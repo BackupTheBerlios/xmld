@@ -17,6 +17,7 @@
 #include "../dutils.h"
 #include "../sutils.h"
 #include "../fmanager.h"
+#include "element_op.h"
 #include "format_manip.h"
 
 /*
@@ -79,7 +80,8 @@ int engine_xmld_get_element_att_length(FILE *fd, int level, char *tagname, char 
    free(tname);
    engine_xmld_locate_att(fd, attribute);
    char *len=engine_xmld_get_curr_att_value(fd);
-   int ret=sprintf(len, "%d", &ret);
+   int ret;
+   sscanf(len, "%d", &ret);
    free(len);
    return ret;
   }
@@ -87,5 +89,5 @@ int engine_xmld_get_element_att_length(FILE *fd, int level, char *tagname, char 
 }
 
 int engine_xmld_get_element_text_length(FILE *fd, int level, char *tagname) {
- return engine_xmld_get_element_text_length(fd, level, tagname, "(text)");
+ return engine_xmld_get_element_att_length(fd, level, tagname, "(text)");
 }

@@ -15,6 +15,7 @@
 #include <string.h>
 #include "xmld_list.h"
 #include "xmld_col.h"
+#include "xmld_row.h"
 struct XMLDFunc;
 #ifndef XMLD_FUNC_TYPE_DEFINED
 #define XMLD_FUNC_TYPE_DEFINED

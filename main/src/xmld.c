@@ -11,11 +11,27 @@
  * -------------------------------------------------------------- * 
  */
 
+#include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
+#include <sys/time.h>
+#include <string.h>
 #include "cfg.h"
+#include "xmld_list.h"
+#include "xmld_connection.h"
+#include "xmld_list.h"
+struct XMLDFunc;
+#ifndef XMLD_FUNC_TYPE_DEFINED
+#define XMLD_FUNC_TYPE_DEFINED
+ typedef struct XMLDFunc XMLDFunc;
+#endif /* XMLD_FUNC_TYPE_DEFINED */
+#include "xmld_expr.h"
+#include "xmld_func.h"
 
 #ifdef USE_PTASKER
  #include <sys/types.h>
+ #include <sys/ipc.h>
+ #include <sys/shm.h>
  #include "ptasker/ptasker.h"
  #define MULTI_PROC_MTASKER
  #undef MULTI_THREAD_MTASKER
@@ -26,12 +42,14 @@
 #include "init.h"
 #include "engine_list.h"
 #include "func_list.h"
+#include "xmld_errors.h"
 
 struct xmld_part parts[6];
 short status;
 int i;
 
 int main() {
+ init_error_array();
  init_create_part(&parts[0], cfg_init, cfg_shutdown);
  init_create_part(&parts[1], mtasker_init, mtasker_shutdown);
  init_create_part(&parts[2], somanager_init, somanager_shutdown);

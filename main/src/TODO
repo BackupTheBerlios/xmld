@@ -301,26 +301,22 @@ of value. (done)
 * Fix that cfg_parser won't accept values containing ';'. (done
 -- by using end-of-line as an end-of-value indiciator)
 
-* Fix XMLDList segfaulting after a call to XMLDList_add.
+* In engine_xmld_set_column_value, a check for availability of the
+format file must be done, thereafter either dmwstrchr or dmwnstrchr
+may be used. (done)
 
-* Implement xmld_socket_read.
+* Conditionally open the format file (only for request types that
+need it). (done)
+
+* Implement xmld_socket_read. (done)
 
 * Compile the whole and fix whatever compilation error meets you.
+(done)
 
 * Run and fix whatever segfault meets you.
 
 * Use and fix bugs to the least acceptable state (0.4.0 is an alpha 
 quality release).
-
-* Implement dmwnstrchr in dutils, and write notes about the use of
-each function there.
-
-* In engine_xmld_set_column_value, a check for availability of the
-format file must be done, thereafter either dmwstrchr or dmwnstrchr
-may be used.
-
-* Conditionally open the format file (only for request types that
-need it).
 
 **** Checks: ****
 

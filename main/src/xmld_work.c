@@ -25,6 +25,7 @@ struct XMLDFunc;
 #include "xmld_func.h"
 #include "xmld_cond.h"
 #include "xmld_col.h"
+#include "xmld_row.h"
 #include "xmld_aggr_table.h"
 struct XMLDEngine;
 #ifndef XMLDENGINE_TYPE_DEFINED
@@ -67,10 +68,10 @@ void XMLDWork_free(XMLDWork *work) {
  * work: the work structure whose memory is to be freed.
  */
 void XMLDWork_free_content(void *work) {
- XMLDRequest_free(work->req);
- XMLDResource_free(work->res);
- XMLDConnection_free(work->conn);
- XMLDResponse_free(work->resp); 
+ XMLDRequest_free(((XMLDWork *) work)->req);
+ XMLDResource_free(((XMLDWork *) work)->res);
+ XMLDConnection_free(((XMLDWork *) work)->conn);
+ XMLDResponse_free(((XMLDWork *) work)->resp); 
 }
 
 /*

@@ -11,8 +11,8 @@
  * -------------------------------------------------------------- * 
  */
 
-#ifndef HAVE_XMLD_ERRORS_H
-#define HAVE_XMLD_ERRORS_H
+#ifndef __XMLD_ERRORS_H
+#define __XMLD_ERRORS_H
 
 enum xmld_error {
  XMLD_ENOFILE,
@@ -23,16 +23,18 @@ enum xmld_error {
  XMLD_ENOTIMPL
 } xmld_errno;
 
-char *err_str[6] = {
+char *err_str[6]; /* = {
  "The request file was not found.",
  "The given engine does not exist.",
  "Invalid file type.",
  "Invalid use of an aggregate expression.",
  "An error has occured while parsing the given query.",
  "The given query is not yet implemented."
-};
+};*/
 
 #define ERROR_RESPONSE xmld_socket_write(work->conn->fd, err_str[xmld_errno])
 
-#endif /* HAVE_XMLD_ERRORS_H */
+void init_error_array(void);
+
+#endif /* __XMLD_ERRORS_H */
 

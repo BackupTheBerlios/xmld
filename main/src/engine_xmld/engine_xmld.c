@@ -322,7 +322,7 @@ void engine_xmld_simplify_expr(XMLDWork * work, XMLDExpr *expr) {
  }
  else if (expr->type == 3) {
   if (expr->func->aggr == 1) {
-   XMLDExpr *work_expr=XMLDFunc_add_to_list(expr->arg_list);
+   XMLDExpr *work_expr=XMLDExpr_add_to_list(expr->arg_list);
    work_expr->nval=(long) work;
   }
   XMLDExpr *func_res=(*(expr->func->func)) (expr->arg_list);
@@ -418,7 +418,7 @@ short engine_xmld_set_column_value(XMLDWork *work, char *col_name, char *value) 
    }
   }
   else {
-   if (engine_xmld_locate_att((FILE *) work->res->data_source), col_name) {
+   if (engine_xmld_locate_att((FILE *) work->res->data_source, col_name)) {
     int len=engine_xmld_get_element_att_length((FILE *) work->res->store+1, *((int*) work->res->store),
 		    tag_name, col_name);
     if (strlen(value) >= len) {

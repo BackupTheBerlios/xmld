@@ -47,7 +47,7 @@ short mtasker_init() {
  
  init_proc=*((int *) cfg_get("mtasker.init_proc"));
  max_proc=*((int *) cfg_get("mtasker.max_proc"));
- max_idle_proc=((int *) cfg_get("mtasker.max_idle_proc"));
+ max_idle_proc=*((int *) cfg_get("mtasker.max_idle_proc"));
 
  if (init_proc>max_proc) {
   init_proc=max_proc;

@@ -16,8 +16,14 @@
 #include "xmld_errors.h"
 #include "xmld_list.h"
 #include "xmld_col.h"
-#include "xmld_func.h"
+#include "xmld_row.h"
+struct XMLDFunc;
+#ifndef XMLD_FUNC_TYPE_DEFINED
+#define XMLD_FUNC_TYPE_DEFINED
+ typedef struct XMLDFunc XMLDFunc;
+#endif /* XMLD_FUNC_TYPE_DEFINED */
 #include "xmld_expr.h"
+#include "xmld_func.h"
 #include "xmld_aggr_table.h"
 #include "xmld_cond.h"
 struct XMLDEngine;
@@ -79,7 +85,7 @@ short twalker_handle(XMLDWork *work) {
   case 1: /* SELECT with WHERE */
    work->res=XMLDResource_create();
   
-   char *full_file=XMLDWork_get_full_file(work);
+   full_file=XMLDWork_get_full_file(work);
    work->res->engine=XMLDEngine_search_list_by_name(engine_list, cfg_get_engine(full_file));
    free(full_file);
    

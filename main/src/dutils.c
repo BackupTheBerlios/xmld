@@ -14,7 +14,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#define BUFFER_SIZE 100
 #include "dutils.h"
 
 /*
@@ -23,20 +22,28 @@
  * gets initialized by the user function.
  */ 
 char getc_buf(FILE *fd, buf_t *buf) {
+ int stat;
  if (buf == NULL) {
-  buff=(buf_t *) malloc(sizeof(buf_t));
-  buff->val=fread((void *) buff->val, sizeof(char), BUFFER_SIZE, fd);
-  buff->val[100]='\0';
-  buff->curr=buff->val;
+  buf=(buf_t *) malloc(sizeof(buf_t));
+  stat=fread((void *) buf->val, sizeof(char), BUFFER_SIZE, fd);
+  if (stat == 0) {
+   return EOF;
+  }
+  buf->val[stat-1]='\0';
+  buf->curr=buf->val;
  }
- else if (buff->curr == (buff->val)+BUFFER_SIZE) {
-  buff->val=fread((void *) buff->val, sizeof(char), BUFFER_SIZE, fd);
-  buff->curr=buff->val;
+ else if (buf->curr == (buf->val)+BUFFER_SIZE) {
+  stat=fread((void *) buf->val, sizeof(char), BUFFER_SIZE, fd);
+  if (stat == 0) {
+   return EOF;
+  }
+  buf->val[stat-1]='\0';
+  buf->curr=buf->val;
  }
  else {
-  buff->curr++;
+  buf->curr++;
  }
- return buff->curr;
+ return *(buf->curr);
 }
 
 /*
@@ -48,11 +55,11 @@ char getc_buf(FILE *fd, buf_t *buf) {
  * by getc_buf on the same buf and fd.
  */ 
 void buf_dump(FILE *fd, buf_t *buf) {
- char *last=buff->curr;
- while (last != '\0' && last != EOF) {
+ char *last=buf->curr;
+ while (*last != '\0' && *last != EOF) {
   last++;
  }
- fseek(fd, buff->curr -  last, SEEK_CUR);
+ fseek(fd, buf->curr -  last, SEEK_CUR);
  free(buf);
 }
 
@@ -136,7 +143,6 @@ char *dmcstrchr(FILE *fd, char *tokens, int num) {
  int i;
  buf_t *buf=NULL;
  char *cap;
- char *curr;
  cap=(char *) malloc(sizeof(char));
  cap[0]='\0';
 
@@ -153,7 +159,7 @@ char *dmcstrchr(FILE *fd, char *tokens, int num) {
     return cap;
    }
   }
-  cap=(char *) realloc((strlen(cap)+2)*sizeof(char));
+  cap=(char *) realloc(cap, (strlen(cap)+2)*sizeof(char));
   cap[strlen(cap)+1]='\0';
   cap[strlen(cap)]=c;
  }
@@ -190,7 +196,7 @@ short dmwstrchr(FILE *fd, char *tokens, int num, char *write) {
   fseek(fd, -1, SEEK_CUR);
   putc(*curr, fd);
   if (*(++curr) == '\0') {
-   break;
+   return 1;
   }
  }
 }

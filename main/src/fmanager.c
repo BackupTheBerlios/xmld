@@ -24,7 +24,7 @@ FILE *fmanager_get_sh_fd(char *file) {
   return NULL;
  }
  if (flock(fileno(ret), LOCK_SH) == 0) {
-  return 1;
+  return ret;
  }
  else {
   fclose(ret);
@@ -55,7 +55,7 @@ FILE *fmanager_get_ex_fd(char *file) {
  * returns: Whether successful.
  */
 short fmanager_unlock_fd(FILE *fd) {
- if (flock(fd, LOCK_UN) == 0) {
+ if (flock(fileno(fd), LOCK_UN) == 0) {
   return 1;
  }
  else {

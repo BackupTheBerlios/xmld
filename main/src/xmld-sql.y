@@ -9,10 +9,10 @@ struct XMLDFunc;
  typedef struct XMLDFunc XMLDFunc;
 #endif /* XMLD_FUNC_TYPE_DEFINED */
 #include "xmld_expr.h"
-#include "xmld_assign.h"
 #include "xmld_func.h"
 #include "xmld_cond.h"
 #include "xmld_col.h"
+#include "xmld_row.h"
 #include "xmld_aggr_table.h"
 struct XMLDEngine;
 #ifndef XMLDENGINE_TYPE_DEFINED
@@ -28,6 +28,7 @@ struct XMLDEngine;
 #include "xmld_errors.h"
 #include "func_list.h"
 #define YYPARSE_PARAM work
+#include "qp.h"
 %}
 
 %union {
@@ -166,14 +167,14 @@ cond_list: cond {
            | cond_list ':' cond {
                                  $$=$1;
 		                 XMLDCond *cond=XMLDCond_add_to_list($$);
-		                 XMLDCond_copy($1, cond);
-		                 XMLDCond_free($1);
+		                 XMLDCond_copy($3, cond);
+		                 XMLDCond_free($3);
 	                        }
 	   | cond_list "," cond { /* for UPDATE support */
                                  $$=$1;
 		                 XMLDCond *cond=XMLDCond_add_to_list($$);
-		                 XMLDCond_copy($1, cond);
-		                 XMLDCond_free($1);
+		                 XMLDCond_copy($3, cond);
+		                 XMLDCond_free($3);
 	                        }
 ;
 
@@ -199,7 +200,7 @@ cond: '(' cond ')' {
 		       $$->negate=0;
 		       $$->type=0;
 		       $$->left=$1;
-		       $$->right=3;
+		       $$->right=$3;
 		       $$->op=0;
                       }
       | expr '<' expr {
@@ -207,7 +208,7 @@ cond: '(' cond ')' {
 		       $$->negate=0;
 		       $$->type=0;
 		       $$->left=$1;
-		       $$->right=3;
+		       $$->right=$3;
 		       $$->op=1;
                       }
       | expr '>' expr {
@@ -215,7 +216,7 @@ cond: '(' cond ')' {
 		       $$->negate=0;
 		       $$->type=0;
 		       $$->left=$1;
-		       $$->right=3;
+		       $$->right=$3;
 		       $$->op=2;
                       }
       | expr NE expr {
@@ -223,7 +224,7 @@ cond: '(' cond ')' {
 		      $$->negate=0;
 		      $$->type=0;
 		      $$->left=$1;
-		      $$->right=3;
+		      $$->right=$3;
 		      $$->op=3;
                      }
       | expr LE expr {
@@ -231,7 +232,7 @@ cond: '(' cond ')' {
 		      $$->negate=0;
 		      $$->type=0;
 		      $$->left=$1;
-		      $$->right=3;
+		      $$->right=$3;
 		      $$->op=4;
 		     } 
       | expr GE expr {
@@ -239,7 +240,7 @@ cond: '(' cond ')' {
 		      $$->negate=0;
 		      $$->type=0;
 		      $$->left=$1;
-		      $$->right=3;
+		      $$->right=$3;
 		      $$->op=5;
 		     }
       | expr LIKE expr {
@@ -396,3 +397,5 @@ expr: '(' expr ')' {
 
 %%
 
+void yyerror(char *s) {
+}

@@ -16,7 +16,7 @@
 
 void qp_handle(void *conn);
 int yyparse(void *);
-int yy_scan_string(const char *);
 int yywrap(void);
+void yyerror(char *);
 
 #endif /* __QP_H */
