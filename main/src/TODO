@@ -1,287 +1,50 @@
---------------- Start of The OpenXMLD 0.6.0 part:
+*--------------- Start of OpenXMLD 0.7.0 part:
 
-Goal: We want it as clean as something clean and as 
-useful as something useful.
+Goal: Cleanliness.
 
---- Foundation:
+Foundation:
+-----------
 
-* Expression tree walking must happen at twalker.
- * xmld_errno must have a default no-error value. (done -- 
- XMLD_ENOERROR)
- * XMLDExpr (define XMLD_SPECIAL_IDENTIFIER because [text]
- and [tagname] may not be the same for other parsers/
- engines -- done)
- * xmld-sql.y (track and fill XMLD_SPECIAL_IDENTIFIER -- done)
- * Take operation, special identifier, wildcard type macros
- out of XMLDExpr and put them in xmld-sql.h because
- they are query parser specific. (done)
- * twalker (Implement twalker_simplify_expr -- done)
-  - Notes:
-   - lists must be returned without resolution.
-   - column names must be put in the ident field after 
-   getting their values.
-   - in case of error, NULL is returned with setting 
-   of xmld_errno to something useful.
-   - NULL columns are indiciated by XMLD_QVAL return
-   values with NULL values of the qval field.
+* The engine interface must be generic, with support for:
+  * Multi-levelled data sets.
+  * Node labelling (tagnames in XML).
 
- * XMLDEngine (Modify according to requirements
- of twalker_simplify_expr) (done)
- * engine_list (Modify according to XMLDEngine changes -- done)
- * XMLDCol (must contain a XMLDExpr field such that
- _is_complex returns XMLD_FALSE -- done).
- * XMLDExpr (Implement XMLDExpr_to_string -- done)
- * XMLDRequest, XMLDExpr and XMLDCond are XMLD-SQL specific
- structures: (done)
-  - put request types in xmld_request.h
-  - put XMLDExpr macros back into xmld_expr.h
- * Merge XMLDCond and XMLDExpr:
-  - XMLDExpr (Put XMLDCond along with its macros and stuff into it -- done)
-  - XMLDCond (remove -- done)
-  - xmld-sql.(y|lex) (resolve condition rules as expressions -- done)
-    - Notes:
-     - conditional operators must be left associative. (done)
-     - Care about operator priority. (done)
-  - twalker_simplify_expr (Merge XMLDCond constructs -- done)
-    - Use XMLDExpr_to_boolean in AND, OR, NOT implementations.
-  - XMLDExpr_to_string (done)
-  - XMLDExpr_to_boolean (done)
- * twalker (call twalker_simplify_expr if is_complex returns
- true):
-  - resolve XMLD_LIST recursively. (done -- XMLDExpr_to_columns)
-  - conditions are resolved just like expressions. (done)
- * twalker_simplify_expr (if alias is not NULL copy it into ret instead of the 
- real column's  name -- done).
- * resptrans (call XMLDExpr_to_string on each column -- done).
- * Engine-XMLD (Implement the required functions)
-   * format documents must have XMLDFile nested inside the primary
-     XMLDFile structure. (done)
-   * Rewrite format_manip functions inside engine_xmld.c (done)
-   * Remove consideration of tag name-specific formatting
-     for performance reasons. (done)
-   * Add the new format functions to engine_list and XMLDEngine (done)
- * XMLDResponse_fill_col/XMLDCol_fill might need to fill the
- expr and not the string. (done)
- 
- 
-* wisely remove mime checking from prepare for performance (if possible!).
-  * Remove the simple check from prepare. (done)
-  * Add the is_valid_mime to XMLDEngine. (done)
-  * Update engine_list to conform. (done)
-  * Implement is_valid_mime in engine_xmld. (done)
+* cfg_parser must be rewritten using bison and flex for
+  cleanliness reasons.
 
-* Engine functions should never know about the XMLDWork structure,
-  XMLDFile one MUST be enough. (done)
+* xmld.conf must not contain types of directives nor 
+  somanager.num_listeners.
 
-* twalker should respect the changes in engine functions and in
-  XMLDCol_fill and XMLDResponse_fill_col. (done)
+* Support for interface parameters.
 
-* If the above gets stabilized, remove unused functions
-in Engine-XMLD (done), XMLDResponse [...?]. (done)
+* Real implementation of interface specification according
+  to the configuration file.
 
-* The engine must not know about [text] and [tagname].
-(Implement separate functions for their retrieval). (done)
- * format_manip (The format document must not use [text] 
- but rather store [text] information in  the place of real 
- element text) (done)
+* Real implementation of mfigure.
 
-* Implement a sequential column retrieval API in the engine in
-order to be able to resolve wildcards correctly. (done)
+* Real implementation of engine configuration functions.
 
-* Every column must have a name:
-  * XMLDExpr_to_string: support whatever kind of expressions.
-    XMLD_OPERATION: (done)
-    XMLD_IDENTIFIER: (done)
-    XMLD_FUNCTION: (done - without argument list)
-    XMLD_WILDCARD: (done)
-    XMLD_LIST: (done)
-    XMLD_VOID_LIST: (done)
-  * twalker_simplify_expr: use XMLDExpr_to_string and fill ret->ident.
-    XMLD_OPERATION: (done)
-    XMLD_IDENTIFIER: (done)
-    XMLD_SPECIAL_IDENTIFIER: (done)
-    XMLD_FUNCTION: (done)
-    XMLD_WILDCARD: (done)
+* ptasker may not handle tasks in the task queue well.
 
-* Take alias handling inside XMLDExpr_to_string. (done)
+* Usage of autoconf to decide the modules to be compiled.
 
-* Don't fill ident or sident in the returned expression
-  from twalker_simplify_expr fill a lateral string because
-  it won't be the same for all query parsers. (done)
+* Separate make files for XMLDSQL, Engine-XMLD and ptasker.
 
-* Should we support all types in XMLDExpr_to_boolean and take them out
-  of twalker_simplify_expr.
+Issues:
+-------
 
-* There Ain't No Such Function As XMLDExpr_simplify. (done)
+* Encode user passwords.
 
-* Full per-file user privilege system.
- * Create a new default database inside the document root
-   name xmld which contains authentication and user privilege
-   information. (done)
- * engine_xmld_prepare should receive full_file as a string
-   instead of having to take it out of XMLDWork each time. 
-   (done)
- * No special treatment for auth/priv files in authman. (use
-   the normal file operation cycle) (done)
- * Engine configuration files should be put inside the xmld
-   database. (done)
- * Real implementation of auth_get_priv. (done)
+* rename XMLDFile.element_pos.
 
-* walk no longer receives a work structure parameter. (done)
-
-* attribute manipulation functions should handle requestion 
-  of a non-existent attribute. (done -- returning NULL) 
-
-* Correct required privilege specification.
- * twalker (Remove initial privilege checking) (done)
- * XMLDFile (store the priv of each file inside it) (done)
- * twalker_simplify_expr (Check the privileges of a file 
- to which a column is associated on each operation) (done)
-
- * There shouldn't be a XMLD_ACCESS_NOTHING we can't limit
-   usage of format files. (done)
- 
- * Support for multiple user interfaces:
-   * Interface = parser + tree walker + response translator.
-   * XMLDInterface structure. (done)
-   * Stabilize the new Interface model. (done)
-   * Create the interface_list part. (done)
-   * Should each interface have its own listening port ? (yes)
-     * somanager should create the XMLDWork structure itself,
-       check for the interface according to the port, and
-       assign it to XMLDWork's interface field. (done)
-     * xmld.conf should contain that as well. (done)
-     * Implement cfg_get_interface. (done -- skeleton)
-     * qp.c should use the given void pointer differently. (done)
-     * XMLDWork should contain a field containing the interface 
-       to use. (done)
-   * Put XMLDSQL parser into a separate directory. (done)
-   * remove all interface-specific functionality from the main
-     tree and put it inside the XMLDSQL parser directory. (done)
-   * xmld-sql.(lex|y) -> xmldsql.(lex|y). (done)
-   * resptrans, twalker [... ?] must be put inside the interface.
-   * data type names in xmlddef should be put inside the interface.   
-   * XMLDWork must contain a void* field like that of XMLDFile
-     to contain per-request request/response information. (done)
-   * Change the connection handling model - shouldn't be called qp.c
-     anymore and should play with interfaces just after authe-
-     ntication. (done -- put inside somanager.c)
-   * Check for whether it's required to free val_carry[?] after
-     user disconnection. (done)
-   * Interfaces can handle new connections and disconnections. (done)
-   * init should initialize/shutdown the interface list. (done)
-   * func_list is interface specific - remove it. (done)
-   * XMLDRequest, XMLDResponse, XMLDFunc, XMLDExpr, XMLDAggrTable
-     are interface specific, should be removed from everywhere else
-     and be used inside the initial XMLDSQL interface. (done)   
-   * twalker_handle should no longer do the response translation step.
-     (done)
-
---- Finishing:
-
-* Fix includes across all code. (done)
-* Compile. (done)
-  * Modify the make script (done)
-* Run. (done)
-* Fix blocking bugs.
-
-*--------------- Start of the OpenXMLD 0.7.0 part:
-
-Goal: Features with slight fixing.
-
-* Stabilize recordset levelling confusion.
-
-* values returned from cfg must be checked for being NULLs.
-
-* protect the auth.xml document. (priv it to root only, and make it 
-system unreadable).
-
-* Handle quotes inside strings in XMLDSQL.
-
-* handle special character decoding in the client.
-
-* fix interrupted system call on server side on reciving
-of DISCONNECT and correction of a wrong pass.
-
-* Should we have a openxmld user with separate system privileges.
-
-* XMLDFile's store should be freed by the engine cleanup function
-  and not XMLDFile_free_content. (done)
-
-* Erase redundancy in somanager.num_listeners.
-
-* XMLDFile.element_pos and XMLDFile.level should be generalized -
-  not all files have levels and not all files should have 
-  element_pos.
-  
-* Try to use generic naming in engine functions. (with specific
-  engine correspondants ?)
-
-* Shell-like treatment of the up and down arrow keys 
-in the client.
-
-* Response must contain a record set header (update PROTO).
-
-* ptasker task queue needs maintenance.
-
-* we are using snprintf!
-
-* Hide the password during input in the client (getch).
-
-* Multiple query parsers support and on-the-fly query
-parser switching.
-
-* ftostr fills the empty characters of the string
-with 0's -- spaces are better.
-
-* "select !:name, age from "file.xml" where !:age=10"
-segfaults when called two times and I don't know why.
-(as of 0.5.0).
-
-* Replace the internal format documents with something
-  standard -- DTD or Schema ?
-  * Make abstract APIs for both.
-
-* Check if it's possible to use a list of XMLDExpr * and
-XMLDCond* in xmld-sql.y in order to avoid copies.
-
-* Implement CREATE TABLE/FILE (with all the hard
-meanings such a word should carry -- requires
-expansion of QUERY.html).
-
-* Add the file/engine association document, and mime/engine
-association document, and implement cfg functions that
-play with them.
-
-* Implement the XMLD_ENOTIMPL things in twalker,
-and specify the corresponding engine functions
-and implement them in Engine-XMLD.
-
-* Expand QUERY.html and implement it accordingly.
-
-* Implement alphabetical comparsion in str_between.
-(check the GNU C Library documentation for "Searching
-and Sorting")
-
-*--------------- Start of The OpenXMLD 0.8.0 part:
-
-Goal: Confromance and high-usability.
-
-* Make it a robust XMLD-SQL implementation!
-
-* XML compliance and Unicode support.
-
-* XPATH/XQuery support.
-
-*--------------- Start of The OpenXMLD 1.0.0 part:
+*--------------- Start of OpenXMLD 0.8.0 part:
 
 Goal: Portability.
 
+* Thread-safe OpenXMLD.
+
 * Implement a multi-threaded multi-
 tasker (Macro: USE_TTASKER).
-
-* Implement an in-memory parser (libxml2-based, with
-caching support)
 
 * Re-implement fmanager using a flock-independent way
 once MULTI_THREAD_MTASKER is on.
