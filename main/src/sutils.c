@@ -39,7 +39,7 @@ char **str_split(char *str, char delim) {
  int num=1;
  ptr=strchr(str, (int) delim);
 
- char **ret; 
+ char **ret=NULL; 
  
  do {
   ret=(char **) realloc(ret, ++num*sizeof(char *));
@@ -51,8 +51,8 @@ char **str_split(char *str, char delim) {
    break;
   }
   else {
-   ret[num-2]=(char *) malloc((ptr - ((lptr==NULL) ? str : lptr)  + 1)*sizeof(char));
-   strncpy(ret[num-2], (lptr==NULL) ? str : lptr, ptr - ((lptr==NULL) ? str : lptr));
+   ret[num-2]=(char *) malloc((ptr - ((lptr==NULL) ? str : lptr + 1)  + 1)*sizeof(char));
+   strncpy(ret[num-2], (lptr==NULL) ? str : lptr + 1, ptr - ((lptr==NULL) ? str : lptr + 1));
    ret[num-2][ptr - ((lptr==NULL) ? str : lptr)]='\0';
   } 
   
@@ -143,6 +143,17 @@ char *ltoa(long num) {
  }
  else if (strlen(ret)+1 < NUMERIC_LENGTH) {
   ret=(char *) realloc(ret, (strlen(ret)+1)*sizeof(char));
+ }
+ return ret;
+}
+
+/*
+ * ltrim: removes white spaces at the beginning of a string.
+ */
+char *ltrim(char *str) {
+ char *ret=str;
+ while (*ret == ' ' || *ret == '\t') {
+  ret++;
  }
  return ret;
 }

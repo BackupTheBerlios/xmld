@@ -99,7 +99,8 @@ short twalker_handle(XMLDWork *work) {
    }
    
    work->resp=XMLDResponse_create();
-   int level=(*(work->res->engine->walk)) (work);   
+   int level=(*(work->res->engine->walk)) (work);
+   int curr_level;
    while (level != 0) {
     if ((*(work->res->engine->eval_cond)) (work, (XMLDCond *) ((work->req->where->content)+level-1))) {
      XMLDList_reset(work->req->retr);
@@ -112,6 +113,12 @@ short twalker_handle(XMLDWork *work) {
       else {
        XMLDResponse_fill_col(work->resp,  (*(work->res->engine->eval_expr)) (work, (XMLDExpr *) XMLDList_curr(work->req->retr)));
       }
+     }
+    }
+    else { /* the condition isn't true, loop until you reach level - 1 */
+     curr_level=level;
+     while (level > curr_level - 1) {
+      level=(*(work->res->engine->walk)) (work);
      }
     }
     level=(*(work->res->engine->walk)) (work);   

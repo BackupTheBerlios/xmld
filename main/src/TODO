@@ -313,10 +313,35 @@ need it). (done)
 * Compile the whole and fix whatever compilation error meets you.
 (done)
 
-* Run and fix whatever segfault meets you.
+* Eat up white space in case of string/integer arrays in cfg_parser.
+(done -- and implemented ltrim)
 
-* Use and fix bugs to the least acceptable state (0.4.0 is an alpha 
-quality release).
+* Fix that str_split includes the delmiter in the output strings.
+(done)
+
+* Fix a segfault in str_split because a pointer that's realloced
+was not initialized to NULL. (done)
+
+* In XMLDList incrementing, decrementing and relocation of void
+pointers must be relative to item_size, that's not automatically
+calculated by the compiler. (done)
+
+* Fix that cfg_parser_parse is passing wrong types maybe because
+of the end-of-line thing. (done)
+
+* mtasker_handle should return 0 (failure) or
+1 (success). (done)
+
+* Implement conditional file descriptor passing in ptasker and
+in mtasker_handle (done -- using passfd.c from perl source code).
+
+* Fix mtasker_handle calls-- add the additional fd argument and
+make 0 = error and 1 = success. (done)
+
+* mtasker_shutdown -> SIGKILL all children.
+
+* Removal of sosel, addition of connhandle, every user connection
+will be handled in an independent context. NO MULTIPLEXING ANYMORE!
 
 **** Checks: ****
 
@@ -328,6 +353,9 @@ on the realloc'd memory segment. These iterators must
 be updated for realloc may change the address of the
 realloc'd segment.
 
+* Check for incrementing of a void pointer being 
+unrelative to the sizeof(type pointed by it).
+
 --------------- Start of The OpenXMLD 0.5.0 part:
 
 * Implement the XMLD_ENOTIMPL things in twalker,
@@ -337,11 +365,15 @@ and implement them in Engine-XMLD.
 * Implement CREATE FILE/TABLE.
 
 * Implement alphabetical comparsion in str_between.
+(check the GNU C Library documentation for "Searching
+and Sorting")
 
 * Find a way of correct resolution of aggregate
 expressions.
 
 * Add and implement SQL functions in func_list.
+
+* Implement mfigure.
 
 * Create a hash table implementation for places where
 search speed is important (XMLDHashTable), and provide
@@ -366,7 +398,8 @@ on the fly.
 * Implement a multi-threaded multi-
 tasker (Macro: USE_TTASKER).
 
-* Implement an in-memory parser (libxml2-based)
+* Implement an in-memory parser (libxml2-based, with
+caching support)
 
 * Re-implement fmanager using a flock-independent way
 once MULTI_THREAD_MTASKER is on.

@@ -56,11 +56,11 @@ short cfg_parser_parse() {
   }
   if (buf == '#') {
    mode=4;
-   ign_ws=1;
+   ign_ws=0;
    continue;
   }
   else {
-   if (ign_ws == 1 && (buf == ' ' || buf == '\t')) {
+   if (ign_ws && (buf == ' ' || buf == '\t' || buf == '\n' || buf == '\r')) {
     continue;
    }
    else {
@@ -123,6 +123,7 @@ short cfg_parser_parse() {
     else if (mode == 4) {
      if (buf == '\n' || buf == '\r') {
       mode=0;
+      ign_ws=1;
      }
     }
    }
@@ -178,7 +179,7 @@ void cfg_parser_parse_token(char *token, short mode) {
    return;
   }
   else if (curr_dir->type == 0) {
-   curr_dir->value.int_value=atoi(token);
+   curr_dir->value.int_value=atoi(ltrim(token));
   }
   else if (curr_dir->type == 1) {
    char **str_array=str_split(token, ',');
@@ -188,7 +189,7 @@ void cfg_parser_parse_token(char *token, short mode) {
     curr_dir->value.int_array_value=(int *) realloc(curr_dir->value.int_array_value, 
 		    num*sizeof(int));
     curr_dir->value.int_array_value[num-1]=0;
-    curr_dir->value.int_array_value[num-2]=atoi(*str_array);
+    curr_dir->value.int_array_value[num-2]=atoi(ltrim(*str_array));
     free(*str_array);
     str_array++;
    }

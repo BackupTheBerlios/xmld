@@ -11,15 +11,10 @@
  * -------------------------------------------------------------- * 
  */
 
-#ifndef __SUTILS_H
-#define __SUTILS_H
+#ifndef __PASSFD_H
+#define __PASSFD_H
 
-char **str_split(char *, char);
-char *str_prepend(char *, char *);
-short str_like(char *, char *);
-short str_between(char *, char *, char *);
-char *ltoa(long);
-char *ltrim(char *);
+int sendfd(int, int);
+int recvfd(int);
 
-#endif /* __SUTILS_H */
-
+#endif /* __PASSFD_H */

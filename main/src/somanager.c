@@ -13,6 +13,9 @@
  
 #include <stdlib.h>
 #include <stdio.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <fcntl.h>
 #include "xmld_sockets.h"
 #include "xmld_list.h"
 #include "xmld_connection.h"
@@ -36,59 +39,61 @@ short somanager_init() {
  num_sock=*((int *) cfg_get("somanager.num_listeners"));
  ports=(int *) cfg_get("somanager.listeners");
  fds=(int*) malloc(num_sock*sizeof(int));
- int i;
- int status;
+ int t;
+ int s;
 
- for (i=0;i<num_sock;i++) {
-  fds[i]=xmld_socket_create();
+ for (t = 0; t < num_sock; t++) {
+  fds[t]=xmld_socket_create();
   
-  if (fds[i]==-1) {
+  if (fds[t] == -1) {
    perror("xmld_socket_create");
-   return -1;
+   return 0;
   }
-  status=xmld_socket_bind(fds[i], ports[i]);
-  if (status==-1) {
+  s = xmld_socket_bind(fds[t], ports[t]);
+  if (s == -1) {
    perror("xmld_socket_bind");
-   return -1;
+   return 0;
   }
-  status=xmld_socket_listen(fds[i]);
-  if (status==-1) {
-   perror("xmld_socket_listen");
-   return -1;
-  }
-  status=mtasker_handle(somanager_handle, (void*) fds[i]);
-  if (status!=0) {
+  s = mtasker_handle(somanager_handle, (void *) (fds+t), fds[t]);
+  if (s == 0) {
    perror("mtasker_handle");
-   return -1;
+   return 0;
   }
  }
- return 0;
+ return 1;
 }
 
 short somanager_shutdown() {
- int i;
- int status;
- for (i=0;i<num_sock;i++) {
-  if (fds[i]!=-1) {
-   status=xmld_socket_shutdown(fds[i]);
-   if (status==-1) {
-    perror("xmld_socket_shutdown");
-   }
-  }
- }
  free(fds);
  free(ports);
- return 0;
+ return 1;
 }
 
 void somanager_handle(void *sockfd) {
- int status;
+ int s;
+
+#ifdef MULTI_PROC_MTASKER
+ s = xmld_socket_listen(passed_fd);
+#else
+ s = xmld_socket_listen(*((int *) sockfd));
+#endif /* MULTI_PROC_MTASKER */
+ 
+ if (s == -1) {
+  perror("xmld_socket_listen");
+  return;
+ }
  while (1) {
-  status=xmld_socket_accept((int)sockfd);
-  if (status==-1) {
+
+#ifdef MULTI_PROC_MTASKER
+  s = xmld_socket_accept(passed_fd);
+#else
+  s = xmld_socket_accept(*((int *) sockfd));
+#endif /* MULTI_PROC_MTASKER */
+
+  if (s == -1) {
    perror("xmld_socket_accept");
    return;
   }
-  sosel_add(status, "/");
+  sosel_add(s, "/");
  } 
 }
