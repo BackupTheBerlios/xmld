@@ -1,0 +1,32 @@
+The XMLD's socket layer:
+------------------------
+ This part is responsible for creating an abstraction layer for the
+ basic socket functions, so all the other parts of the XMLD that n-
+ eed to use socket functionality call the functions defined in th-
+ is part without worrying about the platform on which the XMLD is
+ run.
+
+API:
+----
+int xmld_socket_create(void);
+ 
+ Create a TCP socket and return a descriptor.
+
+int xmld_socket_bind(int sockfd, int port);
+
+ Make the socket _sockfd_ be bound to the local IP address, with
+ the port _port_.
+
+int xmld_socket_listen(int sockfd);
+ 
+ Make the socket _sockfd_ listen to the address it's bound to,
+ with a backlog value of 5.
+ 
+int xmld_socket_accept(int sockfd);
+
+ Make the socket _sockfd_ accept client connections.
+
+int xmld_socket_shutdown(int sockfd);
+
+ Make the socket _sockfd_ be shutdown, and initially stop rec-
+ eiving until the current response sending ends.
