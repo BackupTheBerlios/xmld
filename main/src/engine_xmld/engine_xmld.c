@@ -165,38 +165,18 @@ char *engine_xmld_eval_expr(XMLDWork *work, XMLDExpr *expr, int level) {
  if (expr->type == XMLD_INTEGER) {
   return itostr(expr->nval, 0);
  } 
- else if (expr->type == XMLD_IDENTIFIER) {
-  if (expr->file == NULL) {
-   expr->file = XMLDList_first(work->files);
-  }
-  if (level != 0 && expr->file->level != level) {
-   return NULL;
-  }
-  return engine_xmld_get_column_value(expr->file, expr->ident);
- }
  else if (expr->type == XMLD_QVAL) {
   ret=(char *) malloc((strlen(expr->qval)+1)*sizeof(char));
   strcpy(ret, expr->qval);
   return ret;
  }
- else if (expr->type == XMLD_WILDCARD) { /* expr is a wildcard */
-  if (expr->file == NULL) {
-   expr->file = XMLDList_first(work->files);
-  }
-  if (level != 0 && expr->file->level != level) {
-   return NULL;
-  }
-  return engine_xmld_get_column_value(expr->file, (expr->wildcard == 0) ? "*" : "@");
- }
  else if (expr->type == XMLD_FLOAT) {
   return ftostr(expr->fnval, 0);
  }
  else {
-  XMLDExpr *temp_expr=XMLDExpr_create();
-  XMLDExpr_copy(expr, temp_expr);
-  engine_xmld_simplify_expr(work, temp_expr);
-  ret=engine_xmld_eval_expr(work, temp_expr);
-  XMLDExpr_free(temp_expr);
+  XMLDExpr *tmp=engine_xmld_simplify_expr(work, expr, level);
+  ret=engine_xmld_eval_expr(work, tmp, level);
+  XMLDExpr_free(tmp);
   return ret;
  }  
 }
@@ -204,91 +184,50 @@ char *engine_xmld_eval_expr(XMLDWork *work, XMLDExpr *expr, int level) {
 /* eval_cond function */
 XMLDBool engine_xmld_eval_cond(XMLDWork *work, XMLDCond *cond, int level) {
  XMLDBool val;
- if (cond->type == 0) {
-  if (cond->op == 7 || cond->op == 8) {
-   left_val=engine_xmld_eval_expr(work, cond->left);
-   char *bet_left=engine_xmld_eval_expr(work, cond->right->left);
-   char *bet_right=engine_xmld_eval_expr(work, cond->right->right);
-   val=str_between(left_val, bet_left, bet_right);
-   if (cond->op == 8) {
-    val=!val;
-   }
-   free(left_val);
-   free(bet_left);
-   free(bet_right);
+ if (cond->type == XMLD_CONDITION) {
+  XMLDExpr *left=engine_xmld_simplify_expr(work, cond->left, level);
+  XMLDExpr *right=engine_xmld_simplify_expr(work, cond->right, level);
+  switch(cond->op) {
+   case XMLD_COND_OP_EQUAL:
+   break;
+   case XMLD_COND_OP_L:
+   break;
+   case XMLD_COND_OP_G:
+   break;
+   case XMLD_COND_OP_NE:
+   break;
+   case XMLD_COND_OP_LE:
+   break;
+   case XMLD_COND_OP_GE:
+   break;
+   case XMLD_COND_OP_LIKE:
+   break;
+   case XMLD_COND_OP_BET:
+    val = XMLD_TRUE;
+   break;
+   case XMLD_COND_OP_NBET:
+    val = XMLD_TRUE;
+   break;
   }
-  else {
-   left_val=engine_xmld_eval_expr(work, cond->left);
-   right_val=engine_xmld_eval_expr(work, cond->right);
-   switch(cond->op) {
-    case 0:
-     if (strcmp(left_val, right_val) == 0) {
-      val=1;
-     }
-     else {
-      val=0;
-     }
-    break;
-    case 1:
-     if (atof(left_val, NULL) < atof(right_val, NULL)) {
-      val=1;
-     }
-     else {
-      val=0;
-     }
-    break;
-    case 2:
-     if (atol(left_val) > atol(right_val)) {
-      val=1;
-     }
-     else {
-      val=0;
-     }
-    break;
-    case 3:
-     if (atol(left_val) != atol(right_val)) {
-      val=1;
-     }
-     else {
-      val=0;
-     }
-    break;
-    case 4:
-     if (atol(left_val) <= atol(right_val)) {
-      val=1;
-     }
-     else {
-      val=0;
-     }
-    break;
-    case 5:
-     if (atol(left_val) >= atol(right_val)) {
-      val=1;
-     }
-     else {
-      val=0;
-     }
-    break;
-    case 6:
-     val=str_like(left_val, right_val);
-    break;
-   }
-   free(left_val);
-   free(right_val);
+  XMLDExpr_free(left);
+  XMLDExpr_free(right);
+ }
+ else if (cond->type == XMLD_CONDITION_GRP) {
+  if (cond->cop == XMLD_COND_GRP_AND) {
+   val=(engine_xmld_eval_cond(work, cond->cleft, level) && engine_xmld_eval_cond(work, cond->cright, level));
+  }
+  else if (cond->cop == XMLD_COND_GRP_OR) {
+   val=(engine_xmld_eval_cond(work, cond->cleft, level) || engine_xmld_eval_cond(work, cond->cright, level));
   }
  }
- else if (cond->type == 1) {
-  if (cond->cop == 0) {
-   val=(engine_xmld_eval_cond(work, cond->cleft) && engine_xmld_eval_cond(work, cond->cright));
-  }
-  else if (cond->cop == 1) {
-   val=(engine_xmld_eval_cond(work, cond->cleft) || engine_xmld_eval_cond(work, cond->cright));
-  }
+else if (cond->type == XMLD_CONDITION_VOID) {
+  val = XMLD_TRUE;
  }
- else if (cond->type == 2) {
-  val=1;
+ else if (cond->type == XMLD_CONDITION_LIST) {
+  val=engine_xmld_eval_cond(work, (XMLDCond *) XMLDList_first(cond->conds), level);
  }
- if (cond->negate == 1) {
+ 
+ if (cond->negate == XMLD_TRUE) {
   return !val;
  }
  else {
@@ -297,10 +236,9 @@ XMLDBool engine_xmld_eval_cond(XMLDWork *work, XMLDCond *cond, int level) {
 }
 
 /*
- * Simplifies a XMLDExpr to a type directly
- * interpretable by engine_xmld_eval_expr.
+ * Simplifies a XMLDExpr to a basic type.
  */
-void engine_xmld_simplify_expr(XMLDWork * work, XMLDExpr *expr) {
+XMLDExpr *engine_xmld_simplify_expr(XMLDWork * work, XMLDExpr *expr, int level) {
  if (expr->type == 1) {
   XMLDExpr *temp_left=XMLDExpr_create();
   XMLDExpr *temp_right=XMLDExpr_create();

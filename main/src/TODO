@@ -606,6 +606,18 @@ message. (done)
 * use "[text]" and "[tagname]" instead of "(text)" and
 "(tagname)" for less confusion and easier parsing.
 
+* simplify_expr returns a simplified version of the given 
+expression.
+
+* column resolution and NULL file checking goes inside
+simplify expr.
+
+* edit eval_expr and eval_cond to follow the changes simplify 
+expr. (done)
+
+* remove support for between and not between statements
+for now. (done)
+
 * Engine-XMLD must be rewritten with consideration of
 [1] availablity of column types [2] access levels.
 [3] type and access level enumerations. [4] the new
