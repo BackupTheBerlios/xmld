@@ -257,14 +257,26 @@ get_write_fd -> *_get_ex_fd. (done)
 
 * Implement the rest of format_manip. (done)
 
-* Aggregate expression resolution!!
-
 * XMLDCol_fill shouldn't copy the given string.
 (done)
 
 * str_split.(c|h) -> sutils.(c|h) + str_prepend.
+(done)
 
 * Check for replacement of '\0' and usage of strlen
 to refer to its new position.
 
 * Implement read buffering in dutils.
+
+* For now, make aggregate expression resolution
+be dependent on the extracted record set, and
+it can't just manipulate columns out of it.
+implement eval_aggr_expr and eval_cond.
+
+* Implement engine_xmld_eval_cond (done)
+
+* Fix that FILE might be absolute, and
+XMLDWork shouldn't concatenate it to
+curr_dir in such a case.
+
+* Implement engine_xmld_like and engine_xmld_between.
