@@ -11,8 +11,8 @@
  * -------------------------------------------------------------- * 
  */
 
-#ifndef HAVE_XMLD_AGGR_TABLE
-#define HAVE_XMLD_AGGR_TABLE
+#ifndef HAVE_XMLD_AGGR_TABLE_h
+#define HAVE_XMLD_AGGR_TABLE_h
 
 /* represents an expression -> set of columns assocsiation */
 struct XMLDAggrTable {
@@ -27,4 +27,4 @@ void XMLDAggrTable_free(XMLDAggrTable *);
 void XMLDAggrTable_add_col(XMLDAggrTable *, XMLDCol *);
 void XMLDAggrTable_fill(XMLDAggrTable *, char *);
 
-#endif /* HAVE_XMLD_AGGR_TABLE */
+#endif /* HAVE_XMLD_AGGR_TABLE_h */
