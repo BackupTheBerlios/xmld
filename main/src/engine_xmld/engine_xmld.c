@@ -21,8 +21,14 @@
 #include "../sutils.h"
 #include "../xmld_list.h"
 #include "../xmld_col.h"
-#include "../xmld_func.h"
+#include "../xmld_row.h"
+struct XMLDFunc;
+#ifndef XMLD_FUNC_TYPE_DEFINED
+#define XMLD_FUNC_TYPE_DEFINED
+ typedef struct XMLDFunc XMLDFunc;
+#endif /* XMLD_FUNC_TYPE_DEFINED */
 #include "../xmld_expr.h"
+#include "../xmld_func.h"
 #include "../xmld_aggr_table.h"
 #include "../xmld_cond.h"
 struct XMLDEngine;
@@ -39,11 +45,10 @@ struct XMLDEngine;
 #include "../cfg.h"
 #include "../xmld_errors.h"
 #include "../mfigure.h"
+#include "../fmanager.h"
 #include "engine_xmld.h"
 #include "element_op.h"
 #include "format_manip.h"
-#define NUMERIC_LENGTH 10
-#define ATTRIBUTE_LENGTH 15
 
 /* init function */
 void engine_xmld_init() {
@@ -141,7 +146,7 @@ char *engine_xmld_eval_expr(XMLDWork *work, XMLDExpr *expr) {
  else {
   XMLDExpr *temp_expr=XMLDExpr_create();
   XMLDExpr_copy(expr, temp_expr);
-  engine_xmld_simplify_expr(temp_expr);
+  engine_xmld_simplify_expr(work, temp_expr);
   ret=engine_xmld_eval_expr(work, temp_expr);
   XMLDExpr_free(temp_expr);
   return ret;
@@ -225,7 +230,7 @@ short engine_xmld_eval_cond(XMLDWork *work, XMLDCond *cond) {
      }
     break;
     case 6:
-     val=engine_xmld_like(left_val, right_val);
+     val=str_like(left_val, right_val);
     break;
    }
    free(left_val);
@@ -256,27 +261,10 @@ char *engine_xmld_eval_aggr_expr(XMLDWork *work, XMLDExpr *expr) {
 }
 
 /*
- * Turns a given integer to its string representation.
- * i.e atoi inverse.
- */
-char *itoa(int num) { /* FIXME: may need a snprintf-independent implementation. */
- char *ret=(char *) malloc(NUMERIC_LENGTH*sizeof(char));
- conv=snprintf(ret, NUMERIC_LENGTH, "%d", num);
- if (conv > 0) { /* The numeric value length exceeds NUMERIC_LENGTH */
-  ret=(char *) realloc((NUMERIC_LENGTH+conv)*sizeof(char));
-  snprintf(ret, NUMERIC_LENGTH+conv, "%d", num);
- }
- else if (strlen(ret)+1 < NUMERIC_LENGTH) {
-  ret=(char *) realloc(ret, (strlen(ret)+1)*sizeof(char));
- }
- return ret;
-}
-
-/*
  * Simplifies a XMLDExpr to a type directly
  * interpretable by engine_xmld_eval_expr.
  */
-void engine_xmld_simplify_expr(XMLDExpr *expr) {
+void engine_xmld_simplify_expr(XMLDWork * work, XMLDExpr *expr) {
  if (expr->type == 1) {
   XMLDExpr *temp_left=XMLDExpr_create();
   XMLDExpr *temp_right=XMLDExpr_create();
@@ -291,7 +279,7 @@ void engine_xmld_simplify_expr(XMLDExpr *expr) {
    temp_left->type=0;
    col_value=engine_xmld_get_column_value(work, temp_left->ident);
    temp_left->nval=atoi(col_value);
-   free(col_value)
+   free(col_value);
   }
   if (temp_right->type == 2) {
    temp_right->type=0;
@@ -346,7 +334,7 @@ char *engine_xmld_get_column_value(XMLDWork *work, char *col_name) {
  fgetpos((FILE *) work->res->data_source, &pos);
  char *ret;
  
- if (strcmpi(col_name, "(text)") == 0) {
+ if (strcasecmp(col_name, "(text)") == 0) {
   if (engine_xmld_locate_text((FILE *) (work->res->data_source))) {
    ret=engine_xmld_get_text_value((FILE *) (work->res->data_source));
   }
@@ -354,8 +342,8 @@ char *engine_xmld_get_column_value(XMLDWork *work, char *col_name) {
    ret=NULL;
   }
  }
- else if (strcmpi(col_name, "(tagname)") == 0) {
-  ret=engine_xmld_get_curr_tagname((FILE *) work->res->data_source);
+ else if (strcasecmp(col_name, "(tagname)") == 0) {
+  ret=engine_xmld_get_tagname((FILE *) work->res->data_source);
  }
  else if (strcmp(col_name, "*") == 0) {
   char *atts=engine_xmld_get_column_value(work, "@");
@@ -398,7 +386,7 @@ char *engine_xmld_get_column_value(XMLDWork *work, char *col_name) {
 }
 
 short engine_xmld_set_column_value(XMLDWork *work, char *col_name, char *value) {
- if (strcmpi(col_name, "(text)") == 0) {
+ if (strcasecmp(col_name, "(text)") == 0) {
   if (engine_xmld_locate_text((FILE *) (work->res->data_source))) {
    return engine_xmld_set_text_value((FILE *) (work->res->data_source), value);
   }
