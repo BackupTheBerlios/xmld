@@ -97,7 +97,7 @@ order to be able to resolve wildcards correctly. (done)
     XMLD_WILDCARD:    
   * twalker_simplify_expr: use XMLDExpr_to_string and fill ret->ident.
     XMLD_OPERATION: (done)
-    XMLD_IDENTIFIER:
+    XMLD_IDENTIFIER: (done)
     XMLD_SPECIAL_IDENTIFIER:
     XMLD_FUNCTION:
     XMLD_WILDCARD:    
@@ -172,7 +172,7 @@ parser switching.
 
 * Replace the internal format documents with something
   standard -- DTD or Schema ?
-  * Make abstrace APIs for both.
+  * Make abstract APIs for both.
 
 * Check if it's possible to use a list of XMLDExpr * and
 XMLDCond* in xmld-sql.y in order to avoid copies.
