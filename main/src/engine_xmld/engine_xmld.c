@@ -316,6 +316,10 @@ XMLDExpr *engine_xmld_simplify_expr(XMLDWork *work, XMLDExpr *expr, int level) {
   if (expr->file->store == NULL) {
    return NULL;
   }
+  if (level != 0 && expr->file->level != level) {
+   return NULL;
+  }
+  
   fpos_t pos;
   fgetpos((FILE *) expr->file->data, &pos);
   char *tagname=engine_xmld_get_tagname((FILE *) expr->file->data);
@@ -323,6 +327,9 @@ XMLDExpr *engine_xmld_simplify_expr(XMLDWork *work, XMLDExpr *expr, int level) {
   char *type=engine_xmld_get_element_att_type((FILE *) expr->file->store, level, tagname, expr->ident);
   free(tagname);
   
+  if (type == NULL) {
+   return NULL;
+  }
   if (strcasecmp(type, XMLD_TYPE_CHAR) == 0) {
    ret=XMLDExpr_create();
    ret->type = XMLD_QVAL;
@@ -367,7 +374,7 @@ XMLDExpr *engine_xmld_simplify_expr(XMLDWork *work, XMLDExpr *expr, int level) {
 /*
  * Gets the value of a particular column (attribute/text)
  * relative to the current element in the given file.
- */ 
+ */
 char *engine_xmld_get_column_value(XMLDFile *file, char *col_name) {
  fpos_t pos;
  int token;

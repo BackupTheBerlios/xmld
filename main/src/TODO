@@ -611,7 +611,7 @@ message. (done)
 expression. (done)
 
 * column resolution and NULL file checking goes inside
-simplify expr.
+simplify expr. (done)
 
 * edit eval_expr and eval_cond to follow the changes in
 simplify_expr. (done)
@@ -625,23 +625,30 @@ XMLDExpr_is_complex should handle NULL expressions
 normally. (done)
 
 * Engine-XMLD must be rewritten with consideration of
-[1] availablity of column types [2] access levels.
-[3] type and access level enumerations. [4] the new
-float type [5] nval -> back to int. [7] the major
-changes in simplify_expr. [8] Multiple file support
-and column name -> file association. [9] format
-manipulation functions may return NULL or 0 (issue
-XMLD_EMALFORMAT in that case. [11] itostr and ftostr.
-[12] tagname/attribute name conflicts. [13] XMLD*List 
-changes. [14] Expression grouping. [15] condition
-grouping. [16] hard type checking. [17] eval_cond
-should evaluate only the first condition of a given
-condition list. [18] NULL file name checks. [19] eval_expr 
-and eval_cond level checks (ignored if 0). [20] no
-aggregate expression support.
+[1] availablity of column types (done -- within simplify_expr)
+[2] access levels. (done -- within prepare)
+[3] type and access level enumerations. (done)
+[4] the new float type (done)
+[5] nval -> back to int. (done)
+[7] the major changes in simplify_expr. (done)
+[8] Multiple file support and column name -> file association. (done)
+[9] format manipulation functions may return NULL or 0. (done)
+[11] itostr and ftostr. (done)
+[12] tagname/attribute name conflicts. (done)
+[13] XMLD*List changes. (done)
+[14] Expression grouping. (done)
+[15] condition grouping. (done)
+[16] hard type checking.
+[17] eval_cond should evaluate only the first condition 
+of a given condition list. (done)
+[18] NULL file name checks. (done)
+[19] simplify_expr level checks (ignored if 0). (done)
+[20] no aggregate expression support. (done)
 
 * sync includes across all code according to the editions
 above.
+
+* fix engine_xmld_set_column_value radically.
 
 * Define and implement the exec_assign engine
 function and the UPDATE and UPDATE with
@@ -664,6 +671,8 @@ existent in SQL. Add LENGTH and CONCAT instead. (done)
  * make 
  * make client
 
+* upload QUERY and PROTO to the site, to make sure that all
+editions are put online.
 --------------- Start of The OpenXMLD 0.6.0 part:
 
 Goal: PUMP the features in!
@@ -730,6 +739,9 @@ system unreadable).
 * we are using snprintf!
 
 * discard_cur_att_name should report if it wasn't an att.
+
+* simplify_expr NULL return values must indiciate errors
+and xmld_errno must be set appropriately.
 
 *--------------- Start of The OpenXMLD 0.7.0 part:
 
