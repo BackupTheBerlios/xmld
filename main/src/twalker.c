@@ -990,18 +990,13 @@ XMLDExpr *twalker_simplify_expr(XMLDExpr *expr, XMLDWork *work, int level) {
   else if (expr->sident == XMLD_SIDENT_TAGNAME) {
    ret = XMLDExpr_create();
    ret->type = XMLD_QVAL;
-   if (expr->alias == NULL) {
-    ret->sident = XMLD_SIDENT_TAGNAME;
-   }
-   else {
-    ret->ident = (char *) malloc((strlen(expr->alias)+1) * sizeof(char));
-    strcpy(ret->ident, expr->alias);
-   }
+   ret->ident = XMLDExpr_to_string(expr);
    ret->qval=(*(expr->file->engine->get_tagname)) (expr->file);
   }
  }
  else if (expr->type == XMLD_FUNCTION) {
    ret=(*(expr->func->func)) (expr->arg_list, expr->file);
+   ret->ident = XMLDExpr_to_string(expr);
  }
  else if (expr->type == XMLD_WILDCARD) {
   if (expr->wildcard == XMLD_WILDCARD_ALL) {
@@ -1009,6 +1004,7 @@ XMLDExpr *twalker_simplify_expr(XMLDExpr *expr, XMLDWork *work, int level) {
    XMLDExpr_copy(expr, tmp);
    tmp->wildcard = XMLD_WILDCARD_ATTS;
    ret = twalker_simplify_expr(tmp, work, level);
+   ret = XMLDExpr_to_string(expr);
    free(tmp);
    XMLDExpr *text = XMLDExpr_create();
    text->type = XMLD_SPECIAL_IDENTIFIER;
@@ -1022,6 +1018,7 @@ XMLDExpr *twalker_simplify_expr(XMLDExpr *expr, XMLDWork *work, int level) {
   else if (expr->wildcard == XMLD_WILDCARD_ATTS) {
    ret = XMLDExpr_create();
    ret->type = XMLD_LIST;
+   ret->ident = XMLDExpr_to_string(expr);
    ret->exprs = XMLDExprList_create();   
    XMLDExpr *tmp;
    (*(expr->file->engine->reset_element)) (expr->file);

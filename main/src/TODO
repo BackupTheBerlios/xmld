@@ -93,16 +93,24 @@ order to be able to resolve wildcards correctly. (done)
     XMLD_OPERATION: (done)
     XMLD_IDENTIFIER: (done)
     XMLD_SPECIAL_IDENTIFIER: (done)
-    XMLD_FUNCTION:
-    XMLD_WILDCARD:    
+    XMLD_FUNCTION: 
+    XMLD_WILDCARD: (done)
+    XMLD_LIST:
+    XMLD_VOID_LIST:
   * twalker_simplify_expr: use XMLDExpr_to_string and fill ret->ident.
     XMLD_OPERATION: (done)
     XMLD_IDENTIFIER: (done)
     XMLD_SPECIAL_IDENTIFIER: (done)
     XMLD_FUNCTION:
-    XMLD_WILDCARD:    
+    XMLD_WILDCARD: (done)
+    XMLD_LIST:
+    XMLD_VOID_LIST:
 
 * Take alias handling inside XMLDExpr_to_string.
+
+* Don't fill ident or sident in the returned expression
+  from twalker_simplify_expr fill a lateral string because
+  it won't be the same for all query parsers. (done)
 
 * Should we support all types in XMLDExpr_to_boolean and take them out
   of twalker_simplify_expr.

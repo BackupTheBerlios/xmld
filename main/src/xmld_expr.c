@@ -247,12 +247,22 @@ char *XMLDExpr_to_string(XMLDExpr *expr) {
  else if (expr->type == XMLD_SPECIAL_IDENTIFER) {
   if (expr->sident == XMLD_SIDENT_TEXT) {
    ret = (char *) malloc((strlen(XMLD_SIDENT_TEXT)+1) * sizeof(char));
-   strcpy(ret, XMLD_SIDENT_TEXT);
+   strcpy(ret, "[text]");
   }
   else if (expr->sident == XMLD_SIDENT_TAGNAME) {
    ret = (char *) malloc((strlen(XMLD_SIDENT_TAGNAME)+1) * sizeof(char));
-   strcpy(ret, XMLD_SIDENT_TAGNAME);
+   strcpy(ret, "[tagname]");
   }  
+ }
+ else if (expr->type == XMLD_WILDCARD) {
+  if (expr->wildcard == XMLD_WILDCARD_ALL) {
+   ret = (char *) malloc(2*sizeof(char));
+   strcpy("*", ret);
+  }
+  else if (expr->wildcard == XMLD_WILDCARD_ATTS) {
+   ret = (char *) malloc(2*sizeof(char));
+   strcpy("@", ret);
+  }
  }
  else if (expr->type == XMLD_QVAL) {
   if (expr->qval == NULL) {
