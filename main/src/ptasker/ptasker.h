@@ -17,6 +17,7 @@
 struct task {
  void (*func) (void*);
  void *data;
+ int fd;
 };
 
 struct proc {
@@ -24,6 +25,8 @@ struct proc {
  void *data;
  int busy;
  int die;
+ int fd;
+ int sp[2];
  pid_t pid;
 };
 
@@ -38,9 +41,13 @@ struct task_table {
  int num_tasks;
 };
 
+int passed_fd; /*
+		* The fd last passed using passfd.c
+		*/
+
 short mtasker_init(void);
 short mtasker_shutdown(void);
-short mtasker_handle(void (*) (void*), void*);
+short mtasker_handle(void (*) (void*), void *, int);
 struct proc *mtasker_spawn();
 short mtasker_kill(int);
 void mtasker_handle_idle(int);

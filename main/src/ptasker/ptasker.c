@@ -14,11 +14,13 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include <sys/types.h>
+#include <sys/socket.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <signal.h>
 #include <stdio.h>
 #include "../cfg.h"
+#include "../passfd.h"
 #include "ptasker.h"
 
 /*
@@ -31,15 +33,15 @@ pid_t curr_pid;
 int init_proc;
 int max_proc;
 int max_idle_proc;
-int i;
 
 short mtasker_init() {
+ int i;
  struct sigaction action;
  action.sa_handler=mtasker_handle_idle;
  
  i=sigaction(SIGUSR1, &action, NULL);
- if (i==-1) {
-  return -1;
+ if (i == -1) {
+  return 0;
  }
 
  ttable.num_tasks=0;
@@ -49,7 +51,7 @@ short mtasker_init() {
  max_proc=*((int *) cfg_get("mtasker.max_proc"));
  max_idle_proc=*((int *) cfg_get("mtasker.max_idle_proc"));
 
- if (init_proc>max_proc) {
+ if (init_proc > max_proc) {
   init_proc=max_proc;
  }
  
@@ -59,41 +61,52 @@ short mtasker_init() {
  int tableid=shmget(tablekey, sizeof(struct proc_table), IPC_CREAT);
  int childrenid=shmget(childrenkey, max_proc*sizeof(struct proc), IPC_CREAT);
  
- if (tableid==-1) {
-  return -1;
+ if (tableid == -1) {
+  return 0;
  }
  
  table=(struct proc_table *)shmat(tableid, 0, 0);
  shmctl(tableid, IPC_RMID, 0);
  
- if (childrenid==-1) {
-  return -1;
+ if (childrenid == -1) {
+  return 0;
  }
  
  table->num=0;
  table->num_busy=0;
  table->children=(struct proc *)shmat(childrenid, 0,0);
  shmctl(childrenid, IPC_RMID, 0);
- for (i=0;i<init_proc;i++) {
+ for (i=0; i < init_proc; i++) {
   table->num++;
   table->children[i].pid=-1;
+  table->children[i].fd=-1;
+    
+  if(socketpair(PF_UNIX, SOCK_STREAM, 0, table->children[i].sp) != 0) {
+   table->children[i].pid=0;
+   perror("mtasker_spawn");
+   return 0; 
+  }
   curr_pid=fork();
 
-  if (curr_pid==-1) {
+  if (curr_pid == -1) {
    table->children[i].pid=0;
    perror("mtasker_init");
    mtasker_shutdown();
-   return -1;
+   return 0;
   }
   else if (curr_pid==0) {
    table->children[i].pid=getpid();
   
    while (1) {
-    if (table->children[i].func!=0) {
+    if (table->children[i].func != 0) {
+     if (table->children[i].fd != -1) {
+      passed_fd=recvfd(table->children[i].sp[1]);
+     }
      (*(table->children[i].func))(table->children[i].data);
      table->children[i].busy=0;
      table->children[i].func=0;
      table->children[i].data=0;
+     table->children[i].fd=-1;
      table->num_busy--;
      kill(getppid(), SIGUSR1);
     } 
@@ -104,30 +117,34 @@ short mtasker_init() {
      break;
     }
    }
-   exit(1);
+   exit(0);
   }
  }
- return 0;
+ return 1;
 }
 short mtasker_shutdown() {
- while (table->num_busy>0) {
+ int i;
+ while (table->num_busy > 0) {
  }
- while (ttable.num_tasks>0) {
+ while (ttable.num_tasks > 0) {
   mtasker_handle_idle(10);
  }
- for (i=0;i<max_proc;i++) {
-  while (table->children[i].busy==1) {
+ for (i = 0; i < max_proc; i++) {
+  while (table->children[i].busy == 1) {
   }
+  shutdown(table->children[i].sp[0], 2);
+  shutdown(table->children[i].sp[1], 2);
   table->children[i].die=1;
  }
  free(ttable.tasks);
- return 0;
+ return 1;
 }
-short mtasker_handle(void (*func) (void *), void *data) {
+short mtasker_handle(void (*func) (void *), void *data, int fd) {
+ int i;
  struct proc *use_proc;
  if (table->num > table->num_busy) {
   for (i=0;i<max_proc;i++) {
-   if (table->children[i].busy==0 && table->children[i].pid!=0) {
+   if (table->children[i].busy == 0 && table->children[i].pid != 0) {
     use_proc=&table->children[i];
     break;
    }
@@ -142,31 +159,43 @@ short mtasker_handle(void (*func) (void *), void *data) {
    ttable.tasks=realloc(ttable.tasks, ttable.num_tasks*sizeof(struct task));
    ttable.tasks[ttable.num_tasks-1].func=func;
    ttable.tasks[ttable.num_tasks-1].data=data;
-   return 0;
+   ttable.tasks[ttable.num_tasks-1].fd=fd;
+   return 1;
   }
  }
 
  if (use_proc!=0) {
   use_proc->func=func;
   use_proc->data=data;
+  if (fd != -1 && sendfd(use_proc->sp[0], fd)) {
+   use_proc->fd=fd;
+  } 
   use_proc->busy=1;
   table->num_busy++;
-  return 0;
+  return 1;
  }
  else {
-  return -1;
+  return 0;
  }
 }
 
 struct proc *mtasker_spawn() {
+ int i;
  if (table->num > max_proc) {
   return 0;
  }
  else {
-  for (i=0;i<max_proc;i++) {
+  for (i = 0; i < max_proc; i++) {
    if (table->children[i].pid==0) {
     table->num++;
     table->children[i].pid=-1;
+    table->children[i].fd=-1;
+    
+    if(socketpair(PF_UNIX, SOCK_STREAM, 0, table->children[i].sp) != 0) {
+     table->children[i].pid=0;
+     perror("mtasker_spawn");
+     return 0; 
+    }
     curr_pid=fork();
     
     if (curr_pid==-1) {
@@ -179,10 +208,14 @@ struct proc *mtasker_spawn() {
      
      while (1) {
       if (table->children[i].func!=0) {
+       if (table->children[i].fd != -1) {
+        passed_fd=recvfd(table->children[i].sp[1]);
+       }
        (*(table->children[i].func))(table->children[i].data);
        table->children[i].busy=0;
        table->children[i].func=0;
        table->children[i].data=0;
+       table->children[i].fd=-1;
        table->num_busy--;
        kill(getppid(), SIGUSR1);
       } 
@@ -193,7 +226,7 @@ struct proc *mtasker_spawn() {
        break;
       }
      }
-     exit(1);
+     exit(0);
     }
     break;    
    }
@@ -203,11 +236,12 @@ struct proc *mtasker_spawn() {
 }
 
 short mtasker_kill(int num_proc) {
+ int i;
  int killed_proc=0;
  for (i=0;i<max_proc;i++) {
-  if (table->children[i].busy!=1 && table->children[i].pid!=0) {
+  if (table->children[i].busy != 1 && table->children[i].pid != 0) {
    table->children[i].die=1;
-   if (++killed_proc>=num_proc) {
+   if (++killed_proc >= num_proc) {
     break;
    }
   }  
@@ -219,15 +253,16 @@ void mtasker_handle_idle(int signum) {
  int j;
  short status;
  if (ttable.num_tasks>0) {
-  status=mtasker_handle(ttable.tasks[0].func, ttable.tasks[0].data);
+  status=mtasker_handle(ttable.tasks[0].func, ttable.tasks[0].data, ttable.tasks[0].fd);
   if (status!=0) {
    return;
   }
-  for (j=0;j<ttable.num_tasks-1;j++) {
+  for (j = 0; j < ttable.num_tasks-1; j++) {
    ttable.tasks[j]=ttable.tasks[j+1];
   }
   ttable.tasks[ttable.num_tasks-1].func=0;
   ttable.tasks[ttable.num_tasks-1].data=0;
+  ttable.tasks[ttable.num_tasks-1].fd=-1;
   ttable.num_tasks--;
   ttable.tasks=realloc(ttable.tasks, ttable.num_tasks*sizeof(struct task));
  }
