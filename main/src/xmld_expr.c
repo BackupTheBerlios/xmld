@@ -182,91 +182,117 @@ char *XMLDExpr_to_string(XMLDExpr *expr) {
   if (expr->op == XMLD_OP_ADD) {
    ret = (char *) realloc(ret, (strlen(ret) + 2) * sizeof(char));
    strcat(ret, "+");
+   return ret;
   }
   else if (expr->op == XMLD_OP_BNEG || expr->op == XMLD_OP_UNEG) {
    ret = (char *) realloc(ret, (strlen(ret) + 2) * sizeof(char));
    strcat(ret, "-");
+   return ret;
   }
   else if (expr->op == XMLD_OP_MULTIP) {
    ret = (char *) realloc(ret, (strlen(ret) + 2) * sizeof(char));
    strcat(ret, "*");
+   return ret;
   }
   else if (expr->op == XMLD_OP_DIV) {
    ret = (char *) realloc(ret, (strlen(ret) + 2) * sizeof(char));
    strcat(ret, "/");
+   return ret;
   }
   else if (expr->op == XMLD_OP_EXPO) {
    ret = (char *) realloc(ret, (strlen(ret) + 2) * sizeof(char));
    strcat(ret, "^");
+   return ret;
   }
   else if (expr->op == XMLD_OP_EQUAL) {
    ret = (char *) realloc(ret, (strlen(ret) + 2) * sizeof(char));
    strcat(ret, "=");
+   return ret;
   }
   else if (expr->op == XMLD_OP_L) {
    ret = (char *) realloc(ret, (strlen(ret) + 2) * sizeof(char));
    strcat(ret, "<");
+   return ret;
   }
   else if (expr->op == XMLD_OP_G) {
    ret = (char *) realloc(ret, (strlen(ret) + 2) * sizeof(char));
    strcat(ret, ">");
+   return ret;
   }
   else if (expr->op == XMLD_OP_NE) {
    ret = (char *) realloc(ret, (strlen(ret) + 3) * sizeof(char));
    strcat(ret, "<>");
+   return ret;
   }
   else if (expr->op == XMLD_OP_LE) {
    ret = (char *) realloc(ret, (strlen(ret) + 3) * sizeof(char));
    strcat(ret, "<=");
+   return ret;
   }
   else if (expr->op == XMLD_OP_GE) {
    ret = (char *) realloc(ret, (strlen(ret) + 3) * sizeof(char));
    strcat(ret, ">=");
+   return ret;
   }
   else if (expr->op == XMLD_OP_LIKE) {
    ret = (char *) realloc(ret, (strlen(ret) + 7) * sizeof(char));
    strcat(ret, " LIKE ");
+   return ret;
   }
   else if (expr->op == XMLD_OP_AND) {
    ret = (char *) realloc(ret, (strlen(ret) + 6) * sizeof(char));
    strcat(ret, " AND ");
+   return ret;
   }
   else if (expr->op == XMLD_OP_OR) {
    ret = (char *) realloc(ret, (strlen(ret) + 5) * sizeof(char));
    strcat(ret, " OR ");
+   return ret;
   }
   else if (expr->op == XMLD_OP_NOT) {
    ret = (char *) realloc(ret, (strlen(ret) + 6) * sizeof(char));
    strcat(ret, " NOT ");
+   return ret;
   }
  }
  else if (expr->type == XMLD_IDENTIFIER) {
   ret = (char *) malloc((strlen(expr->ident)+1) * sizeof(char));
   strcpy(ret, expr->ident);
+  return ret;
  }
  else if (expr->type == XMLD_SPECIAL_IDENTIFER) {
   if (expr->sident == XMLD_SIDENT_TEXT) {
    ret = (char *) malloc((strlen(XMLD_SIDENT_TEXT)+1) * sizeof(char));
    strcpy(ret, "[text]");
+   return ret;
   }
   else if (expr->sident == XMLD_SIDENT_TAGNAME) {
    ret = (char *) malloc((strlen(XMLD_SIDENT_TAGNAME)+1) * sizeof(char));
    strcpy(ret, "[tagname]");
+   return ret;
   }  
+ }
+ else if (expr->type == XMLD_FUNCTION) {
+  ret = (char *) malloc((strlen(expr->func->name)+3) * sizeof(char));
+  strcpy(ret, expr->func->name);
+  strcpy(ret, "()");
+  return ret;
  }
  else if (expr->type == XMLD_WILDCARD) {
   if (expr->wildcard == XMLD_WILDCARD_ALL) {
    ret = (char *) malloc(2*sizeof(char));
    strcpy("*", ret);
+   return ret;
   }
   else if (expr->wildcard == XMLD_WILDCARD_ATTS) {
    ret = (char *) malloc(2*sizeof(char));
    strcpy("@", ret);
+   return ret;
   }
  }
  else if (expr->type == XMLD_QVAL) {
   if (expr->qval == NULL) {
-   return NULL;
+   return ret;
   }
   ret=(char *) malloc((strlen(expr->qval)+1)*sizeof(char));
   strcpy(ret, expr->qval);
@@ -275,9 +301,14 @@ char *XMLDExpr_to_string(XMLDExpr *expr) {
  else if (expr->type == XMLD_FLOAT) {
   return ftostr(expr->fnval, 0);
  }
+ else if (expr->type == XMLD_VOID_LIST) {
+  ret = (char *) malloc(2*sizeof(char));
+  strcpy(ret, "!");
+  return ret;
+ }
  else {
   return NULL;
- }  
+ }
 }
 
 /*

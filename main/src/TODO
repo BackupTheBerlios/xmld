@@ -93,7 +93,7 @@ order to be able to resolve wildcards correctly. (done)
     XMLD_OPERATION: (done)
     XMLD_IDENTIFIER: (done)
     XMLD_SPECIAL_IDENTIFIER: (done)
-    XMLD_FUNCTION: 
+    XMLD_FUNCTION:
     XMLD_WILDCARD: (done)
     XMLD_LIST:
     XMLD_VOID_LIST:
@@ -101,7 +101,7 @@ order to be able to resolve wildcards correctly. (done)
     XMLD_OPERATION: (done)
     XMLD_IDENTIFIER: (done)
     XMLD_SPECIAL_IDENTIFIER: (done)
-    XMLD_FUNCTION:
+    XMLD_FUNCTION: (done)
     XMLD_WILDCARD: (done)
     XMLD_LIST:
     XMLD_VOID_LIST:
