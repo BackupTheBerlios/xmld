@@ -20,14 +20,14 @@ struct XMLDCol {
 
 typedef struct XMLDCol XMLDCol;
 
-XMLDCol *XMLDCol_create(char *, short); /* short is whether to copy the char **/
-void XMLDCol_fill(XMLDCol *, char *, short);
-void XMLDCol_free(XMLDCol *, short);
+XMLDCol *XMLDCol_create(char *);
+void XMLDCol_fill(XMLDCol *, char *);
+void XMLDCol_free(XMLDCol *);
 void XMLDCol_free_content(void *);
 
 /* List functions */
 
 XMLDList *XMLDCol_create_list(void);
-XMLDCol *XMLDCol_add_to_list(XMLDList *, char *, short);
+XMLDCol *XMLDCol_add_to_list(XMLDList *, char *);
 
 #endif /* HAVE_XMLD_COL_H */
