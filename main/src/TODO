@@ -492,7 +492,9 @@ error. (done)
 
 * Add void conditions to QUERY.html (done)
 
-* Specify and fully implement a communication protocol.
+* Write a communication protocol document. (done)
+
+* Implement the communication protocol.
 
 * Add a basic client authentication support (an authman 
 part) without support for per-file user previliges. 

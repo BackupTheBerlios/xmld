@@ -1,0 +1,162 @@
+<html>
+<head>
+<title>The OpenXMLD Proposed Communication Protocol</title>
+</head>	
+<body>
+<pre><xmp>
+                 The OpenXMLD Communication Protocol
+		 -----------------------------------
+Date: May the 7th 2004
+
+Author(s): 
+Khalid Al-Kary
+
+Revision: 1.0
+-------------------------------------------------------------------------------
+
+Introduction:
+-------------
+This document describes the way in which an OpenXMLD database server is expected
+to behave towards client connections, eventually it describes the way in which 
+a client should connect and work with a running OpenXMLD daemon.
+
+Connection Establishment:
+-------------------------
+Obviously a client can establish a connection with an OpenXMLD daemon by connecting
+to one of its listener sockets (specified in the xmld.conf file).
+
+Session Initialization:
+-----------------------
+Once the server and the client are successfully connected together The OpenXMLD sends 
+a NULL-terminated message with a maximum length of 40 characters, whose format is as 
+follows:
+
+The OpenXMLD/<version number>
+header-length <numeric value>
+
+Note: In this protocol lines end in '\n'.
+
+* <version number>: The server software version number sent for if the client wants
+to send version-sensitive messages.
+
+* header-length: The maximum length of the header of each upcoming message. (that's
+a server configuration thing).
+
+To receive this message, the client must wait for its arrival once the connection
+is established and store the given values for later usage.
+
+Header Format:
+--------------
+All the messages sent thereafter have a <header> message sent before them whose
+maximum length is that specified by the server's initialization message's "header
+-length" field. And it has the following format (and it's NULL-terminated):
+
+message-length <numeric value>
+status <boolean>
+
+* message-length: The length of the message following the header.
+
+* status: 0 or 1, failure and success respectively. (always 1 for client-sent
+messages)
+
+Additional Information:
+-----------------------
+After receiving the initialization message the client must wait for another 
+message that has the following form:
+
+<header>
+
+column-separator <character>
+column-separator-enc <string>
+row-separator <character>
+row-separator-enc <string>
+
+* column-separator: The character which the server is going to use for 
+separation of columns.
+
+* column-separator-enc: The string to which an occurence of a column sep-
+arator character is to be encoded if it was located inside a column value.
+
+* row-separator: The character which the server is going to use for 
+separation of rows.
+
+* row-sep-enc: The string to which an occurence of a row separator character
+is to be encoded if it was located inside a column value.
+
+Authentication:
+---------------
+After reciving the informational message the client must begin the 
+authentication sequence by sending the following message:
+
+
+<header>
+
+user-name <string>
+
+* user-name: The name of the connecting user.
+
+Note: The additional new line between <header> and the message in this document
+doesn't mean an actual additional '\n' but means two separate socket messages,
+(i.e two write/send/... system calls for C programms). <header> in the first 
+message and the rest in the second one.
+
+
+After sending the user name client must wait until the server sends a header
+with a 0 value of message-length. If status equaled 0 the client should
+restart the authentication sequence by sending the user name message again
+or send a disconnection message (described later). If status is 1 the client
+continues by sending the following message:
+
+<header>
+
+pass <string>
+
+* pass: The password of the connecting user.
+
+The server responds to this message with a message like the one sent after
+the user name message, and the client has to respond to it exactly the same
+way.
+
+Query:
+------
+After the authentication sequence the client is free to query the server:
+
+<header>
+
+<query>
+
+The server responds with a record set for queries that pull information out
+of the server:
+
+message-length <whatever>
+status 1
+
+col1	;
+
+In case of failure:
+
+message-length <whatever>
+status 0
+
+ERR <numeric value>
+<error message>
+
+For queries that don't pull data out of the server a status 1 message or a status 0
+plus an ERR and an error message-message are sent in case of success or failure
+respectively.
+
+Disconnection:
+--------------
+To disconnect from the server, the client sends this message:
+
+<header>
+
+DISCONNECT
+
+Note: lower-case disconnect works too.
+
+It's safe for the client to shutdown its connected socket after sending the disconnection
+message. The server also shutdowns its connected socket once this message is receieved.
+</xmp></pre>
+</body>
+</html>
