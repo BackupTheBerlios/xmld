@@ -16,6 +16,6 @@
 
 FILE *fmanager_get_sh_fd(char *);
 FILE *fmanager_get_ex_fd(char *);
-short fmanager_unlock_fd(FILE *);
+XMLDStatus fmanager_unlock_fd(FILE *);
 
 #endif /* __FMANAGER_H */

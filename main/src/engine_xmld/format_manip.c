@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "../xmlddef.h"
 #include "../dutils.h"
 #include "../sutils.h"
 #include "../fmanager.h"
@@ -27,14 +28,14 @@
  * file is to be associated.
  * full_file: The name of the file whose format file is to
  * be opened.
- * ex: Whether or not to execlusively access the format file.
+ * ex: execlusive access flag.
  */
-FILE *engine_xmld_load_format_file(char *full_file, int ex) {
+FILE *engine_xmld_load_format_file(char *full_file, XMLDBool ex) {
  full_file=(char *) realloc(full_file, (strlen(full_file)+8)*sizeof(char));
  strcat(full_file, ".format");
  FILE *fd;
 
- if (ex == 0) {
+ if (ex == XMLD_FALSE) {
   fd=fmanager_get_sh_fd(full_file);
  }
  else {

@@ -14,9 +14,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include "sutils.h"
 #include <stdio.h>
 #include <errno.h>
+#include "xmlddef.h"
+#include "sutils.h"
 #include "xmld_list.h"
 #include "xmld_directive.h"
 #include "cfg_parser.h"
@@ -29,7 +30,7 @@
  * parser)
  * returns: whether successful.
  */
-int cfg_parser_parse() {
+XMLDStatus cfg_parser_parse() {
  errno=0;
  FILE *conf=fopen("xmld.conf", "r");
 
@@ -40,23 +41,17 @@ int cfg_parser_parse() {
  char buf;
  char *curr_data=NULL;
  int data_len=1;
- int mode=0;   /* 0 = looking for type
-                * 1 = looking for directive
-	        * 2 = looking for equal sign
-		* 3 = looking for value
-		* 4 = looking for end of line
-	        */
- int ign_ws=1; /* 0 = don't ignore whitespace
-	        * 1 = ignore whitespace
-	        */
+ int mode=XMLD_CFG_MODE_TYPE;
+ XMLDBool ign_ws=XMLD_TRUE; /* whether to ignore whitespace */
+ 
  while (1) {
   buf = (char) fgetc(conf);
   if (buf == EOF) {
    break;
   }
-  if (buf == '#' && mode == 0) {
-   mode=4;
-   ign_ws=0;
+  if (buf == '#' && mode == XMLD_CFG_MODE_TYPE) {
+   mode=XMLD_CFG_MODE_END;
+   ign_ws=XMLD_FALSE;
    continue;
   }
   else {
@@ -64,25 +59,25 @@ int cfg_parser_parse() {
     continue;
    }
    else {
-    if (mode == 0) {
+    if (mode == XMLD_CFG_MODE_TYPE) {
      if (buf != ' ' && buf != '\t') {
-      ign_ws=0;
+      ign_ws=XMLD_FALSE;
       curr_data=(char *) realloc(curr_data, (++data_len)*sizeof(char));
       curr_data[data_len-2]=buf;
       curr_data[data_len-1]='\0';
      }
      else {
-      cfg_parser_parse_token(curr_data, 0);
+      cfg_parser_parse_token(curr_data, mode);
       free(curr_data);
       curr_data=NULL;
       data_len=1;
-      mode=1;
-      ign_ws=1;      
+      mode=XMLD_CFG_MODE_DIR;
+      ign_ws=XMLD_TRUE;
      }
     }
     else if (mode == 1) {
      if (buf != ' ' && buf != '\t' && buf != '=') {
-      ign_ws=0;
+      ign_ws=XMLD_FALSE;
       curr_data=(char *) realloc(curr_data, (++data_len)*sizeof(char));
       curr_data[data_len-2]=buf;
       curr_data[data_len-1]='\0';
@@ -91,39 +86,39 @@ int cfg_parser_parse() {
       if (buf == '=') {
        fseek(conf, -1, SEEK_CUR);
       }
-      cfg_parser_parse_token(curr_data, 1);
+      cfg_parser_parse_token(curr_data, mode);
       free(curr_data);
       curr_data=NULL;
       data_len=1;
-      ign_ws=1;
-      mode=2;      
+      ign_ws=XMLD_TRUE;
+      mode=XMLD_CFG_MODE_EQ;
      }
     }
-    else if (mode == 2) {
+    else if (mode == XMLD_CFG_MODE_EQ) {
      if (buf == '=') {
-      mode=3;
+      mode=XMLD_CFG_MODE_VAL;
      }
     }
-    else if (mode == 3) {
+    else if (mode == XMLD_CFG_MODE_VAL) {
      if (buf == '\n' || buf == '\r') {
-      cfg_parser_parse_token(curr_data, 3);
+      cfg_parser_parse_token(curr_data, mode);
       free(curr_data);
       curr_data=NULL;
       data_len=1;
-      ign_ws=1;
-      mode=0;
+      ign_ws=XMLD_TRUE;
+      mode=XMLD_CFG_MODE_TYPE;
      }
      else {
-      ign_ws=0;
+      ign_ws=XMLD_FALSE;
       curr_data=(char *) realloc(curr_data, (++data_len)*sizeof(char));
       curr_data[data_len-2]=buf;
       curr_data[data_len-1]='\0';
      }
     }
-    else if (mode == 4) {
+    else if (mode == XMLD_CFG_MODE_END) {
      if (buf == '\n' || buf == '\r') {
-      mode=0;
-      ign_ws=1;
+      mode=XMLD_CFG_MODE_TYPE;
+      ign_ws=XMLD_TRUE;
      }
     }
    }
@@ -141,7 +136,7 @@ void cfg_parser_parse_token(char *token, int mode) {
   cfg_tree=XMLDDirective_create_list();
  }
  XMLDDirective *curr_dir;
- if (mode == 0) {
+ if (mode == XMLD_CFG_MODE_TYPE) {
   curr_dir=XMLDDirective_add_to_list(cfg_tree);
   XMLDList_next(cfg_tree);
   if (strcmp(token, "int") == 0) {
@@ -163,7 +158,7 @@ void cfg_parser_parse_token(char *token, int mode) {
    curr_dir->type=XMLD_DIR_ERR;
   }
  }
- else if (mode == 1) {
+ else if (mode == XMLD_CFG_MODE_DIR) {
   curr_dir=(XMLDDirective *) XMLDList_curr(cfg_tree);
   if (curr_dir->type == XMLD_DIR_ERR) {
    return;
@@ -173,7 +168,7 @@ void cfg_parser_parse_token(char *token, int mode) {
    strcpy(curr_dir->name, token);
   }
  }
- else if (mode == 3) {
+ else if (mode == XMLD_CFG_MODE_VAL) {
   curr_dir=(XMLDDirective *) XMLDList_curr(cfg_tree);
   if (curr_dir->type == XMLD_DIR_ERR) {
    return;
@@ -227,7 +222,7 @@ void cfg_parser_parse_token(char *token, int mode) {
  * configuration directives from memory.
  * returns: whether successful.
  */
-int cfg_parser_clean() {
+XMLDStatus cfg_parser_clean() {
  XMLDList_free(cfg_tree);
  return XMLD_SUCCESS;
 }

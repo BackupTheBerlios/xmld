@@ -17,9 +17,9 @@
 #include <errno.h>
 #include <limits.h>
 #include <math.h>
+#include "../xmlddef.h"
 #include "../dutils.h"
 #include "../sutils.h"
-#include "../bitutils.h"
 #include "../xmld_list.h"
 #include "../xmld_col.h"
 #include "../xmld_row.h"
@@ -44,7 +44,6 @@ struct XMLDEngine;
 #include "../xmld_work.h"
 #include "../xmld_engine.h"
 #include "../cfg.h"
-#include "../xmld_errors.h"
 #include "../mfigure.h"
 #include "../fmanager.h"
 #include "engine_xmld.h"
@@ -62,7 +61,7 @@ void engine_xmld_init() {
 /* prepare function 
  * level: consult xmld_engine.h
  * */
-int engine_xmld_prepare(XMLDWork *work, int level) {
+XMLDStatus engine_xmld_prepare(XMLDWork *work, int level) {
  char *full_name=XMLDWork_get_full_file(work);
  char *mime=mfigure_get_mime(full_name);
  
@@ -199,7 +198,7 @@ char *engine_xmld_eval_expr(XMLDWork *work, XMLDExpr *expr) {
 }
 
 /* eval_cond function */
-int engine_xmld_eval_cond(XMLDWork *work, XMLDCond *cond) {
+XMLDBool engine_xmld_eval_cond(XMLDWork *work, XMLDCond *cond) {
  short val;
  char *left_val;
  char *right_val;
@@ -442,7 +441,7 @@ char *engine_xmld_get_column_value(XMLDWork *work, char *col_name) {
 }
 
 /* FIXME: always use the format file */
-int engine_xmld_set_column_value(XMLDWork *work, char *col_name, char *value) {
+XMLDStatus engine_xmld_set_column_value(XMLDWork *work, char *col_name, char *value) {
  fpos_t pos;
  fgetpos((FILE *) work->res->data_source, &pos);
  short ret;

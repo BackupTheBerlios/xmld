@@ -17,6 +17,7 @@
 #include <unistd.h>
 #include <signal.h>
 #include <string.h>
+#include "xmlddef.h"
 #include "cfg.h"
 #include "xmld_list.h"
 #include "xmld_connection.h"
@@ -39,7 +40,6 @@ struct XMLDFunc;
 #include "init.h"
 #include "engine_list.h"
 #include "func_list.h"
-#include "xmld_errors.h"
 #define NUM_PARTS 5
  
 struct xmld_part parts[NUM_PARTS];
@@ -58,8 +58,13 @@ int main() {
  }
  
  printf("The OpenXMLD is up and running:\n\t* PID: %d\n", getpid());
-
- init_error_array();
+ err_str[0]="The request file couldn't be opened.";
+ err_str[1]="The given engine does not exist.";
+ err_str[2]="Invalid file type.";
+ err_str[3]="Invalid use of an aggregate expression.";
+ err_str[4]="An error has occured while parsing the given query.";
+ err_str[5]="The given query is not yet implemented.";
+ err_str[6]="Couldn't open a description file for the request file.";
  init_create_part(&parts[0], cfg_init, cfg_shutdown);
  init_create_part(&parts[1], engine_list_init, engine_list_shutdown);
  init_create_part(&parts[2], func_list_init, func_list_shutdown);
@@ -74,7 +79,7 @@ int main() {
    break;
   }
   else {
-   parts[t].ok=1;
+   parts[t].ok=XMLD_TRUE;
   }
  }
  while (1) {
@@ -82,17 +87,17 @@ int main() {
  return 0;
 }
 
-void init_create_part(struct xmld_part *part, short (*init_func) (void), short (*shutdown_func) (void)) {
+void init_create_part(struct xmld_part *part, XMLDStatus (*init_func) (void), XMLDStatus (*shutdown_func) (void)) {
  part->init_func=init_func;
  part->shutdown_func=shutdown_func;
- part->ok=0;
+ part->ok=XMLD_FAILURE;
 }
 
 void init_shutdown_parts(int signum) {
  int t;
  int s;
  for (t = NUM_PARTS - 1; t >= 0; t--) {
-  if (parts[t].ok == 1) {
+  if (parts[t].ok == XMLD_TRUE) {
    s = (*(parts[t].shutdown_func))();
    if (s == XMLD_FAILURE) {
     perror("init_shutdown_parts");

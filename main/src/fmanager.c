@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <sys/file.h>
+#include "xmlddef.h"
 
 /*
  * Get a file decriptor and obtain a shared lock on its inode.
@@ -54,11 +55,11 @@ FILE *fmanager_get_ex_fd(char *file) {
  * fd: The file descriptor to unlock.
  * returns: Whether successful.
  */
-short fmanager_unlock_fd(FILE *fd) {
+XMLDStatus fmanager_unlock_fd(FILE *fd) {
  if (flock(fileno(fd), LOCK_UN) == 0) {
-  return 1;
+  return XMLD_SUCCESS;
  }
  else {
-  return 0;
+  return XMLD_FAILURE;
  }
 }

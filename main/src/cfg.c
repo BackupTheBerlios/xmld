@@ -12,7 +12,7 @@
  */
 
 #include <stdlib.h>
-#include "xmld_errors.h"
+#include "xmlddef.h"
 #include "xmld_list.h"
 #include "xmld_directive.h"
 #include "cfg_parser.h"
@@ -22,9 +22,9 @@
  * : Initiates the configuration manager.
  * returns: whether successful.
  */
-int cfg_init() {
+XMLDStatus cfg_init() {
  cfg_tree=NULL;
- int ret=cfg_parser_parse();
+ XMLDStatus ret=cfg_parser_parse();
  col_sep=*((char *) cfg_get("response.col_sep"));
  col_sep_enc=((char *) cfg_get("response.col_sep_enc"));
  row_sep=*((char *) cfg_get("response.row_sep"));
@@ -110,7 +110,7 @@ void cfg_set_mime_engine(char *mime, char *engine) {
  * Finalizes and cleans up the parse tree of the conf.
  * returns: whether successful.
  */
-int cfg_shutdown() {
+XMLDStatus cfg_shutdown() {
  cfg_parser_clean();
  return XMLD_SUCCESS;
 }

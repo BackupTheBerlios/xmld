@@ -11,9 +11,34 @@
  * -------------------------------------------------------------- * 
  */
 
-#ifndef __BITUTILS_H
-#define __BITUTILS_H
+#ifndef __XMLDDEF_H
+#define __XMLDDEF_H
+
+/* XMLDStatus values */
+#define XMLD_SUCCESS 1
+#define XMLD_FAILURE 0
+#define XMLD_SPECIAL -1
+
+/* XMLDBool values */
+#define XMLD_FALSE 0
+#define XMLD_TRUE 1
 
 #define BIT_ISSET(bitmask, bit) ((bitmask) & (bit))
+#define ERROR_RESPONSE xmld_socket_write(work->conn->fd, err_str[xmld_errno])
 
-#endif /* __BITUTILS_H */
+typedef int XMLDBool;
+typedef int XMLDStatus;
+
+enum xmld_error {
+ XMLD_ENOFILE,
+ XMLD_ENOENGINE,
+ XMLD_EINVALFILE,
+ XMLD_ENOAGGR,
+ XMLD_EPARSE,
+ XMLD_ENOTIMPL,
+ XMLD_ENOFORMAT
+} xmld_errno;
+
+char *err_str[7];
+
+#endif /* __XMLDDEF_H */

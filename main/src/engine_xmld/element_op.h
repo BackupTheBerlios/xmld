@@ -20,9 +20,9 @@ void engine_xmld_discard_curr_att_value(FILE *);
 char *engine_xmld_get_text_value(FILE *);
 char *engine_xmld_get_tagname(FILE *);
 void engine_xmld_discard_curr_att_name(FILE *);
-short engine_xmld_locate_text(FILE *);
-short engine_xmld_locate_att(FILE *, char *);
-short engine_xmld_set_text_value(FILE *, char *);
-short engine_xmld_set_curr_att_value(FILE *, char *);
+XMLDStatus engine_xmld_locate_text(FILE *);
+XMLDStatus engine_xmld_locate_att(FILE *, char *);
+XMLDStatus engine_xmld_set_text_value(FILE *, char *);
+XMLDStatus engine_xmld_set_curr_att_value(FILE *, char *);
 
 #endif /* __ELEMENT_OP_H */

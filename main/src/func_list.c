@@ -12,7 +12,7 @@
  */
 
 #include <stdlib.h>
-#include "xmld_errors.h"
+#include "xmlddef.h"
 #include "xmld_list.h"
 struct XMLDFunc;
 #ifndef XMLD_FUNC_TYPE_DEFINED
@@ -23,17 +23,17 @@ struct XMLDFunc;
 #include "xmld_func.h"
 #include "func_list.h"
 
-int func_list_init() {
+XMLDStatus func_list_init() {
  func_list=XMLDFunc_create_list();
  XMLDFunc *curr_func=XMLDFunc_add_to_list(func_list);
  curr_func->name="Foo";
  curr_func->func=foo_func;
- curr_func->aggr=0;
+ curr_func->aggr=XMLD_FALSE;
  /* rest of function entries */
  return XMLD_SUCCESS;
 }
 
-int func_list_shutdown() {
+XMLDStatus func_list_shutdown() {
  XMLDList_free(func_list);
  return XMLD_SUCCESS;
 }

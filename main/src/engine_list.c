@@ -13,7 +13,7 @@
  
 #include <stdlib.h>
 #include <string.h>
-#include "xmld_errors.h"
+#include "xmlddef.h"
 #include "xmld_list.h"
 #include "xmld_col.h"
 #include "xmld_row.h"
@@ -43,7 +43,7 @@ struct XMLDEngine;
 #include "engine_xmld/engine_xmld.h"
 #endif /* USE_ENGINE_XMLD */
  
-int engine_list_init() {
+XMLDStatus engine_list_init() {
  engine_list=XMLDEngine_create_list();
  XMLDEngine *curr_engine;
 #ifdef USE_ENGINE_XMLD
@@ -65,7 +65,7 @@ int engine_list_init() {
  return XMLD_SUCCESS;
 }
 
-int engine_list_shutdown() {
+XMLDStatus engine_list_shutdown() {
  XMLDList_reset(engine_list);
  while (XMLDList_next(engine_list)) {
   (*(((XMLDEngine *) XMLDList_curr(engine_list))->destroy)) ();

@@ -14,7 +14,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "xmld_errors.h"
+#include "xmlddef.h"
 #include "dutils.h"
 
 /*
@@ -188,7 +188,7 @@ char *dmcstrchr(FILE *fd, char *tokens, int num) {
  * when there are no more characters in write.
  * returns: success/failure.
  */ 
-int dmwstrchr(FILE *fd, char *tokens, int num, char *write) {
+XMLDStatus dmwstrchr(FILE *fd, char *tokens, int num, char *write) {
  char c;
  int i;
  char *curr=write;
