@@ -246,6 +246,9 @@ short engine_xmld_eval_cond(XMLDWork *work, XMLDCond *cond) {
    val=(engine_xmld_eval_cond(work, cond->cleft) || engine_xmld_eval_cond(work, cond->cright));
   }
  }
+ else if (cond->type == 2) {
+  val=1;
+ }
  if (cond->negate == 1) {
   return !val;
  }
