@@ -14,6 +14,9 @@
 #ifndef HAVE_CFG_H
 #define HAVE_CFG_H
 
+char col_sep;
+char row_sep;
+
 short cfg_init(void);
 void *cfg_get(char *);
 char *cfg_get_engine(char *);
