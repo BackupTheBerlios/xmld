@@ -157,3 +157,24 @@ char *ltrim(char *str) {
  }
  return ret;
 }
+
+/*
+ * Replaces a character in a string with a particular string.
+ */
+void mstrchr_replace(char *haystack, char *neddle, char **repl, int num) {
+ char *tmp=(char *) malloc(sizeof(char));
+ int tmp_len=1;
+ tmp[0]='\0';
+ char *curr=haystack;
+ 
+ while (*curr != '\0') {
+  if (*curr == neddle) {
+  }
+  else {
+   tmp=(char *) realloc(tmp, (++tmp_len) * sizeof(char));
+   tmp[tmp_len-1]='\0';
+   tmp[tmp_len-2]=*curr;
+  }
+  curr++;
+ }
+}

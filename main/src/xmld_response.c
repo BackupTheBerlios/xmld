@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "mutils.h"
+#include "sutils.h"
 #include "xmld_sockets.h"
 #include "xmld_list.h"
 #include "xmld_col.h"
@@ -238,11 +239,23 @@ void XMLDResponse_flush(XMLDResponse *resp, int fd) {
  XMLDList_reset(resp->rows);
  XMLDRow *curr_row;
  XMLDCol *curr_col;
+ 
+ /* mstrchr_replace vars */
+ char repl_tok[2];
+ repl_tok[0]=col_sep;
+ repl_tok[1]=row_sep;
+ char *repl_tok_enc[2];
+ repl_tok_enc[0]=col_sep_enc;
+ repl_tok_enc[1]=row_sep_enc;
+ 
  while (XMLDList_next(resp->rows)) {
   curr_row=(XMLDRow *) XMLDList_curr(resp->rows);
   XMLDList_reset(curr_row->cols);
   while (XMLDList_next(curr_row->cols)) {
    curr_col=(XMLDCol *) XMLDList_curr(curr_row->cols);
+   if (curr_col->val != NULL) {    
+    mstrchr_replace(curr_col->val, repl_tok, col_sep_enc, 2);
+   }
    resp_len+=((curr_col->val != NULL) ? strlen(curr_col->val) : 0)+1;
    response=(char *) realloc(response, resp_len*sizeof(char));
    if (curr_col->val != NULL) {

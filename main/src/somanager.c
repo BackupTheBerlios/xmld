@@ -64,6 +64,10 @@ short somanager_init() {
 }
 
 short somanager_shutdown() {
+ int i;
+ for (i = 0; i < num_sock; i++) {
+  xmld_socket_shutdown(fds[i]);
+ }
  free(fds);
  free(ports);
  return 1;

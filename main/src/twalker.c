@@ -214,6 +214,9 @@ short twalker_handle(XMLDWork *work) {
    xmld_errno=XMLD_ENOTIMPL;
    return 0;
   break;
+  case 11: /* DISCONNECT */
+   return -1;
+  break;
  } 
  return 1;
 };

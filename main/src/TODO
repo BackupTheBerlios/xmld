@@ -202,19 +202,6 @@ of a resource context. (done)
 * Split engine_xmld/engine_xmld.(c|h)
 to: (done)
 
-engine_xmld.(c|h): which contains the 
-functions for XMLDEngine. 
-(done)
-
-element_ops.(c|h) (operations):
-which contains all the functions
-which process the current element. 
-(done)
-
-format_manip.(c|h): which contains
-functions for direct .format file
-manipulation. (done)
-
 * fmanager_get_read_fd -> *_get_sh_fd, fmanager_
 get_write_fd -> *_get_ex_fd. (done)
 
@@ -231,8 +218,6 @@ get_write_fd -> *_get_ex_fd. (done)
 
 * str_split.(c|h) -> sutils.(c|h) + str_prepend.
 (done)
-
-* Implement read buffering in dutils. (done)
 
 * Remove eval_aggr_expr from everywhere because
 it's not needed anymore. (done)
@@ -278,8 +263,6 @@ Engine-XMLD's fmanager_get_*_fd calls. (done)
 * In twalker ERROR_RESPONSE for all the not implemented types. (done)
 
 * Add XMLD_ENOTIMPL to xmld_errors.h. (done)
-
-* Write a xmld.conf file. (done)
 
 * Respect 'xmld.document_root' configuration directive when
 using XMLDWork_get_full_file. In addition cfg_init must
@@ -386,22 +369,31 @@ level pointer after each call to walk, while it should do that
 only if walk goes one level deeper and do the opposite if it
 goes one level shallower. (done)
 
+* walk returns 1 for deeper, -1 for shallower and 0 for end
+of document. (done)
+
+* get_level engine function. (done)
+
 --------------- Start of The OpenXMLD 0.4.1 part:
 
 * If a column value contains col_sep or row_sep they
 must be encoded before sending by XMLDResponse_flush.
+(done)
+
+* Implement mstrchr_replace.
 
 * Real string handling in xmld-sql.lex.
 
 * xmld_socket_read contains a buffer over-flow possibility.
 
 * somanager must close all server sockets on shutdown.
+(done)
 
 * Implement the DISCONNECT query in xmld-sql.y and remeber
-to close the client socket.
+to close the client socket. (done)
 
-* Consider not checking types in XMLDCond_copy
-and XMLDExpr_copy.
+* Fix xmld_socket_accept: Interupted system call on DISC
+ONNECT.
 
 * XMLDExpr must contain a floating-point type (e.g double).
 
@@ -409,18 +401,18 @@ and XMLDExpr_copy.
 a child is no longer busy, and install a semaphore on ttable
 if you are going to handle it in any process.
 
-**** Checks: ****
+* Implement read buffering in dutils.
 
-* Check for replacement of '\0' and usage of strlen
-to refer to its new position.
+* Add a number of SQL functions in func_list and create a dir-
+ectory "functions" for them.
 
-* Check all the code for realloc() while iterators are
-on the realloc'd memory segment. These iterators must
-be updated for realloc may change the address of the
-realloc'd segment.
+* Remove/Secure usage of SIGUSR1 in ptasker.
 
-* Check for incrementing of a void pointer being 
-unrelative to the sizeof(type pointed by it).
+* Add the file/engine association document, and mime/engine
+association documents, and implement cfg functions that
+play with them.
+
+* Implement mfigure.
 
 --------------- Start of The OpenXMLD 0.5.0 part:
 
@@ -428,18 +420,20 @@ unrelative to the sizeof(type pointed by it).
 and specify the corresponding engine functions
 and implement them in Engine-XMLD.
 
-* Implement CREATE FILE/TABLE.
+* Expand QUERY.html and implement it accordingly
+(especially CREATE FILE/TABLE).
 
 * Implement alphabetical comparsion in str_between.
 (check the GNU C Library documentation for "Searching
 and Sorting")
 
+* Implement multiple files support, and expression->
+file association.
+
 * Find a way of correct resolution of aggregate
 expressions.
 
-* Add and implement SQL functions in func_list.
-
-* Implement mfigure.
+* Continue implementation of SQL functions in func_list.
 
 * Create a hash table implementation for places where
 search speed is important (XMLDHashTable), and provide
@@ -449,17 +443,14 @@ XMLDEngine_create_hashtable(...)
 XMLDEngine_add_to_hashtable(...)
 XMLDEngine_search_hashtable(...)
 
-* Remove/Secure usage of SIGUSR1 in ptasker.
-
-* Find a good way of reporting out-of-request errors.
-
-* in 0.5.x releases, exapnd QUERY.html, and offer support for
-whatever added there.
-
-* Implement multiple query parsers support and switching
-on the fly.
+* Multiple query parsers support and on-the-fly query
+parser switching.
 
 *--------------- Start of The OpenXMLD 0.6.0 part:
+
+* Make it a robust XMLD-SQL implementation!
+
+*--------------- Start of The OpenXMLD 0.7.0 part:
 
 * Implement a multi-threaded multi-
 tasker (Macro: USE_TTASKER).

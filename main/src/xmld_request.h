@@ -29,6 +29,7 @@ struct XMLDRequest {
 	      * 8 = INSERT with WHERE
 	      * 9 = INSERT
 	      * 10= USE
+	      * 11= DISCONNECT
               */
  XMLDList *retr;  /* list of action expressions (query type dependent) */
  XMLDList *vals; /* A list of values for the above expressions  (query type dependent) */

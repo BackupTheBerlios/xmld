@@ -58,6 +58,7 @@ struct XMLDEngine;
 
 /* Keywords */
 %token SELECT
+%token DISCONNECT
 %token FROM
 %token WHERE
 %token UPDATE
@@ -97,6 +98,10 @@ query: SELECT expr_list FROM QVAL {
 				   ((XMLDWork *) work)->req->retr=$2;
 				   YYACCEPT;
                                   }
+       | DISCONNECT {
+                     ((XMLDWork *) work)->req->type=11;
+		     YYACCEPT;
+                    }
        | SELECT expr_list FROM QVAL WHERE cond_list {
 			     	                     ((XMLDWork *) work)->req->type=1;
 				                     ((XMLDWork *) work)->req->file=$4;

@@ -21,7 +21,7 @@ flex 2.5.4
 In main/src of the distribution:
 
 $ bison -d xmld-sql.y
-$ flex -i -d xmld-sql.lex
+$ flex -i -f xmld-sql.lex
 
 These files should by now be generated in main/src:
 
