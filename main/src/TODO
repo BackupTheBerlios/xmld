@@ -153,7 +153,7 @@ to determine whether to be thread safe. (done)
 * Remove fmanager, make its tasks be request type specific.
 (done)
 
-* Fix twalker to work with the new XMLDResponse.
+* Fix twalker to work with the new XMLDResponse. (done)
 
 * Add col_sep, row_sep configuration options, and make them
 be persistent in a variable (in cfg.h), thereafter, use
@@ -174,3 +174,8 @@ configuration option.
 * XMLDResponse_flush must be a request type specific thing
 (i.e remove it from qp and add it conditionally inside 
 twalker) (done)
+
+* Correct usage of XMLDList_last in XMLDResponse_add_col/row. (done)
+
+* Implement XMLDResponse_curr_col/row which returns the current column/row.
+(done)
