@@ -111,8 +111,6 @@ once the columns pointed by it are filled. (done)
 
 * Implement xmld_socket_write. (done)
 
-* Implement your own yylex!
-
 * Implement macro-dependent mtasker switching and put the 
 current mtasker in a different directory and call it ptasker,
 this should involve #ifdef'ing the include in each place 
@@ -195,10 +193,10 @@ rce.
 success/failure must use 0 for failure
 and 1 for success in all the code.
 
-* In all places where XMLDFunc was used
-maintain correct dependency by defining
-XMLDExpr before it just like XMLDEngine
-was treated.
+* In all places where XMLDFunc/XMLDExpr
+were used maintain correct dependency 
+by defining XMLDFunc before XMLDExpr.
+(done)
 
 * In all .h files HAVE_X_X_H -> __X_X_H
 since the 'HAVE' thing has another use.
@@ -268,16 +266,13 @@ to refer to its new position.
 
 * Implement read buffering in dutils.
 
-* For now, make aggregate expression resolution
-be dependent on the extracted record set, and
-it can't just manipulate columns out of it.
-implement eval_aggr_expr and eval_cond.
+* Implement eval_aggr_expr.
 
 * Implement engine_xmld_eval_cond (done)
 
 * Fix that FILE might be absolute, and
 XMLDWork shouldn't concatenate it to
-curr_dir in such a case.
+curr_dir in such a case. (done)
 
 * Write a skeleton parser that returns the same XMLDRequest
 each time.
@@ -287,8 +282,14 @@ each time.
 * Implement str_like, str_between in sutils. (done)
 
 * Add the AND operator type to expr to handle
-between and not between conditionals.
+between and not between conditionals. (done)
 
 * eval_cond atoi -> atol. (done)
 
 * Implement alphabetical comparsion in str_between.
+
+* itoa -> sutils. (done)
+
+* Implement XMLDExpr_copy.
+
+* Try to compile engine_xmld. (done successfully)
