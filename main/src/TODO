@@ -74,11 +74,14 @@ fmanager. (done)
 for usage of it in other parts. (done)
 
 * Implement ERROR_RESPONSE such that it depends
-on a variable (e.g xmld_errno).
+on a variable (e.g xmld_errno, in file xmld_errors
+.h). (done)
 
 * Use ERROR_RESPONSE instead of perror and other
 error reporting routines, and make sure that
 all the code sets xmld_errno appropriately.
+remember to include xmld_sockets.h each time
+you include xmld_errors.h. (done)
 
 * Remove/Secure usage of SIGUSR1 in mtasker.
 
@@ -127,10 +130,41 @@ socket, and use it in qp. (done)
 and check within *_free_content before freeing.
 
 * In places where the decision was not to free internal memory
-redecide with he new NULL thing above. (I remember XMDWork not
+redecide with the new NULL thing above. (I remember XMDWork not
 freeing its member structures).
 
 * Call XMLDList_free for each XMLDAggrTable in XMLDResponse
 once the columns pointed by it are filled. (done)
 
-* Implement xmld_socket_write.
+* Implement xmld_socket_write. (done)
+
+* Implement your own yylex!
+
+* Implement macro-dependent mtasker switching and put the 
+current mtasker in a different directory and call it ptasker,
+this should involve #ifdef'ing the include in each place 
+where mtasker.h is included, and putting different values 
+for it depending on the macro MTASKER, also define the 
+macro MULTI_PROC_MTASKER, so it can be used by other parts
+to know whether to be multi-process safe (i.e to use shared 
+memory segments) or not, and the macro MULTI_THREAD_MTASKER 
+to determine whether to be thread safe. (done)
+
+* Remove fmanager, make its tasks be request type specific.
+(done)
+
+* Fix twalker to work with the new XMLDResponse.
+
+* Add col_sep, row_sep configuration options, and make them
+be persistent in a variable (in cfg.h), thereafter, use
+them in XMLDResponse_flush. (done)
+
+* Add "char" type to XMLDDirective, make consideration in
+cfg_parser_parse, and in cfg_get.
+
+* sosel should read MULTI_PROC_MTASKER to decide whether
+to use a shared memory segment for storing connection
+information and whether to obey the sosel.max_conn
+configuration option.
+
+* Find a good way of reporting out-of-request errors.
