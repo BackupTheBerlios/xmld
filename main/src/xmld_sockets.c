@@ -11,8 +11,9 @@
  * -------------------------------------------------------------- * 
  */
  
-#include <sys/socket.h>
+#include <string.h>
 #include <sys/types.h>
+#include <sys/socket.h>
 #include <netinet/in.h>
 #include "xmld_sockets.h"
 
@@ -34,4 +35,7 @@ int xmld_socket_shutdown(int sockfd) {
 }
 int xmld_socket_accept(int sockfd) {
  return accept(sockfd, NULL, NULL);
+}
+int xmld_socket_write(int sockfd, char *str) {
+ return send(sockfd, (void *) str, strlen(str)*sizeof(char), MSG_NOSIGNAL);
 }
