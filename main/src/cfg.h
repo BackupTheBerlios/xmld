@@ -14,4 +14,12 @@
 #ifndef HAVE_CFG_H
 #define HAVE_CFG_H
 
+short cfg_init(void);
+void *cfg_get(char *);
+char *cfg_get_engine(char *);
+void cfg_set_engine(char *, char *);
+char *cfg_get_engine_mime(char *);
+void cfg_set_engine_mime(char *, char *);
+short cfg_shutdown(void);
+
 #endif /* HAVE_CFG_H */
