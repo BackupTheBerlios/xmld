@@ -147,18 +147,12 @@ xmld_status_t sosel_add(int fd, char*dir) {
   }
  return stat;
 }
-xmld_status_t sosel_remove(int fd) {
- xmld_status_t stat=XMLD_FAILURE;
- int j;
- for (j=0;j<max_conn;j++) {
-  if (conn_table->conn[j].fd==fd) {
-   free(conn_table->conn[j].curr_dir);
-   conn_table->conn[j].fd=0;
-   conn_table->conn[j].sfd=0;
-   conn_table->used--;
-   stat=XMLD_SUCCESS;
-   break;
-  }
- }
- return stat;
+xmld_status_t sosel_remove(struct XMLDConnection *conn) {
+ if (conn->curr_dir) {
+  free(conn->curr_dir);
+ } 
+ conn->fd=0;
+ conn->sfd=0;
+ conn_table->used--;
+ return XMLD_SUCCESS;
 }

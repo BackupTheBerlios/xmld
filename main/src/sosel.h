@@ -19,7 +19,7 @@ xmld_status_t sosel_shutdown(void);
 xmld_status_t sosel_sadd(int);
 xmld_status_t sosel_sremove(int);
 xmld_status_t sosel_add(int, char*);
-xmld_status_t sosel_remove(int);
+xmld_status_t sosel_remove(struct XMLDConnection*);
 void sosel_run(void*);
 
 /* represents a connection table */
