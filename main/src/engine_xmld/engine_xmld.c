@@ -185,7 +185,7 @@ short engine_xmld_eval_cond(XMLDWork *work, XMLDCond *cond) {
      }
     break;
     case 1:
-     if (atoi(left_val) < atoi(right_val)) {
+     if (atol(left_val) < atol(right_val)) {
       val=1;
      }
      else {
@@ -193,7 +193,7 @@ short engine_xmld_eval_cond(XMLDWork *work, XMLDCond *cond) {
      }
     break;
     case 2:
-     if (atoi(left_val) > atoi(right_val)) {
+     if (atol(left_val) > atol(right_val)) {
       val=1;
      }
      else {
@@ -201,7 +201,7 @@ short engine_xmld_eval_cond(XMLDWork *work, XMLDCond *cond) {
      }
     break;
     case 3:
-     if (atoi(left_val) != atoi(right_val)) {
+     if (atol(left_val) != atol(right_val)) {
       val=1;
      }
      else {
@@ -209,7 +209,7 @@ short engine_xmld_eval_cond(XMLDWork *work, XMLDCond *cond) {
      }
     break;
     case 4:
-     if (atoi(left_val) <= atoi(right_val)) {
+     if (atol(left_val) <= atol(right_val)) {
       val=1;
      }
      else {
@@ -217,7 +217,7 @@ short engine_xmld_eval_cond(XMLDWork *work, XMLDCond *cond) {
      }
     break;
     case 5:
-     if (atoi(left_val) >= atoi(right_val)) {
+     if (atol(left_val) >= atol(right_val)) {
       val=1;
      }
      else {
