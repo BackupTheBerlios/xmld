@@ -18,7 +18,8 @@ struct XMLDWork {
  XMLDConnection *conn;
  XMLDInterface *interface;
  XMLDFileList *files;
- void *store;
+ void *req;
+ void *resp;
 };
 
 typedef struct XMLDWork XMLDWork;

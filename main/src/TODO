@@ -173,11 +173,17 @@ order to be able to resolve wildcards correctly. (done)
    * func_list is interface specific - remove it. (done)
    * XMLDRequest, XMLDResponse, XMLDFunc, XMLDExpr, XMLDAggrTable
      are interface specific, should be removed from everywhere else
-     and be used inside the initial XMLD-SQL interface.
-   * [...]
- 
+     and be used inside the initial XMLD-SQL interface. (done)   
+
+* twalker_handle should no longer do the response translation step.
+  (done)
+
+* ERROR_RESPONSE should be interface and engine specific.
+
 * XMLDFile's store should be freed by the engine cleanup function
   and not XMLDFile_free_content.
+
+* The compiler can automatically cast - do not implicitly cast!
 
 * Erase redundancy in somanager.num_listeners.
 

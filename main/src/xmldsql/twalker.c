@@ -118,13 +118,6 @@ XMLDStatus twalker_handle(XMLDWork *work) {
     last_row->num_up += num_up;
     last_row->num_down += num_down;
    }
-   
-   char *resp=resptrans_handle(work);
-   if (protoimpl_write_sequence(work->conn->fd, resp, 1) == XMLD_FAILURE) {
-    free(resp);
-    return XMLD_FAILURE;
-   }
-   free(resp);
    XMLDList_reset(work->files);
    while (XMLDList_next(work->files)) {
     XMLDFile *curr_file=(XMLDFile *) XMLDList_curr(work->files);
@@ -272,13 +265,6 @@ XMLDStatus twalker_handle(XMLDWork *work) {
     last_row->num_up += num_up;
     last_row->num_down += num_down;
    }
-   
-   resp=resptrans_handle(work);
-   if (protoimpl_write_sequence(work->conn->fd, resp, 1) == XMLD_FAILURE) {
-    free(resp);
-    return XMLD_FAILURE;
-   }
-   free(resp);
    XMLDList_reset(work->files);
    while (XMLDList_next(work->files)) {
     XMLDFile *curr_file=(XMLDFile *) XMLDList_curr(work->files);
