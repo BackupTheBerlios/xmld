@@ -65,14 +65,14 @@ void cfg_set_engine(char *file, char *engine) {
  * : Gets the default engine for the given _mime_
  * returns: the name of the mentioned engine.
  */
-char *cfg_get_engine_mime(char *mime) { 
+char *cfg_get_mime_engine(char *mime) { 
  return (char *) NULL;
 }
 
 /*
  * : Sets the default engine for a given _mime_.
  */
-void cfg_set_engine_mime(char *mime, char *engine) {
+void cfg_set_mime_engine(char *mime, char *engine) {
 }
 
 /*
