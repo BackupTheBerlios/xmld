@@ -16,8 +16,8 @@
 #include <string.h>
 #include "xmlddef.h"
 #include "sutils.h"
-#define INTEGER_LENGTH 15
-#define FLOAT_LENGTH 15
+#define INTEGER_LENGTH 10
+#define FLOAT_LENGTH 10
 
 /*
  * : Returns an array of strings extracted
@@ -137,7 +137,7 @@ XMLDBool str_between(char *str, char *min, char *max) {
  */
 char *itostr(int num, int len) {
  if (len == 0) {
-  len = NUMERIC_LENGTH;
+  len = INTEGER_LENGTH;
  }
  char *ret=(char *) malloc(len*sizeof(char));
  snprintf(ret, len, "%d", num);

@@ -53,13 +53,13 @@ struct XMLDEngine;
 /* init function */
 void engine_xmld_init() {
  /* 
-  * init (in this case) is quiete useless,
-  * might be useful for persistent things which may appear later (?)
+  * init is useless in engine_xmld.
+  * but it might be useful for persistent things which may appear later (?)
   */
 }
 
 /* prepare function 
- * level: consult xmld_engine.h
+ * level: see xmld_engine.h
  * */
 XMLDStatus engine_xmld_prepare(XMLDWork *work, XMLDFile *file, int level) {
  char *full_name=XMLDFile_get_full_name(file, work);
@@ -128,56 +128,68 @@ int engine_xmld_walk(XMLDWork *work, XMLDFile *file) {
  while (1) {
   token=dmstrstr((FILE *) file->data, tokens, 2);
   if (token == -1) {
-   return 0;
+   return XMLD_WALK_END;
   }
   else if (token == 0) {
    buf=getc((FILE *) file->data);
    if (buf == '/') {
     file->level--;
     if (file->level == 0) {
-     return 0;
+     return XMLD_WALK_END;
     }
     else {
-     return -1;
+     return XMLD_WALK_UP;
     }
    }
    else {
     fseek((FILE *) file->data, -1, SEEK_CUR);
     file->level++;
-    return 1;
+    return XMLD_WALK_DOWN;
    } 
   }
   else if (token == 1) {
    file->level--;
    if (file->level == 0) {
-    return 0;
+    return XMLD_WALK_END;
    }
    else {
-    return -1;
+    return XMLD_WALK_UP;
    }
   }
  }
 }
 
 /* eval_expr function */
-char *engine_xmld_eval_expr(XMLDWork *work, XMLDExpr *expr, XMLDAggrTable *aggr_table, int level) {
+char *engine_xmld_eval_expr(XMLDWork *work, XMLDExpr *expr, int level) {
  char *ret;
- if (expr->type == 0) { /* expr is an integer */
-  return itoa(expr->nval);
+ if (expr->type == XMLD_INTEGER) {
+  return itostr(expr->nval, 0);
  } 
- else if (expr->type == 2) { /* expr is a column name */
-  return strchr_replace(strchr_replace(engine_xmld_get_column_value(work, expr->ident), col_sep, col_sep_enc), row_sep, row_sep_enc);  
+ else if (expr->type == XMLD_IDENTIFIER) {
+  if (expr->file == NULL) {
+   expr->file = XMLDList_first(work->files);
+  }
+  if (level != 0 && expr->file->level != level) {
+   return NULL;
+  }
+  return engine_xmld_get_column_value(expr->file, expr->ident);
  }
- else if (expr->type == 4) { /* expr is a string value */
+ else if (expr->type == XMLD_QVAL) {
   ret=(char *) malloc((strlen(expr->qval)+1)*sizeof(char));
   strcpy(ret, expr->qval);
   return ret;
  }
- else if (expr->type == 5) { /* expr is a wildcard */
-  return engine_xmld_get_column_value(work, (expr->wildcard == 0) ? "*" : "@");
+ else if (expr->type == XMLD_WILDCARD) { /* expr is a wildcard */
+  if (expr->file == NULL) {
+   expr->file = XMLDList_first(work->files);
+  }
+  if (level != 0 && expr->file->level != level) {
+   return NULL;
+  }
+  return engine_xmld_get_column_value(expr->file, (expr->wildcard == 0) ? "*" : "@");
  }
- else if (expr->type == 6) {
-  return ftoa(expr->fnval);
+ else if (expr->type == XMLD_FLOAT) {
+  return ftostr(expr->fnval, 0);
  }
  else {
   XMLDExpr *temp_expr=XMLDExpr_create();
@@ -191,9 +203,7 @@ char *engine_xmld_eval_expr(XMLDWork *work, XMLDExpr *expr, XMLDAggrTable *aggr_
 
 /* eval_cond function */
 XMLDBool engine_xmld_eval_cond(XMLDWork *work, XMLDCond *cond, int level) {
- short val;
- char *left_val;
- char *right_val;
+ XMLDBool val;
  if (cond->type == 0) {
   if (cond->op == 7 || cond->op == 8) {
    left_val=engine_xmld_eval_expr(work, cond->left);
@@ -358,26 +368,26 @@ void engine_xmld_simplify_expr(XMLDWork * work, XMLDExpr *expr) {
  * Gets the value of a particular column (attribute/text)
  * relative to the current element.
  */ 
-char *engine_xmld_get_column_value(XMLDWork *work, char *col_name) {
+char *engine_xmld_get_column_value(XMLDFile *file, char *col_name) {
  fpos_t pos;
  int token;
- fgetpos((FILE *) work->res->data_source, &pos);
+ fgetpos((FILE *) file->data, &pos);
  char *ret;
  
  if (strcasecmp(col_name, "(text)") == 0) {
-  if (engine_xmld_locate_text((FILE *) (work->res->data_source))) {
-   ret=engine_xmld_get_text_value((FILE *) (work->res->data_source));
+  if (engine_xmld_locate_text((FILE *) file->data)) {
+   ret=engine_xmld_get_text_value((FILE *) file->data);
   }
   else {
    ret=NULL;
   }
  }
  else if (strcasecmp(col_name, "(tagname)") == 0) {
-  ret=engine_xmld_get_tagname((FILE *) work->res->data_source);
+  ret=engine_xmld_get_tagname((FILE *) file->data);
  }
  else if (strcmp(col_name, "*") == 0) {
-  char *atts=engine_xmld_get_column_value(work, "@");
-  char *text=engine_xmld_get_column_value(work, "(text)");
+  char *atts=engine_xmld_get_column_value(file, "@");
+  char *text=engine_xmld_get_column_value(file, "(text)");
   if (text != NULL) {
    ret=(char *) malloc((strlen(atts)+strlen(text)+2)*sizeof(char));
   }
@@ -388,14 +398,16 @@ char *engine_xmld_get_column_value(XMLDWork *work, char *col_name) {
   if (text != NULL) {
    ret[strlen(atts)]=col_sep;
    strcat(ret, text);
-  } 
+   free(text);
+  }
+  free(atts);
  }
  else if (strcmp(col_name, "@") == 0) {
   ret=(char *) malloc(sizeof(char));
   ret[0]='\0';
   int ret_len=1;
   while (1) {
-   token=dmstrchr((FILE *) work->res->data_source, " >", 2);
+   token=dmstrchr((FILE *) file->data, " >", 2);
    if (token == 1) { /* Attribute not found */
     if (ret_len == 1) {
      free(ret);
@@ -409,8 +421,8 @@ char *engine_xmld_get_column_value(XMLDWork *work, char *col_name) {
     break;
    }
    else if (token == 0) {
-    engine_xmld_discard_curr_att_name((FILE *) work->res->data_source);
-    char *att_value=engine_xmld_get_curr_att_value((FILE *) work->res->data_source);
+    engine_xmld_discard_curr_att_name((FILE *) file->data);
+    char *att_value=engine_xmld_get_curr_att_value((FILE *) file->data);
     ret_len+=strlen(att_value)+1;
     ret=(char *) realloc(ret, (ret_len)*sizeof(char));
     strcat(ret, att_value);
@@ -421,14 +433,14 @@ char *engine_xmld_get_column_value(XMLDWork *work, char *col_name) {
   }
  }
  else {
-  if (engine_xmld_locate_att((FILE *) (work->res->data_source), col_name)) {
-   ret=engine_xmld_get_curr_att_value((FILE *) (work->res->data_source));
+  if (engine_xmld_locate_att((FILE *) file->data, col_name)) {
+   ret=engine_xmld_get_curr_att_value((FILE *) file->data);
   }
   else {
    ret=NULL;
   }
  }
- fsetpos((FILE *) work->res->data_source, &pos);
+ fsetpos((FILE *) file->data, &pos);
  return ret;
 }
 

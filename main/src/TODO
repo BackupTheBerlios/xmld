@@ -550,7 +550,7 @@ esponse_flush. and remove XMLDResponse_flush. (done)
  * twalker (done)
  * different related levels for WHERE when ~ is used in twalker. (done)
  
-* Add "Notes on record sets" to PROTO.html. (done)
+* Add "Record sets" to PROTO.html. (done)
 
 * Fix QUERY.html typos. (done)
 
@@ -558,34 +558,7 @@ esponse_flush. and remove XMLDResponse_flush. (done)
 
 * add down-level up-level to init msg (done)
 
-* Individual expression resolution within twalker:
- 
- * Expression lists are resolved in an expression
- by expression basis. (done)
-
-* Correct aggregate expression resolution:
-  
- * Aggregate expressions are to be evaluated normally
- (done)
- * Association to columns is the only optional step
- after checking for expr->aggr. (done)
- * eval_expr should take a XMLDAggrTable that's passed
- to a function (if any). (done)
- * XMLDResponse_assoc_col_to_aggr should return the selected
- aggregate expression table. (done)
- * XMLDAggrTable should contain a XMLDExpr field to maintain
- last value. (done)
- * Generally, a function whether it's aggregate or
- not, should have access to the work structure, and have
- a third argument to which the aggregate expression table
- is to be passed (NULL if the function is not aggregate).
- (done)
- * do the former filling technique again. (done)
- * XMLDResponse_curr_aggr_table (done)
- * XMLDResponse_next_aggr returns success/failure. (done)
-
-* Typing is now loose within xmld-sql.y, twalker should be
-a hard checker.
+* Individual expression resolution within twalker. (done)
 
 * Fix xmld_socket_accept: Interupted system call on DISC
 ONNECT. (check how of xmld_socket_shutdown).
@@ -627,37 +600,11 @@ message. (done)
 
 * remove get_level completely. (done)
 
-* Aggregate expression maintenance:
- 
- * XMLDAggrTable should contain a XMLDExprList (one expr
- for each aggregate expression). (done)
- * XMLDAggrTable's value field should be a XMLDExprList
-   that's resolved in a per row manner. (done)
- * In each column expr should be copied to a new element
- of value. (in XMLDAggrTable_add_col -- done)
- * add a value field to XMLDAggrTable and initially copy
- the expr to it. (done)
- * XMLDAggrTable_internal_assoc: scans value for aggregate
- function calls and associates each to an element in values.
- (done)
- * each aggregate expression updates its own element in
- the values. (using XMLDList_next/reset if 0 -- ok)
- * XMLDAggrTable_fill should loop through values
-   while resolving. (done)
- * XMLDAggrTable_fill no longer receives a value, the value has
- to be resolved internally, it just needs eval_expr as
- an argument. (done)
- * fix XMLDReponse_fill_curr_aggr. (done)
- * fix twalker's call of XMLDResponse_fill_curr_aggr. (done)
- * re-add eval_aggr_expr. and remove the XMLDAggrTable* arg
- from eval_expr. (done)
- * fix eval_expr calls in twalker. (done)
- * define and implement XMLDAggrTable_internal_assoc. (done)
- * value should _refer_ to elements in aggrs and not just
- be one-to-one corresponding to them.
- 
 * Erase aggregate expression resolution for now.
 (done)
+
+* use "[text]" and "[tagname]" instead of "(text)" and
+"(tagname)" for less confusion and easier parsing.
 
 * Engine-XMLD must be rewritten with consideration of
 [1] availablity of column types [2] access levels.
@@ -751,6 +698,10 @@ specifications.
 system unreadable).
 
 * Handle quotes inside strings in xmld-sql.lex
+
+* we are using snprintf!
+
+* discard_cur_att_name should report if it wasn't an att.
 
 *--------------- Start of The OpenXMLD 0.7.0 part:
 
