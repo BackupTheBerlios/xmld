@@ -416,13 +416,17 @@ useful as something useful.
  * Engine-XMLD (Implement the required functions)
    * format documents must have XMLDFile nested inside the primary
      XMLDFile structure. (done)
-   * Rewrite format_manip functions inside engine_xmld.c
+   * Rewrite format_manip functions inside engine_xmld.c (done)
    * Remove consideration of tag name-specific formatting
-     for performance reasons.
-   * Add the new format functions to engine_list and XMLDEngine.
+     for performance reasons. (done)
+   * Add the new format functions to engine_list and XMLDEngine
+     and remove XMLDWork from them.
  * XMLDResponse_fill_col/XMLDCol_fill might need to fill the
  expr and not the string.
- * wisely remove mime checking from prepare for performance.
+ * wisely remove mime checking from prepare for performance (if possible!).
+
+* Engine functions should never know about the XMLDWork structure,
+  XMLDFile one MUST be enough.
 
 * If the above gets stabilized, remove unused functions
 in Engine-XMLD (done), XMLDResponse [...?].
@@ -500,6 +504,10 @@ Goal: Features with slight fixing.
 
 * Multiple query parsers support and on-the-fly query
 parser switching.
+
+* Replace the internal format documents with something
+  standard -- DTD or Schema ?
+  * Make abstrace APIs for both.
 
 * Check if it's possible to use a list of XMLDExpr * and
 XMLDCond* in xmld-sql.y in order to avoid copies.

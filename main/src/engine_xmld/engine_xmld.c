@@ -93,9 +93,9 @@ XMLDStatus engine_xmld_load_format_file(XMLDFile *file, char *name, XMLDBool ex)
 } 
 
 /* cleanup function */
-void engine_xmld_cleanup(XMLDWork *work, XMLDFile *file) {
+void engine_xmld_cleanup(XMLDFile *file) {
  if (file->store != NULL) {
-  engine_Xmld_unload_format_file(file);
+  engine_xmld_unload_format_file(file);
  }
  fmanager_unlock_fd((FILE *) file->data);
  fclose((FILE *) file->data);
@@ -118,8 +118,8 @@ void engine_xmld_destroy() {
  * XMLD_WALK_END : end of document
  * XMLD_WALK_DOWN: deeper by one
  */ 
-int engine_xmld_walk(XMLDWork *work, XMLDFile *file) {
- short token;
+int engine_xmld_walk(XMLDFile *file) {
+ int token;
  char buf;
  char *tokens[2]={"<", "/>"};
   
@@ -162,7 +162,55 @@ char *engine_xmld_get_attribute(XMLDFile *file, char *attribute) {
  }
 }
 
+char *_get_attribute_format(XMLDFile *file, char *attribute) {
+ int ret = engine_xmld_walk(file->store);
+ while (file->store->level != file->level && ret != XMLD_WALK_END) {
+  ret = engine_xmld_walk(file->store);
+ }
+ char *format = engine_xmld_get_attribute(file->store, attribute);
+ return format;
+}
+
+int _get_format_length(char *format) {
+ char *stroke=strchr(format, '|');
+ if (stroke == NULL) {
+  return NULL;
+ }
+ *stroke='\0';
+ int ret;
+ sscanf(format, "%d", &ret);
+ return ret;
+}
+
+char *_get_format_type(char *format) {
+ char *stroke=strchr(format, '|');
+ if (stroke == NULL) {
+  return NULL;
+ }
+ stroke++;
+ char *ret=(char *) malloc((strlen(stroke)+1) * sizeof(char));
+ strcpy(ret, stroke);
+ return ret;
+}
+
 char *engine_xmld_get_attribute_type(XMLDFile *file, char *attribute) {
+ char *format = _get_attribute_format(file, attribute);
+ if (format != NULL) {
+  return _get_format_type(format);
+ }
+ else {
+  return NULL;
+ }
+}
+
+int engine_xmld_get_attribute_length(XMLDFile *file, char *attribute) {
+ char *format = _get_attribute_format(file, attribute);
+ if (format != NULL) {
+  return _get_format_length(format);
+ }
+ else {
+  return NULL;
+ }
 }
 
 char *engine_xmld_get_text(XMLDFile *file) {
@@ -177,7 +225,33 @@ char *engine_xmld_get_text(XMLDFile *file) {
  } 
 }
 
+char *_get_text_format(XMLDFile *file) {
+ int ret = engine_xmld_walk(file->store);
+ while (file->store->level != file->level && ret != XMLD_WALK_END) {
+  ret = engine_xmld_walk(file->store);
+ }
+ char *format = engine_xmld_get_text(file->store);
+ return format;
+}
+
 char *engine_xmld_get_text_type(XMLDFile *file) {
+ char *format = _get_text_format(file);
+ if (format != NULL) {
+  return _get_format_type(format);
+ }
+ else {
+  return NULL;
+ }
+}
+
+int engine_xmld_get_text_length(XMLDFile *file) {
+ char *format = _get_text_format(file);
+ if (format != NULL) {
+  return _get_format_length(format);
+ }
+ else {
+  return NULL;
+ }
 }
 
 char *engine_xmld_get_tagname(XMLDFile *file) {
@@ -210,6 +284,13 @@ char *engine_xmld_get_curr_attribute_type(XMLDFile *file) {
  }
  char *att = engine_xmld_get_curr_attribute_name(XMLDFile *file);
  return engine_xmld_get_attribute_type(file, att);
+}
+
+int engine_xmld_get_curr_attribute_length(XMLDFile *file) {
+ char *att_name = engine_xmld_get_curr_attribute_name(file);
+ int len = engine_xmld_get_attribute_length(file, att_name);
+ free(att_name);
+ return len;
 }
 
 char *engine_xmld_get_curr_attribute_name(XMLDFile *file) {
