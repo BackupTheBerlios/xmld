@@ -56,7 +56,7 @@ XMLDStatus somanager_init() {
    return XMLD_FAILURE;
   }
   printf("\t* Listening port %d: %d\n", t+1, ports[t]);
-  s = mtasker_handle(somanager_handle, (void *) (fds+t), fds[t]);
+  s = mtasker_handle(somanager_handle, (void *) &t, fds[t]);
   if (s == XMLD_FAILURE) {
    perror("mtasker_handle");
    return XMLD_FAILURE;
@@ -75,12 +75,12 @@ XMLDStatus somanager_shutdown() {
  return XMLD_SUCCESS;
 }
 
-void somanager_handle(void *sockfd) {
+void somanager_handle(void *sockindex) {
  int s;
 #ifdef MULTI_PROC_MTASKER
  s = xmld_socket_listen(passed_fd);
 #else
- s = xmld_socket_listen(*((int *) sockfd));
+ s = xmld_socket_listen(fds[*((int *) sockindex)]);
 #endif /* MULTI_PROC_MTASKER */
  
  if (s == -1) {
@@ -92,7 +92,7 @@ void somanager_handle(void *sockfd) {
 #ifdef MULTI_PROC_MTASKER
   s = xmld_socket_accept(passed_fd);
 #else
-  s = xmld_socket_accept(*((int *) sockfd));
+  s = xmld_socket_accept(fds[*((int *) sockfd)]);
 #endif /* MULTI_PROC_MTASKER */
 
   if (s == -1) {
@@ -100,8 +100,11 @@ void somanager_handle(void *sockfd) {
    continue;
   }
   
+  XMLDWork work;
   XMLDConnection conn;
-  conn.fd=s;
-  mtasker_handle(qp_handle, (void *) &conn, s);
+  work.conn = &conn;
+  work.conn->fd = s;
+  work.interface = cfg_get_interface(ports[*((int *) sockfd)]);
+  mtasker_handle(qp_handle, (void *) &work, s);
  } 
 }

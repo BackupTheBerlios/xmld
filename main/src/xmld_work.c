@@ -22,6 +22,7 @@ XMLDWork *XMLDWork_create() {
  work->resp=NULL;
  work->files=NULL;
  work->conn=NULL;
+ work->interface=NULL;
  return work;
 }
 
@@ -44,6 +45,7 @@ void XMLDWork_free_content(void *work) {
  XMLDRequest_free(((XMLDWork *) work)->req);
  XMLDList_free(((XMLDWork *) work)->files);
  XMLDConnection_free(((XMLDWork *) work)->conn);
+ XMLDInterface_free(((XMLDWork *) work)->interface);
  XMLDResponse_free(((XMLDWork *) work)->resp); 
 }
 
@@ -68,5 +70,6 @@ XMLDWork *XMLDWorkList_add(XMLDWorkList *list) {
  work->resp=NULL;
  work->files=NULL;
  work->conn=NULL;
+ work->interface=NULL;
  return work;
 }

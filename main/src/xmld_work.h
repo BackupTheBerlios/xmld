@@ -18,6 +18,7 @@ struct XMLDWork {
  XMLDRequest *req;
  XMLDResponse *resp;
  XMLDConnection *conn;
+ XMLDInterface *interface;
  XMLDFileList *files;
 };
 

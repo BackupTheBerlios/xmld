@@ -144,13 +144,17 @@ order to be able to resolve wildcards correctly. (done)
  * Support for multiple query parsers and switching of parsers
    on the fly:
    * XMLDInterface structure. (done)
-   * Stabilize the new Interface model.
-   * Create the interface_list part.
-   * Should each interface has its own listening port ?
-     * somanager should check the interface list for ports.
-     * xmld.conf should contain that as well.
-     * XMLDWork should contain a field containing the desired
-       interface to use.
+   * Stabilize the new Interface model. (done)
+   * Create the interface_list part. (done)
+   * Should each interface have its own listening port ?
+     * somanager should create the XMLDWork structure itself,
+       check for the interface according to the port, and
+       assign it to XMLDWork's interface field. (done)
+     * xmld.conf should contain that as well. (done)
+     * Implement cfg_get_interface.
+     * qp.c should use the given void pointer differently.
+     * XMLDWork should contain a field containing the interface 
+       to use.
    * Put XMLD-SQL parser into a separate directory.
    * resptrans, twalker [... ?] must be put inside the interface.
    * data type names in xmlddef should be put inside the interface.   
@@ -160,8 +164,11 @@ order to be able to resolve wildcards correctly. (done)
      anymore and should play with the interfaces just after authe-
      ntication.
    * Interfaces can handle new connections and disconnections.
+   * init should initialize/shutdown the interface list.
+   * func_list is interface specific - remove it.
    * [...]
  
+* Erase redundancy in somanager.num_listeners.
 * Try to use generic naming in engine functions. (with specific
   engine correspondants ?)
 
