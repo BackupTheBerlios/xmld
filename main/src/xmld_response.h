@@ -21,21 +21,25 @@ struct XMLDResponse {
 
 typedef struct XMLDResponse XMLDResponse;
 
+/* Rows (and columns) manipulation functions */
 XMLDResponse *XMLDResponse_create(void);
 void XMLDResponse_add_row(XMLDResponse *);
-void XMLDResponse_fill_col(XMLDResponse *, char *); /*
-						     * Note the given string isn't copied.
-						     */
 void XMLDResponse_add_col(XMLDResponse *);
-void XMLDResponse_add_aggr(XMLDResponse *, XMLDExpr *);
-void XMLDResponse_aggr_reset(XMLDResponse *); /* Resets _curr_table_ */
-XMLDExpr *XMLDResponse_curr_aggr(XMLDResponse *); /* return the current aggr expr */
-void XMLDResponse_fill_aggr(XMLDResponse *, char *);
-void XMLDResponse_aggr_next(XMLDResponse *);
+void XMLDResponse_fill_col(XMLDResponse *, char *);
+
+/* Aggregate expression tables manipulation functions */
+void XMLDResponse_assoc_col_to_aggr(XMLDResponse *, XMLDExpr *, XMLDCol *);
+XMLDAggrTable *XMLDResponse_search_aggr_tables_by_expr(XMLDResponse *, XMLDExpr *);
+void XMLDResponse_reset_aggr(XMLDResponse *);
+XMLDExpr *XMLDResponse_curr_aggr_expr(XMLDResponse *);
+void XMLDResponse_fill_curr_aggr(XMLDResponse *, char *);
+void XMLDResponse_next_aggr(XMLDResponse *);
+void XMLDResponse_free(XMLDResponse *);
+void XMLDResponse_free_content(void *);
 
 /* List functions */
 
 XMLDList *XMLDResoponse_create_list(void);
-void XMLDResponse_add_to_list(XMLDList *);
+XMLDResponse *XMLDResponse_add_to_list(XMLDList *);
 
 #endif /* HAVE_XMLD_RESPONSE_H */
