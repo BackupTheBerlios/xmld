@@ -6,6 +6,12 @@ The XMLD's socket layer:
  is part without worrying about the platform on which the XMLD is
  run.
 
+Source Files:
+-------------
+ 
+ xmld_sockets.c
+ xmld_sockets.h
+ 
 API:
 ----
 int xmld_socket_create(void);

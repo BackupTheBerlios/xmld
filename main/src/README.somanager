@@ -5,6 +5,12 @@ The XMLD's socket manager:
  the client sockets to the socket group being checked by
  the socket selector.
 
+Source Files:
+-------------
+ 
+ somanager.c
+ somanager.h
+ 
 API:
 ----
 xmld_status_t somanager_init(void);

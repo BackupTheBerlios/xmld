@@ -5,6 +5,12 @@ The XMLD's Socket Selector:
  for each client socket). This is normally achieved by
  using the function select().
 
+Source Files:
+-------------
+ 
+ sosel.c
+ sosel.h
+
 API:
 ----
  struct XMLDConnection *conn_table;
