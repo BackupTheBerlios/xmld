@@ -95,7 +95,7 @@ Expression lists:
 An expression list is a group of expressions separated by
 commas:
 
-expr1, expr2, expr3 ...
+<expression>, <expression>, <expression> ...
 
 Those are used in places like the select statement:
 
@@ -107,7 +107,7 @@ XML is multi-levelled:
 
 <root>
  <level1>
-  <level2>
+  <level2/>
  </level1>
 </root>
 
@@ -121,16 +121,15 @@ this should get age, name and gender column values
 from all the single-level table, that is meaningful in
 such context, but for XML this should normally mean trial
 to retrieve age, name and gender attributes from all the
-levels of the document, and this is probably not the 
-wanted behaviour. XMLD-SQL offers a per-level specification
+levels of the document--this is probably not the wanted 
+behaviour. XMLD-SQL offers a per-level specification
 of the columns to be retrieved/updated/checked/whatever
 using the ":" operator, which is going to be further
 explained later:
 
 Level-sensitive expression lists:
 ---------------------------------
-Here's an example from the implication which the name carries
-with it:
+Here's an example:
 
 name, age, gender:type, color, size
 
@@ -203,7 +202,7 @@ Conditional negation:
 ---------------------
 To negate a condition:
 
- NOT expr <condition> expr
+NOT <expression> <condition> <expression>
 
 Conditional grouping:
 ---------------------
@@ -267,7 +266,7 @@ name, age, gender
 
 will evaluate to nothing in level 2.
 
-In XML-SQL, the '~' prefix operator is used to apply the 
+In XMLD-SQL, the '~' prefix operator is used to apply the 
 semantics of the language construct just after it to
 all the deeper levels, that is:
 
@@ -277,7 +276,7 @@ will evaluate to:
 
 name, age, gender
 
-in level 2.
+in level 2 and above.
 
 Note: the '~' operator can only be used in the last mentioned
 level in a level-sensitive language construct.
@@ -295,10 +294,10 @@ Expression lists: Don't retrieve anything from deeper levels
 Table name representation:
 --------------------------
 
-XML files are not database tables, the are files that have extensions
-that contain dots, the reason for which these files names when mentioned
+XML files are not database tables, they are files that have extensions
+that contain dots, the reason for which these files' names when mentioned
 inside a query have to be quoted for the dots and other special characters
-not to be mixed ith other uses for them inside the query:
+not to be mixed with other uses of them inside the query:
 
 "subdirectory1/file1.xml"
 "file2.xml"
@@ -350,7 +349,7 @@ The SELECT clause:
 ------------------
 
 SELECT <level-sensitive expression list> FROM <file name>
-SELECT <level-sensitive expression list> FROM <file name> FILE WHERE <level sensitive condition list>
+SELECT <level-sensitive expression list> FROM <file name> WHERE <level-sensitive condition list>
 
 The UPDATE clause:
 ------------------
@@ -371,7 +370,7 @@ The INSERT clause:
 INSERT INTO <file name> [( <level-sensitive column names list> )] VALUES ( <level-sensitive 
 expression list> )
 
-INSERT INTO FILE [( <level-sensitive column names list> )] VALUES 
+INSERT INTO <file name> [( <level-sensitive column names list> )] VALUES 
 ( <level-sensitive expression list> ) WHERE <level-sensitive condition list>
 
 -- to be continued

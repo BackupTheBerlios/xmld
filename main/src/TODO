@@ -552,7 +552,7 @@ esponse_flush. and remove XMLDResponse_flush. (done)
  
 * Add "Notes on record sets" to PROTO.html. (done)
 
-* Fix QUERY.html typos.
+* Fix QUERY.html typos. (done)
 
 * Implement read buffering in dutils.
 
