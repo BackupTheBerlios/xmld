@@ -33,5 +33,6 @@ void xmldclient_print_record_set(char *);
 void xmldclient_print_error(char *);
 void xmldclient_print_server_err_msg(char *);
 void xmldclient_get_port(int *);
+void xmldclient_free_info(struct conn_info *);
 
 #endif /* __XMLDCLIENT_H */

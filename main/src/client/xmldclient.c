@@ -25,6 +25,10 @@ int main(int argc, char **argv) {
  short port=0;
  int fd, status, curr_char=0;
  struct conn_info info;
+ info.col_sep_enc=NULL;
+ info.row_sep_enc=NULL;
+ info.down_level_enc=NULL;
+ info.up_level_enc=NULL;
  char *curr_msg;
  char *query=NULL;
 
@@ -60,6 +64,7 @@ int main(int argc, char **argv) {
 
   status=xmldclient_auth(fd);
   if (status == XMLD_FAILURE) {
+   xmldclient_free_info(&info);
    xmldclient_print_err("Unable to authenticate user");
    continue;
   }
@@ -68,9 +73,9 @@ int main(int argc, char **argv) {
    printf(PROMPT);
    char curr=getchar();
    while (curr != ';') {
-    query=(char *) realloc(query, (curr_char+1) * sizeof(char));
-    query[curr_char]=curr;
-    curr_char++;
+    query=(char *) realloc(query, (curr_char + 2) * sizeof(char));
+    query[curr_char++]=curr;
+    query[curr_char]='\0';
     curr=getchar();
    }
    status=protoimpl_write_sequence(fd, query, 1);
@@ -94,6 +99,7 @@ int main(int argc, char **argv) {
    free(query);
    curr_char=0;
   } 
+  xmldclient_free_info(&info);
  }
  return 0;
 }
@@ -103,6 +109,102 @@ XMLDStatus xmldclient_auth(int fd) {
 }
 
 XMLDStatus xmldclient_process_info_msg(char *msg, struct conn_info *info) {
+ char *curr=msg;
+ char *token=NULL;
+ int tok_curr=0;
+ int num_init=0;
+ char **fill_str=NULL;
+ char *fill_char=NULL;
+ while (*curr != '\0') {
+  if (*curr == ' ') {
+   if (token == NULL) {
+    xmldclient_free_info(info);
+    return XMLD_FAILURE;
+   }
+   else if (strcmp(token, COL_SEP_FIELD) == 0) {
+    fill_char=$(info->col_sep);
+    fill_str=NULL;
+   }
+   else if (strcmp(token, COL_SEP_ENC_FIELD) == 0) {
+    fill_char=NULL;
+    fill_str=&(info->col_sep_enc);
+   }
+   else if (strcmp(token, ROW_SEP_FIELD) == 0) {
+    fill_char=$(info->row_sep);
+    fill_str=NULL;
+   }
+   else if (strcmp(token, ROW_SEP_ENC_FIELD) == 0) {
+    fill_char=NULL;
+    fill_str=&(info->row_sep_enc);
+   }
+   else if (strcmp(token, DOWN_LEVEL_FIELD) == 0) {
+    fill_char=$(info->down_level);
+    fill_str=NULL;
+   }
+   else if (strcmp(token, DOWN_LEVEL_ENC_FIELD) == 0) {
+    fill_char=NULL;
+    fill_str=&(info->down_level_enc);
+   }
+   else if (strcmp(token, UP_LEVEL_FIELD) == 0) {
+    fill_char=$(info->up_level);
+    fill_str=NULL;
+   }
+   else if (strcmp(token, UP_LEVEL_ENC_FIELD) == 0) {
+    fill_char=NULL;
+    fill_str=&(info->up_level_enc);
+   }
+   else {
+    free(token);
+    token=NULL;
+    tok_curr=0;
+    xmldclient_free_info(info);
+    return XMLD_FAILURE;
+   }
+   free(token);
+   token=NULL;
+   tok_curr=0;
+  }
+  else if (*curr == '\n') {
+   if (token == NULL) {
+    xmldclient_free_info(info);
+    return XMLD_FAILURE;
+   }
+   else {
+    if (fill_str != NULL) {
+     *fill_str=(char *) malloc((strlen(token)+1)*sizeof(char));
+     strcpy(*fill_str, token);
+    }
+    else if (fill_char != NULL) {
+     sscanf(token, "%c", *fill_char);
+    }
+    else {
+     free(token);
+     token=NULL;
+     tok_curr=0;
+     xmldclient_free_info(info);
+     return XMLD_FAILURE;
+    }
+    free(token);
+    token=NULL;
+    tok_curr=0;
+   }
+   num_init++;
+  }
+  else {
+   token=(char *) realloc(token, (tok_curr+2) * sizeof(char));
+   token[tok_curr++]=*curr;
+   token[tok_curr]='\0';
+  }
+  curr++;
+ }
+ cfree(token);
+ if (num_init < INIT_NUM_FIELDS) {
+  xmldclient_free_info(info);
+  return XMLD_FAILURE;
+ }
+ else {
+  return XMLD_SUCCESS;
+ } 
 }
 
 void xmldclient_get_port(int *port_ptr) {
@@ -116,8 +218,27 @@ void xmldclient_print_err(char *err) {
 }
 
 void xmldclient_print_server_err_msg(char *msg) {
+ char p[2];
+ p[0]=strchr(msg, ' ');
+ p[0]++;
+ p[1]=strchr(p[0], "\n");
+ p[1]='\0';
+ printf("ERROR %s: ", p[0]);
+ p[1]='\n';
+ p[0]=strchr(p[1], ' ');
+ p[0]++;
+ p[1]=strchr(p[0], '\n');
+ p[1]='\0';
+ printf("%s", p[0]);
+ p[1]='\n';
 }
 
 void xmldclient_print_record_set(char *rs) {
 }
 
+void xmldclient_free_info(struct conn_info *info) {
+ cfree(info->col_sep_enc);
+ cfree(info->row_sep_enc);
+ cfree(info->down_level_enc);
+ cfree(info->up_level_enc);
+}

@@ -667,9 +667,7 @@ statements that must not be mixed with normal conditions. (done)
 * upload QUERY and PROTO to the site, to make sure that all
 editions are put online. (done)
 
-* A make script:
- * make (done)
- * make client
+* A make script (done)
 
 * A capability-demonstrating client in src/client.
 
@@ -687,7 +685,14 @@ listening to under the PID.
 * handle SIGINT in client and send disconnet to the
 server on receiving it.
 
+* create auth.xml and add a single user to it.
+
 * fix 
+
+* a make script for the client or a 'client' target
+in the old script.
+
+* modify INSTALL.
 --------------- Start of The OpenXMLD 0.6.0 part:
 
 Goal: Clean it up more and PUMP a lot of features in!
@@ -785,7 +790,6 @@ system unreadable).
 and xmld_errno must be set appropriately.
 
 * handle special character decoding in the client.
-
 *--------------- Start of the OpenXMLD 0.7.0 part:
 
 Goal: not set yet

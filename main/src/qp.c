@@ -40,8 +40,8 @@ void qp_handle(void *conn) {
 #endif
  
  /* writing the init msg */
- char *arg_carry[8]={QP_COL_SEP_FIELD, QP_COL_SEP_ENC_FIELD, QP_ROW_SEP_FIELD, QP_ROW_SEP_ENC_FIELD, QP_DOWN_LEVEL_FIELD
-                     , QP_DOWN_LEVEL_ENC_FIELD, QP_UP_LEVEL_FIELD, QP_UP_LEVEL_ENC_FIELD};
+ char *arg_carry[8]={COL_SEP_FIELD, COL_SEP_ENC_FIELD, ROW_SEP_FIELD, ROW_SEP_ENC_FIELD, DOWN_LEVEL_FIELD
+                     , DOWN_LEVEL_ENC_FIELD, UP_LEVEL_FIELD, UP_LEVEL_ENC_FIELD};
  char *val_carry[8];
  
  /* NUL attachment to the end of single characters */
