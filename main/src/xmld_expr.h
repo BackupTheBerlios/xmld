@@ -33,7 +33,7 @@ struct XMLDExpr {
 	      *   0 = scalar
 	      */
  
- int nval; /* type 0 */
+ long nval; /* type 0 */
  
  /*--------------------*/
  struct XMLDExpr *left; /* type 1:
