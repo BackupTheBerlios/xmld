@@ -18,8 +18,8 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <stdio.h>
-#include "cfg.h"
-#include "mtasker.h"
+#include "../cfg.h"
+#include "ptasker.h"
 
 /*
  * FIXME: secure mtasker_handle_idle (SIGUSR1)
