@@ -753,7 +753,7 @@ useful as something useful.
  * Take operation, special identifier, wildcard type macros
  out of XMLDExpr and put them in xmld-sql.h because
  they are query parser specific. (done)
- * twalker (Implement twalker_simplify_expr)
+ * twalker (Implement twalker_simplify_expr -- done)
   * Notes:
    * lists must be returned without resolution.
    * column names must be put in the ident field after 
@@ -762,11 +762,12 @@ useful as something useful.
    of xmld_errno to something useful.
    * NULL columns are indiciated by XMLD_QVAL return
    values with NULL values of the qval field.
+
  * XMLDEngine (Modify according to requirements
  of twalker_simplify_expr)
  * engine_list (Modify according to XMLDEngine changes)
  * XMLDExpr (Implement XMLDExpr_to_string)
- * twalker (call twalker_simplify_expr is is_complex returns
+ * twalker (call twalker_simplify_expr if is_complex returns
  true)
  * twalker (twalker_handle must resolve XMLD_LIST recursively
  using twalker_simplify_expr)
@@ -837,6 +838,8 @@ segfaults when called two times and I don't know why.
 
 * fix interrupted system call on server side on reciving
 of DISCONNECT and correction of a wrong pass.
+
+* Should we have a openxmld user with separate previliges.
 
 *--------------- Start of the OpenXMLD 0.7.0 part:
 

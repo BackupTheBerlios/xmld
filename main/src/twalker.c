@@ -369,6 +369,24 @@ XMLDStatus twalker_handle(XMLDWork *work) {
  */
 XMLDExpr *twalker_simplify_expr(XMLDExpr *expr, XMLDWork *work, int level) {
  XMLDExpr *ret;
+ if (expr->type == XMLD_IDENTIFIER || expr->type == XMLD_SPECIAL_IDENTIFIER
+     || expr->type == XMLD_WILDCARD) {
+  if (expr->file == NULL) {
+   expr->file = (XMLDFile *) XMLDList_first(work->files);
+  }
+  else if (expr->file->data == NULL) {
+   XMLDFile *curr_file=expr->file;
+   expr->file = XMLDFileList_search_by_name(work->files, expr->file->name);
+   XMLDFile_free(curr_file);
+  }
+  if (level != 0 && expr->file->level != level) {
+   ret = XMLDExpr_create();
+   ret->type = XMLD_QVAL;
+   ret->qval=NULL;
+   return ret;
+  }
+ }
+
  xmld_errno = XMLD_ENOERROR;
  if (expr->type == XMLD_OPERATION) {
   XMLDExpr *left, *right;
@@ -660,78 +678,63 @@ XMLDExpr *twalker_simplify_expr(XMLDExpr *expr, XMLDWork *work, int level) {
   }	  
  }
  else if (expr->type == XMLD_IDENTIFIER) {
-  if (expr->file == NULL) {
-   expr->file = (XMLDFile *) XMLDList_first(work->files);
-  }
-  else if (expr->file->data == NULL) {
-   XMLDFile *curr_file=expr->file;
-   expr->file = XMLDFileList_search_by_name(work->files, expr->file->name);
-   XMLDFile_free(curr_file);
-  }
-  
-  if (level != 0 && expr->file->level != level) {
-   ret = XMLDExpr_create();
-   ret->type = XMLD_QVAL;
-   ret->qval=NULL;
-   return ret;
-  }
-  
-  if (expr->file->store == NULL) {
-   ret=XMLDExpr_create();
-   ret->type = XMLD_QVAL;
-   ret->qval=engine_xmld_get_column_value(expr->file, expr->ident);
-   return ret;
-  }
-  
-  fpos_t pos;
-  fgetpos((FILE *) expr->file->data, &pos);
-  char *tagname=engine_xmld_get_tagname((FILE *) expr->file->data);
-  fsetpos((FILE *) expr->file->data, &pos);
-  char *type=engine_xmld_get_element_att_type((FILE *) expr->file->store, level, tagname, expr->ident);
-  free(tagname);
-  if (type == NULL) {
-   ret=XMLDExpr_create();
-   ret->type = XMLD_QVAL;
-   ret->qval=engine_xmld_get_column_value(expr->file, expr->ident);
-  }
-  else if (strcasecmp(type, XMLD_TYPE_CHAR) == 0) {
-   ret=XMLDExpr_create();
-   ret->type = XMLD_QVAL;
-   ret->qval=engine_xmld_get_column_value(expr->file, expr->ident);
-  }
-  else if (strcasecmp(type, XMLD_TYPE_INT) == 0) {
-   ret=XMLDExpr_create();
-   ret->type = XMLD_INTEGER;
-   ret->qval=engine_xmld_get_column_value(expr->file, expr->ident);
-   ret->nval=atoi(ret->qval);
-   free(ret->qval);
-   ret->qval=NULL;
-  }
-  else if (strcasecmp(type, XMLD_TYPE_FLOAT) == 0) {
-   ret=XMLDExpr_create();
-   ret->type = XMLD_FLOAT;
-   ret->qval=engine_xmld_get_column_value(expr->file, expr->ident);
-   ret->fnval=atof(ret->qval);
-   free(ret->qval);
-   ret->qval=NULL;
-  }
-  else {
-   ret=XMLDExpr_create();
-   ret->type = XMLD_QVAL;
-   ret->qval=engine_xmld_get_column_value(expr->file, expr->ident);
-  }
+  char *type = (*(expr->file->engine->get_attribute_type)) (expr->file, expr->ident);
+  ret = XMLDExpr_create();
+  ret->ident = (char *) malloc((strlen(expr->ident)+1) * sizeof(char));
+  strcpy(ret->ident, expr->ident);
+  ret->qval=(*(expr->file->engine->get_attribute)) (expr->file, expr->ident);
+  XMLDExpr_apply_type(ret, type);
   free(type);
  }
+ else if (expr->type == XMLD_SPECIAL_IDENTIFIER) {
+  if (expr->sident == XMLD_SIDENT_TEXT) {
+   char *type = (*(expr->file->engine->get_text_type)) (expr->file);
+   ret = XMLDExpr_create();
+   ret->sident = XMLD_SIDENT_TEXT;
+   ret->qval=(*(expr->file->engine->get_text)) (expr->file);
+   XMLDExpr_apply_type(ret, type);
+   free(type);
+  }
+  else if (expr->sident == XMLD_SIDENT_TAGNAME) {
+   ret = XMLDExpr_create();
+   ret->type = XMLD_QVAL;
+   ret->sident = XMLD_SIDENT_TAGNAME;
+   ret->qval=(*(expr->file->engine->get_tagname)) (expr->file);
+  }
+ }
  else if (expr->type == XMLD_FUNCTION) {
-  ret=(*(expr->func->func)) (expr->arg_list, expr->file);
+   ret=(*(expr->func->func)) (expr->arg_list, expr->file);
  }
  else if (expr->type == XMLD_WILDCARD) {
-  if (expr->file == NULL) {
-   expr->file = (XMLDFile *) XMLDList_first(work->files);
+  if (expr->wildcard == XMLD_WILDCARD_ALL) {
+   XMLDExpr *tmp = XMLDExpr_create();
+   XMLDExpr_copy(expr, tmp);
+   tmp->wildcard = XMLD_WILDCARD_ATTS;
+   ret = twalker_simplify_expr(tmp, work, level);
+   free(tmp);
+   XMLDExpr *text = XMLDExpr_create();
+   text->type = XMLD_SPECIAL_IDENTIFIER;
+   text->sident = XMLD_SIDENT_TEXT;
+   tmp = twalker_simplify_expr(text, work, level);
+   XMLDExpr_free(text);
+   text = XMLDExprList_add(ret->exprs);
+   XMLDExpr_copy(tmp, text);
+   free(tmp);
   }
-  ret=XMLDExpr_create();
-  ret->type=XMLD_QVAL;
-  ret->qval=engine_xmld_get_column_value(expr->file, (expr->wildcard == XMLD_WILDCARD_ALL) ? "*" : "@");
+  else if (expr->wildcard == XMLD_WILDCARD_ATTS) {
+   ret = XMLDExpr_create();
+   ret->type = XMLD_LIST;
+   ret->exprs = XMLDExprList_create();   
+   XMLDExpr *tmp;
+   while ((*(expr->file->engine->next_attribute)) (expr->file) == XMLD_TRUE) {
+    char *type = (*(expr->file->engine->get_curr_attribute_type)) (expr->file);
+    tmp = XMLDExprList_add(ret->exprs);
+    tmp->ident = (*(expr->file->engine->get_curr_attribute_name)) (expr->file);
+    tmp->qval = (*(expr->file->engine->get_curr_attribute_value)) (expr->file);
+    XMLDExpr_apply_type(tmp, type);
+    free(type);
+   }
+  }
  }
  return ret;
 }

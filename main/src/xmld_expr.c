@@ -133,6 +133,31 @@ XMLDBool XMLDExpr_is_complex(XMLDExpr *expr) {
 }
 
 /*
+ * Read the given type and transform the given no-type string 
+ * expression to it.
+ */ 
+void XMLDExpr_apply_type(XMLDExpr *expr, char *type) {
+ if (type == NULL || strcasecmp(type, XMLD_TYPE_CHAR) == 0) {
+  expr->type = XMLD_QVAL;
+ }
+ else if (strcasecmp(type, XMLD_TYPE_INT) == 0) {
+  expr->type = XMLD_INTEGER;
+  expr->nval=atoi(expr->qval);
+  free(expr->qval);
+  expr->qval=NULL;
+ }
+ else if (strcasecmp(type, XMLD_TYPE_FLOAT) == 0) {
+  expr->type = XMLD_FLOAT;
+  expr->fnval=atof(expr->qval);
+  free(expr->qval);
+  expr->qval=NULL;
+ }
+ else {
+  expr->type = XMLD_QVAL;
+ }
+}
+
+/*
  * : Create a list of expressions.
  * returns: the newly created expression list.
  */

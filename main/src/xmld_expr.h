@@ -70,6 +70,7 @@ struct XMLDExpr {
 XMLDExpr *XMLDExpr_create(void);
 void XMLDExpr_copy(XMLDExpr *, XMLDExpr *);
 XMLDBool XMLDExpr_is_complex(XMLDExpr *);
+void XMLDExpr_apply_type(XMLDExpr *, char *);
 void XMLDExpr_free(XMLDExpr *);
 void XMLDExpr_free_content(void *);
 
