@@ -49,19 +49,21 @@ void *XMLDList_add(XMLDList *list) {
 }
 
 /*
- * : Points the internal list pointer to the first element in the list.
- * list: the list whose pointer is to be modified.
+ * : Gets the first element in the list.
+ * list: the list from which to get the first element.
+ * returns: a poiner to the first element in list.
  */
-void XMLDList_first(XMLDList *list) {
- list->curr_element = list->content;
+void *XMLDList_first(XMLDList *list) {
+ return list->content;
 }
 
 /*
- * : Points the internal list pointer to the last elementin the list.
- * list: the list whose pointer is to be modified.
+ * : Gets the last element in the list.
+ * list: the list from which to get the last element.
+ * returns: a poiner to the last element in list.
  */
-void XMLDList_last(XMLDList *list) {
- list->curr_element = list->last_element;
+void *XMLDList_last(XMLDList *list) {
+ return list->last_element;
 }
 
 /*
@@ -109,4 +111,13 @@ short XMLDList_prev(XMLDList *list) {
  */
 void *XMLDList_curr(XMLDList *list) {
  return list->curr_element;
+}
+
+/*
+ * : Resets the internal list pointer, so that XMLDList_next selects the 
+ * first element in the list and XMLDList_prev selects the last one.
+ * list: the list to be reset.
+ */
+void XMLDList_reset(XMLDList *list) {
+ list->curr_element=0;
 }
