@@ -105,7 +105,22 @@ Foundation:
 
 * Generic Data Storage API -- to remove database server-specific
   fields from different structures.
+   * XMLDAssoc -- Thread-safe associative array implementation:
+     * Numeric and String index support.
+     * No internal iterators.
+     * Automatic reusage of already allocated memory segments.
+     * Automatic length calculation.
+   * xmld_assoc.h
+   * xmld_assoc.c
 
+* Replace XMLDList with XMLDAssoc in all the code.
+
+* For all generic structures, use a signle XMLDAssoc field
+  instead of the multiple void* fields.
+   * XMLDWork
+   * XMLDFile
+   * XMLDInterface ?
+   
 * Support for re-parsing of the configuration on the fly.
   * Signal each of the child processes so it reparses the configuration for
     itself.
@@ -147,10 +162,14 @@ Foundation:
 
 * Separate make files for EchoServer and ptasker.
 
+* Rename to OpenDaemon.
+
+* Remove old documents from the docs page.
+
 Issues:
 -------
 
-* Encode user passwords.
+* authman must encode/decode user passwords.
 
 * rename XMLDFile.element_pos to XMLDFile.node_pos (done).
 
@@ -171,15 +190,10 @@ Goal: Strength.
 * cleaner, more portable sockets API.
 
 * Thread-safe core.
-  * XMLDList internal iterators are not thread safe.
-  * XMLD*List_functions depend on persistence of the internal
-    iterator which isn't guaranteed.
+  * XMLDAssoc semaphore/mutex usage.
 
-* Implement a multi-threaded multi-
-tasker (Macro: USE_TTASKER).
+* Implement a multi-threaded multi-tasker (Macro: USE_TTASKER).
 
-* Re-implement fmanager using a flock-independent way
-once MULTI_THREAD_MTASKER is on.
+* Re-implement fmanager using a flock-independent way once MULTI_THREAD_MTASKER is on.
 
-* Implement a path translator that modifies the path
-according to the OS.
+* Implement a path translation API that modifies the path according to the OS.
