@@ -29,8 +29,12 @@ struct XMLDRequest {
 
 typedef struct XMLDRequest XMLDRequest;
 
-XMLDRequest *XMLDRequest_create(char *, short, XMLDExprTable *, XMLDCondTable *);
-void XMLDRequest_free_content(XMLDRequest *);
+XMLDRequest *XMLDRequest_create(char *, short, XMLDList *, XMLDList *);
 void XMLDRequest_free(XMLDRequest *);
+
+/* List functions */
+
+XMLDList *XMLDRequest_create_list(void);
+void XMLDRequest_add_to_list(XMLDList *, char *, short, XMLDList *, XMLDList *);
 
 #endif /* HAVE_XMLD_REQUEST_H */

@@ -15,8 +15,8 @@
 #define HAVE_XMLD_RESPONSE_H
 
 struct XMLDResponse {
- XMLDRowTable *rows;
- XMLDAggrTableTable *tables;
+ XMLDList *rows;
+ XMLDList *tables;
 };
 
 typedef struct XMLDResponse XMLDResponse;
@@ -32,6 +32,10 @@ void XMLDResponse_aggr_reset(XMLDResponse *); /* Resets _curr_table_ */
 XMLDExpr *XMLDResponse_curr_aggr(XMLDResponse *); /* return the current aggr expr */
 void XMLDResponse_fill_aggr(XMLDResponse *, char *);
 void XMLDResponse_aggr_next(XMLDResponse *);
-void XMLDResponse_free_content(XMLDResponse *);
+
+/* List functions */
+
+XMLDList *XMLDResoponse_create_list(void);
+void XMLDResponse_add_to_list(XMLDList *);
 
 #endif /* HAVE_XMLD_RESPONSE_H */

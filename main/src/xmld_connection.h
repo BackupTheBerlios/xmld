@@ -24,7 +24,11 @@ struct XMLDConnection {
 typedef struct XMLDConnection XMLDConnection;
 
 XMLDConnection *XMLDConnection_create(int, int, char *);
-void XMLDConnection_free_content(XMLDConnection *);
 void XMLDConnection_free(XMLDConnection *);
+
+/* List functions */
+
+XMLDList *XMLDConnection_create_list(void);
+void XMLDConnection_add_to_list(XMLDList *, int, int, char *);
 
 #endif /* HAVE_XMLD_CONNECTION_H */

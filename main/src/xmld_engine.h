@@ -26,7 +26,11 @@ struct XMLDEngine {
 typedef struct XMLDEngine XMLDEngine;
 
 XMLDEngine *XMLDEngine_create(void *(*)(XMLDWork *), void *(*)(XMLDWork *), int (*)(XMLDWork *), char *(*)(XMLDWork *, XMLDExpr *), int (*) (XMLDWork *, XMLDCond *), char *(*) (XMLDWork *, XMLDExpr *));
-void XMLDEngine_free_content(XMLDEngine *);
 void XMLDEngine_free(XMLDEngine *);
+
+/* List functions */
+
+XMLDList *XMLDEngine_create_list(void);
+void XMLDEngine_add_to_list(XMLDList *, void *(*)(XMLDWork *), void *(*)(XMLDWork *), int (*)(XMLDWork *), char *(*)(XMLDWork *, XMLDExpr *), int (*) (XMLDWork *, XMLDCond *), char *(*) (XMLDWork *, XMLDExpr *));
 
 #endif /* HAVE_XMLD_ENGINE_H */

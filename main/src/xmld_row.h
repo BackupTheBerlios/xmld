@@ -16,15 +16,19 @@
 
 /* Represents a row of response */
 struct XMLDRow {
- XMLDColTable *cols;
+ XMLDList *cols;
 };
 
 typedef struct XMLDRow XMLDRow;
 
-XMLDRow *XMLDRow_create(XMLDColTable *);
+XMLDRow *XMLDRow_create(XMLDList *);
 void XMLDRow_add_col(XMLDRow *);
 void XMLDRow_fill_col(XMLDRow *, char *);
-void XMLDRow_free_content(XMLDRow *);
 void XMLDRow_free(XMLDRow *);
+
+/* List functions */
+
+XMLDList *XMLDRow_create_list(void);
+void XMLDRow_add_to_list(XMLDList *, XMLDList *);
 
 #endif /* HAVE_XMLD_ROW_H */

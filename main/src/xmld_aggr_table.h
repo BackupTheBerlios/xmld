@@ -23,9 +23,14 @@ struct XMLDAggrTable {
 typedef struct XMLDAggrTable XMLDAggrTable;
 
 XMLDAggrTable *XMLDAggrTable_create(XMLDExpr *, XMLDRow *);
-void XMLDAggrTable_free_content(XMLDAggrTable *);
 void XMLDAggrTable_free(XMLDAggrTable *);
 void XMLDAggrTable_add_col(XMLDAggrTable *, XMLDCol *);
 void XMLDAggrTable_fill(XMLDAggrTable *, char *);
+
+/* List functions */
+
+XMLDList *XMLDAggrTable_create_list(void);
+void XMLDAggrTable_add_to_list(XMLDList *, XMLDExpr *, XMLDRow *);
+XMLDAggrTable *XMLDAggrTable_search_list_by_expr(XMLDList *, XMLDExpr *);
 
 #endif /* HAVE_XMLD_AGGR_TABLE_h */
