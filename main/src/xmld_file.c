@@ -48,7 +48,6 @@ void XMLDFile_free(XMLDFile *file) {
  */
 void XMLDFile_free_content(void *file) {
  cfree(((XMLDFile *) file)->name);
- XMLDFile_free(((XMLDFile *) file)->store);
 }
 
 /*

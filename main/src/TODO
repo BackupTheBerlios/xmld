@@ -141,12 +141,12 @@ order to be able to resolve wildcards correctly. (done)
  * There shouldn't be a XMLD_ACCESS_NOTHING we can't limit
    usage of format files. (done)
  
- * Support for multiple query parsers and switching of parsers
-   on the fly:
+ * Support for multiple user interfaces:
+   * Interface = parser + tree walker + response translator.
    * XMLDInterface structure. (done)
    * Stabilize the new Interface model. (done)
    * Create the interface_list part. (done)
-   * Should each interface have its own listening port ?
+   * Should each interface have its own listening port ? (yes)
      * somanager should create the XMLDWork structure itself,
        check for the interface according to the port, and
        assign it to XMLDWork's interface field. (done)
@@ -155,7 +155,7 @@ order to be able to resolve wildcards correctly. (done)
      * qp.c should use the given void pointer differently. (done)
      * XMLDWork should contain a field containing the interface 
        to use. (done)
-   * Put XMLD-SQL parser into a separate directory. (done)
+   * Put XMLDSQL parser into a separate directory. (done)
    * remove all interface-specific functionality from the main
      tree and put it inside the XMLDSQL parser directory. (done)
    * xmld-sql.(lex|y) -> xmldsql.(lex|y). (done)
@@ -173,46 +173,33 @@ order to be able to resolve wildcards correctly. (done)
    * func_list is interface specific - remove it. (done)
    * XMLDRequest, XMLDResponse, XMLDFunc, XMLDExpr, XMLDAggrTable
      are interface specific, should be removed from everywhere else
-     and be used inside the initial XMLD-SQL interface. (done)   
-
-* twalker_handle should no longer do the response translation step.
-  (done)
+     and be used inside the initial XMLDSQL interface. (done)   
+   * twalker_handle should no longer do the response translation step.
+     (done)
 
 * ERROR_RESPONSE should be interface and engine specific.
 
-* XMLDFile's store should be freed by the engine cleanup function
-  and not XMLDFile_free_content.
+--- Features:
 
-* The compiler can automatically cast - do not implicitly cast!
+* Shell-like treatment of the up and down arrow keys 
+in the client.
+
+--- Cleanups:
+
+* XMLDFile's store should be freed by the engine cleanup function
+  and not XMLDFile_free_content. (done)
 
 * Erase redundancy in somanager.num_listeners.
 
 * XMLDFile.element_pos and XMLDFile.level should be generalized -
-  not all files have levels not all files should have element_pos.
+  not all files have levels and not all files should have 
+  element_pos.
   
 * Try to use generic naming in engine functions. (with specific
   engine correspondants ?)
 
 * cfg_get_engine should fall back to a default engine if the
   required engine name was not found.
-
-* Response must contain a record set header (update PROTO).
-
---- Features:
-
-* Aggregate function calls support.
-
-* Create a hash table implementation for places where
-search speed is important.
-
-* Shell-like treatment of the up and down arrow keys 
-in the client.
-
-* A modest number of aggregate and scalar SQL functions.
-
---- Cleanups:
-
-* ptasker task queue needs maintenance.
 
 * Stabilize recordset levelling confusion.
 
@@ -221,20 +208,9 @@ in the client.
 * protect the auth.xml document. (priv it to root only, and make it 
 system unreadable).
 
-* Handle quotes inside strings in xmld-sql.lex
-
-* we are using snprintf!
+* Handle quotes inside strings in XMLDSQL.
 
 * handle special character decoding in the client.
-
-* Hide the password during input in the client (getch).
-
-* ftostr fills the empty characters of the string
-with 0's -- spaces are better.
-
-* "select !:name, age from "file.xml" where !:age=10"
-segfaults when called two times and I don't know why.
-(as of 0.5.0).
 
 * fix interrupted system call on server side on reciving
 of DISCONNECT and correction of a wrong pass.
@@ -245,8 +221,24 @@ of DISCONNECT and correction of a wrong pass.
 
 Goal: Features with slight fixing.
 
+
+* Response must contain a record set header (update PROTO).
+
+* ptasker task queue needs maintenance.
+
+* we are using snprintf!
+
+* Hide the password during input in the client (getch).
+
 * Multiple query parsers support and on-the-fly query
 parser switching.
+
+* ftostr fills the empty characters of the string
+with 0's -- spaces are better.
+
+* "select !:name, age from "file.xml" where !:age=10"
+segfaults when called two times and I don't know why.
+(as of 0.5.0).
 
 * Replace the internal format documents with something
   standard -- DTD or Schema ?
