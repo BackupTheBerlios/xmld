@@ -33,8 +33,7 @@ struct XMLDRequest {
  int wildcard; /* 0 = *
 		* 1 = @
 		*/ 
- struct XMLDCond *cond; /* the conditional for each level */
- int num_cond;
+ struct XMLDCond **cond; /* the conditional for each level */
 };
 
 /* carries the response to be sent */

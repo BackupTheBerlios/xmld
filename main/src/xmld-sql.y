@@ -17,6 +17,7 @@ int num_cond;
  char *str;
  struct XMLDCond *cond_t;
  struct XMLDCond **cond_arr;
+ struct XMLDRequest *request;
  char **str_arr;
  int num;
 }
@@ -30,6 +31,11 @@ int num_cond;
 %type <cond_t> cond
 %type <num> expr
 %type <str_arr> retr
+%type <num> wildcard
+%type <str_arr> where
+%type <cond_t> '='
+%type <cond_t> '<'
+%type <cond_t> '>'
 %token <cond_t> AND /* flex: "AND" */
 %token <cond_t> OR /* flex: "OR" */
 %token <cond_t> XOR /* flex: "XOR" */
@@ -45,10 +51,37 @@ int num_cond;
 %%
 
 query: /* empty */
-       | SELECT retr FROM QUOTED_VAL
-       | SELECT wildcard FROM QUTOED_VAL
-       | SELECT retr FROM QUOTED_VAL WHERE where
-       | SELECT wildcard FROM QUOTED_VAL
+       | SELECT retr FROM QUOTED_VAL { 
+                                       $$=(struct XMLDRequest *) malloc(sizeof(struct XMLDRequest));
+                                       $$->file=(char*)  malloc(strlen($4)*sizeof(char));
+				       strcpy($$->file, $4);
+				       $$->retr=$2;
+				       $$->cond=0;
+				     }
+       | SELECT wildcard FROM QUOTED_VAL {                                          
+                                          $$=(struct XMLDRequest *) malloc(sizeof(struct XMLDRequest));
+                                          $$->file=(char*)  malloc(strlen($4)*sizeof(char));
+				          strcpy($$->file, $4);
+				          $$->retr=0;
+					  $$->wildcard=$2;
+				          $$->cond=0;
+                                         }
+       | SELECT retr FROM QUOTED_VAL WHERE where {                                          
+                                                  $$=(struct XMLDRequest *) malloc(sizeof(struct XMLDRequest));
+                                                  $$->file=(char*)  malloc(strlen($4)*sizeof(char));
+				                  strcpy($$->file, $4);
+				                  $$->retr=$2;
+				                  $$->cond=$6;
+                                                 }
+       | SELECT wildcard FROM QUOTED_VAL WHERE where {                                          
+                                                      $$=(struct XMLDRequest *) malloc(sizeof(struct XMLDRequest));
+                                                      $$->file=(char*)  malloc(strlen($4)*sizeof(char));
+				                      strcpy($$->file, $4);
+				                      $$->retr=0;
+						      $$->wildcard=$2;
+				                      $$->cond=$6;
+                                                     }
+
 ;
 
 wildcard: '*' { $$ = 0; }
@@ -98,7 +131,7 @@ cond: '(' cond ')' { $$ = $2; }
                        $$->left=$1;
 		       $$->right=$3;
 		       $$->connector=3;}
-      | 0             { $$=0; }
+      | '?'             { $$=0; }
       | IDENTIFIER '=' QUOTED_VAL {
                              $$=$2;
 			     $$->ident=(char*)malloc(strlen($1)*sizeof(char));
