@@ -743,19 +743,33 @@ useful as something useful.
 
 --- Foundation:
 
-* the engine must not know about *, @, [text], [tagnames].
+* Expression tree walking must happen out of the engine.
+ * xmld_errno must have a default no-error value.
+ * XMLDExpr (Implement XMLDExpr_simplify)
+  * Notes:
+   * lists must be returned as is.
+   * column names must be put in the ident after getting 
+   their values.
+   * in case of error, NULL is returned with setting 
+   of xmld_errno to something useful.
+   * to distinguish between NULL columns and error
+   conditions clear xmld_errno.
+ * XMLDEngine (Modify according to requirements
+ of XMLDExpr_simplify)
+ * engine_list (Modify according to XMLDEngine changes)
+ * XMLDResponse (Implement XMLDResponse_fill)
+ * twalker (twalker_handle must only call 
+ XMLDResponse_fill for each expression to be retr
+ ieved)
 
-* one walk over the document and the expression for column and 
-wildcard resolution and one more walk over the expression
-for evaluation.
+* If the above gets stabilized, remove unused functions
+in Engine-XMLD, XMLDResponse [...?].
 
-* implement a sequential column selection API in the engine in
+* The engine must not know about [text] and [tagname].
+(Implement separate functions for their retrieval).
+
+* Implement a sequential column retrieval API in the engine in
 order to be able to resolve wildcards correctly.
-
-* expression tree walking must happen at twalker.
-
-* Rewrite the engine API according to twalker and update
-Engine-XMLD accordingly.
 
 * Response must contain a record set header (update PROTO).
 
@@ -770,10 +784,19 @@ Engine-XMLD accordingly.
 * Create a hash table implementation for places where
 search speed is important.
 
-* Full per-file user privilege system. (auth_get_priv)
+* Full per-file user privilege system.
+ * Real implementation of auth_get_priv.
+
+* Correct required privilege specification.
+ * twalker (Remove initial privilege checking)
+ * XMLDFile (store the priv of each file inside it)
+ * XMLDExpr_simplify (Check the privileges of a file 
+ to which a column is associated on each operation)
 
 * Shell-like treatment of the forward and backward arrow keys 
 in the client.
+
+* A modest number of aggregate and scalar SQL functions.
 
 --- Cleanups:
 
