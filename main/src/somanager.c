@@ -100,11 +100,72 @@ void somanager_handle(void *sockindex) {
    continue;
   }
   
-  XMLDWork work;
   XMLDConnection conn;
-  work.conn = &conn;
-  work.conn->fd = s;
-  work.interface = cfg_get_interface(ports[*((int *) sockfd)]);
-  mtasker_handle(qp_handle, (void *) &work, s);
+  conn.fd = s;
+  conn.user = cfg_get_interface_name(ports[*((int *) sockfd)]);
+  mtasker_handle(somanager_user_connection, (void *) &conn, s);
  } 
+}
+
+/*
+ * Handles a new user connection - along with a loop
+ * for handling an infinite number of requests.
+ */
+void somanager_user_connection(void *conn) {
+#ifdef MULTI_PROC_MTASKER
+ int fd=passed_fd;
+#else
+ int fd=((XMLDConnection *) conn)->fd;
+#endif
+ 
+ /* writing the init msg */
+ char *arg_carry[8]={COL_SEP_FIELD, COL_SEP_ENC_FIELD, ROW_SEP_FIELD, ROW_SEP_ENC_FIELD, DOWN_LEVEL_FIELD
+                     , DOWN_LEVEL_ENC_FIELD, UP_LEVEL_FIELD, UP_LEVEL_ENC_FIELD};
+ char *val_carry[8];
+ 
+ /* NUL attachment to the end of single characters */
+ char col_sep_str[2];
+ char row_sep_str[2];
+ char down_level_str[2];
+ char up_level_str[2];
+ col_sep_str[0]=col_sep;
+ row_sep_str[0]=row_sep;
+ down_level_str[0]=down_level;
+ up_level_str[0]=up_level;
+ col_sep_str[1]=row_sep_str[1]=down_level_str[1]=up_level_str[1]='\0';
+ 
+ val_carry[0]=col_sep_str;
+ val_carry[1]=col_sep_enc;
+ val_carry[2]=row_sep_str;
+ val_carry[3]=row_sep_enc;
+ val_carry[4]=down_level_str;
+ val_carry[5]=down_level_enc;
+ val_carry[6]=up_level_str;
+ val_carry[7]=up_level_enc;
+ char *init_msg=protoimpl_compose_msg(arg_carry, val_carry, 8, 0);
+ 
+ if (protoimpl_write_sequence(fd, init_msg, 1) == XMLD_FAILURE) {
+  free(init_msg);
+  xmld_socket_shutdown(fd);
+  free(conn->user);
+  return;
+ }
+ free(init_msg);
+ 
+ if (authman_handle(fd, val_carry) == XMLD_FAILURE) {
+  xmld_socket_shutdown(fd);
+  free(conn->user);
+  return;
+ }
+ 
+ XMLDWork *work=XMLDWork_create();
+ work->interface = XMLDInterfaceList_search_by_name(interface_list, conn->user);
+ free(conn->user);
+ 
+ if (work->interface == NULL) {
+  xmld_socket_shutdown(fd);
+  return;
+ }
+
+ work->conn=XMLDConnection_create(fd, val_carry[1], val_carry[0]);
 }

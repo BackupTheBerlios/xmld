@@ -39,5 +39,5 @@ void XMLDInterface_free_content(void *);
 
 XMLDInterfaceList *XMLDInterfaceList_create(void);
 XMLDInterface *XMLDInterfaceList_add(XMLDInterfaceList *);
-
+XMLDInterface *XMLDInterfaceList_search_by_name(XMLDInterfaceList *, char *);
 #endif /* __XMLD_INTERFACE_H */

@@ -127,6 +127,6 @@ XMLDStatus cfg_shutdown() {
  * Gets the name of the interface associated to
  * a particular server port.
  */
-char *cfg_get_interface(int port) {
+char *cfg_get_interface_name(int port) {
  return "XMLDSQL";
 }

@@ -61,3 +61,25 @@ XMLDInterface *XMLDInterfaceList_add(XMLDInterfaceList *list, char *name) {
  interface->name = name;
  return req;
 }
+
+/*
+ * : Searches a list of interface structures for an interface that
+ * has a particular name.
+ * list: the list to search.
+ * name: the name to look for.
+ * returns: a pointer to the interface that has the given name or NULL
+ * if not found. If there was more than one interface having the same
+ * name, a pointer to the first one is returned.
+ */
+XMLDInterface *XMLDInterfaceList_search_by_name(XMLDInterfaceList *list, char *name) {
+ XMLDList_reset(list);
+ XMLDInterface *interface=NULL;
+ while (XMLDList_next(list)) {
+  if (strcmp(((XMLDInterface *) XMLDList_curr(list))->name, name)==0) {
+   engine = (XMLDInterface *) XMLDList_curr(list);
+   break;
+  }
+ }
+ return interface;
+}
+
