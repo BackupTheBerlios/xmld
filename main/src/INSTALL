@@ -1,11 +1,7 @@
-# The OpenXMLD 0.4.0 INSTALL document
+# The OpenXMLD 0.5.0 INSTALL document
 -------------------------------------
 
-Note: This document is a temproary installation guide,
-at a later point a configure and a make script would
-be available.
-
-Note #2: The OpenXMLD is not guaranteed to work except
+Note: The OpenXMLD is not guaranteed to compile except
 on the development platform which has the following
 charasteristics:
 
@@ -15,101 +11,119 @@ gcc 3.3
 GNU bison 1.28
 flex 2.5.4 
 
-# Step 1: Parser code generation
---------------------------------
+# Server Compilation:
+---------------------
 
 In main/src of the distribution:
 
-$ bison -d xmld-sql.y
-$ flex -i -f xmld-sql.lex
+$ make
 
-These files should by now be generated in main/src:
+# Client Compilation:
+---------------------
 
-xmld-sql.tab.h
-xmld-sql.tab.c
-lex.yy.c
+In main/src/client of the distribution:
 
-# Step 2: Compilation:
+$ make
+
+Report any compilation problems please (read
+the feedback section at the bottom).
+
+# Running and testing:
 ----------------------
 
 In main/src of the distribution:
 
-$ gcc -c cfg.c cfg_parser.c dutils.c engine_list.c
-fmanager.c func_list.c mfigure.c mutils.c passfd.c
-qp.c somanager.c sutils.c twalker.c xmld_aggr_table.c
-xmld.c xmld_col.c xmld_cond.c xmld_connection.c 
-xmld_directive.c xmld_engine.c xmld_errors.c 
-xmld_expr.c xmld_func.c xmld_list.c xmld_request.c
-xmld_resource.c xmld_response.c xmld_row.c
-xmld_sockets.c xmld_work.c xmld-sql.tab.c lex.yy.c 
--DUSE_PTASKER -DUSE_ENGINE_XMLD
-$ cd ptasker
-$ gcc -c ptasker.c
-$ cd ..
-$ cd engine_xmld
-$ gcc -c engine_xmld.c format_manip.c element_op.c 
--DUSE_PTASKER -DUSE_ENGINE_XMLD
-$ cd ..
-
-The first shell command generates 2-3 warnings.
-
-# Step 3: Linking:
-------------------
-
-In main/src of the distribution:
-
-$ gcc cfg.o cfg_parser.o dutils.o engine_list.o 
-engine_xmld/engine_xmld.o engine_xmld/format_manip.o 
-engine_xmld/element_op.o fmanager.o func_list.o 
-lex.yy.o mfigure.o mutils.o ptasker/ptasker.o qp.o
-somanager.o sutils.o twalker.o xmld_aggr_table.o 
-xmld.o xmld_col.o xmld_cond.o xmld_connection.o
-xmld_directive.o xmld_engine.o xmld_expr.o xmld_func.o
-xmld_list.o xmld_request.o xmld_resource.o 
-xmld_response.o xmld_row.o xmld_work.o xmld-sql.tab.o
-xmld_sockets.o passfd.o xmld_errors.o -lfl -lm -o xmld
-
-# Step 4: Running and testing:
-------------------------------
-
-In main/src of the distribution:
-
-$ gcc xmldtry.c -o xmldtry
-
-This compiles a small test program which implies
-availability of a file "my_file.xml" in the document
-root of the server (see xmld.conf of the distribution),
-write a file "my_file.xml" in "/" which is the default
-document root (change that if neccessary), the content
-of my_file.xml should be something like that:
-
-<myfile name="myname">kkk<b name="hisname"/><c name="i"/>
-</myfile>
-
 $ ./xmld
 
-In another console:
+A message like this one should be generated:
 
-$ ./xmldtry
+The OpenXMLD is up and running:
+	* Main PID: ????
+	* Listening port 1: ?
+	* Listening port 2: ?
+	[...]
+	
+These ports are listed in the xmld.conf file in
+the "Socket manager controls".
 
-Given the exact document as above the output should be:
+In main/src/client, run the client:
 
-myname	;i	;
+$ ./xmldclient
 
-You can modify my_file.xml and the query inside xmldtry.c
-(at the end -- before the write call) to get different
-results, as of this release only SELECT and SELECT with
-WHERE queries are supported. Remember to recompile xmldtry.c
-after each edition :-)
+If the client asks for a port write one of those
+which are listed when running the server.
 
-# Step 5: What else
--------------------
+The client will ask for a user name and a password,
+currently the only added user is: khalid with 
+password: pass
 
-Read the QUERY.html document to understand the xmld-sql query
-language, write different xml documents in the document root
-and run xmldtry to see the results, and modify the query inside
-xmldtry.c and test as much as you can, and report all problems
-that you find (I'm sure there are much) to: 
+You could have run the client that way:
+
+./xmldclient <port> <username>
+
+or:
+
+./xmldclient <port>
+
+typically (with default 0.5.0 xmld.conf):
+
+./xmldclient 6666 khalid
+
+# The Document Root:
+--------------------
+
+As of the default 0.5.0 xmld.conf, the document root of
+the server is main/src/document_root. It contains
+two small example files:
+
+file.xml
+file2.xml
+
+along with their format documents:
+
+file.xml.format
+file2.xml.format
+
+You can query both, or add your own, or just change the
+document root in xmld.conf to anything else. Note that
+if you are going to execute SELECT queries against any
+file, you don't need a format document, but if you
+are going to execute a SELECT with WHERE query
+you do need a format document which will be created 
+automatically in the future by the CREATE TABLE/FILE 
+command.
+
+# Querying The Server
+---------------------
+
+Read the QUERY.html document to understand the XMLD-SQL query
+language. After authentication, the client would show you a
+prompt:
+
+xmld>
+
+Write a query and end it with ";" and see what happens. Note
+that only SELECT and SELECT with WHERE queries are supported
+(along with their bugs).
+
+# Query Examples:
+-----------------
+
+With the default document root:
+
+select !:name from "file.xml"
+select !:~name from "file.xml"
+select !:name from "file.xml" where !:name="khalid"
+select !:"file.xml".name, "file2.xml".name from "file.xml", "file2.xml"
+
+# Feedback:
+-----------
+
+This is an alpha quality release. It would segfault and it would behave
+incorrectly--there's a big number of known bugs. The 0.6.0 release
+will contain a lot of core changes, the reason for which extensive
+bug fixing is no use right now, however feel free to send questions
+, suggestions or whatever to:
 
 xmld-dev@lists.berlios.de
 

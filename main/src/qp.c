@@ -97,7 +97,9 @@ void qp_handle(void *conn) {
    XMLDResponse_free(work->resp);
    XMLDRequest_free(work->req);
    XMLDList_free(work->files);
-   work->req=work->resp=work->files=NULL;
+   work->req=NULL;
+   work->resp=NULL;
+   work->files=NULL;
    continue;
   }
   
@@ -110,7 +112,9 @@ void qp_handle(void *conn) {
   XMLDResponse_free(work->resp);
   XMLDRequest_free(work->req);
   XMLDList_free(work->files);
-  work->req=work->resp=work->files=NULL;
+  work->req=NULL;
+  work->resp=NULL;
+  work->files=NULL;
  }
  xmld_socket_shutdown(work->conn->fd);
  XMLDWork_free(work);

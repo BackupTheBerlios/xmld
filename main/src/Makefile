@@ -6,7 +6,7 @@ OBJECTS = authman.o cfg.o cfg_parser.o dutils.o engine_list.o fmanager.o func_li
 BISON = bison
 FLEX = flex
 CFLAGS = -Wall -DUSE_ENGINE_XMLD -DUSE_PTASKER
-CC = /usr/local/bin/gcc
+CC = gcc
 VPATH = ptasker:engine_xmld
 
 all: generate ${OBJECTS}
