@@ -106,7 +106,7 @@ order to be able to resolve wildcards correctly. (done)
     XMLD_LIST:
     XMLD_VOID_LIST:
 
-* Take alias handling inside XMLDExpr_to_string.
+* Take alias handling inside XMLDExpr_to_string. (done)
 
 * Don't fill ident or sident in the returned expression
   from twalker_simplify_expr fill a lateral string because

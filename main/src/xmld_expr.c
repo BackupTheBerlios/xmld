@@ -170,6 +170,11 @@ char *XMLDExpr_to_string(XMLDExpr *expr) {
  if (expr == NULL) {
   return NULL;
  }
+
+ if (expr->alias != NULL) {
+  ret = (char *) malloc((strlen(expr->alias)+1) * sizeof(char));
+  return ret;
+ }
  else if (expr->type == XMLD_INTEGER) {
   return itostr(expr->nval, 0);
  }
