@@ -49,6 +49,7 @@ object-oriented foundation and other editions. (done)
 
 * Write a skeleton do-nothing engine, and attach it to
 the list of XMLDEngine's which serve the requests.
+(done -- Engine-XMLD)
 
 * Check all the code for usage of strlen->malloc->strcpy
 must be strlen+1->malloc->strcpy, because strlen doesn't
@@ -70,12 +71,14 @@ which is to be used with a given file in
 fmanager. (done)
 
 * Remove usage of XMLDMemPool from qp, and check
-for usage of it in other parts.
+for usage of it in other parts. (done)
 
 * Implement ERROR_RESPONSE such that it depends
 on a variable (e.g xmld_errno).
 
-* Use ERROR_RESPONSE instead of perror.
+* Use ERROR_RESPONSE instead of perror and other
+error reporting routines, and make sure that
+all the code sets xmld_errno appropriately.
 
 * Remove/Secure usage of SIGUSR1 in mtasker.
 
@@ -107,7 +110,27 @@ the new structures of the object-oriented foundation,
 and check the code for things like struct cond ... 
 etc. (done)
 
-* Remove creation arguments in:
- - XMLDWork
- - XMLDResource
- - Check for more.
+* Remove creation arguments and manage code dependency
+and fix *_add_to_list().
+in:
+
+ - XMLDWork (qp) (done)
+ - XMLDResource (fmanager?) (done)
+ - XMLDRow (XMLDResponse) (done)
+ - XMLDAggrTable (XMLDResponse) (done)
+
+* Implement XMLDResponse_flush which sends the response
+contents as string chunks to the fd of the listener
+socket, and use it in qp. (done)
+
+* In all structures, initialize all memory containers to NULL,
+and check within *_free_content before freeing.
+
+* In places where the decision was not to free internal memory
+redecide with he new NULL thing above. (I remember XMDWork not
+freeing its member structures).
+
+* Call XMLDList_free for each XMLDAggrTable in XMLDResponse
+once the columns pointed by it are filled. (done)
+
+* Implement xmld_socket_write.
