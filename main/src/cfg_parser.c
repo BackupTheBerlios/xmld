@@ -14,7 +14,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include "str_split.h"
+#include "sutils.h"
 #include <stdio.h>
 #include <errno.h>
 #include "xmld_list.h"
