@@ -52,8 +52,8 @@ XMLDStatus engine_list_init() {
  curr_engine->prepare=engine_xmld_prepare;
  curr_engine->cleanup=engine_xmld_cleanup;
  curr_engine->walk=engine_xmld_walk;
- curr_engine->get_level=engine_xmld_get_level;
  curr_engine->destroy=engine_xmld_destroy;
+ curr_engine->eval_aggr_expr=engine_xmld_eval_aggr_expr;
  curr_engine->eval_expr=engine_xmld_eval_expr;
  curr_engine->eval_cond=engine_xmld_eval_cond;
 #endif /* USE_ENGINE_XMLD */

@@ -111,7 +111,8 @@ XMLDAggrTable *XMLDResponse_assoc_col_to_aggr(XMLDResponse *resp, XMLDExpr *expr
  }
  if (table == NULL) {
   table=XMLDAggrTableList_add(resp->tables);
-  table->aggr=expr;
+  table->expr=expr;
+  XMLDAggrTable_internal_assoc(table);
   resp->tables->curr_element=XMLDList_last(resp->tables);
  }
  XMLDAggrTable_add_col(table, col);
@@ -181,10 +182,10 @@ XMLDStatus XMLDResponse_next_aggr(XMLDResponse *resp) {
  * resp: the response structre to work on.
  * val: the value to fill the response structure with.
  */
-void XMLDResponse_fill_curr_aggr(XMLDResponse *resp, char *val) {
+void XMLDResponse_fill_curr_aggr(XMLDResponse *resp, XMLDWork *work, char *(*eval_expr) (XMLDWork *, XMLDExpr *, int)) {
  XMLDAggrTable *table=(XMLDAggrTable *) XMLDList_curr(resp->tables);
  if (table!=NULL) {
-  XMLDAggrTable_fill(table, val);
+  XMLDAggrTable_fill(table, work, eval_expr);
  }
 }
 

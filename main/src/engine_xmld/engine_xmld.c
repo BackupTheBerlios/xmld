@@ -116,25 +116,25 @@ void engine_xmld_destroy() {
 
 /* walk function
  * return values:
- * -1 : shallower by one
- * 0  : end of document
- * 1  : deeper by one
+ * XMLD_WALK_UP  : shallower by one
+ * XMLD_WALK_END : end of document
+ * XMLD_WALK_DOWN: deeper by one
  */ 
-int engine_xmld_walk(XMLDWork *work) {
+int engine_xmld_walk(XMLDWork *work, XMLDFile *file) {
  short token;
  char buf;
  char *tokens[2]={"<", "/>"};
   
  while (1) {
-  token=dmstrstr((FILE *) work->res->data_source, tokens, 2);
+  token=dmstrstr((FILE *) file->data, tokens, 2);
   if (token == -1) {
    return 0;
   }
   else if (token == 0) {
-   buf=getc((FILE *) work->res->data_source);
+   buf=getc((FILE *) file->data);
    if (buf == '/') {
-    (*((int *) work->res->store))--;
-    if ((*((int *) work->res->store)) == 0) {
+    file->level--;
+    if (file->level == 0) {
      return 0;
     }
     else {
@@ -142,14 +142,14 @@ int engine_xmld_walk(XMLDWork *work) {
     }
    }
    else {
-    fseek((FILE *) work->res->data_source, -1, SEEK_CUR);
-    (*((int *) work->res->store))++;
+    fseek((FILE *) file->data, -1, SEEK_CUR);
+    file->level++;
     return 1;
    } 
   }
   else if (token == 1) {
-   (*((int *) work->res->store))--;
-   if ((*((int *) work->res->store)) == 0) {
+   file->level--;
+   if (file->level == 0) {
     return 0;
    }
    else {
@@ -159,16 +159,11 @@ int engine_xmld_walk(XMLDWork *work) {
  }
 }
 
-/* get_level function*/
-int engine_xmld_get_level(XMLDWork *work) {
- return *((int *) work->res->store);
-}
-
 /* eval_expr function */
-char *engine_xmld_eval_expr(XMLDWork *work, XMLDExpr *expr, XMLDAggrTable *aggr_table) {
+char *engine_xmld_eval_expr(XMLDWork *work, XMLDExpr *expr, XMLDAggrTable *aggr_table, int level) {
  char *ret;
- if (expr->type == 0) { /* expr is of a numeric type */
-  return ltoa(expr->nval);
+ if (expr->type == 0) { /* expr is an integer */
+  return itoa(expr->nval);
  } 
  else if (expr->type == 2) { /* expr is a column name */
   return strchr_replace(strchr_replace(engine_xmld_get_column_value(work, expr->ident), col_sep, col_sep_enc), row_sep, row_sep_enc);  
@@ -195,7 +190,7 @@ char *engine_xmld_eval_expr(XMLDWork *work, XMLDExpr *expr, XMLDAggrTable *aggr_
 }
 
 /* eval_cond function */
-XMLDBool engine_xmld_eval_cond(XMLDWork *work, XMLDCond *cond) {
+XMLDBool engine_xmld_eval_cond(XMLDWork *work, XMLDCond *cond, int level) {
  short val;
  char *left_val;
  char *right_val;

@@ -14,11 +14,17 @@
 #ifndef __XMLD_AGGR_TABLE_h
 #define __XMLD_AGGR_TABLE_h
 
-/* represents an (aggregate expression -> set of columns) assocsiation */
+/* represents an (aggregate expression -> set of columns) association */
 struct XMLDAggrTable {
- XMLDExpr *aggr;
- XMLDExpr *value;
- XMLDList *col_ptrs; /* list of "XMLDCol*" */
+ XMLDExpr *expr; /* A pointer to the original expression */
+ XMLDExpr *value; /* A single copy of the original expression for internal
+		     modification */
+ XMLDExprList *values; /* A copy of the original for internal modification
+			in a per-row way */
+ XMLDExprList *aggrs; /* An expression for each aggregate function call
+		         inside elements of values (identical) */
+ XMLDList *col_ptrs; /* Each column here corresponds to an element of
+		      values (this is a list of "XMLDCol*" */
 };
 
 typedef struct XMLDAggrTable XMLDAggrTable;
@@ -28,7 +34,9 @@ XMLDAggrTable *XMLDAggrTable_create();
 void XMLDAggrTable_free(XMLDAggrTable *);
 void XMLDAggrTable_free_content(void *);
 void XMLDAggrTable_add_col(XMLDAggrTable *, XMLDCol *);
-void XMLDAggrTable_fill(XMLDAggrTable *, char *);
+void XMLDAggrTable_fill(XMLDAggrTable *, XMLDWork *, char *(*) (XMLDWork *, XMLDExpr *, int));
+void XMLDAggrTable_internal_assoc(XMLDAggrTable *);
+void XMLDAggrTable_resolve_expr(XMLDAggrTable *, XMLDExpr *);
 
 /* List functions */
 

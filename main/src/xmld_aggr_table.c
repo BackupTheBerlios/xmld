@@ -33,8 +33,9 @@ struct XMLDFunc;
  */
 XMLDAggrTable *XMLDAggrTable_create() {
  XMLDAggrTable *table=(XMLDAggrTable *) malloc(sizeof(XMLDAggrTable));
- table->aggr=NULL;
- table->value=NULL;
+ table->expr=NULL;
+ table->values=NULL;
+ table->aggrs=NULL;
  table->col_ptrs=NULL;
  return table;
 }
@@ -55,8 +56,9 @@ void XMLDAggrTable_free(XMLDAggrTable *table) {
  * table: the aggregate expression table whose internal memory is to be freed.
  */
 void XMLDAggrTable_free_content(void *table) {
- XMLDExpr_free(((XMLDAggrTable *) table)->aggr);
- XMLDExpr_free(((XMLDAggrTable *) table)->value);
+ XMLDExpr_free(((XMLDAggrTable *) table)->expr);
+ XMLDList_free(((XMLDAggrTable *) table)->values);
+ XMLDList_free(((XMLDAggrTable *) table)->aggrs);
  XMLDList_free(((XMLDAggrTable *) table)->col_ptrs);
 }
 
@@ -69,21 +71,30 @@ void XMLDAggrTable_add_col(XMLDAggrTable *table, XMLDCol *col) {
  if (table->col_ptrs == NULL) {
   table->col_ptrs=XMLDList_create(sizeof(XMLDCol *), NULL);
  }
+ if (table->values == NULL) {
+  table->values=XMLDExprList_create();
+ }
  XMLDCol **col_ptr=(XMLDCol **) XMLDList_add(table->col_ptrs);
+ XMLDExpr *col_expr=XMLDExprList_add(table->values);
+ XMLDExpr_copy(table->expr, col_expr); 
  *col_ptr=col;
 }
 
 /*
  * : Fills the set of columns attached to the aggregate expression table
- * with a given value.
+ * with their appropriate values.
  * table: the table whose column pointers are going to be filled.
- * val: the character value with which these column pointers are going
- * to be filled.
+ * work: the work structure with respect to which the expression is going
+ * to be determined.
+ * eval_expr: the function used for expression evaluation.
  */
-void XMLDAggrTable_fill(XMLDAggrTable *table, char *val) {
+void XMLDAggrTable_fill(XMLDAggrTable *table, XMLDWork *work, char *(*eval_expr) (XMLDWork *, XMLDExpr *, int)) {
  XMLDList_reset(table->col_ptrs);
- while (XMLDList_next(table->col_ptrs)) {
+ XMLDList_reset(table->values);
+ char *val;
+ while (XMLDList_next(table->col_ptrs) && XMLDList_next(table->values)) {
   XMLDCol **col_ptr=(XMLDCol **) XMLDList_curr(table->col_ptrs);
+  val=(*eval_expr) (work, (XMLDExpr *) XMLDList_curr(table->values), 0);
   XMLDCol_fill(*col_ptr, val);
  }
 }
@@ -107,7 +118,9 @@ XMLDAggrTableList *XMLDAggrTableList_create() {
  */
 XMLDAggrTable *XMLDAggrTableList_add(XMLDAggrTableList *list) {
  XMLDAggrTable *table=(XMLDAggrTable *) XMLDList_add(list);
- table->aggr=NULL;
+ table->expr=NULL;
+ table->values=NULL;
+ table->aggrs=NULL;
  table->col_ptrs=NULL;
  return table;
 }
@@ -124,10 +137,56 @@ XMLDAggrTableList *XMLDAggrTableList_search_by_expr(XMLDAggrTableList *list, XML
  XMLDList_reset(list);
  XMLDAggrTable *table=NULL;
  while (XMLDList_next(list)) {
-  if (((XMLDAggrTable *) XMLDList_curr(list))->aggr == aggr) {
+  if (((XMLDAggrTable *) XMLDList_curr(list))->expr == aggr) {
    table = (XMLDAggrTable *) XMLDList_curr(list);
    break;
   }
  }
  return table;
+}
+
+/*
+ * Copies the expr field of the given XMLDAggrTable into the value 
+ * field of it and walks through the expression tree of an aggregate 
+ * expression  and associates each occurence of an aggregate function 
+ * call to an element in the aggrs field of the given XMLDAggrTable.
+ */
+void XMLDAggrTable_internal_assoc(XMLDAggrTable *table) {
+ table->value=XMLDExpr_create();
+ XMLDExpr_copy(table->expr, table->value);
+ table->aggrs=XMLDExprList_create();
+ XMLDAggrTable_resolve_expr(table, table->value);
+}
+
+/*
+ * Split for reasons of recursion.
+ */
+void XMLDAggrTable_resolve_expr(XMLDAggrTable *table, XMLDExpr *expr) {
+ if (expr == NULL) {
+  return;
+ }
+ if (expr -> aggr == XMLD_FALSE) {
+  return;
+ }
+ switch (expr->type) {
+  case XMLD_OPERATION:
+   XMLDAggrTable_resolve_expr(table, expr->left);
+   XMLDAggrTable_resolve_expr(table, expr->right);
+  break;
+  case XMLD_FUNCTION:
+   if (expr->func->aggr == XMLD_TRUE) {
+    XMLDExprList_add(table->aggrs);
+   }
+   XMLDList_reset(expr->arg_list);
+   while (XMLDList_next(expr->arg_list)) {
+    XMLDAggrTable_resolve_expr(table, (XMLDExpr *) XMLDList_curr(expr->arg_list));
+   }
+  break;
+  case XMLD_LIST: /* for completeness -- not used */
+   XMLDList_reset(expr->exprs);
+   while (XMLDList_next(expr->exprs)) {
+    XMLDAggrTable_resolve_expr(table, (XMLDExpr *) XMLDList_curr(expr->exprs));
+   }
+  break;
+ }
 }

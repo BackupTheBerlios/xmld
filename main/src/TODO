@@ -625,6 +625,35 @@ message. (done)
 
 * remove "proposed" from query, proto. (done)
 
+* remove get_level completely. (done)
+
+* Aggregate expression maintenance:
+ 
+ * XMLDAggrTable should contain a XMLDExprList (one expr
+ for each aggregate expression). (done)
+ * XMLDAggrTable's value field should be a XMLDExprList
+   that's resolved in a per row manner. (done)
+ * In each column expr should be copied to a new element
+ of value. (in XMLDAggrTable_add_col -- done)
+ * add a value field to XMLDAggrTable and initially copy
+ the expr to it. (done)
+ * XMLDAggrTable_internal_assoc: scans value for aggregate
+ function calls and associates each to an element in values.
+ (done)
+ * each aggregate expression updates its own element in
+ the values. (using XMLDList_next/reset if 0 -- ok)
+ * XMLDAggrTable_fill should loop through values
+   while resolving. (done)
+ * XMLDAggrTable_fill no longer receives a value, the value has
+ to be resolved internally, it just needs eval_expr as
+ an argument. (done)
+ * fix XMLDReponse_fill_curr_aggr. (done)
+ * fix twalker's call of XMLDResponse_fill_curr_aggr. (done)
+ * re-add eval_aggr_expr. and remove the XMLDAggrTable* arg
+ from eval_expr. (done)
+ * fix eval_expr calls in twalker. (done)
+ * define and implement XMLDAggrTable_internal_assoc. (done)
+ 
 * Engine-XMLD must be rewritten with consideration of
 [1] availablity of column types [2] access levels.
 [3] type and access level enumerations. [4] the new
@@ -641,7 +670,8 @@ should evaluate only the first condition of a given
 condition list. [18] eval_expr should return NULL
 if the expression was aggregate. [19] NULL
 file checks. [20] eval_expr and eval_cond level
-checks.
+checks (ignored if 0). [21] aggregate expressino resolution things
+above. [22] recursive resolution of aggregate expressions.
 
 * sync includes across all code according to the editions
 above.
@@ -665,6 +695,9 @@ ectory "functions" for them. (one aggregate and one scalar).
 Goal: PUMP the features in!
 
 * Response must contain a record set header (update PROTO).
+
+* Check if it's possible to use a list of XMLDExpr * and
+XMLDCond* in xmld-sql.y in order to avoid copies.
 
 * Multiple query parsers support and on-the-fly query
 parser switching.
