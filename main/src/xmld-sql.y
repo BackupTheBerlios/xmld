@@ -57,13 +57,13 @@ struct XMLDEngine;
 /* Type Definitions */
 %type <expr> expr
 %type <cond> cond
-%type <list> expr_list cond_list assign_list
+%type <list> expr_list cond_list
 
 /* Other Tokens  */
 %token <qval> QVAL IDENTIFIER
 %token <num> NUM
 
-/* Conditional Operators */
+/* Logical Operators */
 %left AND OR
 %nonassoc '=' '<' '>' NE LE GE LIKE BETWEEN NBETWEEN
 %left NOT
@@ -77,33 +77,84 @@ struct XMLDEngine;
 %%
 
 query: SELECT expr_list FROM QVAL {
-                                   ((XMLDWork *) work)->req=XMLDRequest_create();
 				   ((XMLDWork *) work)->req->type=0;
 				   ((XMLDWork *) work)->req->file=$4;
-				   ((XMLDWork *) work)->req->retr=$2;				   
+				   ((XMLDWork *) work)->req->retr=$2;
+				   YYACCEPT;
                                   }
        | SELECT expr_list FROM QVAL WHERE cond_list {
-                                                     ((XMLDWork *) work)->req=XMLDRequest_create();
 			     	                     ((XMLDWork *) work)->req->type=1;
 				                     ((XMLDWork *) work)->req->file=$4;
 				                     ((XMLDWork *) work)->req->retr=$2;
 						     ((XMLDWork *) work)->req->where=$6;
+						     YYACCEPT;
                                                     }
-       | UPDATE QVAL SET assign_list
-       | UPDATE QVAL SET assign_list WHERE cond_list
-       | DELETE FROM QVAL
-       | DELETE FROM QVAL WHERE cond_list
-       | DELETE '*' FROM QVAL
-       | INSERT INTO QVAL '(' expr_list ')' VALUES '(' expr_list ')'
-       | INSERT INTO QVAL VALUES '(' expr_list ')'
-       | INSERT INTO QVAL '(' expr_list ')' VALUES '(' expr_list ')' WHERE cond_list
-       | INSERT INTO QVAL VALUES '(' expr_list ')' WHERE cond_list
-       | USE QVAL
-       | error { YYABORT; }
-;
-
-assign_list: assign
-             | assign_list ',' assign
+       | UPDATE QVAL SET cond_list {
+				    ((XMLDWork *) work)->req->type=2;
+				    ((XMLDWork *) work)->req->file=$2;
+				    ((XMLDWork *) work)->req->vals=$4;
+				    YYACCEPT;
+                                   }
+       | UPDATE QVAL SET cond_list WHERE cond_list {
+				                    ((XMLDWork *) work)->req->type=3;
+				                    ((XMLDWork *) work)->req->file=$2;
+				                    ((XMLDWork *) work)->req->vals=$4;
+						    ((XMLDWork *) work)->req->where=$6;
+						    YYACCEPT;
+                                                   }
+       | DELETE FROM QVAL {
+ 		           ((XMLDWork *) work)->req->type=4;
+			   ((XMLDWork *) work)->req->file=$3;
+			   YYACCEPT;
+                          }
+       | DELETE FROM QVAL WHERE cond_list {
+ 		                           ((XMLDWork *) work)->req->type=5;
+			                   ((XMLDWork *) work)->req->file=$3;
+					   ((XMLDWork *) work)->req->where=$5;
+					   YYACCEPT;
+                                          }
+       | DELETE '*' FROM QVAL {
+ 		               ((XMLDWork *) work)->req->type=4;
+			       ((XMLDWork *) work)->req->file=$4;
+			       YYACCEPT;
+                              }
+       | INSERT INTO QVAL '(' expr_list ')' VALUES '(' expr_list ')' {
+                                                                      ((XMLDWork *) work)->req->type=6;
+								      ((XMLDWork *) work)->req->file=$3;
+								      ((XMLDWork *) work)->req->retr=$5;
+								      ((XMLDWork *) work)->req->vals=$9;
+								      YYACCEPT;
+								     }								     
+       | INSERT INTO QVAL VALUES '(' expr_list ')' {
+                                                    ((XMLDWork *) work)->req->type=9;
+					            ((XMLDWork *) work)->req->file=$3;
+						    ((XMLDWork *) work)->req->vals=$6;
+						    YYACCEPT;
+                                                   }
+       | INSERT INTO QVAL '(' expr_list ')' VALUES '(' expr_list ')' WHERE cond_list {
+                                                                                      ((XMLDWork *) work)->req->type=7;
+										      ((XMLDWork *) work)->req->file=$3;
+										      ((XMLDWork *) work)->req->retr=$5;
+										      ((XMLDWork *) work)->req->vals=$9;
+										      ((XMLDWork *) work)->req->where=$12;
+										      YYACCEPT;
+										     }
+       | INSERT INTO QVAL VALUES '(' expr_list ')' WHERE cond_list {
+                                                                    ((XMLDWork *) work)->req->type=8;
+						                    ((XMLDWork *) work)->req->file=$3;
+								    ((XMLDWork *) work)->req->vals=$6;
+								    ((XMLDWork *) work)->req->where=$9;
+								    YYACCEPT;
+                                                                   }
+       | USE QVAL {
+                   ((XMLDWork *) work)->req->type=10;
+		   ((XMLDWork *) work)->req->file=$2;
+		   YYACCEPT;
+                  }
+       | error {
+                xmld_errno=XMLD_EPARSE;
+                YYABORT; 
+               }
 ;
 
 cond_list: cond {
@@ -113,7 +164,13 @@ cond_list: cond {
 		 XMLDCond_free($1);
                 }
            | cond_list ':' cond {
-                                 $1=XMLDCond_create_list();
+                                 $$=$1;
+		                 XMLDCond *cond=XMLDCond_add_to_list($$);
+		                 XMLDCond_copy($1, cond);
+		                 XMLDCond_free($1);
+	                        }
+	   | cond_list "," cond { /* for UPDATE support */
+                                 $$=$1;
 		                 XMLDCond *cond=XMLDCond_add_to_list($$);
 		                 XMLDCond_copy($1, cond);
 		                 XMLDCond_free($1);
@@ -132,9 +189,6 @@ expr_list: expr {
 		                 XMLDExpr_copy($3, expr);
 		                 XMLDExpr_free($3);
 	                        }
-;
-
-assign: IDENTIFIER '=' expr
 ;
 
 cond: '(' cond ')' {
@@ -232,6 +286,10 @@ cond: '(' cond ')' {
                   $$=$2;
 		  $$->negate=~($$->negate);
                  }
+      | '!' { /* void condition */
+             $$=XMLDCond_create();
+	     $$->type=2;
+            }
 ;
 
 expr: '(' expr ')' {
