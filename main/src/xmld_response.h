@@ -36,7 +36,6 @@ void XMLDResponse_fill_curr_aggr(XMLDResponse *, char *);
 void XMLDResponse_next_aggr(XMLDResponse *);
 XMLDRow *XMLDResponse_curr_row(XMLDResponse *);
 XMLDCol *XMLDResponse_curr_col(XMLDResponse *);
-void XMLDResponse_flush(XMLDResponse *, int);
 void XMLDResponse_free(XMLDResponse *);
 void XMLDResponse_free_content(void *);
 

@@ -31,20 +31,20 @@ A scalar expression can be one of the following:
  
  [*] A column name.
  [*] A scalar function call.
- [*] A mathmatical expression.
+ [*] A mathematical expression.
  [*] A sequence of characters.
 
 Note: a column in XML is generally an XML element's attribute,
 in addition to these two special cases:
   
- [*] "[text]" is the text of an element.
- [*] "[tagname]" is the tag name of an element.
+ [*] "(text)" is the text of an element.
+ [*] "(tagname)" is the name of an element's tag.
 
 According to that, the following are valid XMLD-SQL expressions:
   
 name
 age
-STRCAT(UCASE([text]),UCASE(age))
+STRCAT(UCASE((text)),UCASE(age))
 STRLEN(name)+5
 age-1
 "my name is a name"
@@ -55,7 +55,7 @@ An aggregate expression is identically a scalar expression
 with the exception that it can contain aggregate functions.
  
 From my understanding, an aggregate function is a function whose
-value depends on more than one element, so the XML processor 
+value depends on more than one element that the XML processor 
 needs to go through all the elements to get its value, and it has 
 one value for all of the elements.
 
@@ -138,7 +138,7 @@ XML is multi-levelled:
 For that reason Multi-level conditionals are required, which are
 infact a collection of conditional groups (either scalar or ag-
 gregate) separated by colons--each condition stands for one 
-level in the XML tree corresponsding to its index in the 
+level in the XML tree corresponding to its index in the 
 Multi-level conditional:
 
 Scalar Multi-level Conditional (sc_cond_level):
@@ -152,16 +152,16 @@ agr_cond_group [: agr_cond_group [: agr_cond_group ...]]
 Example:
 
 Scalar: 
-[tagname]="people" AND country="country1" : LCASE(name)="myname"
+(tagname)="people" AND country="country1" : LCASE(name)="myname"
 
 Aggregate:
 count(*)=5 : count(name)=7
 
-Usage of void conditions: You may need to defined a condition for
-a particular level, while keeping the level before it be selected
-unconditionally, the case in which you will need to use the void 
-condition (!) to keep the order while maintaining the right semantic
-of an "Always true" condition.
+Usage of void conditions: You may need to define a condition for
+a particular level while keeping the level before it be selected
+unconditionally. In such case you will need to use the void condition 
+(!) to keep the order while maintaining the semantic of an "Always true" 
+condition.
 
 Assignment:
 -----------
@@ -179,8 +179,8 @@ sc_assign_group)
 
 Such as:
 
-name = 'bb52', age = '20'
-bugs_status = 'too many'
+name = "bb52", age = "20"
+bugs_status = "too many"
 
 An aggregate assignment group is the one that contains at least
 one aggregate assignment. Aggregate assignments and aggregate 
@@ -193,11 +193,9 @@ Is a special case of an expression, that can only contain a quoted
 sequence of characters that represents a XML file name relative
 to the current directory or absolute starting from the server root.
 
-"file1.xml"
 "subdirectory1/file1.xml"
-'file2.xml'
-'sub2/file3.xml'
-'/file3.xml'
+"file2.xml"
+"sub2/file3.xml"
 "/file4.xml"
 
 The DIR string:
@@ -206,12 +204,12 @@ Is a special case of an expression, that can only contain a quoted
 sequence of characters that represents a path either relative to the
 current directory, or absolute starting from the server's root.
 
-"/db1/"
-'/db2'
+"/db1"
+"db2"
 
 The USE clause:
 ---------------
-Note: this changes the current path to DIR.
+The USE clause changes the current path to DIR.
 
 USE DIR
 

@@ -494,7 +494,11 @@ error. (done)
 
 * Specify and fully implement a communication protocol.
 
-* Add authentication support and an authman part.
+* Add a basic client authentication support (an authman 
+part) without support for per-file user previliges. 
+(done)
+
+* protect the auth.xml document in any way.
 
 * Handle quotes inside strings in xmld-sql.lex
 
@@ -510,7 +514,7 @@ if you are going to handle it in any process.
 ONNECT. (check how of xmld_socket_shutdown).
 
 * Create a resptrans part that does the job of XMLDR
-esponse_flush.
+esponse_flush. and remove XMLDResponse_flush. (done)
 
 * Find a way of correct resolution of aggregate
 expressions. A way to attach the requirements of each
@@ -536,6 +540,8 @@ manipulation functions may return NULL or 0 (issue
 XMLD_EMALFORMAT in that case. [10] Multiple
 query parsers support. [11] itostr and ftostr.
 [12] tagname/attribute name conflicts.
+
+* Hook authman_get_priv somewhere (?).
 
 * Define and implement the exec_assign engine
 function, implement the UPDATE and UPDATE with
@@ -576,6 +582,8 @@ APIs in XMLDEngine and XMLDFunc (...?) in that form:
 XMLDEngine_create_hashtable(...)
 XMLDEngine_add_to_hashtable(...)
 XMLDEngine_search_hashtable(...)
+
+* Full per-file user privilege system.
 
 * itoa, ftoa use snprintf with a fixed INTEGER_LENGTH
 size of output string, that is--integers bigger than

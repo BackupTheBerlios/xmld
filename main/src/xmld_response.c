@@ -15,8 +15,6 @@
 #include <string.h>
 #include "xmlddef.h"
 #include "mutils.h"
-#include "sutils.h"
-#include "xmld_sockets.h"
 #include "xmld_list.h"
 #include "xmld_col.h"
 #include "xmld_row.h"
@@ -29,7 +27,6 @@ struct XMLDFunc;
 #include "xmld_func.h"
 #include "xmld_aggr_table.h"
 #include "xmld_response.h"
-#include "cfg.h"
 
 /*
  * : Creates a new response structure.
@@ -223,53 +220,4 @@ XMLDRow *XMLDResponse_curr_row(XMLDResponse *resp) {
  */
 XMLDCol *XMLDResponse_curr_col(XMLDResponse *resp) {
  return (XMLDCol *) XMLDList_curr((XMLDResponse_curr_row(resp))->cols);
-}
-
-/*
- * : Flushes contents of the given response
- * structures to the given fd (should be socket)
- * resp: The response structure whose contents
- * are to be flushed.
- * fd: The file descriptor of the socket to which
- * the contents are to be flushed.
- */
-void XMLDResponse_flush(XMLDResponse *resp, int fd) {
- char *response=(char *) malloc(sizeof(char));
- response[0]='\0';
- int resp_len=1;
- XMLDList_reset(resp->rows);
- XMLDRow *curr_row;
- XMLDCol *curr_col;
- 
- /* mstrchr_replace vars */
- char repl_tok[2];
- repl_tok[0]=col_sep;
- repl_tok[1]=row_sep;
- char *repl_tok_enc[2];
- repl_tok_enc[0]=col_sep_enc;
- repl_tok_enc[1]=row_sep_enc;
- 
- while (XMLDList_next(resp->rows)) {
-  curr_row=(XMLDRow *) XMLDList_curr(resp->rows);
-  XMLDList_reset(curr_row->cols);
-  while (XMLDList_next(curr_row->cols)) {
-   curr_col=(XMLDCol *) XMLDList_curr(curr_row->cols);
-   if (curr_col->val != NULL) {
-    char *old_val=curr_col->val;
-    curr_col->val=mstrchr_replace(curr_col->val, repl_tok, repl_tok_enc, 2);
-    free(old_val);
-   }
-   resp_len+=((curr_col->val != NULL) ? strlen(curr_col->val) : 0)+1;
-   response=(char *) realloc(response, resp_len*sizeof(char));
-   if (curr_col->val != NULL) {
-    strcat(response, curr_col->val);
-   } 
-   response[resp_len-2]=col_sep;
-   response[resp_len-1]='\0';
-  }
-  response=(char *) realloc(response, (++resp_len) * sizeof(char));
-  response[resp_len-2]=row_sep;
-  response[resp_len-1]='\0';
- }
- xmld_socket_write(fd, response);
 }
