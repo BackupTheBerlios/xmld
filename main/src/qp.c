@@ -11,10 +11,13 @@
  * -------------------------------------------------------------- * 
  */
  
-#include <iostream.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 #include "errors.h"
 #include "xmld_mempool.h"
 #include "xmld_types.h"
+#include "sosel.h"
 #include "fmanager.h"
 #include "qp.h"
 
@@ -23,8 +26,11 @@ void qp_handle(void *conn) {
  /* FIXME the number of segments must come from config */
  struct XMLDMemPool *expr_pool=XMLDMemPool_create(sizeof(struct expr), 20, expr_free_content);
  struct XMLDMemPool *cond_pool=XMLDMemPool_create(sizeof(struct cond), 10, NULL);
- work->conn=(struct XMLDConnection *) conn;
+ work->conn=(struct XMLDConnection *) malloc(sizeof(struct XMLDConnection));
+ memcpy((void *) work->conn, conn, sizeof(conn));
+ sosel_remove(conn);
  work->req=(struct XMLDRequest *) malloc(sizeof(struct XMLDRequest));
+ /* FIXME: what should yyin be assigned to ? */
  yyin=fopen(work->conn->fd, "r");
  int status=yyparse();
  if (status==-1) {
@@ -35,7 +41,7 @@ void qp_handle(void *conn) {
  xmld_status_t stat;
  stat=fmanager_handle(work);
  if (stat==XMLD_FAILURE) {
-  /* NOTE: ERROR_RESPONSE should contain readdition of the socket
+  /* NOTE: ERROR_RESPONSE must contain readdition of the socket
    * to conn_table (sosel_add) which will be blocking */
   ERROR_RESPONSE("There was an error accessing the requested file.");
   return;
