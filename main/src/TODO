@@ -1,0 +1,13 @@
+* Make a unified <what ever>Table API for:
+ 
+   * XMLDExprTable
+   * XMLDCondTable
+   * XMLDFuncTable
+   * XMLDAggrTableTable
+   * XMLDConnectionTable ? (maybe turning the shm in sosel to it)
+
+* After making the above mentioned unified API and creating
+  a header file for each structure of the mentioned above, 
+  check for places where the API isn't used, and use it.
+
+* HAVE_XMLD_MEMPOOL_H -> HAVE_XMLD_MEM_POOL_H
