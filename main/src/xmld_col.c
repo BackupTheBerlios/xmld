@@ -21,11 +21,9 @@
  * val (optional): an initial value to associate to the column.
  * returns: the newly created column
  */
-XMLDCol *XMLDCol_create(char *val) {
+XMLDCol *XMLDCol_create() {
  XMLDCol *col=(XMLDCol *) malloc(sizeof(XMLDCol));
- if (val!=NULL) {
-  XMLDCol_fill(col, val);
- }
+ col->val=NULL;
  return col;
 }
 
@@ -52,7 +50,7 @@ void XMLDCol_free_content(void *col) {
  * val: the value.
  */
 void XMLDCol_fill(XMLDCol *col, char *val) {
- col->val=(char *) malloc((strlen(val)+1)*sizeof(char));
+ col->val=(char *) realloc(col->val, (strlen(val)+1)*sizeof(char));
  strcpy(col->val, val);
 }
 
@@ -72,10 +70,8 @@ XMLDList *XMLDCol_create_list() {
  * cpy (optional) : whether to copy val.
  * returns: a pointer to the added XMLDCol.
  */ 
-XMLDCol *XMLDCol_add_to_list(XMLDList *list, char *val) {
+XMLDCol *XMLDCol_add_to_list(XMLDList *list) {
  XMLDCol *col=(XMLDCol *) XMLDList_add(list);
- if (val!=NULL) {
-  XMLDCol_fill(col, val);
- }
+ col->val=NULL;
  return col;
 }

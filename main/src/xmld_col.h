@@ -20,7 +20,7 @@ struct XMLDCol {
 
 typedef struct XMLDCol XMLDCol;
 
-XMLDCol *XMLDCol_create(char *);
+XMLDCol *XMLDCol_create(void);
 void XMLDCol_fill(XMLDCol *, char *);
 void XMLDCol_free(XMLDCol *);
 void XMLDCol_free_content(void *);
@@ -28,6 +28,6 @@ void XMLDCol_free_content(void *);
 /* List functions */
 
 XMLDList *XMLDCol_create_list(void);
-XMLDCol *XMLDCol_add_to_list(XMLDList *, char *);
+XMLDCol *XMLDCol_add_to_list(XMLDList *);
 
 #endif /* HAVE_XMLD_COL_H */
