@@ -123,8 +123,16 @@ struct XMLDRequest {
 struct XMLDResponse {
 };
 
+/* carries an engine's information */
+struct XMLDEngine {
+ void *(*init) (struct XMLDWork *);
+ void *(*destroy) (struct XMLDWork *);
+};
+
 /* carries per-request resources */
 struct XMLDResource {
+ struct XMLDEngine *engine; /* the engine to be used */
+ void *data_source; /* the data_source (fd/memory tree) */
 };
 
 /* carries connection-specific information */
@@ -132,7 +140,6 @@ struct XMLDConnection {
  int fd;
  int sfd;
  char *curr_dir; /* the current directory */
- char *user; /* for authentication in the future */
 };
 
 struct XMLDWork {
