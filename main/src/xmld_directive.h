@@ -29,6 +29,7 @@ struct XMLDDirective {
               * 0 = int
               * 1 = int*
 	      * 2 = char*
+	      * 3 = char**
 	      */
 };
 
