@@ -170,16 +170,18 @@ void cfg_parser_parse_token(char *token, int mode) {
  }
  else if (mode == XMLD_CFG_MODE_VAL) {
   curr_dir=(XMLDDirective *) XMLDList_curr(cfg_tree);
-  if (curr_dir->type == XMLD_DIR_ERR) {
-   return;
-  }
+  char **str_array;
+  int num;
   switch(curr_dir->type) {
+   case XMLD_DIR_ERR:
+    return;
+   break;
    case XMLD_DIR_INT:
     curr_dir->value.int_value=atoi(ltrim(token));
    break; 
    case XMLD_DIR_INTARR:
-    char **str_array=str_split(token, ',');
-    int num=1;
+    str_array=str_split(token, ',');
+    num=1;
     while (*str_array != NULL) {
      num++;
      curr_dir->value.int_array_value=(int *) realloc(curr_dir->value.int_array_value, num*sizeof(int));
