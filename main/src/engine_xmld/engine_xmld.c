@@ -169,9 +169,9 @@ char *engine_xmld_eval_expr(XMLDWork *work, XMLDExpr *expr) {
  char *ret;
  if (expr->type == 0) { /* expr is of a numeric type */
   return ltoa(expr->nval);
- }
+ } 
  else if (expr->type == 2) { /* expr is a column name */
-  return engine_xmld_get_column_value(work, expr->ident);  
+  return strchr_replace(strchr_replace(engine_xmld_get_column_value(work, expr->ident), col_sep, col_sep_enc), row_sep, row_sep_enc);  
  }
  else if (expr->type == 4) { /* expr is a string value */
   ret=(char *) malloc((strlen(expr->qval)+1)*sizeof(char));
@@ -180,6 +180,9 @@ char *engine_xmld_eval_expr(XMLDWork *work, XMLDExpr *expr) {
  }
  else if (expr->type == 5) { /* expr is a wildcard */
   return engine_xmld_get_column_value(work, (expr->wildcard == 0) ? "*" : "@");
+ }
+ else if (expr->type == 6) {
+  return ftoa(expr->fnval);
  }
  else {
   XMLDExpr *temp_expr=XMLDExpr_create();
@@ -197,20 +200,14 @@ short engine_xmld_eval_cond(XMLDWork *work, XMLDCond *cond) {
  char *left_val;
  char *right_val;
  if (cond->type == 0) {
-  if (cond->op == 7) {
+  if (cond->op == 7 || cond->op == 8) {
    left_val=engine_xmld_eval_expr(work, cond->left);
    char *bet_left=engine_xmld_eval_expr(work, cond->right->left);
    char *bet_right=engine_xmld_eval_expr(work, cond->right->right);
    val=str_between(left_val, bet_left, bet_right);
-   free(left_val);
-   free(bet_left);
-   free(bet_right);
-  }
-  else if (cond->op == 8) {
-   left_val=engine_xmld_eval_expr(work, cond->left);
-   char *bet_left=engine_xmld_eval_expr(work, cond->right->left);
-   char *bet_right=engine_xmld_eval_expr(work, cond->right->right);
-   val=!str_between(left_val, bet_left, bet_right);
+   if (cond->op == 8) {
+    val=!val;
+   }
    free(left_val);
    free(bet_left);
    free(bet_right);
@@ -228,7 +225,7 @@ short engine_xmld_eval_cond(XMLDWork *work, XMLDCond *cond) {
      }
     break;
     case 1:
-     if (atol(left_val) < atol(right_val)) {
+     if (atof(left_val, NULL) < atof(right_val, NULL)) {
       val=1;
      }
      else {

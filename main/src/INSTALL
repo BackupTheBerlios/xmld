@@ -47,7 +47,7 @@ $ cd ptasker
 $ gcc -c ptasker.c
 $ cd ..
 $ cd engine_xmld
-$ gcc3 -c engine_xmld.c format_manip.c element_op.c 
+$ gcc -c engine_xmld.c format_manip.c element_op.c 
 -DUSE_PTASKER -DUSE_ENGINE_XMLD
 $ cd ..
 

@@ -405,6 +405,8 @@ Support that in xmld-sql.(lex|y).
 
 * Support for expression type 6 in engine_xmld.
 
+* Implement dtoa (sutils.h).
+
 * Consider converting nval back to int.
 
 * Make sure that mtasker_handle_idle is called whensever
@@ -418,11 +420,13 @@ ectory "functions" for them.
 
 * Remove/Secure usage of SIGUSR1 in ptasker.
 
-* Add the file/engine association document, and mime/engine
-association documents, and implement cfg functions that
-play with them.
+* engine_xmld_eval_cond must be rewritten using engine_xmld
+_simplify_expr and engine_xmld_get_colum_value and format
+manip get_type functions.
 
-* Implement mfigure.
+* .format must contain the datatype of each column, eval_
+cond must check .format when it comes to determination of
+column types.
 
 --------------- Start of The OpenXMLD 0.5.0 part:
 
@@ -443,6 +447,8 @@ file association.
 * Find a way of correct resolution of aggregate
 expressions.
 
+* SQL functions must be able to report errors.
+
 * Continue implementation of SQL functions in func_list.
 
 * Create a hash table implementation for places where
@@ -456,9 +462,15 @@ XMLDEngine_search_hashtable(...)
 * Multiple query parsers support and on-the-fly query
 parser switching.
 
+* Add the file/engine association document, and mime/engine
+association documents, and implement cfg functions that
+play with them.
+
 *--------------- Start of The OpenXMLD 0.6.0 part:
 
 * Make it a robust XMLD-SQL implementation!
+
+* XML compliance and Unicode support.
 
 *--------------- Start of The OpenXMLD 0.7.0 part:
 
@@ -470,3 +482,6 @@ caching support)
 
 * Re-implement fmanager using a flock-independent way
 once MULTI_THREAD_MTASKER is on.
+
+* Implement a path translator that modifies the path
+according to the OS.
