@@ -69,7 +69,7 @@ short twalker_handle(XMLDWork *work) {
    }
    XMLDResponse_reset_aggr(work->resp);
    while (XMLDResponse_curr_aggr_expr(work->resp) != NULL) {
-    XMLDResponse_fill_curr_aggr(work->resp, (*(work->res->engine->eval_aggr_expr)) (work, XMLDResponse_curr_aggr_expr(work->resp)));
+    XMLDResponse_fill_curr_aggr(work->resp, (*(work->res->engine->eval_expr)) (work, XMLDResponse_curr_aggr_expr(work->resp)));
     XMLDResponse_next_aggr(work->resp);
    }
    XMLDResponse_flush(work->resp, work->conn->fd);
@@ -112,7 +112,7 @@ short twalker_handle(XMLDWork *work) {
    }
    XMLDResponse_reset_aggr(work->resp);
    while (XMLDResponse_curr_aggr_expr(work->resp) != NULL) {
-    XMLDResponse_fill_curr_aggr(work->resp, (*(work->res->engine->eval_aggr_expr)) (work, XMLDResponse_curr_aggr_expr(work->resp)));
+    XMLDResponse_fill_curr_aggr(work->resp, (*(work->res->engine->eval_expr)) (work, XMLDResponse_curr_aggr_expr(work->resp)));
     XMLDResponse_next_aggr(work->resp);
    }
    XMLDResponse_flush(work->resp, work->conn->fd);
@@ -120,22 +120,40 @@ short twalker_handle(XMLDWork *work) {
    (*(work->res->engine->cleanup)) (work);
   break;
   case 2: /* UPDATE */
+   xmld_errno=XMLD_ENOTIMPL;
+   return 0;
   break;
   case 3: /* UPDATE with WHERE */
+   xmld_errno=XMLD_ENOTIMPL;
+   return 0;
   break;
   case 4: /* DELETE or (DELETE *) */
+   xmld_errno=XMLD_ENOTIMPL;
+   return 0;
   break;
   case 5: /* DELETE with WHERE */
+   xmld_errno=XMLD_ENOTIMPL;
+   return 0;
   break;
   case 6: /* INSERT with column list */
+   xmld_errno=XMLD_ENOTIMPL;
+   return 0;
   break;
   case 7: /* INSERT with column list with WHERE */
+   xmld_errno=XMLD_ENOTIMPL;
+   return 0;
   break;
   case 8: /* INSERT with WHERE */
+   xmld_errno=XMLD_ENOTIMPL;
+   return 0;
   break;
   case 9: /* INSERT */
+   xmld_errno=XMLD_ENOTIMPL;
+   return 0;
   break;
   case 10: /* USE */
+   xmld_errno=XMLD_ENOTIMPL;
+   return 0;
   break;
  } 
  return 1;
