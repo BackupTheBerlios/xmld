@@ -136,7 +136,7 @@ order to be able to resolve wildcards correctly. (done)
  * twalker (Remove initial privilege checking) (done)
  * XMLDFile (store the priv of each file inside it) (done)
  * twalker_simplify_expr (Check the privileges of a file 
- to which a column is associated on each operation) (done)
+ to which a column is associated on each operation)
 
  * There shouldn't be a XMLD_ACCESS_NOTHING we can't limit
    usage of format files. (done)
