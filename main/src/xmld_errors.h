@@ -17,13 +17,15 @@
 enum xmld_error {
  XMLD_ENOFILE,
  XMLD_ENOENGINE,
- XMLD_EINVALFILE
+ XMLD_EINVALFILE,
+ XMLD_ENOAGGR
 } xmld_errno;
 
 char *err_str[3] = {
  "The request file was not found.",
  "The given engine does not exist.",
- "Invalid file type."
+ "Invalid file type.",
+ "Invalid use of an aggregate expression"
 };
 
 #define ERROR_RESPONSE xmld_socket_write(work->conn->fd, err_str[xmld_errno])
