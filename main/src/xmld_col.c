@@ -18,7 +18,6 @@
 
 /*
  * : Creates a new column.
- * val (optional): an initial value to associate to the column.
  * returns: the newly created column
  */
 XMLDCol *XMLDCol_create() {
@@ -41,7 +40,6 @@ void XMLDCol_free(XMLDCol *col) {
  * col: the column to free
  */
 void XMLDCol_free_content(void *col) {
- free(((XMLDCol *)col)->val);
 }
 
 /*
@@ -50,8 +48,7 @@ void XMLDCol_free_content(void *col) {
  * val: the value.
  */
 void XMLDCol_fill(XMLDCol *col, char *val) {
- col->val=(char *) realloc(col->val, (strlen(val)+1)*sizeof(char));
- strcpy(col->val, val);
+ col->val=val;
 }
 
 /*
