@@ -374,7 +374,7 @@ XMLDExpr *twalker_simplify_expr(XMLDExpr *expr, XMLDWork *work, int level) {
  if (expr->type == XMLD_OPERATION) {
   XMLDExpr *left, *right;
   if (XMLDExpr_is_complex(expr->left)) {
-   left=XMLDExpr_simplify(expr->left, work, level);
+   left=twalker_simplify_expr(expr->left, work, level);
   }
   else {
    left=expr->left;
@@ -386,7 +386,7 @@ XMLDExpr *twalker_simplify_expr(XMLDExpr *expr, XMLDWork *work, int level) {
   
   xmld_errno = XMLD_ENOERROR;
   if (XMLDExpr_is_complex(expr->right)) {
-   right=XMLDExpr_simplify(expr->right, work, level);
+   right=twalker_simplify_expr(expr->right, work, level);
   }
   else {
    right=expr->right;
@@ -416,11 +416,13 @@ XMLDExpr *twalker_simplify_expr(XMLDExpr *expr, XMLDWork *work, int level) {
       case XMLD_INTEGER:
        ret=XMLDExpr_create();
        ret->type = XMLD_INTEGER;
+       ret->ident = XMLDExpr_to_string(expr);
        ret->nval=left->nval + right->nval;
       break; 
       case XMLD_FLOAT:
        ret=XMLDExpr_create();
        ret->type = XMLD_FLOAT;
+       ret->ident = XMLDExpr_to_string(expr);
        ret->fnval=left->fnval + right->fnval;
       break;
      }
@@ -429,11 +431,13 @@ XMLDExpr *twalker_simplify_expr(XMLDExpr *expr, XMLDWork *work, int level) {
      if (left->type == XMLD_FLOAT && right->type == XMLD_INTEGER) {
       ret=XMLDExpr_create();
       ret->type=XMLD_FLOAT;
+      ret->ident = XMLDExpr_to_string(expr);
       ret->fnval=left->fnval + right->nval;
      }
      else if (left->type == XMLD_INTEGER && right->type == XMLD_FLOAT) {
       ret=XMLDExpr_create();
       ret->type=XMLD_FLOAT;
+      ret->ident = XMLDExpr_to_string(expr);
       ret->fnval=left->nval + right->fnval;
      }
     }
@@ -454,11 +458,13 @@ XMLDExpr *twalker_simplify_expr(XMLDExpr *expr, XMLDWork *work, int level) {
       case XMLD_INTEGER:
        ret=XMLDExpr_create();
        ret->type = XMLD_INTEGER;
+       ret->ident = XMLDExpr_to_string(expr);
        ret->nval=left->nval - right->nval;
       break; 
       case XMLD_FLOAT:
        ret=XMLDExpr_create();
        ret->type = XMLD_FLOAT;
+       ret->ident = XMLDExpr_to_string(expr);
        ret->fnval=left->fnval - right->fnval;
       break;
      }
@@ -467,11 +473,13 @@ XMLDExpr *twalker_simplify_expr(XMLDExpr *expr, XMLDWork *work, int level) {
      if (left->type == XMLD_FLOAT && right->type == XMLD_INTEGER) {
       ret=XMLDExpr_create();
       ret->type=XMLD_FLOAT;
+      ret->ident = XMLDExpr_to_string(expr);
       ret->fnval=left->fnval - right->nval;
      }
      else if (left->type == XMLD_INTEGER && right->type == XMLD_FLOAT) {
       ret=XMLDExpr_create();
       ret->type=XMLD_FLOAT;
+      ret->ident = XMLDExpr_to_string(expr);
       ret->fnval=left->nval - right->fnval;
      }
     }
@@ -492,11 +500,13 @@ XMLDExpr *twalker_simplify_expr(XMLDExpr *expr, XMLDWork *work, int level) {
       case XMLD_INTEGER:
        ret=XMLDExpr_create();
        ret->type = XMLD_INTEGER;
+       ret->ident = XMLDExpr_to_string(expr);
        ret->nval=left->nval * right->nval;
       break; 
       case XMLD_FLOAT:
        ret=XMLDExpr_create();
        ret->type = XMLD_FLOAT;
+       ret->ident = XMLDExpr_to_string(expr);
        ret->fnval=left->fnval * right->fnval;
       break;
      }
@@ -505,11 +515,13 @@ XMLDExpr *twalker_simplify_expr(XMLDExpr *expr, XMLDWork *work, int level) {
      if (left->type == XMLD_FLOAT && right->type == XMLD_INTEGER) {
       ret=XMLDExpr_create();
       ret->type=XMLD_FLOAT;
+      ret->ident = XMLDExpr_to_string(expr);
       ret->fnval=left->fnval * right->nval;
      }
      else if (left->type == XMLD_INTEGER && right->type == XMLD_FLOAT) {
       ret=XMLDExpr_create();
       ret->type=XMLD_FLOAT;
+      ret->ident = XMLDExpr_to_string(expr);
       ret->fnval=left->nval * right->fnval;
      }
     }
@@ -540,6 +552,7 @@ XMLDExpr *twalker_simplify_expr(XMLDExpr *expr, XMLDWork *work, int level) {
        }
        ret=XMLDExpr_create();
        ret->type = XMLD_FLOAT;
+       ret->ident = XMLDExpr_to_string(expr);
        ret->fnval=left->nval / right->nval;
       break; 
       case XMLD_FLOAT:
@@ -555,6 +568,7 @@ XMLDExpr *twalker_simplify_expr(XMLDExpr *expr, XMLDWork *work, int level) {
        }
        ret=XMLDExpr_create();
        ret->type = XMLD_FLOAT;
+       ret->ident = XMLDExpr_to_string(expr);
        ret->fnval=left->fnval / right->fnval;
       break;
      }
@@ -573,6 +587,7 @@ XMLDExpr *twalker_simplify_expr(XMLDExpr *expr, XMLDWork *work, int level) {
       }
       ret=XMLDExpr_create();
       ret->type=XMLD_FLOAT;
+      ret->ident = XMLDExpr_to_string(expr);
       ret->fnval=left->fnval / right->nval;
      }
      else if (left->type == XMLD_INTEGER && right->type == XMLD_FLOAT) {
@@ -588,6 +603,7 @@ XMLDExpr *twalker_simplify_expr(XMLDExpr *expr, XMLDWork *work, int level) {
       }
       ret=XMLDExpr_create();
       ret->type=XMLD_FLOAT;
+      ret->ident = XMLDExpr_to_string(expr);
       ret->fnval=left->nval / right->fnval;
      }
     }
@@ -608,11 +624,13 @@ XMLDExpr *twalker_simplify_expr(XMLDExpr *expr, XMLDWork *work, int level) {
       case XMLD_INTEGER:
        ret=XMLDExpr_create();
        ret->type = XMLD_FLOAT;
+       ret->ident = XMLDExpr_to_string(expr);
        ret->fnval=pow(left->nval, right->nval);
       break; 
       case XMLD_FLOAT:
        ret=XMLDExpr_create();
        ret->type = XMLD_FLOAT;
+       ret->ident = XMLDExpr_to_string(expr);
        ret->fnval=pow(left->fnval, right->fnval);
       break;
      }
@@ -621,11 +639,13 @@ XMLDExpr *twalker_simplify_expr(XMLDExpr *expr, XMLDWork *work, int level) {
      if (left->type == XMLD_FLOAT && right->type == XMLD_INTEGER) {
       ret=XMLDExpr_create();
       ret->type=XMLD_FLOAT;
+      ret->ident = XMLDExpr_to_string(expr);
       ret->fnval=pow(left->fnval, right->nval);
      }
      else if (left->type == XMLD_INTEGER && right->type == XMLD_FLOAT) {
       ret=XMLDExpr_create();
       ret->type=XMLD_FLOAT;
+      ret->ident = XMLDExpr_to_string(expr);
       ret->fnval=pow(left->nval, right->fnval);
      }
     }
@@ -642,11 +662,13 @@ XMLDExpr *twalker_simplify_expr(XMLDExpr *expr, XMLDWork *work, int level) {
      case XMLD_INTEGER:
       ret=XMLDExpr_create();
       ret->type=XMLD_INTEGER;
+      ret->ident = XMLDExpr_to_string(expr);
       ret->nval=-right->nval;
      break;
      case XMLD_FLOAT:
       ret=XMLDExpr_create();
       ret->type=XMLD_FLOAT;
+      ret->ident = XMLDExpr_to_string(expr);
       ret->fnval=-right->fnval;
      break;
     } 
@@ -655,6 +677,7 @@ XMLDExpr *twalker_simplify_expr(XMLDExpr *expr, XMLDWork *work, int level) {
     if (left->type == right->type) {
      ret = XMLDExpr_create();
      ret->type = XMLD_INTEGER;
+     ret->ident = XMLDExpr_to_string(expr);
      switch(left->type) {
       case XMLD_INTEGER:
        ret->nval = (left->nval == right->nval);
@@ -671,11 +694,13 @@ XMLDExpr *twalker_simplify_expr(XMLDExpr *expr, XMLDWork *work, int level) {
      if (left->type == XMLD_INTEGER && right->type == XMLD_FLOAT) {
       ret = XMLDExpr_create();
       ret->type = XMLD_INTEGER;
+      re->ident = XMLDExpr_to_string(expr);
       ret->nval = (left->nval == right->fnval);
      }
      else if (left->type == XMLD_FLOAT && right->type == XMLD_INTEGER) {
       ret = XMLDExpr_create();
       ret->type = XMLD_INTEGER;
+      ret->ident = XMLDExpr_to_string(expr);
       ret->nval = (left->fnval == right->nval);
      }
      else {
@@ -694,6 +719,7 @@ XMLDExpr *twalker_simplify_expr(XMLDExpr *expr, XMLDWork *work, int level) {
     if (left->type == right->type) {
      ret = XMLDExpr_create();
      ret->type = XMLD_INTEGER;
+     ret->ident = XMLDExpr_to_string(expr);
      switch(left->type) {
       case XMLD_INTEGER:
        ret->nval = (left->nval < right->nval);
@@ -710,11 +736,13 @@ XMLDExpr *twalker_simplify_expr(XMLDExpr *expr, XMLDWork *work, int level) {
      if (left->type == XMLD_INTEGER && right->type == XMLD_FLOAT) {
       ret = XMLDExpr_create();
       ret->type = XMLD_INTEGER;
+      ret->ident = XMLDExpr_to_string(expr);
       ret->nval = (left->nval < right->fnval);
      }
      else if (left->type == XMLD_FLOAT && right->type == XMLD_INTEGER) {
       ret = XMLDExpr_create();
       ret->type = XMLD_INTEGER;
+      ret->ident = XMLDExpr_to_string(expr);
       ret->nval = (left->fnval < right->nval);
      }
      else {
@@ -732,6 +760,7 @@ XMLDExpr *twalker_simplify_expr(XMLDExpr *expr, XMLDWork *work, int level) {
    case XMLD_OP_G:
     if (left->type == right->type) {
      ret = XMLDExpr_create();
+     ret->ident = XMLDExpr_to_string(expr);
      ret->type = XMLD_INTEGER;
      switch(left->type) {
       case XMLD_INTEGER:
@@ -749,11 +778,13 @@ XMLDExpr *twalker_simplify_expr(XMLDExpr *expr, XMLDWork *work, int level) {
      if (left->type == XMLD_INTEGER && right->type == XMLD_FLOAT) {
       ret = XMLDExpr_create();
       ret->type = XMLD_INTEGER;
+      ret->ident = XMLDExpr_to_string(expr);
       ret->nval = (left->nval > right->fnval);
      }
      else if (left->type == XMLD_FLOAT && right->type == XMLD_INTEGER) {
       ret = XMLDExpr_create();
       ret->type = XMLD_INTEGER;
+      ret->ident = XMLDExpr_to_string(expr);
       ret->nval = (left->fnval > right->nval);
      }
      else {
@@ -771,6 +802,7 @@ XMLDExpr *twalker_simplify_expr(XMLDExpr *expr, XMLDWork *work, int level) {
    case XMLD_OP_NE:
     if (left->type == right->type) {
      ret = XMLDExpr_create();
+     ret->ident = XMLDExpr_to_string(expr);
      ret->type = XMLD_INTEGER;
      switch(left->type) {
       case XMLD_INTEGER:
@@ -788,11 +820,13 @@ XMLDExpr *twalker_simplify_expr(XMLDExpr *expr, XMLDWork *work, int level) {
      if (left->type == XMLD_INTEGER && right->type == XMLD_FLOAT) {
       ret = XMLDExpr_create();
       ret->type = XMLD_INTEGER;
+      ret->ident = XMLDExpr_to_string(expr);
       ret->nval = (left->nval != right->fnval);
      }
      else if (left->type == XMLD_FLOAT && right->type == XMLD_INTEGER) {
       ret = XMLDExpr_create();
       ret->type = XMLD_INTEGER;
+      ret->ident = XMLDExpr_to_string(expr);
       ret->nval = (left->fnval != right->nval);
      }
      else {
@@ -810,6 +844,7 @@ XMLDExpr *twalker_simplify_expr(XMLDExpr *expr, XMLDWork *work, int level) {
    case XMLD_OP_LE:
     if (left->type == right->type) {
      ret = XMLDExpr_create();
+     ret->ident = XMLDExpr_to_string(expr);
      ret->type = XMLD_INTEGER;
      switch(left->type) {
       case XMLD_INTEGER:
@@ -827,11 +862,13 @@ XMLDExpr *twalker_simplify_expr(XMLDExpr *expr, XMLDWork *work, int level) {
      if (left->type == XMLD_INTEGER && right->type == XMLD_FLOAT) {
       ret = XMLDExpr_create();
       ret->type = XMLD_INTEGER;
+      ret->ident = XMLDExpr_to_string(expr);
       ret->nval = (left->nval <= right->fnval);
      }
      else if (left->type == XMLD_FLOAT && right->type == XMLD_INTEGER) {
       ret = XMLDExpr_create();
       ret->type = XMLD_INTEGER;
+      ret->ident = XMLDExpr_to_string(expr);
       ret->nval = (left->fnval <= right->nval);
      }
      else {
@@ -849,6 +886,7 @@ XMLDExpr *twalker_simplify_expr(XMLDExpr *expr, XMLDWork *work, int level) {
    case XMLD_OP_GE:
     if (left->type == right->type) {
      ret = XMLDExpr_create();
+     ret->ident = XMLDExpr_to_string(expr);
      ret->type = XMLD_INTEGER;
      switch(left->type) {
       case XMLD_INTEGER:
@@ -866,11 +904,13 @@ XMLDExpr *twalker_simplify_expr(XMLDExpr *expr, XMLDWork *work, int level) {
      if (left->type == XMLD_INTEGER && right->type == XMLD_FLOAT) {
       ret = XMLDExpr_create();
       ret->type = XMLD_INTEGER;
+      ret->ident = XMLDExpr_to_string(expr);
       ret->nval = (left->nval >= right->fnval);
      }
      else if (left->type == XMLD_FLOAT && right->type == XMLD_INTEGER) {
       ret = XMLDExpr_create();
       ret->type = XMLD_INTEGER;
+      ret->ident = XMLDExpr_to_string(expr);
       ret->nval = (left->fnval >= right->nval);
      }
      else {
@@ -889,6 +929,7 @@ XMLDExpr *twalker_simplify_expr(XMLDExpr *expr, XMLDWork *work, int level) {
     if (left->type == XMLD_QVAL && right->type = XMLD_QVAL) {
      ret = XMLDExpr_create();
      ret->type = XMLD_INTEGER;
+     ret->ident = XMLDExpr_to_string(expr);
      ret->nval = str_like(left->qval, right->qval);
     }
     else {
@@ -905,16 +946,19 @@ XMLDExpr *twalker_simplify_expr(XMLDExpr *expr, XMLDWork *work, int level) {
    case XMLD_OP_AND:
     ret = XMLDExpr_create();
     ret->type = XMLD_INTEGER;
+    ret->ident = XMLDExpr_to_string(expr);
     ret->nval = (XMLDExpr_to_boolean(left) && XMLDExpr_to_boolean(right));
    break;
    case XMLD_OP_OR:
     ret = XMLDExpr_create();
     ret->type = XMLD_INTEGER;
+    ret->ident = XMLDExpr_to_string(expr);
     ret->nval = (XMLDExpr_to_boolean(left) || XMLDExpr_to_boolean(right));
    break;
    case XMLD_OP_NOT:
     ret = XMLDExpr_create();
     ret->type = XMLD_INTEGER;
+    ret->ident = XMLDExpr_to_string(expr);
     ret->nval = (!XMLDExpr_to_boolean(right));
    break;
   }
