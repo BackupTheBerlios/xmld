@@ -14,14 +14,10 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include "errors.h"
 #include "xmld_types.h"
 #include "xmld_mempool.h"
-/* FIXME
- * - Number of pool segments should come from config.
- * - request should be external and already allocated.
- */
-struct XMLDMemPool *expr_pool=XMLDMemPool_create(sizeof(struct expr), 20);
-struct XMLDMemPool *cond_pool=XMLDMemPool_create(sizeof(struct cond), 10);
+#define  YYERROR_VERBOSE
 int yyerror(char *);
 int yylex(void);
 int num_expr;
@@ -77,7 +73,8 @@ query: /* empty */
 					   request->file=(char *) malloc(strlen($4)*sizeof(char));
 					   strcpy(request->file, $4);
 					   request->type=0;
-					   request->retr=$2;					  
+					   request->retr=$2;
+					   YYACCEPT;
                                           }
        | SELECT expr_list FROM QUOTED_VAL WHERE cond_list {
                                                            $$=1;
@@ -87,6 +84,7 @@ query: /* empty */
 							   request->type=1;
 							   request->retr=$2;
 							   request->where=$6;
+							   YYACCEPT;
                                                           }
 ;
 
@@ -305,6 +303,6 @@ expr_list: expr {
 %%
 
 int yyerror(char *s) {
- printf("%s\n",s);
+ ERROR_RESPONSE(s);
  return 0;
 }
