@@ -23,7 +23,7 @@ typedef struct XMLDRow XMLDRow;
 
 XMLDRow *XMLDRow_create(XMLDList *);
 void XMLDRow_add_col(XMLDRow *);
-void XMLDRow_fill_col(XMLDRow *, char *);
+void XMLDRow_fill_col(XMLDRow *, char *, short);
 void XMLDRow_free(XMLDRow *);
 
 /* List functions */
