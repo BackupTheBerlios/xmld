@@ -52,7 +52,7 @@ the list of XMLDEngine's which serve the requests.
 
 * Check all the code for usage of strlen->malloc->strcpy
 must be strlen+1->malloc->strcpy, because strlen doesn't
-count the null character.
+count the null character. (done)
 
 * Check all the code for realloc() while iterators are
 on the realloc'd memory segment. These iterators must
@@ -60,14 +60,37 @@ be updated for realloc may change the address of the
 realloc'd segment.
 
 * Fix usage of cfg in all the parts that currently
-use it incorrectly: somanager, mtasker.
+use it incorrectly: sosel, somanager, mtasker. (done)
 
 * Use cfg in sosel to determine the timeout period
-of select().
+of select(). (done)
 
 * Use *_engine cfg functions to get the engine
 which is to be used with a given file in
-fmanager.
+fmanager. (done)
 
 * Remove usage of XMLDMemPool from qp, and check
 for usage of it in other parts.
+
+* Implement ERROR_RESPONSE such that it depends
+on a variable (e.g xmld_errno).
+
+* Use ERROR_RESPONSE instead of perror.
+
+* Remove/Secure usage of SIGUSR1 in mtasker.
+
+* Add a MIME figurer part (mfigure) which det-
+rmines the mime type of a given file, and
+implements mfigure_get_mime(char *). Integrate
+that with cfg_get_engine, such that if an engine
+for the given file wasn't found, mfigurer is used
+to figure out the mime type of that file, and cfg_
+get_engine finally returns the value returned by
+cfg_get_mime_engine.
+
+* Add a filed to XMLDRequest that carries the full
+file name + path from the root in order to use it
+easily in fmanager (full_file).
+
+* Create the engine_list global variable in a sepa
+rate module file.
