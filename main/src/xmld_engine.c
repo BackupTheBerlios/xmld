@@ -12,9 +12,13 @@
  */
 
 #include <stdlib.h>
+#include <string.h>
 #include "xmld_list.h"
+#include "xmld_table.h"
+#include "xmld_col.h"
 #include "xmld_func.h"
 #include "xmld_expr.h"
+#include "xmld_aggr_table.h"
 #include "xmld_cond.h"
 struct XMLDEngine;
 #ifndef XMLDENGINE_TYPE_DEFINED
@@ -30,10 +34,13 @@ struct XMLDEngine;
 
 /*
  * : Creates a new engine structure.
+ * name: the name of the new engine. (not copied)
  * returns: the newly created engine.
  */
-XMLDEngine *XMLDEngine_create() {
- return ((XMLDEngine *) malloc(sizeof(XMLDEngine)));
+XMLDEngine *XMLDEngine_create(char *name) {
+ XMLDEngine *engine=(XMLDEngine *) malloc(sizeof(XMLDEngine));
+ engine->name=name;
+ return engine;
 }
 
 /*
@@ -63,9 +70,32 @@ XMLDList *XMLDEngine_create_list() {
 /*
  * : Adds a new element to a list of engine structures.
  * list: the list to which the new engine structure will be added.
+ * name: the name of the newly added engine structure.
  * returns: a pointer to the newly added element.
  */
-XMLDEngine *XMLDEngine_add_to_list(XMLDList *list) {
- return ((XMLDEngine *) XMLDList_add(list));
+XMLDEngine *XMLDEngine_add_to_list(XMLDList *list, char *name) {
+ XMLDEngine *engine=(XMLDEngine *) XMLDList_add(list);
+ engine->name=name;
+ return engine;
 }
 
+/*
+ * : Searches a list of engine structures for an engine that
+ * has a particular name.
+ * list: the list to search.
+ * name: the name to look for.
+ * returns: a pointer to the engine that has the given name or NULL
+ * if not found. If there was more than one engine having the same
+ * name, a pointer to the first one is returned.
+ */
+XMLDEngine *XMLDEngine_search_list_by_name(XMLDList *list, char *name) {
+ XMLDList_reset(list);
+ XMLDEngine *engine=NULL;
+ while (XMLDList_next(list)) {
+  if (strcmp(((XMLDEngine *) XMLDList_curr(list))->name, name)==0) {
+   engine = (XMLDEngine *) XMLDList_curr(list);
+   break;
+  }
+ }
+ return engine;
+}

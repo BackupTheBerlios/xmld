@@ -15,6 +15,7 @@
 #define HAVE_XMLD_ENGINE_H
 
 struct XMLDEngine {
+ char *name;
  void *(*init) (XMLDWork *);
  void *(*destroy) (XMLDWork *);
  int (*walk) (XMLDWork *);
@@ -28,13 +29,14 @@ struct XMLDEngine {
  typedef struct XMLDEngine XMLDEngine;
 #endif /* XMLDENGINE_TYPE_DEFINED */
 
-XMLDEngine *XMLDEngine_create(void);
+XMLDEngine *XMLDEngine_create(char *);
 void XMLDEngine_free(XMLDEngine *);
 void XMLDEngine_free_content(void *);
 
 /* List functions */
 
 XMLDList *XMLDEngine_create_list(void);
-XMLDEngine *XMLDEngine_add_to_list(XMLDList *);
+XMLDEngine *XMLDEngine_add_to_list(XMLDList *, char *);
+XMLDEngine *XMLDEngine_search_list_by_name(XMLDList *, char *);
 
 #endif /* HAVE_XMLD_ENGINE_H */
