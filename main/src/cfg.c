@@ -12,6 +12,7 @@
  */
 
 #include <stdlib.h>
+#include "xmld_list.h"
 #include "cfg_parser.h"
 #include "cfg.h"
 
