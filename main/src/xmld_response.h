@@ -20,6 +20,7 @@ struct XMLDResponse {
 };
 
 typedef struct XMLDResponse XMLDResponse;
+typedef XMLDList XMLDResponseList;
 
 /* Rows (and columns) manipulation functions */
 XMLDResponse *XMLDResponse_create(void);

@@ -25,6 +25,7 @@ struct XMLDRequest {
 };
 
 typedef struct XMLDRequest XMLDRequest;
+typedef XMLDList XMLDRequestList;
 
 XMLDRequest *XMLDRequest_create(void);
 void XMLDRequest_free(XMLDRequest *);

@@ -20,6 +20,7 @@ struct XMLDRow {
 };
 
 typedef struct XMLDRow XMLDRow;
+typedef XMLDList XMLDRowList;
 
 XMLDRow *XMLDRow_create();
 void XMLDRow_add_col(XMLDRow *);

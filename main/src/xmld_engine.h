@@ -71,6 +71,7 @@ struct XMLDEngine {
 #define XMLDENGINE_TYPE_DEFINED
  typedef struct XMLDEngine XMLDEngine;
 #endif /* XMLDENGINE_TYPE_DEFINED */
+typedef XMLDList XMLDEngineList;
 
 XMLDEngine *XMLDEngine_create(char *);
 void XMLDEngine_free(XMLDEngine *);

@@ -68,6 +68,7 @@ struct XMLDExpr {
 };
 
 typedef struct XMLDExpr XMLDExpr;
+typedef XMLDList XMLDExprList;
 
 XMLDExpr *XMLDExpr_create(void);
 void XMLDExpr_copy(XMLDExpr *, XMLDExpr *);

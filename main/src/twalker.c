@@ -42,6 +42,7 @@ struct XMLDEngine;
 #include "twalker.h"
 #include "xmld-sql.h"
 #include "resptrans.h"
+#include "protoimpl.h" 
 #include "authman.h"
  
 XMLDStatus twalker_handle(XMLDWork *work) {
@@ -105,7 +106,7 @@ XMLDStatus twalker_handle(XMLDWork *work) {
    work->res=XMLDResource_create();
   
    full_file=XMLDWork_get_full_file(work);
-   int priv=authman_get_priv(work->conn->user, full_file);
+   priv=authman_get_priv(work->conn->user, full_file);
    
    if (!BIT_ISSET(priv, XMLD_PRIV_READ)) {
     free(full_file);

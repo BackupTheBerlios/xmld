@@ -39,6 +39,7 @@ struct XMLDEngine;
 #include "xmld_connection.h"
 #include "xmld_work.h"
 #include "xmld_engine.h"
+#include "cfg.h"
 #include "qp.h"
 #include "twalker.h"
 #include "protoimpl.h"
@@ -94,7 +95,7 @@ void qp_handle(void *conn) {
   char *query=protoimpl_read_sequence(work->conn->fd, NULL);
   YY_BUFFER_STATE buf=yy_scan_string(query);
   printf("%s\n", query);
-  status=yyparse((void *) work);
+  XMLDStatus status=yyparse((void *) work);
   yy_delete_buffer(buf);
   if (status == 1) {
    ERROR_RESPONSE;

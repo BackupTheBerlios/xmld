@@ -68,7 +68,9 @@ int main() {
  err_str[5]="The given query is not yet implemented.";
  err_str[6]="Couldn't open a description file for the request file.";
  err_str[7]="Mal-formed description file for the request file.";
- 
+ err_str[8]="Read privileges not available for the request file";
+ err_str[9]="Write privileges not available for the request file";
+
  init_create_part(&parts[0], cfg_init, cfg_shutdown);
  init_create_part(&parts[1], engine_list_init, engine_list_shutdown);
  init_create_part(&parts[2], func_list_init, func_list_shutdown);

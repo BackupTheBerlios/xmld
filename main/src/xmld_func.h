@@ -24,6 +24,7 @@ struct XMLDFunc { /* represents a SQL function */
 #define XMLD_FUNC_TYPE_DEFINED
  typedef struct XMLDFunc XMLDFunc;
 #endif /* XMLD_FUNC_TYPE_DEFINED */
+typedef XMLDList XMLDFuncList;
 
 XMLDFunc *XMLDFunc_create(void);
 void XMLDFunc_free(XMLDFunc *);

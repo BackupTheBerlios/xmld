@@ -19,6 +19,7 @@ struct XMLDCol {
 };
 
 typedef struct XMLDCol XMLDCol;
+typedef XMLDList XMLDColList;
 
 XMLDCol *XMLDCol_create(void);
 void XMLDCol_fill(XMLDCol *, char *);

@@ -50,6 +50,7 @@ struct XMLDCond {
 };
 
 typedef struct XMLDCond XMLDCond;
+typedef XMLDList XMLDCondList;
 
 XMLDCond *XMLDCond_create(void);
 void XMLDCond_copy(XMLDCond *, XMLDCond *);

@@ -29,7 +29,7 @@
 #define XMLD_TRUE 1
 
 #define BIT_ISSET(bitmask, bit) ((bitmask) & (bit))
-#define ERROR_RESPONSE xmld_socket_write(work->conn->fd, err_str[xmld_errno])
+#define ERROR_RESPONSE xmld_socket_write(work->conn->fd, err_str[xmld_errno], strlen(err_str[xmld_errno])+1)
 
 typedef int XMLDBool;
 typedef int XMLDStatus;
@@ -42,9 +42,11 @@ enum xmld_error {
  XMLD_EPARSE,
  XMLD_ENOTIMPL,
  XMLD_ENOFORMAT,
- XMLD_EMALFORMAT
+ XMLD_EMALFORMAT,
+ XMLD_ENORPRIV,
+ XMLD_ENOWPRIV
 } xmld_errno;
 
-char *err_str[8];
+char *err_str[10];
 
 #endif /* __XMLDDEF_H */

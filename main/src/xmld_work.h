@@ -22,6 +22,7 @@ struct XMLDWork {
 };
 
 typedef struct XMLDWork XMLDWork;
+typedef XMLDList XMLDWorkList;
 
 XMLDWork *XMLDWork_create(void);
 char *XMLDWork_get_full_file(XMLDWork *);

@@ -38,6 +38,7 @@ struct XMLDDirective {
 };
 
 typedef struct XMLDDirective XMLDDirective;
+typedef XMLDList XMLDDirectiveList;
 
 XMLDDirective *XMLDDirective_create(void);
 void XMLDDirective_free_content(void *);
