@@ -40,17 +40,20 @@ short cfg_parser_parse() {
  char buf;
  char *curr_data=NULL;
  int data_len=1;
- short mode=0; /* 0  = looking for type
-                * 1  = looking for directive
-	        * 2  = looking for equal sign
-		* 3  = looking for value
-		* 4  = looking for end-of-line
+ short mode=0; /* 0 = looking for type
+                * 1 = looking for directive
+	        * 2 = looking for equal sign
+		* 3 = looking for value
+		* 4 = looking for end of line
 	        */
  short ign_ws=1; /* 0 = don't ignore whitespace
 	          * 1 = ignore whitespace
 	          */
- while (!feof(conf)) {
-  fread((void *) &buf, sizeof(char), 1, conf);
+ while (1) {
+  buf = (char) fgetc(conf);
+  if (buf == EOF) {
+   break;
+  }
   if (buf == '#') {
    mode=4;
    ign_ws=1;
@@ -102,13 +105,13 @@ short cfg_parser_parse() {
      }
     }
     else if (mode == 3) {
-     if (buf == ';') {
+     if (buf == '\n' || buf == '\r') {
       cfg_parser_parse_token(curr_data, 3);
       free(curr_data);
       curr_data=NULL;
       data_len=1;
       ign_ws=1;
-      mode=4;
+      mode=0;
      }
      else {
       ign_ws=0;
@@ -184,7 +187,7 @@ void cfg_parser_parse_token(char *token, short mode) {
     num++;
     curr_dir->value.int_array_value=(int *) realloc(curr_dir->value.int_array_value, 
 		    num*sizeof(int));
-    curr_dir->value.int_array_value[num-1]=0;
+    curr_dir->value.int_array_value[num-1]=NULL;
     curr_dir->value.int_array_value[num-2]=atoi(*str_array);
     free(*str_array);
     str_array++;
