@@ -117,7 +117,7 @@ once the columns pointed by it are filled. (done)
 current mtasker in a different directory and call it ptasker,
 this should involve #ifdef'ing the include in each place 
 where mtasker.h is included, and putting different values 
-for it depending on the macro MTASKER, also define the 
+for it depending on the macro USE_PTASKER, also define the 
 macro MULTI_PROC_MTASKER, so it can be used by other parts
 to know whether to be multi-process safe (i.e to use shared 
 memory segments) or not, and the macro MULTI_THREAD_MTASKER 
@@ -138,7 +138,7 @@ cfg_parser_parse, and in cfg_get. (done)
 * sosel should read MULTI_PROC_MTASKER to decide whether
 to use a shared memory segment for storing connection
 information and whether to obey the sosel.max_conn
-iconfiguration option.
+configuration option.
 
 * Find a good way of reporting out-of-request errors.
 
@@ -185,22 +185,102 @@ you include xmld_errors.h. (done)
 * Implement Engine-XMLD !!!
 
 * Add a 'level' member to XMLDResource.
+(cancelled -- store instead)
 
 * Add a 'return_type' member to XMLDFunc.
+(done, and removed, for the returned 
+XMLDExpr contains its type)
 
 * Make multiple function containers in
 XMLDFunc that depend on return_type.
+(cancelled -- XMLDExpr is always re
+-turned)
 
 * Implement func_list like engine_list.
-
-* Aggregate expression resolution must
-be redone with each iteration over new
-elements, using the type of the expre-
-sion to decide the way of merging with
-the value currently put in the columns.
+(done)
 
 * Add the 'store' element to XMLDResou-
 rce.
+(done)
+
 * short return values that indiciate
 success/failure must use 0 for failure
 and 1 for success in all the code.
+
+* In all places where XMLDFunc was used
+maintain correct dependency by defining
+XMLDExpr before it just like XMLDEngine
+was treated.
+
+* In all .h files HAVE_X_X_H -> __X_X_H
+since the 'HAVE' thing has another use.
+
+* Add the func_list part to init. (done)
+
+* ptasker/ptasker.h inclusion must include
+sys/types.h for pid_t before it.
+
+* Implement dmstrstr and dmstrchr. 
+(in dutils.h).
+
+* In XMLDResponse_fill_col, don't use 
+XMLDCol_fill, in order not to copy
+the input string.
+
+* XMLDEngine's walk function now returns
+the current level and not a status
+code, prepare for that everywhere.
+
+* Aggregate expression resolution
+must go this way:
+
+[-] There should be a way of 
+associating columns on which
+the aggregate expression depends
+to the XMLDAggrTable.
+
+[-] eval_aggr_expr of the engine
+must use a XMLDAggrTable instead of
+just XMLDExpr in order to use
+the dependency.
+
+[-] Substitution happens on the
+columns associated to the XMLDAggr
+Table.
+
+* in QUERY.html, fix the wrong
+understanding that an expression
+which contains '*' or '@' is an
+aggregate one.
+
+* Stream specific functions in
+Engine-XMLD should receive only 
+an fd, for them to be usable out 
+of a resource context.
+
+* Engine-XMLD must open a format
+document (filename.xml.format) 
+at prepare of each request. If that
+file wasn't available writes to
+the document must not be allowed.
+
+* Split engine_xmld/engine_xmld.(c|h)
+to:
+
+engine_xmld.(c|h): which contains
+only the functions for XMLDEngine. 
+(done)
+
+element_ops.(c|h) (operations):
+which contains all the functions
+which process the current element. 
+(e.g element_ops_get_curr_att_value) 
+(done)
+
+format_manip.(c|h): which contains
+functions for direct .format file
+manipulation (e.g format_manip_
+get_curr_element_att_len(fd of
+.format, level, tagname, attribute
+name). (done)
+
