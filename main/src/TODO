@@ -1,21 +1,25 @@
 * Implement XMLDList mechanism instead of XMLD*Table for
   each structure. (done)
 
-* Implement new structures:
-
-  * XMLDContext: to represent a thread/process for the
-    mtasker. (with usage of XMLDList instead of proc
-    table). (cancelled, because it won't be used
-    out of the mtasker itself)
-
 * Remove XMLDPart and revert the initializer to the old
 way -- XMLDPart won't be used out of the initializer.
 (done)
 
-* Create a generic XMLDTable structure to maintain
-static size lists of objects.
+* Create an *_init function for each structure that
+gets called by the *_create function, such that
+a structure obtained in a way different from dynamic
+allocation (e.g shared memory) can be initialized
+just as a dynamically allocated one.
 
-* Use a XMLDList of XMLDConnection's in sosel.
+* Create a generic XMLDTable structure to maintain
+static size lists of objects. And modify structures
+to use XMLDTable where useful.
+
+* Use a XMLDTable of XMLDConnection's in sosel.
+
+* Remove xmld_status_t (and errors.h) from every
+where and use int (such that 0 = success, -1 = error 
+and other numbers mean special return values) instead.
 
 * Create a hash table implementation for places where
 search speed is important (XMLDHashTable), and provide
