@@ -52,14 +52,8 @@ age-1
 Aggregate Expression (agr_expr):
 --------------------------------
 An aggregate expression is identically a scalar expression
-with these two exceptions:
-
- [*] It can contain aggregate functions.
- [*] It can contain these special wildcards:
+with the exception that it can contain aggregate functions.
  
-   [-] "*" which means "all the columns"
-   [-] "@" which means "all the columns but without [text]"
-     
 From my understanding, an aggregate function is a function whose
 value depends on more than one element, so the XML processor 
 needs to go through all the elements to get its value, and it has 

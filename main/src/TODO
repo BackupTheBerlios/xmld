@@ -210,7 +210,7 @@ sys/types.h for pid_t before it.
 
 * Implement dmstrstr, dmstrchr, dmcstrchr,
 dmwstrchr.
-(in dutils.h).
+(in dutils.h). (done)
 
 * XMLDEngine's walk function now returns
 the current level and not a status
@@ -220,7 +220,7 @@ code, prepare for that everywhere.
 * in QUERY.html, fix the wrong
 understanding that an expression
 which contains '*' or '@' is an
-aggregate one.
+aggregate one. (done)
 
 * Stream specific functions in
 Engine-XMLD should receive only 
@@ -263,3 +263,8 @@ get_write_fd -> *_get_ex_fd. (done)
 (done)
 
 * str_split.(c|h) -> sutils.(c|h) + str_prepend.
+
+* Check for replacement of '\0' and usage of strlen
+to refer to its new position.
+
+* Implement read buffering in dutils.

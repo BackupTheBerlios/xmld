@@ -11,10 +11,11 @@
  * -------------------------------------------------------------- * 
  */
 
-#ifndef HAVE_STR_SPLIT_H
-#define HAVE_STR_SPLIT_H
+#ifndef __SUTILS_H
+#define __SUTILS_H
 
 char **str_split(char *, char);
+char *str_prepend(char *, char *);
 
-#endif /* HAVE_STR_SPLIT_H */
+#endif /* __SUTILS_H */
 
