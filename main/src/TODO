@@ -653,10 +653,8 @@ with identifiers. (done)
 * Use the first file's engine to resolve expressions within 
 twalker. (done)
 
-* A capability-demonstrating client in src/client.
-
 * put the default document root inside the distribution
-along with the example files.
+along with the example files. (done)
 
 * \n is the end-of-line in proto. (done)
 
@@ -670,8 +668,10 @@ statements that must not be mixed with normal conditions. (done)
 editions are put online. (done)
 
 * A make script:
- * make 
+ * make (done)
  * make client
+
+* A capability-demonstrating client in src/client.
 
 * compile
 
