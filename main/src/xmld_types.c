@@ -13,3 +13,17 @@
  
 /* add all the structures manipulation functions here */
 #include "xmld_types.h"
+
+void expr_free_content(void *segment) {
+ struct expr *ex=(struct expr *)segment;
+ if (ex->type==2 && ex->ident!=0) {
+  free(ex->ident);
+ }
+ if (ex->type==4 && ex->qval!=0) {
+  free(ex->qval);
+ }
+ if (ex->alias!=0) {
+  free(ex->alias);
+ }
+}
+ 
