@@ -29,11 +29,12 @@ struct conn_info {
 
 XMLDStatus xmldclient_auth(int);
 XMLDStatus xmldclient_process_info_msg(char *, struct conn_info *);
-void xmldclient_print_record_set(char *);
+void xmldclient_print_record_set(char *, struct conn_info *);
 void xmldclient_print_err(char *);
 void xmldclient_print_server_err_msg(char *);
 void xmldclient_get_port(short *);
 void xmldclient_free_info(struct conn_info *);
 char *xmldclient_input_string(char *);
+void xmldclient_disconnect(int);
 
 #endif /* __XMLDCLIENT_H */

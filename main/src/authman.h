@@ -15,8 +15,8 @@
 #define __AUTHMAN_H
 
 /* Bitmask returned by authman_get_priv -- for now! */
-#define XMLD_PRIV_READ 0  /* Read  */
-#define XMLD_PRIV_WRITE 1 /* Write */
+#define XMLD_PRIV_READ 1  /* Read  */
+#define XMLD_PRIV_WRITE 2 /* Write */
 
 #define AUTH_USER_NAME "name"
 #define AUTH_USER_PASS "pass"

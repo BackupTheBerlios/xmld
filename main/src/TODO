@@ -679,9 +679,6 @@ statements that must not be mixed with normal conditions. (done)
 * in somanager. print out each port the OpenXMLD 
 listening to under the PID. (done)
 
-* handle SIGINT in client and send disconnet to the
-server on receiving it.
-
 * create auth.xml and add a single user to it. (done)
 
 * fix client segfaults. (done)
@@ -690,7 +687,15 @@ server on receiving it.
 
 * a make script for the client (done).
 
-* record set parsing and showing in xmldclient.
+* record set parsing and showing in xmldclient. (done)
+
+* handle SIGINT in client and send disconnet to the
+server on receiving it. (done)
+
+* fix interrupted system call on server side on reciving
+of DISCONNECT.
+
+* segfault on the server side on simplest retr.
 
 * fix 
 

@@ -16,10 +16,12 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <unistd.h>
+#include <signal.h>
 #include "../xmld_sockets.h"
 #include "../protoimpl.h"
 #include "xmldclient.h"
 
+int main_fd=0;
 
 int main(int argc, char **argv) {
  ++argv; --argc;
@@ -33,6 +35,10 @@ int main(int argc, char **argv) {
  char *curr_msg;
  char *query=NULL;
 
+ struct sigaction action;
+ action.sa_handler=xmldclient_disconnect;
+ sigaction(SIGINT, &action, NULL);
+ 
  if (argc > 0) {
   port=atoi(argv[0]);
  }
@@ -43,6 +49,7 @@ int main(int argc, char **argv) {
    continue;
   }
   fd=socket(PF_INET, SOCK_STREAM, 0);
+  main_fd=fd;
   struct sockaddr_in addr;
   addr.sin_family=PF_INET;
   addr.sin_port=htons(port);
@@ -97,7 +104,7 @@ int main(int argc, char **argv) {
     curr_char=0;
     continue;
    }
-   xmldclient_print_record_set(curr_msg);
+   xmldclient_print_record_set(curr_msg, &info);
    free(curr_msg);
    free(query);
    curr_char=0;
@@ -277,7 +284,40 @@ void xmldclient_print_server_err_msg(char *msg) {
  *p[1]='\n';
 }
 
-void xmldclient_print_record_set(char *rs) {
+void xmldclient_print_record_set(char *rs, struct conn_info *info) {
+ char *curr=rs;
+ char *curr_col=NULL;
+ int curr_col_len=0;
+ int level;
+ int i;
+ 
+ while (*curr != '\0') {
+  if (*curr == info->row_sep) {
+   printf("\n");
+   for (i = 0; i < level; i++) {
+    printf("\t");
+   }
+  }
+  else if (*curr == info->col_sep) {
+   printf(" ");
+   printf("%s\n", curr_col);
+   free(curr_col);
+   curr_col=NULL;
+   curr_col_len=0;
+  }
+  else if (*curr == info->down_level) {
+   level++;
+  }
+  else if (*curr == info->up_level) {
+   level--;
+  }
+  else {
+   curr_col=(char *) realloc(curr_col, (curr_col_len + 2) * sizeof(char));
+   curr_col[curr_col_len+1]='\0';
+   curr_col[curr_col_len]=*curr;
+   curr_col_len++;
+  }
+ }
 }
 
 void xmldclient_free_info(struct conn_info *info) {
@@ -303,4 +343,12 @@ char *xmldclient_input_string(char *msg) {
   scanf("%c", &curr);
  }
  return input;
+}
+
+void xmldclient_disconnect(int signum) {
+ if (main_fd != 0) {
+  protoimpl_write_sequence(main_fd, DISCONNECTION_MESSAGE, 1);
+ } 
+ printf("\nGoodbye!\n");
+ exit(0);
 }
