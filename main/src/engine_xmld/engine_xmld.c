@@ -257,13 +257,6 @@ short engine_xmld_eval_cond(XMLDWork *work, XMLDCond *cond) {
  }
 }
 
-/* eval_aggr_expr function */
-char *engine_xmld_eval_aggr_expr(XMLDWork *work, XMLDExpr *expr) {
- char *ret=(char *) malloc(27*sizeof(char));
- strcpy(ret, "Aggregate Expression Value");
- return ret;
-}
-
 /*
  * Simplifies a XMLDExpr to a type directly
  * interpretable by engine_xmld_eval_expr.
@@ -322,6 +315,10 @@ void engine_xmld_simplify_expr(XMLDWork * work, XMLDExpr *expr) {
   XMLDExpr_free(temp_right);
  }
  else if (expr->type == 3) {
+  if (expr->func->aggr == 1) {
+   XMLDExpr *work_expr=XMLDFunc_add_to_list(expr->arg_list);
+   work_expr->nval=(long) work;
+  }
   XMLDExpr *func_res=(*(expr->func->func)) (expr->arg_list);
   XMLDExpr_copy(func_res, expr);
   XMLDExpr_free(func_res);
