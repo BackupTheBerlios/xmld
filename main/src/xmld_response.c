@@ -67,7 +67,7 @@ void XMLDResponse_add_row(XMLDResponse *resp) {
  */
 void XMLDResponse_add_col(XMLDResponse *resp) {
  XMLDRow *row=(XMLDRow *) XMLDList_curr(resp->rows);
- XMLDCol_add_to_list(row->cols, NULL);
+ XMLDCol_add_to_list(row->cols);
  XMLDList_last(row->cols);
 }
 
@@ -102,7 +102,7 @@ void XMLDResponse_assoc_col_to_aggr(XMLDResponse *resp, XMLDExpr *expr, XMLDCol 
   table=XMLDResponse_search_aggr_tables_by_expr(resp, expr);
  }
  if (table == NULL) {
-  table=XMLDAggrTable_add_to_list(resp->tables, NULL, NULL);
+  table=XMLDAggrTable_add_to_list(resp->tables);
   table->aggr=expr;
   XMLDList_last(resp->tables);
  }
