@@ -168,3 +168,9 @@ information and whether to obey the sosel.max_conn
 configuration option.
 
 * Find a good way of reporting out-of-request errors.
+
+* macros inside mtasker -> ptasker ;-)
+
+* XMLDResponse_flush must be a request type specific thing
+(i.e remove it from qp and add it conditionally inside 
+twalker) (done)
