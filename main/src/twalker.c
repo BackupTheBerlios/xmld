@@ -51,7 +51,6 @@ short twalker_handle(XMLDWork *work) {
   }
   
   if (((*(work->res->engine->prepare)) (work)) == 0) {
-   xmld_errno=XMLD_EPREPAREFAIL;
    return -1;
   }
   
