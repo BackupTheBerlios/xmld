@@ -743,11 +743,19 @@ useful as something useful.
 
 --- Foundation:
 
-* Expression tree walking must happen out of the engine.
- * xmld_errno must have a default no-error value. (done)
- * XMLDExpr (Implement XMLDExpr_simplify)
+* Expression tree walking must happen at twalker.
+ * xmld_errno must have a default no-error value. (done -- 
+ XMLD_ENOERROR)
+ * XMLDExpr (define XMLD_SPECIAL_IDENTIFIER because [text]
+ and [tagname] may not be the same for other parsers/
+ engines -- done)
+ * xmld-sql.y (track and fill XMLD_SPECIAL_IDENTIFIER -- done)
+ * Take operation, special identifier, wildcard type macros
+ out of XMLDExpr and put them in xmld-sql.h because
+ they are query parser specific. (done)
+ * twalker (Implement twalker_simplify_expr)
   * Notes:
-   * lists must be returned as is.
+   * lists must be returned without resolution.
    * column names must be put in the ident field after 
    getting their values.
    * in case of error, NULL is returned with setting 
@@ -755,18 +763,25 @@ useful as something useful.
    * NULL columns are indiciated by XMLD_QVAL return
    values with NULL values of the qval field.
  * XMLDEngine (Modify according to requirements
- of XMLDExpr_simplify)
+ of twalker_simplify_expr)
  * engine_list (Modify according to XMLDEngine changes)
- * XMLDResponse (Implement XMLDResponse_fill)
- * twalker (twalker_handle must only call 
- XMLDResponse_fill for each expression to be retr
- ieved)
+ * XMLDExpr (Implement XMLDExpr_to_string)
+ * twalker (call twalker_simplify_expr is is_complex returns
+ true)
+ * twalker (twalker_handle must resolve XMLD_LIST recursively
+ using twalker_simplify_expr)
+
+* Condition tree walking must happen at twalker.
+ * XMLDCond (Implement XMLDCond_to_boolean)
 
 * If the above gets stabilized, remove unused functions
 in Engine-XMLD, XMLDResponse [...?].
 
 * The engine must not know about [text] and [tagname].
 (Implement separate functions for their retrieval).
+ * format_manip (The format document must not use [text] 
+ but rather store [text] information in  the place of real 
+ element text)
 
 * Implement a sequential column retrieval API in the engine in
 order to be able to resolve wildcards correctly.
@@ -790,7 +805,7 @@ search speed is important.
 * Correct required privilege specification.
  * twalker (Remove initial privilege checking)
  * XMLDFile (store the priv of each file inside it)
- * XMLDExpr_simplify (Check the privileges of a file 
+ * twalker_simplify_expr (Check the privileges of a file 
  to which a column is associated on each operation)
 
 * Shell-like treatment of the forward and backward arrow keys 

@@ -14,6 +14,7 @@
 #ifndef __TWALKER_H
 #define __TWALKER_H
 
-XMLDStatus twalker_handle(struct XMLDWork *);
+XMLDStatus twalker_handle(XMLDWork *);
+XMLDExpr *twalker_simplify_expr(XMLDExpr *, XMLDWork *, int);
 
 #endif /* __TWALKER_H */

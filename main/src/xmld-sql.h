@@ -27,5 +27,22 @@
 #define XMLD_SQL_INSERT 9           /* INSERT                             */
 #define XMLD_SQL_USE 10             /* USE                                */
 
+/* XMLD-SQL Operation types */
+#define XMLD_OP_ADD 0    /* Addition                  */
+#define XMLD_OP_BNEG 1   /* Binary substraction       */
+#define XMLD_OP_MULTIP 2 /* Multiplication            */
+#define XMLD_OP_DIV 3    /* Division                  */
+#define XMLD_OP_EXPO 4   /* Exponentation             */
+#define XMLD_OP_UNEG 5   /* Sign switching            */
+#define XMLD_OP_AND 6    /* AND (for between support) */
+
+/* XMLD-SQL Special identifier types */
+#define XMLD_SIDENT_TEXT 0    /* [text]    */
+#define XMLD_SIDENT_TAGNAME 1 /* [tagname] */
+
+/* XMLD-SQL Wildcard types */
+#define XMLD_WILDCARD_ALL 0  /* All columns     */
+#define XMLD_WILDCARD_ATTS 1 /* Attributes only */
+
 #endif /* __XMLD_SQL_H */
 

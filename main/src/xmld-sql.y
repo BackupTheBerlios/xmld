@@ -516,6 +516,17 @@ expr: '(' expr ')' {
 		    $$->type=XMLD_IDENTIFIER;
 		    $$->ident=$1;
                    }
+      | SPECIAL_IDENTIFIER {
+                            $$=XMLDExpr_create();
+			    $$->aggr=XMLD_FALSE;
+			    $$->type=XMLD_SPECIAL_IDENTIFIER;
+			    if (strcmp($1, "[text]") == 0) {
+			     $$->sident=XMLD_SIDENT_TEXT;
+			    }
+			    else {
+			     $$->sident=XMLD_SIDENT_TAGNAME;
+			    }
+                           }
       | IDENTIFIER '(' expr_list ')' {
                                       $$=XMLDExpr_create();
 				      $$->type=XMLD_FUNCTION;

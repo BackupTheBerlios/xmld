@@ -65,7 +65,7 @@
 ([[]{1})(("text"|"tagname"){1})([]]{1}) {
                                          lvalp->qval=(char *) malloc((strlen(yytext)+1)*sizeof(char));
 		                         strcpy(lvalp->qval, yytext);
-		                         return IDENTIFIER;
+		                         return SPECIAL_IDENTIFIER;
                                         }
 [0-9]+"."[0-9]+ {
                  lvalp->fnum=atof(yytext);
