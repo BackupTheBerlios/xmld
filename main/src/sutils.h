@@ -18,6 +18,7 @@ char **str_split(char *, char);
 char *str_prepend(char *, char *);
 short str_like(char *, char *);
 short str_between(char *, char *, char *);
+char *itoa(int);
 
 #endif /* __SUTILS_H */
 
