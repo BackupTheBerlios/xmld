@@ -9,11 +9,14 @@
 int yylex(void);
 int yyerror(char *);
 void printout(char *);
+int num_ident;
+int num_cond;
 %}
 
 %union {
  char *str;
  struct XMLDCond *cond_t;
+ struct XMLDCond **cond_arr;
  char **str_arr;
  int num;
 }
@@ -21,7 +24,7 @@ void printout(char *);
 %token SELECT /* flex: "select" */
 %token <str> IDENTIFIER    /* flex [A-Z][A-Z0-9]+ | "(tagname)" | "(text)" */
 %token FROM   /* flex: "from"   */
-%token WHERE  /* flex: "where"  */
+%token <cond_arr> WHERE  /* flex: "where"  */
 %token <str> QUOTED_VAL /* flex: "\"[a-z]+\"" | "'[a-z]+'" */
 %token <num> NUM /* flex: [0-9]* */
 %type <cond_t> cond
@@ -43,17 +46,41 @@ void printout(char *);
 
 query: /* empty */
        | SELECT retr FROM QUOTED_VAL
+       | SELECT wildcard FROM QUTOED_VAL
        | SELECT retr FROM QUOTED_VAL WHERE where
+       | SELECT wildcard FROM QUOTED_VAL
 ;
 
-retr: '*' { $$=realloc(sizeof(char*)*(strlen($$)+1));*$$="*"; }
-      | '@' { $$=realloc(sizeof(char*)*(strlen($$)+1));*$$="@";}
-      | IDENTIFIER
-      | retr ',' IDENTIFIER
+wildcard: '*' { $$ = 0; }
+          | '@' { $$ = 1; }
 ;
 
-where: cond
-       | where ':' cond
+retr: IDENTIFIER { $$=(char**) malloc(2*sizeof(char*));
+                   num_ident=2;
+		   $$[0]=(char*) malloc(strlen($1)*sizeof(char));
+		   $$[1]=(char*) 0;
+		   strcpy($$[0], $1);
+                 }
+      | retr ',' IDENTIFIER {
+                             num_ident++;
+                             $$=(char**) realloc(num_ident*sizeof(char*));
+			     $$[num_ident-2]=(char*) malloc(strlen($3)*sizeof(char));
+			     $$[num_ident-1]=(char*) 0;
+			     strcpy($$[num_ident-2], $3);
+                            }
+;
+
+where: cond { $$=(struct XMLDCond **) malloc(2*sizeof(struct XMLDCond*));
+             num_cond=2;
+	     $$[0]=$1;
+	     $$[1]=(struct XMLDCond*) 0;
+            }
+       | where ':' cond {
+                         num_ident++;
+                         $$=(struct XMLDCond **) realloc(num_ident*sizeof(struct XMLDCond *));
+			 $$[num_ident-2]=$3;
+			 $$[num_ident-1]=(struct XMLDCond*) 0;
+                        }
 ;
 
 cond: '(' cond ')' { $$ = $2; }

@@ -29,7 +29,10 @@ struct XMLDCond {
 /* carries the parsed query */
 struct XMLDRequest {
  char *file;
- char **retr;
+ char **retr;  /* when = 0, look for wildcard */
+ int wildcard; /* 0 = *
+		* 1 = @
+		*/ 
  struct XMLDCond *cond; /* the conditional for each level */
  int num_cond;
 };

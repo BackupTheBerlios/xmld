@@ -23,8 +23,8 @@ int yyparse(void);
 ":" return ':'; /* FIXME: return a bigger cond ? */
 "like" yylval.cond_t=(struct XMLDCond *)malloc(sizeof(struct XMLDCond));return LIKE;
 /* FIXME: check if QUOTED_VAL should be up */
-"\"[a-z0-9]+\""|"'[a-z0-9]+'" yylval.str=realloc(yylval.str, strlen(yytext)*sizeof(char));strcpy(yylval.str,yytext);return QUOTED_VAL; 
-[a-z][a-z0-9]+|"(tagname)"|"(text)" yylval.str=realloc(yylval.str, strlen(yytext)*sizeof(char));strcpy(yylval.str, yytext);return IDENTIFIER;
+"\"[a-z0-9]+\""|"'[a-z0-9]+'" yylval.str=(char*)realloc(yylval.str, strlen(yytext)*sizeof(char));strcpy(yylval.str,yytext);return QUOTED_VAL; 
+[a-z][a-z0-9]+|"(tagname)"|"(text)" yylval.str=(char*)realloc(yylval.str, strlen(yytext)*sizeof(char));strcpy(yylval.str, yytext);return IDENTIFIER;
 [0-9]* yylval.num=atoi(yytext); return NUM;
 
 %%
