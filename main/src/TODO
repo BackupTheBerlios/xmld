@@ -53,3 +53,8 @@ the list of XMLDEngine's which serve the requests.
 * Check all the code for usage of strlen->malloc->strcpy
 must be strlen+1->malloc->strcpy, because strlen doesn't
 count the null character.
+
+* Check all the code for realloc() while iterators are
+on the realloc'd memory segment. These iterators must
+be updated for realloc may change the address of the
+realloc'd segment.
