@@ -68,3 +68,11 @@ char *str_prepend(char *dest, char *pre) {
  strcat(ret, dest);
  return ret;
 }
+
+short str_like(char *str, char *patern) {
+ return 1;
+}
+
+short str_between(char *str, char *min, char *max) {
+ return 1;
+}
