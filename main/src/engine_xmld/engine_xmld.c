@@ -118,6 +118,43 @@ int engine_xmld_walk(XMLDWork *work, XMLDFile *file) {
  }
 }
 
+
+char *engine_xmld_get_attribute(XMLDFile *file, char *attribute) {
+ engine_xmld_reset_element(file);
+ char *name;
+ while (engine_xmld_next_attribute(file) == XMLD_TRUE) {
+  name = engine_xmld_get_curr_attribute_name(file);
+  if (strcmp(name, attribute) == 0) {
+   free(name);
+   return engine_xmld_get_curr_attribute_value(file);
+  }
+  free(name);
+ }
+}
+
+char *engine_xmld_get_attribute_type(XMLDFile *file, char *attribute) {
+}
+
+char *engine_xmld_get_text(XMLDFile *file) {
+ engine_xmld_reset_element(file);
+ char *tokens[2]={"/>", ">"};
+ int tok = dmstrstr((FILE *) file->data, tokens, 2);
+ if (tok == -1 || tok == 0) {
+  return NULL;
+ }
+ else {
+  return dmcstrchr((FILE *) file->data, "<", 1);
+ } 
+}
+
+char *engine_xmld_get_text_type(XMLDFile *file) {
+}
+
+char *engine_xmld_get_tagname(XMLDFile *file) {
+ engine_xmld_reset_element(file);
+ return dmcstrchr((FILE *) file->data, " />", 3);
+}
+
 /* Sequential attribute selection API */
 
 void engine_xmld_reset_element(XMLDFile *file) {
