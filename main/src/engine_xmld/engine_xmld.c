@@ -87,7 +87,13 @@ short engine_xmld_prepare(XMLDWork *work) {
  
  work->res->store=malloc(3*sizeof(int));
  *((int *) work->res->store)=0; /* <-- the current level in the document */
- *((int *) work->res->store+2)=engine_xmld_load_format_file((FILE *) (work->res->store+1), full_name, work->req->type);
+ if (work->req->type == 2 || work->req->type == 3 || work->req->type == 4 || work->req->type == 5
+     || work->req->type == 6 || work->req->type == 7 || work->req->type == 8 || work->req->type == 9) {	 
+  *((int *) work->res->store+2)=engine_xmld_load_format_file((FILE *) (work->res->store+1), full_name, work->req->type);
+ }
+ else {
+  *((int *) work->res->store+2)=0;
+ }
  free(full_name);
 
  return 1;
@@ -387,20 +393,66 @@ char *engine_xmld_get_column_value(XMLDWork *work, char *col_name) {
 }
 
 short engine_xmld_set_column_value(XMLDWork *work, char *col_name, char *value) {
- if (strcasecmp(col_name, "(text)") == 0) {
-  if (engine_xmld_locate_text((FILE *) (work->res->data_source))) {
-   return engine_xmld_set_text_value((FILE *) (work->res->data_source), value);
+ fpos_t pos;
+ fgetpos((FILE *) work->res->data_source, &pos);
+ short ret;
+ /* FIXME: should the lengthed writing be in element_op ? */
+ if (*((int *) work->res->store+2)) { /* we have got a format file */
+  int stat;
+  char *tag_name=engine_xmld_get_tagname((FILE *) work->res->data_source);
+  if (strcasecmp(col_name, "(text)") == 0) {
+   if (engine_xmld_locate_text((FILE *) work->res->data_source)) {
+    int len=engine_xmld_get_element_text_length((FILE *) work->res->store+1, *((int*) work->res->store),
+		    tag_name);
+    fgetc((FILE *) work->res->data_source); /* Eat the quote up */
+    if (strlen(value) >= len) {
+     stat=fwrite((void *) value, sizeof(char), len, (FILE *) work->res->data_source);
+    }
+    else {
+     stat=fwrite((void *) value, sizeof(char), strlen(value), (FILE *) work->res->data_source);
+    }
+    ret = (stat == 0) ? 0 : 1;
+   }
+   else {
+    ret=0;
+   }
   }
   else {
-   return 0;
+   if (engine_xmld_locate_att((FILE *) work->res->data_source), col_name) {
+    int len=engine_xmld_get_element_att_length((FILE *) work->res->store+1, *((int*) work->res->store),
+		    tag_name, col_name);
+    if (strlen(value) >= len) {
+     stat=fwrite((void *) value, sizeof(char), len, (FILE *) work->res->data_source);
+    }
+    else {
+     stat=fwrite((void *) value, sizeof(char), strlen(value), (FILE *) work->res->data_source);
+    }
+    ret = (stat == 0) ? 0 : 1;
+   }
+   else {
+    ret=0;
+   }
   }
+  free(tag_name);
  }
  else {
-  if (engine_xmld_locate_att((FILE *) (work->res->data_source), col_name)) {
-   return engine_xmld_set_curr_att_value((FILE *) (work->res->data_source), value);
+  if (strcasecmp(col_name, "(text)") == 0) {
+   if (engine_xmld_locate_text((FILE *) (work->res->data_source))) {
+    ret=engine_xmld_set_text_value((FILE *) (work->res->data_source), value);
+   }
+   else {
+    ret=0;
+   }
   }
   else {
-   return 0;
+   if (engine_xmld_locate_att((FILE *) (work->res->data_source), col_name)) {
+    ret=engine_xmld_set_curr_att_value((FILE *) (work->res->data_source), value);
+   }
+   else {
+    ret=0;
+   }
   }
- }
+ } 
+ fsetpos((FILE *) work->res->data_source, &pos);
+ return ret;
 }
