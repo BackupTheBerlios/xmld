@@ -26,6 +26,7 @@ short cfg_init() {
  short ret=cfg_parser_parse();
  col_sep=*((char *) cfg_get("response.col_sep"));
  row_sep=*((char *) cfg_get("response.row_sep"));
+ document_root=((char *) cfg_get("xmld.document_root"));
  return ret;
 }
 
