@@ -13,6 +13,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include "cfg.h"
 #include "xmld_list.h"
 struct XMLDFunc;
 #ifndef XMLD_FUNC_TYPE_DEFINED
@@ -77,13 +78,15 @@ void XMLDWork_free_content(void *work) {
 char *XMLDWork_get_full_file(XMLDWork *work) {
  char *full_file;
  if (*(work->req->file) == '/') {
-  full_file=(char *) malloc((strlen(work->req->file)+1)*sizeof(char));
-  strcpy(full_file, work->req->file);
+  full_file=(char *) malloc((strlen(work->req->file)+strlen(document_root)+1)*sizeof(char));
+  strcpy(full_file, document_root);
+  strcat(full_file, work->req->file);
   return full_file;
  }
 
- full_file=(char *) malloc(strlen((work->conn->curr_dir)+strlen(work->req->file)+1)*sizeof(char));
- strcpy(full_file, work->conn->curr_dir);
+ full_file=(char *) malloc(strlen(document_root)+strlen((work->conn->curr_dir)+strlen(work->req->file)+1)*sizeof(char));
+ strcpy(full_file, document_root);
+ strcat(full_file, work->conn->curr_dir);
  strcat(full_file, work->req->file);
  return full_file;
 }
