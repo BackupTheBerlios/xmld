@@ -118,7 +118,7 @@ value: STRING
               {
                $$=XMLDCfgValue_create();
 	       $$->type = XMLD_CFG_STRING;
-	       $$->value = (char *) $1;
+	       $$->value = (void *) $1;
               }
      | INTEGER
               {

@@ -60,7 +60,7 @@ XMLDStatus cfg_init() {
  * NULL for the tree means getting the directive from
  * cfg_tree.
  */
-XMLDCfgValueList *cfg_get(char *section, char *directive, XMLDCfgSection *tree) {
+XMLDCfgValue *cfg_get(char *section, char *directive, XMLDCfgSection *tree) {
  if (tree == NULL) {
   tree = cfg_tree;
  }

@@ -27,6 +27,47 @@ XMLDCfgSection *XMLDCfgSection_create() {
  return section;
 }
 
+
+/*
+ * : Gets a child section of the given section
+ * that has the given name, if multiple sections
+ * with that name exist, the given index is to
+ * decide which one to return.
+ */
+XMLDCfgSection *XMLDCfgSection_get_section(XMLDCfgSection *section, char *name, int index) {
+ int num = 0;
+ XMLDList_reset(section->sections);
+ while (XMLDList_next(section->sections)) {
+  if (strcmp(((XMLDCfgSection *) XMLDList_curr(section->sections))->name, name) == 0) {
+   num++;
+   if (num == index) {
+    return (XMLDCfgSection *) XMLDList_curr(section->sections);
+    break;
+   }
+  }
+ }
+}
+
+/*
+ * : Gets a directive in the given section
+ * that has the given name, if multiple directives
+ * with that name exist, the given index is to
+ * decide which one to return.
+ */
+XMLDCfgDirective *XMLDCfgSection_get_directive(XMLDCfgSection *section, char *name, int index) {
+ int num = 0;
+ XMLDList_reset(section->directives);
+ while (XMLDList_next(section->directives)) {
+  if (strcmp(((XMLDCfgDirective *) XMLDList_curr(section->directives))->name, name) == 0) {
+   num++;
+   if (num == index) {
+    return (XMLDCfgDirective *) XMLDList_curr(section->directives);
+   }
+  }
+ }
+ return NULL;
+}
+
 /*
  * : Frees a configuration section structure.
  * section: the section structure to free.

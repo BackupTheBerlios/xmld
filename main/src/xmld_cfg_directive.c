@@ -28,6 +28,22 @@ XMLDCfgDirective *XMLDCfgDirective_create() {
 }
 
 /*
+ * Gets the value structure of the given directive
+ * if index was 0, it returns the main value.
+ * Otherwise, index is the number of the parameter to return.
+ */ 
+XMLDCfgValue *XMLDCfgDirective_get_value(XMLDCfgDirective *directive, int index) {
+ int num = 0;
+ while (XMLDList_next(directive->values)) {
+  if (num == index) {
+   return (XMLDCfgValue *) XMLDList_curr(directive->values);
+  }
+  num++;
+ }
+ return NULL;
+}
+
+/*
  * : Frees a configuration directive structure.
  * directive: the directive structure to free.
  */

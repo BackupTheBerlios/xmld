@@ -16,7 +16,7 @@ Foundation:
 * Better passage of file names from the tree walker to the engine.
   * XMLDFile can contain an additional field that carries the full
     actual file path from the document root ?  (done)
-  * No longer should XMLDFile_get_full file be needed. (done)
+  * No longer should XMLDFile_get_full_file be needed. (done)
 
 * Addition of data source modification functions to the engine API. (done)
   * Capability bit. (done)
@@ -44,11 +44,22 @@ Foundation:
     * Reimplement cfg_get that supports a section name and
       a parent section structure arguments (NULL in case of
       cfg_tree). (done -- returns XMLDCfgValueList)
+    * Devise an API in cfg that eases retrival of directives
+      it just is really hard to do right now.
+       * XMLDCfgSection_get_section: (done)
+         * The index of the section.
+       * XMLDCfgSection_get_directive: (done)
+	 * The index of the directive.
+       * XMLDCfgDirective should provide a value retrieval function --
+         XMLDCfgDirective_get_value, that receives an argument: (done)
+	 * The index of the parameter to retrieve (0 for the main value).
     * Modify all parts.
       * ptasker
-    * modify initialization of document_root. (done)
+      * somanager
+    * modify initialization of document_root.
     * XMLDList_first and XMLDList_last should return NULL in case of
       receiving NULL as an argument. (done)
+    * Write a new sample xmld.conf. (done)
   * Engine association functions should be put in engine list. (done)
   * cfg_parser.(c|h) -> cfg.(c|h) (done)
   * Global configuration variables should remain initialized
@@ -56,7 +67,10 @@ Foundation:
   * Erase cfg.c and cfg.h. (done)
   * xmld.conf must not contain types of directives nor 
   somanager.num_listeners. (ok)
-  * Support for interface parameters. (ok)
+  * Support for directive parameters. (ok)
+  * # Support for comments in cfg_parser.lex (done)
+  * expected bug in cfg.c: The first directive of a set of directives
+    that have the same name is the only one we can retrieve.
 
 * Real implementation of interface specification according
   to the configuration file with support for interface parameters.
@@ -84,8 +98,7 @@ Foundation:
   Each interface will have a predefined set of rules the client
   knows about.
   
-  
-* Usage of autoconf to decide the modules to be compiled.
+* Usage of autoconf to decide on the modules to be compiled.
 
 * Separate make files for XMLDSQL, Engine-XMLD and ptasker.
 
@@ -101,11 +114,21 @@ Issues:
 
 *--------------- Start of OpenXMLD 0.8.0 part:
 
-Goal: Portability.
+Goal: Strength.
+
+* Portable loadable modules support.
+
+* Support for loading of a module on demand.
+
+* Port-based protocol selection and protocol
+  abstraction (?).
+  
+* cleaner, more portable sockets API.
 
 * Thread-safe core.
-
-* cleaner, more portable sockets API.
+  * XMLDList internal iterators are not thread safe.
+  * XMLD*List_functions depend on persistence of the internal
+    iterator which isn't guaranteed.
 
 * Implement a multi-threaded multi-
 tasker (Macro: USE_TTASKER).

@@ -49,9 +49,9 @@ XMLDStatus mtasker_init() {
  ttable.num_tasks=0;
  ttable.tasks=0;
  
- init_proc=*((int *) cfg_get("mtasker.init_proc"));
- max_proc=*((int *) cfg_get("mtasker.max_proc"));
- max_idle_proc=*((int *) cfg_get("mtasker.max_idle_proc"));
+ init_proc=*((int *) (XMLDList_first(cfg_get("PTasker", "InitProc", NULL))->value));
+ max_proc=*((int *) (XMLDList_first(cfg_get("PTasker", "MaxProc", NULL))->value));
+ max_idle_proc=*((int *) (XMLDList_first(cfg_get("PTasker", "MaxIdleProc", NULL))->value));
 
  if (init_proc > max_proc) {
   init_proc = max_proc;

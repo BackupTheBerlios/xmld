@@ -27,6 +27,8 @@ struct XMLDCfgSection {
 #endif /* XMLD_CFG_SECTION_TYPE_DEFINED */
 
 XMLDCfgSection *XMLDCfgSection_create(void);
+XMLDCfgSection *XMLDCfgSection_get_section(XMLDCfgSection *, char *, int);
+XMLDCfgDirective *XMLDCfgSection_get_directive(XMLDCfgSection *, char *, int);
 void XMLDCfgSection_free_content(void *);
 void XMLDCfgSection_free(XMLDCfgSection *);
 

@@ -20,10 +20,10 @@
 %%
 
 " " return ' ';
-"#" return '#';
-"<" return '<';
-">" return '>';
-"/" return '/';
+^#.{0,}\n
+< return '<';
+> return '>';
+/ return '/';
 "\n" return '\n';
 "\""  BEGIN STR;
 <STR>[^"]* {
