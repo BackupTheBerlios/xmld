@@ -53,7 +53,6 @@ void qp_handle(void *conn) {
   return;
  }
 
- XMLDResponse_flush(work->resp, work->conn->fd);
  sosel_add(work->conn->fd, work->conn->curr_dir);
  XMLDWork_free(work);
 }
