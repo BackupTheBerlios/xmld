@@ -58,20 +58,40 @@ void yy_switch_to_buffer(YY_BUFFER_STATE);
 void yy_delete_buffer(YY_BUFFER_STATE);
 
 void qp_handle(void *conn) {
- XMLDStatus status;
 #ifdef MULTI_PROC_MTASKER
  int fd=passed_fd;
 #else
  int fd=((XMLDConnection *) conn)->fd;
 #endif
  
+ /* writing the init msg */
+ char *arg_carry[4]={QP_COL_SEP_FIELD, QP_COL_SEP_ENC_FIELD, QP_ROW_SEP_FIELD, QP_ROW_SEP_ENC_FIELD};
+ char *val_carry[4];
+ val_carry[0]=&col_sep;
+ val_carry[1]=col_sep_enc;
+ val_carry[2]=&row_sep;
+ val_carry[3]=row_sep_enc;
+ char *init_msg=protoimpl_compose_msg(arg_carry, val_carry, 4, 0);
+ 
+ if (protoimpl_write_sequence(fd, init_msg, 1) == XMLD_FAILURE) {
+  free(init_msg);
+  xmld_socket_shutdown(fd);
+  return;
+ }
+ free(init_msg);
+ 
+ if (authman_handle(fd, val_carry) == XMLD_FAILURE) {
+  xmld_socket_shutdown(fd);
+  return;
+ }
+ 
  XMLDWork *work=XMLDWork_create();
- work->conn=XMLDConnection_create(fd, base_dir, user_name);
+ work->conn=XMLDConnection_create(fd, val_carry[1], val_carry[0]);
  
  while (1) {
   work->req=XMLDRequest_create();
   
-  char *query=xmld_socket_read(work->conn->fd);
+  char *query=protoimpl_read_sequence(work->conn->fd, NULL);
   YY_BUFFER_STATE buf=yy_scan_string(query);
   printf("%s\n", query);
   status=yyparse((void *) work);

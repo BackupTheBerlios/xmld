@@ -28,7 +28,7 @@
  * such that each value is associated with the argument with the
  * same index in args. The generated message is never longer than
  * len--arguments that go past it are ignored. This method returns 
- * the composed message.
+ * the composed message. If len was 0, it's ignored.
  */
 char *protoimpl_compose_msg(char **args, char **vals, int num, int len) {
  char *ret=(char *) malloc(sizeof(char));
@@ -37,7 +37,7 @@ char *protoimpl_compose_msg(char **args, char **vals, int num, int len) {
 
  while (i < num) {
   ret_len += strlen(args[i]) + strlen(vals[i]) + 2; /* 2 is \n + space */
-  if (ret_len > len) {
+  if (ret_len > len && len != 0) {
    break;
   }
   ret=(char *) realloc(ret, ret_len * sizeof(char));

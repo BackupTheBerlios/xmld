@@ -14,7 +14,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "xmlddef.h"
-#include "xmld_sockets.h"
 #include "xmld_list.h"
 #include "xmld_col.h"
 #include "xmld_row.h"
@@ -95,7 +94,10 @@ XMLDStatus twalker_handle(XMLDWork *work) {
     XMLDResponse_next_aggr(work->resp);
    }
    char *resp=resptrans_handle(work);
-   xmld_socket_write(work->conn->fd, resp);
+   if (protoimpl_write_sequence(work->conn->fd, resp, 1) == XMLD_FAILURE) {
+    free(resp);
+    return XMLD_FAILURE;
+   }
    free(resp);
    (*(work->res->engine->cleanup)) (work);
   break;
@@ -196,7 +198,10 @@ XMLDStatus twalker_handle(XMLDWork *work) {
     XMLDResponse_next_aggr(work->resp);
    }
    resp=resptrans_handle(work);
-   xmld_socket_write(work->conn->fd, resp);
+   if (protoimpl_write_sequence(work->conn->fd, resp, 1) == XMLD_FAILURE) {
+    free(resp);
+    return XMLD_FAILURE;
+   }
    free(resp);
    (*(work->res->engine->cleanup)) (work);
   break;

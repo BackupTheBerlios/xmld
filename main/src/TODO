@@ -494,11 +494,15 @@ error. (done)
 * Write a communication protocol document. (done)
 
 * Implement the communication protocol. (protoimpl
-part).
+part). (done)
 
 * Attach the communication protocol everywhere else.
+(done)
 
 * Add "Notes on record sets" to PROTO.html.
+
+
+* Consider handling init message out of qp.
 
 * resptrans in twalker instead of XMLDResponse_flush. (done)
 
@@ -512,10 +516,15 @@ the curr_dir of the user as well. (done)
 * protect the auth.xml document. (priv it to root only, and make it 
 system unreadable).
 
+* should XMLDList have _add_to_list and _create_list functions ?
+
 * define XMLD*List macros as XMLDList for clearity of code
 and use them everywhere.
 
 * Hook authman_get_priv in twalker. (done)
+
+* resptrans should write an additional header row
+at the beginning.
 
 * Add a length argument to xmld_socket_read/write. (done)
 
