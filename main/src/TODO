@@ -646,19 +646,12 @@ of a given condition list. (done)
 [20] no aggregate expression support. (done)
 
 * it maybe neccessary to fgetpos-fsetpos at simplify_expr
-with identifiers.
+with identifiers. (done)
 
 * fix engine_xmld_set_column_value radically. (done)
 
-* Define and implement the exec_assign engine
-function and the UPDATE and UPDATE with
-WHERE request types in twalker.
- 
- * Handle assignment lists in an assignment-per-
- assignment basis.
-
-* Implement a first SQL function (LENGTH) in a separate source 
-directory.
+* Use the first file's engine to resolve expressions within 
+twalker. (done)
 
 * A capability-demonstrating client in src/client.
 
@@ -670,20 +663,48 @@ along with the example files.
 * Erase STRCAT and STRLEN from QUERY.html examples, those aren't 
 existent in SQL. Add LENGTH and CONCAT instead. (done)
 
-* A make script:
- * make 
- * make client
-
-* repair includes across all code.
-
 * remove BETWEEN and NOT BETWEEN from conditions, those are special
 statements that must not be mixed with normal conditions. (done)
 
 * upload QUERY and PROTO to the site, to make sure that all
-editions are put online.
+editions are put online. (done)
+
+* A make script:
+ * make 
+ * make client
+
+* compile
+
+* repair includes across all code.
+
+* run and fix!
+
 --------------- Start of The OpenXMLD 0.6.0 part:
 
-Goal: PUMP the features in!
+Goal: Clean it up more and PUMP a lot of features in!
+
+* limit the engine API to column retrieval/updating and 
+transfer condition and expression evaluation to twalker.
+
+* @ and * must not be recognized within the engine.
+
+* retrieval of text and tagnames is a completely different
+thing.
+
+* one walk for column and wildcard resolution and one more
+for evaluation at twalker.
+
+* implement a sequential column selection API in the engine.
+
+* expression tree walking must happen at twalker.
+
+ * twalker_resolve_expr: turns columns and wildcards into expressions.
+ * twalker_resolve_cond: turns conditions into simple conditions.
+ * twalker_eval_expr: gets a string value out of the expression.
+ * twalker_eval_cond: 1 or 0 for the condition.
+
+* expression evaluation in twalker must consult the expression itself
+to know which engine to use.
 
 * wildcards must be turned into multiple expressions within
 twalker.
@@ -754,7 +775,11 @@ system unreadable).
 * simplify_expr NULL return values must indiciate errors
 and xmld_errno must be set appropriately.
 
-*--------------- Start of The OpenXMLD 0.7.0 part:
+*--------------- Start of the OpenXMLD 0.7.0 part:
+
+Goal: not set yet
+
+*--------------- Start of The OpenXMLD 0.8.0 part:
 
 Goal: Confromance and high-usability.
 

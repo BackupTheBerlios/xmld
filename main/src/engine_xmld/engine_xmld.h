@@ -24,3 +24,5 @@ XMLDBool engine_xmld_eval_cond (XMLDWork *, XMLDCond * int);
 char *engine_xmld_get_column_value (XMLDFile *, char *);
 XMLDStatus engine_xmld_set_column_value (XMLDWork *, char *, char *);
 XMLDExpr *engine_xmld_simplify_expr (XMLDWork *, XMLDExpr *, int);
+
+#endif /* __ENGINE_XMLD_H */

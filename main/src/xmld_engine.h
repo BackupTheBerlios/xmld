@@ -39,30 +39,24 @@ struct XMLDEngine {
 				                       */
  
  void (*cleanup) (XMLDWork *, XMLDFile *); /* The function called after each
-				            *  request the engine serves.
+				            * request the engine serves.
 				            */
- void (*destroy) (void); /* The function called before the engine
-			  * is removed from engine_list.
+ void (*destroy) (void); /* The function used for removal of the 
+			  * engine from engine_list.
 			  */
  
- int (*walk) (XMLDWork *, XMLDFile *); /* The function which the tree walker
-			                * calls for the engine to give a next
-			                * result from its data source.
+ int (*walk) (XMLDWork *, XMLDFile *); /* The function which makes the engine
+			                * give a next result from the given file.
 			                */
- char *(*eval_expr) (XMLDWork *, XMLDExpr *, int); /* The function which
-					            * the tree walker calls
-					            * to get the value of
-					            * an expression from the
-					            * engine. 	 
+ char *(*eval_expr) (XMLDWork *, XMLDExpr *, int); /* The function used for
+					            * getting the value of
+					            * an expression. 	 
 					            */
  
- XMLDBool (*eval_cond) (XMLDWork *, XMLDCond *, int); /* The function which
-					               * the tree walker calls
-					               * when it needs the eng-
-					               * ine to evaluate a con-
+ XMLDBool (*eval_cond) (XMLDWork *, XMLDCond *, int); /* The function used for
+					               * evaluation of a con-
 					               * dition.
 					               */
- 
 };
 
 #ifndef XMLDENGINE_TYPE_DEFINED

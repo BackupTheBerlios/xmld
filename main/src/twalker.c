@@ -119,12 +119,12 @@ XMLDStatus twalker_handle(XMLDWork *work) {
        XMLDList_reset(expr_list);
        while (XMLDList_next(expr_list)) {
         XMLDResponse_add_col(work->resp);
-        XMLDResponse_fill_col(work->resp, (*(work->res->engine->eval_expr)) (work, (XMLDExpr *) XMLDList_curr(expr_list), curr_max_level));
+        XMLDResponse_fill_col(work->resp, (*(((XMLDFile *) XMLDList_first(work->files))->engine->eval_expr)) (work, (XMLDExpr *) XMLDList_curr(expr_list), curr_max_level));
        }
       }
       else {	      
        XMLDResponse_add_col(work->resp);
-       XMLDResponse_fill_col(work->resp, (*(work->res->engine->eval_expr)) (work, (XMLDExpr *) XMLDList_curr(work->req->retr), curr_max_level));
+       XMLDResponse_fill_col(work->resp, (*(((XMLDFile *) XMLDList_first(work->files))->engine->eval_expr)) (work, (XMLDExpr *) XMLDList_curr(work->req->retr), curr_max_level));
       }
      } 
     }
@@ -252,12 +252,12 @@ XMLDStatus twalker_handle(XMLDWork *work) {
         XMLDList_reset(expr_list);
         while (XMLDList_next(expr_list)) {
 	 XMLDResponse_add_col(work->resp);
-         XMLDResponse_fill_col(work->resp, (*(work->res->engine->eval_expr)) (work, (XMLDExpr *) XMLDList_curr(expr_list), curr_max_level));
+         XMLDResponse_fill_col(work->resp, (*(((XMLDFile *) XMLDList_first(work->files))->engine->eval_expr)) (work, (XMLDExpr *) XMLDList_curr(expr_list), curr_max_level));
 	}
        }
        else {
 	XMLDResponse_add_col(work->resp);
-        XMLDResponse_fill_col(work->resp, (*(work->res->engine->eval_expr)) (work, (XMLDExpr *) XMLDList_curr(work->req->retr), curr_max_level));
+        XMLDResponse_fill_col(work->resp, (*(((XMLDFile *) XMLDList_first(work->files))->engine->eval_expr)) (work, (XMLDExpr *) XMLDList_curr(work->req->retr), curr_max_level));
        }
       }
       else {
