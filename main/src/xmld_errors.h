@@ -19,15 +19,17 @@ enum xmld_error {
  XMLD_ENOENGINE,
  XMLD_EINVALFILE,
  XMLD_ENOAGGR,
- XMLD_EPARSE
+ XMLD_EPARSE,
+ XMLD_ENOTIMPL
 } xmld_errno;
 
-char *err_str[5] = {
+char *err_str[6] = {
  "The request file was not found.",
  "The given engine does not exist.",
  "Invalid file type.",
- "Invalid use of an aggregate expression",
- "An error has occured while parsing the given query"
+ "Invalid use of an aggregate expression.",
+ "An error has occured while parsing the given query.",
+ "The given query is not yet implemented."
 };
 
 #define ERROR_RESPONSE xmld_socket_write(work->conn->fd, err_str[xmld_errno])
