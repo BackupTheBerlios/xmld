@@ -35,4 +35,4 @@ oriented foundation.
 
 * Add a name field to XMLDEngine. This should normally
 involve creation of a function that searches a list
-of XMLDEngine's by name.
+of XMLDEngine's by name. (done)
