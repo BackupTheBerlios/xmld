@@ -554,7 +554,7 @@ esponse_flush. and remove XMLDResponse_flush. (done)
 
 * Fix QUERY.html typos. (done)
 
-* Implement read buffering in dutils.
+* Implement read buffering in dutils. (done)
 
 * Handle quotes inside strings in xmld-sql.lex
 

@@ -18,39 +18,33 @@
 #include "dutils.h"
 
 /*
+ * Creates a new buffer object.
+ */
+buf_t *buf_create() {
+ buf_t *ret=(buf_t *) malloc(sizeof(buf_t));
+ ret->val[0]='\0';
+ ret->curr=ret->val;
+ return ret;
+}
+
+/*
  * A buffered version of the getc call.
  * buf: the buffer information object which
  * gets initialized by the user.
  */ 
-/*
- * FIXME: really implement getc_buf and buf_dump
- * in order to gain the performance enhancement related
- * to buffering.
- */
 char getc_buf(FILE *fd, buf_t *buf) {
- return (char) getc(fd);
- /*int stat;
- if (strlen(buf->val) == 0) {
-  stat=fread((void *) buf->val, sizeof(char), BUFFER_SIZE-1, fd);
-  if (stat == 0) {
+ if (buf->curr == '\0') {
+  if (fgets(buf->val, BUFFER_SIZE-1, fd) == NULL) {
    return EOF;
   }
-  buf->val[stat]='\0';
-  buf->curr=buf->val;
- }
- else if (buf->curr == (buf->val)+BUFFER_SIZE-1) {
-  stat=fread((void *) buf->val, sizeof(char), BUFFER_SIZE-1, fd);
-  if (stat == 0) {
-   return EOF;
+  else {
+   buf->curr=buf->val;
   }
-  buf->val[stat]='\0';
-  buf->curr=buf->val;
  }
  else {
   buf->curr++;
  }
- return *(buf->curr);
- */
+ return *buf->curr;
 }
 
 /*
@@ -62,11 +56,8 @@ char getc_buf(FILE *fd, buf_t *buf) {
  * by getc_buf on the same buf and fd.
  */ 
 void buf_dump(FILE *fd, buf_t *buf) {
- /*char *last=buf->curr;
- while (*last != '\0' && *last != EOF) {
-  last++;
- }
- fseek(fd, buf->curr - last + 1, SEEK_CUR);*/
+ char *null_char=strchr(buf->val, '\0');
+ fseek(fd, buf->curr - null_char, SEEK_CUR);
  free(buf);
 }
 
@@ -84,8 +75,7 @@ int dmstrstr(FILE *fd, char **tokens, int num) {
  int *cur=(int *) calloc(num, sizeof(int));
  char c;
  int i;
- buf_t *buf=(buf_t *) malloc(sizeof(buf_t));
- buf->val[0]='\0';
+ buf_t *buf=buf_create();
  
  while (1) {
   c=getc_buf(fd, buf);
@@ -118,8 +108,7 @@ int dmstrstr(FILE *fd, char **tokens, int num) {
 int dmstrchr(FILE *fd, char *tokens, int num) {
  char c;
  int i;
- buf_t *buf=(buf_t *) malloc(sizeof(buf_t));
- buf->val[0]='\0';
+ buf_t *buf=buf_create();
 
  while (1) {
   c=getc_buf(fd, buf);
@@ -150,8 +139,7 @@ int dmstrchr(FILE *fd, char *tokens, int num) {
 char *dmcstrchr(FILE *fd, char *tokens, int num) {
  char c;
  int i;
- buf_t *buf=(buf_t *) malloc(sizeof(buf_t));
- buf->val[0]='\0';
+ buf_t *buf=buf_create();
  char *cap;
  cap=(char *) malloc(sizeof(char));
  cap[0]='\0';

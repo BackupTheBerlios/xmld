@@ -22,7 +22,8 @@ struct buf_t {
 
 typedef struct buf_t buf_t;
 
-char fgetc_buf(FILE *, buf_t *);
+buf_t *buf_create(void);
+char getc_buf(FILE *, buf_t *);
 void buf_dump(FILE *, buf_t *);
 int dmstrstr(FILE *, char **, int);
 int dmstrchr(FILE *, char *, int);
