@@ -22,7 +22,7 @@ typedef struct XMLDCol XMLDCol;
 
 XMLDCol *XMLDCol_create(char *, short); /* short is whether to copy the char **/
 void XMLDCol_fill(XMLDCol *, char *, short);
-void XMLDCol_free(XMLDCol *);
+void XMLDCol_free(XMLDCol *, short);
 
 /* List functions */
 
