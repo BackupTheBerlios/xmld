@@ -56,6 +56,7 @@ char *resptrans_handle(XMLDWork *work) {
   XMLDList_reset(curr_row->cols);
   while (XMLDList_next(curr_row->cols)) {
    curr_col=(XMLDCol *) XMLDList_curr(curr_row->cols);
+   curr_col->val = XMLDExpr_to_string(curr_col->expr);
    if (curr_col->val != NULL) {
     char *tmp=mstrchr_replace(curr_col->val, repl_tok, repl_tok_enc, 4);
     free(curr_col->val);

@@ -790,13 +790,16 @@ useful as something useful.
   - conditions are resolved just like expressions. (done)
  * twalker_simplify_expr (if alias is not NULL copy it into ret instead of the 
  real column's  name -- done).
- * resptrans (call XMLDExpr_to_string on each column).
+ * resptrans (call XMLDExpr_to_string on each column -- done).
  * Engine-XMLD (Implement the required functions)
+   * format_manip should be revamped to remove consideration
+     of tag name specific element format - for performance
+     reasons.
  * XMLDResponse_fill_col/XMLDCol_fill might need to fill the
  expr and not the string.
 
 * If the above gets stabilized, remove unused functions
-in Engine-XMLD, XMLDResponse [...?].
+in Engine-XMLD (done), XMLDResponse [...?].
 
 * Every column must have a name:
   * XMLDExpr_to_string: support operation translation.
@@ -811,19 +814,6 @@ in Engine-XMLD, XMLDResponse [...?].
 * Implement a sequential column retrieval API in the engine in
 order to be able to resolve wildcards correctly. (done)
 
-* Response must contain a record set header (update PROTO).
-
-* ptasker task queue needs maintenance.
-
-* Stabilize recordset levelling confusion.
-
---- Features:
-
-* Aggregate function calls support.
-
-* Create a hash table implementation for places where
-search speed is important.
-
 * Full per-file user privilege system.
  * Real implementation of auth_get_priv.
 
@@ -833,12 +823,25 @@ search speed is important.
  * twalker_simplify_expr (Check the privileges of a file 
  to which a column is associated on each operation)
 
+* Response must contain a record set header (update PROTO).
+
+--- Features:
+
+* Aggregate function calls support.
+
+* Create a hash table implementation for places where
+search speed is important.
+
 * Shell-like treatment of the forward and backward arrow keys 
 in the client.
 
 * A modest number of aggregate and scalar SQL functions.
 
 --- Cleanups:
+
+* ptasker task queue needs maintenance.
+
+* Stabilize recordset levelling confusion.
 
 * values returned from cfg must be checked for being NULLs.
 

@@ -18,11 +18,21 @@ void engine_xmld_init (void);
 XMLDStatus engine_xmld_prepare (XMLDWork *, XMLDFile *, int);
 void engine_xmld_cleanup (XMLDWork *, XMLDFile *);
 void engine_xmld_destroy (void);
+
 int engine_xmld_walk (XMLDWork *, XMLDFile *);
-char *engine_xmld_eval_expr (XMLDWork *, XMLDExpr *, int);
-XMLDBool engine_xmld_eval_cond (XMLDWork *, XMLDCond *, int);
-char *engine_xmld_get_column_value (XMLDFile *, char *);
-XMLDStatus engine_xmld_set_column_value (XMLDFile *, char *, char *);
-XMLDExpr *engine_xmld_simplify_expr (XMLDWork *, XMLDExpr *, int);
+char *engine_xmld_get_attribute_type (XMLDFile *, char *);
+char *engine_xmld_get_attribute (XMLDFile *, char *);
+char *engine_xmld_get_text_type (XMLDFile *);
+char *engine_xmld_get_text(XMLDFile *);
+char *engine_xmld_get_tagname(XMLDFile *);
+
+/* Sequential attribute selection API */
+
+void engine_xmld_reset_element (XMLDFile *);
+XMLDBool engine_xmld_next_attribute (XMLDFile *);
+char *engine_xmld_get_curr_attribute_type (XMLDFile *);
+char *engine_xmld_get_curr_attribute_name (XMLDFile *);
+char *engine_xmld_get_curr_attribute_value (XMLDFile *);
+
 
 #endif /* __ENGINE_XMLD_H */
