@@ -32,7 +32,6 @@ struct XMLDEngine;
 #include "xmld_work.h"
 #include "xmld_engine.h"
 #include "sosel.h"
-#include "fmanager.h"
 #include "qp.h"
 #include "twalker.h"
 
@@ -45,13 +44,6 @@ void qp_handle(void *conn) {
  /*
   * Here should go lexing and parsing.
   */
- status=fmanager_handle(work);
- if (status == -1) {
-  ERROR_RESPONSE();
-  sosel_add(work->conn->fd, work->conn->curr_dir);
-  XMLDWork_free(work);
-  return;
- }
  status=twalker_handle(work);
  if (status==-1) {
   ERROR_RESPONSE();
