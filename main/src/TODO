@@ -15,11 +15,11 @@ Foundation:
 
 * Better passage of file names from the tree walker to the engine.
   * XMLDFile can contain an additional field that carries the full
-    actual file path ?  
-  * No longer should XMLDFile_get_full file be needed.
+    actual file path from the document root ?  (done)
+  * No longer should XMLDFile_get_full file be needed. (done)
 
-* Addition of data source modification functions to the engine API.
-  * Capability bit.
+* Addition of data source modification functions to the engine API. (done)
+  * Capability bit. (done)
 
 * Data source creation functions.
   * A new access level bit ?

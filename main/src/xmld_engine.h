@@ -29,13 +29,14 @@
 #define ENGINE_CAP_NODE_NAME 2
 #define ENGINE_CAP_NODE_ABSOLUTE_VALUE 4
 #define ENGINE_CAP_LABEL_ITERATION 6
+#define ENGINE_CAP_NODE_MODIFY 8
 
 struct XMLDEngine {
  char *name;
  int engine_cap;
  void (*init) (void);
  XMLDBool (*is_valid_mime) (char *);
- XMLDStatus (*prepare) (char *, XMLDFile *, int); 
+ XMLDStatus (*prepare) (XMLDFile *, int); 
  void (*cleanup) (XMLDFile *);
  void (*destroy) (void);
  int (*walk) (XMLDFile *);
@@ -55,6 +56,12 @@ struct XMLDEngine {
  char *(*get_current_labeled_value_type) (XMLDFile *);
  int (*get_current_labeled_value_length) (XMLDFile *);
  char *(*get_current_labeled_value) (XMLDFile *);
+
+ /* Data source modification API */
+
+ XMLDBool (*set_labeled_node_value) (XMLDFile *, char *, char *);
+ XMLDBool (*set_absolute_node_value) (XMLDFile *, char *);
+ XMLDBool (*set_node_name) (XMLDFile *, char *); 
 };
 
 #ifndef XMLDENGINE_TYPE_DEFINED

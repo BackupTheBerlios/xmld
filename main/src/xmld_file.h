@@ -16,6 +16,7 @@
 
 struct XMLDFile {
  char *name;
+ char *path;
  void *data;
  XMLDFile *store; /* Additional storage field   */
  XMLDEngine *engine;
@@ -31,7 +32,6 @@ struct XMLDFile {
 #endif /* XMLDFILE_TYPE_DEFINED */
 
 XMLDFile *XMLDFile_create(char *);
-char *XMLDFile_get_full_name(XMLDFile *, XMLDWork *);
 void XMLDFile_free(XMLDFile *);
 void XMLDFile_free_content(void *);
 

@@ -51,38 +51,6 @@ void XMLDFile_free_content(void *file) {
 }
 
 /*
- * : Returns the full file name of the file structure.
- * file: The file structure mentioned.
- * work: The work structure to which the file structure is associated.
- * returns: The full file location from the root of the server.
- */
-char *XMLDFile_get_full_name(XMLDFile *file, XMLDWork *work) {
- char *full_file;
- if (file->name == NULL) {
-  return NULL;
- }
- if (*(file->name) == '/') {
-  full_file=(char *) malloc((strlen(file->name)+strlen(document_root)+1)*sizeof(char));
-  strcpy(full_file, document_root);
-  strcat(full_file, file->name);
-  return full_file;
- }
- char *lcurr=work->conn->curr_dir;
- if (*(work->conn->curr_dir) == '/') {
-  work->conn->curr_dir++;
- }
- 
- full_file=(char *) malloc((strlen(document_root)+strlen(work->conn->curr_dir)+strlen(file->name)+1)*sizeof(char));
- strcpy(full_file, document_root);
- strcat(full_file, work->conn->curr_dir);
- strcat(full_file, file->name);
- if (work->conn->curr_dir - lcurr == 1) {
-  work->conn->curr_dir--;
- }
- return full_file;
-}
-
-/*
  * Creates a list of files.
  */
 XMLDFileList *XMLDFileList_create() {
