@@ -19,7 +19,7 @@
 void qp_handle(void *conn) {
  struct XMLDWork *work=(struct XMLDWork *) malloc(sizeof(struct XMLDWork));
  /* FIXME the number of segments must come from config */
- struct XMLDMemPool *expr_pool=XMLDMemPool_create(sizeof(struct expr), 20, expr_free);
+ struct XMLDMemPool *expr_pool=XMLDMemPool_create(sizeof(struct expr), 20, expr_free_content);
  struct XMLDMemPool *cond_pool=XMLDMemPool_create(sizeof(struct cond), 10, NULL);
  work->conn=(struct XMLDConnection *) conn;
  work->req=(struct XMLDRequest *) malloc(sizeof(struct XMLDRequest));
