@@ -142,4 +142,5 @@ struct XMLDWork {
  struct XMLDConnection *conn;
 };
 
+void expr_free_content(void *);
 #endif
