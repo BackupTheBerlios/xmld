@@ -42,28 +42,25 @@ void qp_handle(void *conn) {
  *))->curr_dir);
  sosel_remove(conn);
  work->req=XMLDRequest_create();
- /* FIXME: what should yyin be assigned to ? */
- yyin=fopen(work->conn->fd, "r");
- int status=yyparse();
- if (status==-1) {
-  /*
-   * should find a safe way to free
-   * the memory used inside yyparse
-   */
-  return;
- }
+ /*
+  * Here should go lexing and parsing.
+  */
  status=fmanager_handle(work);
- if (status==-1) {
-  /* NOTE: ERROR_RESPONSE must contain readdition of the socket
-   * to conn_table (sosel_add) which will be a blocking operation */
-  ERROR_RESPONSE("There was an error accessing the requested file.");
+ if (status == -1) {
+  ERROR_RESPONSE();
+  sosel_add(work->conn->fd, work->conn->curr_dir);
+  XMLDWork_free(work);
   return;
  }
  status=twalker_handle(work);
  if (status==-1) {
-  ERROR_RESPONSE("Error during implementing query");
+  ERROR_RESPONSE();
+  sosel_add(work->conn->fd, work->conn->curr_dir);
+  XMLDWork_free(work);
   return;
  }
- /* send through the socket*/
- /* re-add the socket */
+
+ XMLDResponse_flush(work->resp, work->conn->fd);
+ sosel_add(work->conn->fd, work->conn->curr_dir);
+ XMLDWork_free(work);
 }
