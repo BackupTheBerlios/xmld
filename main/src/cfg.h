@@ -14,23 +14,11 @@
 #ifndef __CFG_H
 #define __CFG_H
 
-char col_sep;
-char row_sep;
-char down_level;
-char up_level;
+XMLDCfgSection *cfg_tree;
+
 char *document_root;
-char *row_sep_enc;
-char *col_sep_enc;
-char *down_level_enc;
-char *up_level_enc;
 
 XMLDStatus cfg_init(void);
-void *cfg_get(char *);
-char *cfg_get_engine(char *);
-char *cfg_get_interface_name(int);
-void cfg_set_engine(char *, char *);
-char *cfg_get_mime_engine(char *);
-void cfg_set_mime_engine(char *, char *);
 XMLDStatus cfg_shutdown(void);
 
 #endif /* __CFG_H */

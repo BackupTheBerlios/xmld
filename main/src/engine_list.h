@@ -17,6 +17,10 @@
 XMLDEngineList *engine_list;
 
 XMLDStatus engine_list_init();
+char *engine_list_get_engine(char *);
+void engine_list_set_engine(char *, char *);
+char *engine_list_get_mime_engine(char *);
+void engine_list_set_mime_engine(char *, char *);
 XMLDStatus engine_list_shutdown();
 
 #endif /* __ENGINE_LIST_H */

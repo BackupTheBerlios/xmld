@@ -40,10 +40,17 @@ Foundation:
   * New cfg_parser.c must use cfg_parser.y. (done)
   * Modify cfg_parser.y such that it takes a prepared parse
     tree as input and fills it. (done)
-  * Modify cfg.c accrodingly. (consider revamping the API)
+  * Each part should manipulate cfg data structures directly.
+    * Modify all parts.
+    * modify initialization of document_root.
+  * Engine association functions should be put in engine list. (done)
+  * cfg_parser.(c|h) -> cfg.(c|h) (done)
+  * Global configuratin variables should remain initialized
+    by cfg_init.
+  * Erase cfg.c and cfg.h. (done)
   * xmld.conf must not contain types of directives nor 
-  somanager.num_listeners.
-  * Support for interface parameters.
+  somanager.num_listeners. (ok)
+  * Support for interface parameters. (ok)
 
 * Real implementation of interface specification according
   to the configuration file with support for interface parameters.
@@ -54,7 +61,8 @@ Foundation:
 
 * Real implementation of mfigure.
 
-* Real implementation of engine configuration functions.
+* Real implementation of engine association functions.
+  * maybe a clean up of the whole system ?
 
 * Usage of autoconf to decide the modules to be compiled.
 
@@ -75,6 +83,8 @@ Issues:
 Goal: Portability.
 
 * Thread-safe core.
+
+* cleaner, more portable sockets API.
 
 * Implement a multi-threaded multi-
 tasker (Macro: USE_TTASKER).
