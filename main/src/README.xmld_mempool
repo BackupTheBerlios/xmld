@@ -1,0 +1,40 @@
+The OpenXMLD's Memory Pool:
+---------------------------
+ This part provides a pre-allocated pool of memory
+ segments, that can be reused for an infinite number
+ of times, thus eliminating the need to allocate
+ memory each time.
+
+Source Files:
+-------------
+ xmld_mempool.c
+ xmld_mempool.h
+
+API:
+----
+
+struct XMLDMemPool *XMLDMemPool_create(int segsize, int segnum)
+ 
+ This function is used to create a memory pool with a number 
+ of initial segments _segnum_ each of size _segsize_ bytes.
+
+void *XMLDMemPool_get_segment(struct XMLDMemPool *pool) 
+
+ This function returns a void pointer to one of the non-used 
+ pre-allocated segments in the memory pool pointed to by 
+ _pool_,  if there was no free segments in that pool, the 
+ memory pool is automatically resized, only if the 
+ reallocation of the  memory pool doesn't succeed this 
+ function returns NULL.
+
+void XMLDMemPool_free(struct XMLDMemPool *pool)
+
+ Frees all the resources used by this memory pool and its
+ segments.
+
+void XMLDMemPool_free_segment(struct XMLDMemPool *pool, void *segment)
+ 
+ This function frees the segment whose pointer value is _segment_ 
+ in the memory pool, so other calls to XMLMemPool_get_segment can
+ use it.
+-------------------------------------------------------------
