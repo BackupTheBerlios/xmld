@@ -11,3 +11,4 @@
   check for places where the API isn't used, and use it.
 
 * HAVE_XMLD_MEMPOOL_H -> HAVE_XMLD_MEM_POOL_H
+* Edit xmld_*.h so they contain creation methods.
