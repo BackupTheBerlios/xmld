@@ -16,7 +16,7 @@
 
 struct XMLDFunc { /* represents a SQL function */
  char *name;
- void *(*func) (XMLDList *);
+ XMLDExpr *(*func) (XMLDList *); 
  short aggr; /*
                * 1 = Aggregate function
                * 0 = Scalar function
