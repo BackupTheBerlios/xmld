@@ -68,6 +68,12 @@ void *cfg_get(char *key) {
  * if not, NULL is returned (MIME checking
  * should be used to determine the engine).
  */
+
+/* ATTENTION: cfg_get_engine, whensever written
+ * must free the string returned from mfigure_get
+ * _mime explicitly if it uses it
+ */
+
 char *cfg_get_engine(char *file) {
  return (char *) NULL;
 }
