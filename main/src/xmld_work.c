@@ -12,6 +12,7 @@
  */
 
 #include <stdlib.h>
+#include "mutils.h"
 #include <string.h>
 #include "cfg.h"
 #include "xmld_list.h"
@@ -39,14 +40,14 @@ struct XMLDEngine;
 
 /*
  * : Creates a new work structure.
- * req (optional): an initial request structure.
- * resp (optional): an initial response structure.
- * res (optional): an initial resource structure.
- * conn (optional): an initial connection structure.
  * returns: the newly created work structure.
  */
 XMLDWork *XMLDWork_create() {
  XMLDWork *work=(XMLDWork *) malloc(sizeof(XMLDWork));
+ work->req=NULL;
+ work->resp=NULL;
+ work->res=NULL;
+ work->conn=NULL;
  return work;
 }
 
@@ -55,8 +56,10 @@ XMLDWork *XMLDWork_create() {
  * work: the work structure to free.
  */
 void XMLDWork_free(XMLDWork *work) {
- XMLDWork_free_content((void *) work);
- free(work);
+ if (work != NULL) {
+  XMLDWork_free_content((void *) work);
+  free(work);
+ } 
 }
 
 /*
@@ -64,6 +67,10 @@ void XMLDWork_free(XMLDWork *work) {
  * work: the work structure whose memory is to be freed.
  */
 void XMLDWork_free_content(void *work) {
+ XMLDRequest_free(work->req);
+ XMLDResource_free(work->res);
+ XMLDConnection_free(work->conn);
+ XMLDResponse_free(work->resp); 
 }
 
 /*
@@ -108,5 +115,9 @@ XMLDList *XMLDWork_create_list() {
  */
 XMLDWork *XMLDWork_add_to_list(XMLDList *list) {
  XMLDWork *work=(XMLDWork *) XMLDList_add(list);
+ work->req=NULL;
+ work->resp=NULL;
+ work->res=NULL;
+ work->conn=NULL;
  return work;
 }

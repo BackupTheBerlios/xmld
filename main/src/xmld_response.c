@@ -12,6 +12,7 @@
  */
 
 #include <stdlib.h>
+#include "mutils.h"
 #include "string.h"
 #include "xmld_sockets.h"
 #include "xmld_list.h"
@@ -44,8 +45,10 @@ XMLDResponse *XMLDResponse_create() {
  * resp: the response structure to free.
  */
 void XMLDResponse_free(XMLDResponse *resp) {
- XMLDResponse_free_content((void *)resp);
- free(resp);
+ if (resp != NULL) {
+  XMLDResponse_free_content((void *)resp);
+  free(resp);
+ } 
 }
 
 /*

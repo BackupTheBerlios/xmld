@@ -12,6 +12,7 @@
  */
 
 #include <stdlib.h>
+#include "mutils.h"
 #include "xmld_list.h"
 #include "xmld_directive.h"
 
@@ -26,9 +27,9 @@ XMLDList *XMLDList_create(int item_size, void (*free_func) (void *)) {
  XMLDList *list=(XMLDList *) malloc(sizeof(XMLDList));
  list->item_size=item_size;
  list->free_func=(free_func == NULL) ? default_free_func : free_func;
- list->content=0;
- list->last_element=0;
- list->curr_element=0;
+ list->content=NULL;
+ list->last_element=NULL;
+ list->curr_element=NULL;
  return list;
 }
 
@@ -37,12 +38,14 @@ XMLDList *XMLDList_create(int item_size, void (*free_func) (void *)) {
  * list: the list to free.
  */
 void XMLDList_free(XMLDList *list) {
- XMLDList_reset(list);
- while (XMLDList_next(list)) {
-  (*(list->free_func)) (XMLDList_curr(list));
- }
- free(list->content);
- free(list);
+ if (list != NULL) {
+  XMLDList_reset(list);
+  while (XMLDList_next(list)) {
+   (*(list->free_func)) (XMLDList_curr(list));
+  }
+  cfree(list->content);
+  free(list);
+ } 
 }
 
 /*

@@ -12,6 +12,7 @@
  */
 
 #include <stdlib.h>
+#include "mutils.h"
 #include <string.h>
 #include "xmld_list.h"
 struct XMLDFunc;
@@ -28,6 +29,14 @@ struct XMLDFunc;
  */
 XMLDExpr *XMLDExpr_create() {
  XMLDExpr *expr=(XMLDExpr *) malloc(sizeof(XMLDExpr));
+ expr->aggr=0;
+ expr->left=NULL;
+ expr->right=NULL;
+ expr->ident=NULL;
+ expr->func=NULL;
+ expr->arg_list=NULL;
+ expr->qval=NULL;
+ expr->alias=NULL;
  return expr;
 }
 
@@ -38,8 +47,10 @@ XMLDExpr *XMLDExpr_create() {
  * to free fields not included in the current type of the expression.
  */
 void XMLDExpr_free(XMLDExpr *expr) {
- XMLDExpr_free_content((void *) expr);
- free(expr);
+ if (expr != NULL) {
+  XMLDExpr_free_content((void *) expr);
+  free(expr);
+ } 
 }
 
 /*
@@ -53,17 +64,17 @@ void XMLDExpr_free_content(void *expr) {
    XMLDExpr_free(((XMLDExpr *)expr)->right);
    break;
   case 2:
-   free(((XMLDExpr *)expr)->ident);
+   cfree(((XMLDExpr *)expr)->ident);
    break;
   case 3:
    XMLDList_free(((XMLDExpr *)expr)->arg_list);
    break;
   case 4:
-   free(((XMLDExpr *)expr)->qval);
+   cfree(((XMLDExpr *)expr)->qval);
    break;
  }
- if (((XMLDExpr *)expr)->alias!=NULL) {
-  free(((XMLDExpr *)expr)->alias);
+ if (((XMLDExpr *)expr)->alias != NULL) {
+  cfree(((XMLDExpr *)expr)->alias);
  }
 }
 
@@ -119,5 +130,13 @@ XMLDList *XMLDExpr_create_list() {
  */ 
 XMLDExpr *XMLDExpr_add_to_list(XMLDList *list) {
  XMLDExpr *expr=(XMLDExpr *) XMLDList_add(list);
+ expr->aggr=0;
+ expr->left=NULL;
+ expr->right=NULL;
+ expr->ident=NULL;
+ expr->func=NULL;
+ expr->arg_list=NULL;
+ expr->qval=NULL;
+ expr->alias=NULL;
  return expr;
 }

@@ -12,6 +12,7 @@
  */
 
 #include <stdlib.h>
+#include "mutils.h"
 #include <string.h>
 #include "xmld_list.h"
 #include "xmld_col.h"
@@ -52,8 +53,10 @@ XMLDEngine *XMLDEngine_create(char *name) {
  * engine: the engine to free.
  */
 void XMLDEngine_free(XMLDEngine *engine) {
- XMLDEngine_free_content((void*) engine);
- free(engine);
+ if (engine != NULL) {
+  XMLDEngine_free_content((void*) engine);
+  free(engine);
+ } 
 }
 
 /*

@@ -12,6 +12,7 @@
  */
 
 #include <stdlib.h>
+#include "mutils.h"
 #include <string.h>
 #include "xmld_list.h"
 struct XMLDFunc;
@@ -28,6 +29,9 @@ struct XMLDFunc;
  */
 XMLDFunc *XMLDFunc_create() {
  XMLDFunc *func=(XMLDFunc *) malloc(sizeof(XMLDFunc));
+ func->name=NULL;
+ func->func=NULL;
+ func->aggr=0;
  return func;
 }
 
@@ -36,8 +40,10 @@ XMLDFunc *XMLDFunc_create() {
  * func: the function structure to free.
  */
 void XMLDFunc_free(XMLDFunc *func) {
- XMLDFunc_free_content((void *) func);
- free(func);
+ if (func != NULL) {
+  XMLDFunc_free_content((void *) func);
+  free(func);
+ } 
 }
 
 /*
@@ -45,7 +51,7 @@ void XMLDFunc_free(XMLDFunc *func) {
  * func: a void pointer to the function whose memory is to be freed.
  */
 void XMLDFunc_free_content(void *func) {
- free(((XMLDFunc *)func)->name); 
+ cfree(((XMLDFunc *)func)->name); 
 }
 
 /*
@@ -64,6 +70,9 @@ XMLDList *XMLDFunc_create_list() {
  */
 XMLDFunc *XMLDFunc_add_to_list(XMLDList *list) {
  XMLDFunc *func=(XMLDFunc *) XMLDList_add(list);
+ func->name=NULL;
+ func->func=NULL;
+ func->aggr=0;
  return func;
 }
 

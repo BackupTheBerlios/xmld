@@ -12,6 +12,7 @@
  */
 
 #include <stdlib.h>
+#include "mutils.h"
 #include <string.h>
 #include "xmld_list.h"
 #include "xmld_col.h"
@@ -31,8 +32,10 @@ XMLDCol *XMLDCol_create() {
  * col: the column to free.
  */
 void XMLDCol_free(XMLDCol *col) {
- XMLDCol_free_content((void *) col);
- free(col);
+ if (col != NULL) {
+  XMLDCol_free_content((void *) col);
+  free(col);
+ } 
 }
 
 /*
@@ -40,6 +43,7 @@ void XMLDCol_free(XMLDCol *col) {
  * col: the column to free
  */
 void XMLDCol_free_content(void *col) {
+ cfree(((XMLDCol *) col)->val);
 }
 
 /*

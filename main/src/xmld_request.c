@@ -12,6 +12,7 @@
  */
 
 #include <stdlib.h>
+#include "mutils.h"
 #include "xmld_list.h"
 #include "xmld_request.h"
 
@@ -21,6 +22,10 @@
  */
 XMLDRequest *XMLDRequest_create() {
  XMLDRequest *req=(XMLDRequest *) malloc(sizeof(XMLDRequest));
+ req->file=NULL;
+ req->retr=NULL;
+ req->vals=NULL;
+ req->where=NULL;
  return req;
 }
 
@@ -29,8 +34,10 @@ XMLDRequest *XMLDRequest_create() {
  * req: the request structure to be freed.
  */
 void XMLDRequest_free(XMLDRequest *req) {
- XMLDRequest_free_content((void *)req);
- free(req);
+ if (req != NULL) {
+  XMLDRequest_free_content((void *)req);
+  free(req);
+ }  
 }
 
 /*
@@ -38,17 +45,10 @@ void XMLDRequest_free(XMLDRequest *req) {
  * req: the structure whose internally memory is to be freed.
  */
 void XMLDRequest_free_content(void *req) {
- switch (((XMLDRequest *) req)->type) {
-  case 0:
-   free(((XMLDRequest *) req)->file);
-   XMLDList_free(((XMLDRequest *) req)->retr);
-   break;
-  case 1:
-   free(((XMLDRequest *) req)->file);
-   XMLDList_free(((XMLDRequest *) req)->retr);
-   XMLDList_free(((XMLDRequest *) req)->where);
-   break;
- }
+ cfree(((XMLDRequest *) req)->file);
+ XMLDList_free(((XMLDRequest *) req)->retr);
+ XMLDList_free(((XMLDRequest *) req)->vals);
+ XMLDList_free(((XMLDRequest *) req)->where);
 }
 
 /*
@@ -67,5 +67,9 @@ XMLDList *XMLDRequest_create_list() {
  */
 XMLDRequest *XMLDRequest_add_to_list(XMLDList *list) {
  XMLDRequest *req=(XMLDRequest *) XMLDList_add(list);
+ req->file=NULL;
+ req->retr=NULL;
+ req->vals=NULL;
+ req->where=NULL;
  return req;
 }

@@ -12,6 +12,7 @@
  */
 
 #include <stdlib.h>
+#include "mutils.h"
 #include <string.h>
 #include "xmld_list.h"
 struct XMLDFunc;
@@ -42,8 +43,10 @@ XMLDAggrTable *XMLDAggrTable_create() {
  * table: the aggregate expression table to free.
  */
 void XMLDAggrTable_free(XMLDAggrTable *table) {
- XMLDAggrTable_free_content((void *)table);
- free(table);
+ if (table != NULL) {
+  XMLDAggrTable_free_content((void *)table);
+  free(table);
+ } 
 }
 
 /*

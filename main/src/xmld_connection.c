@@ -12,6 +12,7 @@
  */
 
 #include <stdlib.h>
+#include "mutils.h"
 #include <string.h>
 #include "xmld_list.h"
 #include "xmld_connection.h"
@@ -29,7 +30,10 @@ XMLDConnection *XMLDConnection_create(int fd, char *curr_dir) {
  if (curr_dir != NULL) {
   conn->curr_dir=(char *) malloc((strlen(curr_dir)+1)*sizeof(char));
   strcpy(conn->curr_dir, curr_dir);
- } 
+ }
+ else {
+  conn->curr_dir=NULL;
+ }
  return conn;
 }
 
@@ -38,8 +42,10 @@ XMLDConnection *XMLDConnection_create(int fd, char *curr_dir) {
  * conn: the connection structure to free.
  */
 void XMLDConnection_free(XMLDConnection *conn) {
- XMLDConnection_free_content((void *) conn);
- free(conn);
+ if (conn != NULL) {
+  XMLDConnection_free_content((void *) conn);
+  free(conn);
+ }
 }
 
 /*
@@ -47,7 +53,7 @@ void XMLDConnection_free(XMLDConnection *conn) {
  * conn: the connection structure to free.
  */
 void XMLDConnection_free_content(void *conn) {
- free(((XMLDConnection *) conn)->curr_dir); 
+ cfree(((XMLDConnection *) conn)->curr_dir); 
 }
 
 /*
@@ -70,6 +76,9 @@ XMLDConnection *XMLDConnection_add_to_list(XMLDList *list, int fd, char *curr_di
  if (curr_dir != NULL) {
   conn->curr_dir=(char *) malloc((strlen(curr_dir)+1)*sizeof(char));
   strcpy(conn->curr_dir, curr_dir);
- } 
+ }
+ else {
+  conn->curr_dir=NULL;
+ }
  return conn;
 }

@@ -12,6 +12,7 @@
  */
 
 #include <stdlib.h>
+#include "mutils.h"
 #include <string.h>
 #include "xmld_list.h"
 #include "xmld_directive.h"
@@ -21,7 +22,11 @@
  * returns: the newly created directive.
  */
 XMLDDirective *XMLDDirective_create() {
- return ((XMLDDirective *) malloc(sizeof(XMLDDirective)));
+ XMLDDirective *dir=(XMLDDirective *) malloc(sizeof(XMLDDirective));
+ dir->name=NULL;
+ dir->type=2;
+ dir->value.string_value=NULL;
+ return dir;
 }
 
 /*
@@ -29,8 +34,10 @@ XMLDDirective *XMLDDirective_create() {
  * directive: the directive structure to free.
  */
 void XMLDDirective_free(XMLDDirective *directive) {
- XMLDDirective_free_content((void *) directive);
- free(directive);
+ if (directive != NULL) {
+  XMLDDirective_free_content((void *) directive);
+  free(directive);
+ } 
 };
 
 /*
@@ -42,20 +49,21 @@ void XMLDDirective_free(XMLDDirective *directive) {
 void XMLDDirective_free_content(void *directive) {
  XMLDDirective *dir=(XMLDDirective *) directive;
  if (dir->type == 1) {
-  free(dir->value.int_array_value);
+  cfree(dir->value.int_array_value);
  }
  else if (dir->type == 2) {
-  free(dir->value.string_value);
+  cfree(dir->value.string_value);
  }
  else if (dir->type == 3) {
   char **ptr=dir->value.string_array_value;
   while (ptr != NULL) {
-   free(*ptr);
+   cfree(*ptr);
+   ptr++;
   }
-  free(dir->value.string_array_value);
+  cfree(dir->value.string_array_value);
  }
  if (dir->type != -1) {
-  free(dir->name);
+  cfree(dir->name);
  }
 }
 
@@ -75,7 +83,11 @@ XMLDList *XMLDDirective_create_list() {
  * returns: a pointer to the newly added element.
  */
 XMLDDirective *XMLDDirective_add_to_list(XMLDList *list) {
- return ((XMLDDirective *) XMLDList_add(list));
+ XMLDDirective *dir=(XMLDDirective *) XMLDList_add(list);
+ dir->name=NULL;
+ dir->type=2;
+ dir->value.string_value=NULL;
+ return dir;
 }
 
 /*

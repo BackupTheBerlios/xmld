@@ -12,6 +12,7 @@
  */
 
 #include <stdlib.h>
+#include "mutils.h"
 #include "xmld_list.h"
 #include "xmld_col.h"
 #include "xmld_row.h"
@@ -32,8 +33,10 @@ XMLDRow *XMLDRow_create() {
  * row: the row to free.
  */
 void XMLDRow_free(XMLDRow *row) {
- XMLDRow_free_content((void *) row);
- free(row);
+ if (row != NULL) {
+  XMLDRow_free_content((void *) row);
+  free(row);
+ } 
 }
 
 /*

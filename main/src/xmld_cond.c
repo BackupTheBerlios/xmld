@@ -12,6 +12,7 @@
  */
 
 #include <stdlib.h>
+#include "mutils.h"
 #include "xmld_list.h"
 struct XMLDFunc;
 #ifndef XMLD_FUNC_TYPE_DEFINED
@@ -28,6 +29,10 @@ struct XMLDFunc;
  */
 XMLDCond *XMLDCond_create() {
  XMLDCond *cond = (XMLDCond *) malloc(sizeof(XMLDCond));
+ cond->left=NULL;
+ cond->right=NULL;
+ cond->cleft=NULL;
+ cond->cright=NULL;
  return cond;
 }
 
@@ -36,8 +41,10 @@ XMLDCond *XMLDCond_create() {
  * cond: the condition structure to free.
  */
 void XMLDCond_free(XMLDCond *cond) {
- XMLDCond_free_content((void *) cond);
- free(cond);
+ if (cond != NULL) {
+  XMLDCond_free_content((void *) cond);
+  free(cond);
+ } 
 }
 
 /*
@@ -93,5 +100,9 @@ XMLDList *XMLDCond_create_list() {
  */
 XMLDCond *XMLDCond_add_to_list(XMLDList *list) {
  XMLDCond *cond=(XMLDCond *) XMLDList_add(list);
+ cond->left=NULL;
+ cond->right=NULL;
+ cond->cleft=NULL;
+ cond->crigt=NULL;
  return cond;
 }

@@ -12,6 +12,7 @@
  */
 
 #include <stdlib.h>
+#include "mutils.h"
 #include "xmld_list.h"
 #include "xmld_col.h"
 struct XMLDFunc;
@@ -37,13 +38,13 @@ struct XMLDEngine;
 
 /*
  * : Creates a new resource structure.
- * engine (optional): the engine that serves the request.
- * data_source (optional): the source of data on which the
- * engine will work.
  * returns: the newly created resource structure.
  */
 XMLDResource *XMLDResource_create() {
  XMLDResource *res=(XMLDResource *) malloc(sizeof(XMLDResource));
+ res->engine=NULL;
+ res->data_source=NULL;
+ res->store=NULL;
  return res;
 }
 
@@ -52,8 +53,10 @@ XMLDResource *XMLDResource_create() {
  * res: the resource structure to free.
  */
 void XMLDResource_free(XMLDResource *res) {
- XMLDResource_free_content((void *) res);
- free(res);
+ if (res != NULL) {
+  XMLDResource_free_content((void *) res);
+  free(res);
+ } 
 }
 
 /*
@@ -62,9 +65,7 @@ void XMLDResource_free(XMLDResource *res) {
  */
 void XMLDResource_free_content(void *res) {
 /*
- * Note: data_source isn't freed, should be freed with destroy() of 
- * the engine, which must have been called before freeing the engine
- * itself (unless init() of the engine wasn't called).
+ * Freeing data items of this structure is an engine specific task.
  */ 
 }
 
@@ -85,5 +86,8 @@ XMLDList *XMLDResource_create_list() {
  */
 XMLDResource *XMLDResource_add_to_list(XMLDList *list) {
  XMLDResource *res=(XMLDResource *) XMLDList_add(list);
+ res->engine=NULL;
+ res->data_source=NULL;
+ res->store=NULL;
  return res;
 }
