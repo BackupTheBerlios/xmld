@@ -72,7 +72,7 @@ XMLDStatus twalker_handle(XMLDWork *work) {
    XMLDList_reset(work->files);
    while (XMLDList_next(work->files)) {
     curr_file=(XMLDFile *) XMLDList_curr(work->files);
-    ret=(*(curr_file->engine->walk)) (work, curr_file);
+    ret=(*(curr_file->engine->walk)) (curr_file);
     if (ret == XMLD_WALK_END) {
      ret_all=XMLD_WALK_END;
      break;
@@ -105,7 +105,7 @@ XMLDStatus twalker_handle(XMLDWork *work) {
     while (XMLDList_next(work->files)) {
      curr_file=(XMLDFile *) XMLDList_curr(work->files);
      if (curr_file->level == curr_max_level) {
-      ret=(*(curr_file->engine->walk)) (work, curr_file);
+      ret=(*(curr_file->engine->walk)) (curr_file);
       if (ret == XMLD_WALK_END) {
        ret_all=XMLD_WALK_END;
        break;
@@ -188,7 +188,7 @@ XMLDStatus twalker_handle(XMLDWork *work) {
    XMLDList_reset(work->files);
    while (XMLDList_next(work->files)) {
     curr_file=(XMLDFile *) XMLDList_curr(work->files);
-    ret=(*(curr_file->engine->walk)) (work, curr_file);
+    ret=(*(curr_file->engine->walk)) (curr_file);
     if (ret == XMLD_WALK_END) {
      ret_all=XMLD_WALK_END;
      break;
@@ -230,7 +230,7 @@ XMLDStatus twalker_handle(XMLDWork *work) {
          while (XMLDList_next(work->files)) {
           curr_file=(XMLDFile *) XMLDList_curr(work->files);
           if (curr_file->level == curr_max_level) {
-           ret=(*(curr_file->engine->walk)) (work, curr_file);
+           ret=(*(curr_file->engine->walk)) (curr_file);
            if (ret == XMLD_WALK_DOWN) {
             ret_all=XMLD_WALK_DOWN;
            }
@@ -266,7 +266,7 @@ XMLDStatus twalker_handle(XMLDWork *work) {
     while (XMLDList_next(work->files)) {
      curr_file=(XMLDFile *) XMLDList_curr(work->files);
      if (curr_file->level == curr_max_level) {
-      ret=(*(curr_file->engine->walk)) (work, curr_file);
+      ret=(*(curr_file->engine->walk)) (curr_file);
       if (ret == XMLD_WALK_END) {
        ret_all=XMLD_WALK_END;
        break;

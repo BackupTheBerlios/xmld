@@ -127,13 +127,10 @@ order to be able to resolve wildcards correctly. (done)
    database. (done)
  * Real implementation of auth_get_priv. (done)
 
-* walk no longer receives a work structure parameter.
-  * twalker.
+* walk no longer receives a work structure parameter. (done)
 
 * attribute manipulation functions should handle requestion 
-  of a non-existent attribute.
-
-* XMLDFile->data should be set to NULL upon failure.
+  of a non-existent attribute. (done -- returning NULL) 
 
 * Correct required privilege specification.
  * twalker (Remove initial privilege checking)
