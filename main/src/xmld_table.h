@@ -18,7 +18,10 @@ struct XMLDTable {
  XMLDList *list;
  void *fill; /* the current empty segment (which can be used) */
  int num; /* Number of elements */
- int used; /* Number of used elements */
+ int used; /* Number of used elements, this value is maintained externally
+	    * because there isn't a removal routine in the table functions
+	    * it's originally put here to fit the shared memory segment in
+	    * sosel. */
 };
 
 typedef struct XMLDTable XMLDTable;
