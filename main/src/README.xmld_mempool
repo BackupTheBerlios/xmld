@@ -32,9 +32,9 @@ void XMLDMemPool_free(struct XMLDMemPool *pool)
  Frees all the resources used by this memory pool and its
  segments.
 
-void XMLDMemPool_free_segment(struct XMLDMemPool *pool, void *segment)
+void XMLDMemPool_unget_segment(struct XMLDMemPool *pool, void *segment)
  
- This function frees the segment whose pointer value is _segment_ 
+ This function ungets the segment whose pointer value is _segment_ 
  in the memory pool, so other calls to XMLMemPool_get_segment can
  use it.
 -------------------------------------------------------------
