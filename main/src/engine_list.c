@@ -43,10 +43,20 @@ short engine_list_init() {
  curr_engine=XMLDEngine_add_to_list(engine_list, "Engine-XMLD");
  /* rest of engine data goes here */
 #endif /* USE_ENGINE_XMLD */
+ XMLDList_reset(engine_list);
+ while (XMLDList_next(engine_list)) {
+  (*(((XMLDEngine *) XMLDList_curr(engine_list))->init)) ();
+ }
+ 
  return 1;
 }
 
 short engine_list_shutdown() {
+ XMLDList_reset(engine_list);
+ while (XMLDList_next(engine_list)) {
+  (*(((XMLDEngine *) XMLDList_curr(engine_list))->destroy)) ();
+ }
+ 
  XMLDList_free(engine_list);
  return 1;
 }
