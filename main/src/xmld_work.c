@@ -76,12 +76,9 @@ void XMLDWork_free_content(void *work) {
 
 /*
  * : Returns the full file name of the request structure
- * associated with the given work structure concatenated to
- * the current directory of the connection structure associated
- * to the given work structure.
+ * associated with the given work structure.
  * work: The work structure mentioned.
- * returns: The full file location from the root of the given
- * work structure.
+ * returns: The full file location from the root of the server.
  */
 char *XMLDWork_get_full_file(XMLDWork *work) {
  char *full_file;
@@ -91,11 +88,18 @@ char *XMLDWork_get_full_file(XMLDWork *work) {
   strcat(full_file, work->req->file);
   return full_file;
  }
-
+ char *lcurr=work->conn->curr_dir;
+ if (*(work->conn->curr_dir) == '/') {
+  work->conn->curr_dir++;
+ }
+ 
  full_file=(char *) malloc(strlen(document_root)+strlen((work->conn->curr_dir)+strlen(work->req->file)+1)*sizeof(char));
  strcpy(full_file, document_root);
  strcat(full_file, work->conn->curr_dir);
  strcat(full_file, work->req->file);
+ if (work->conn->curr_dir - lcurr == 1) {
+  work->conn->curr_dir--;
+ }
  return full_file;
 }
 

@@ -48,7 +48,7 @@ short twalker_handle(XMLDWork *work) {
   
    char *full_file=XMLDWork_get_full_file(work);
    work->res->engine=XMLDEngine_search_list_by_name(engine_list, cfg_get_engine(full_file));
-   /*free(full_file);*/ /* FIXME: This one segfaults! */
+   free(full_file);
    
    if (work->res->engine == NULL) {
     xmld_errno=XMLD_ENOENGINE;
@@ -58,10 +58,9 @@ short twalker_handle(XMLDWork *work) {
    if (((*(work->res->engine->prepare)) (work)) == 0) {
     return 0;
    }
-   printf("here\n");
 
    work->resp=XMLDResponse_create();
-   while ((*(work->res->engine->walk)) (work) != 0) {
+   while (((*(work->res->engine->walk)) (work)) != 0) {
     XMLDList_reset(work->req->retr);
     XMLDResponse_add_row(work->resp);
     while (XMLDList_next(work->req->retr)) {
@@ -70,7 +69,7 @@ short twalker_handle(XMLDWork *work) {
       XMLDResponse_assoc_col_to_aggr(work->resp, (XMLDExpr *) XMLDList_curr(work->req->retr), XMLDResponse_curr_col(work->resp));
      }
      else {
-      XMLDResponse_fill_col(work->resp,  (*(work->res->engine->eval_expr)) (work, (XMLDExpr *) XMLDList_curr(work->req->retr)));
+      XMLDResponse_fill_col(work->resp, (*(work->res->engine->eval_expr)) (work, (XMLDExpr *) XMLDList_curr(work->req->retr)));
      }
     }
    }

@@ -50,6 +50,7 @@ short engine_list_init() {
  curr_engine->init=engine_xmld_init;
  curr_engine->prepare=engine_xmld_prepare;
  curr_engine->cleanup=engine_xmld_cleanup;
+ curr_engine->walk=engine_xmld_walk;
  curr_engine->destroy=engine_xmld_destroy;
  curr_engine->eval_expr=engine_xmld_eval_expr;
  curr_engine->eval_cond=engine_xmld_eval_cond;

@@ -66,7 +66,7 @@ void XMLDResponse_free_content(void *resp) {
  * to be added.
  */
 void XMLDResponse_add_row(XMLDResponse *resp) {
- XMLDList_add(resp->rows);
+ XMLDRow_add_to_list(resp->rows);
  resp->rows->curr_element=XMLDList_last(resp->rows);
 }
 
@@ -76,7 +76,7 @@ void XMLDResponse_add_row(XMLDResponse *resp) {
  * resp: the mentioned response structure.
  */
 void XMLDResponse_add_col(XMLDResponse *resp) {
- XMLDRow *row=(XMLDRow *) XMLDList_curr(resp->rows);
+ XMLDRow *row=XMLDResponse_curr_row(resp);
  XMLDCol_add_to_list(row->cols);
  row->cols->curr_element=XMLDList_last(row->cols);
 }
@@ -220,7 +220,7 @@ XMLDRow *XMLDResponse_curr_row(XMLDResponse *resp) {
  * current row in the given resopnse structure.
  */
 XMLDCol *XMLDResponse_curr_col(XMLDResponse *resp) {
-  return (XMLDCol *) XMLDList_curr((XMLDResponse_curr_row(resp))->cols);
+ return (XMLDCol *) XMLDList_curr((XMLDResponse_curr_row(resp))->cols);
 }
 
 /*
@@ -232,13 +232,26 @@ XMLDCol *XMLDResponse_curr_col(XMLDResponse *resp) {
  * the contents are to be flushed.
  */
 void XMLDResponse_flush(XMLDResponse *resp, int fd) {
+ char *response=(char *) malloc(sizeof(char));
+ response[0]='\0';
+ int resp_len=0;
  XMLDList_reset(resp->rows);
+ XMLDRow *curr_row;
+ XMLDCol *curr_col;
  while (XMLDList_next(resp->rows)) {
-  XMLDList_reset(((XMLDRow *) XMLDList_curr(resp->rows))->cols);
-  while (XMLDList_next(((XMLDRow *) XMLDList_curr(resp->rows))->cols)) {
-   xmld_socket_write(fd, ((XMLDCol *) XMLDList_curr(((XMLDRow *)XMLDList_curr(resp->rows))->cols))->val);
-   xmld_socket_write(fd, (char *) &col_sep);
+  curr_row=(XMLDRow *) XMLDList_curr(resp->rows);
+  XMLDList_reset(curr_row->cols);
+  while (XMLDList_next(curr_row->cols)) {
+   curr_col=(XMLDCol *) XMLDList_curr(curr_row->cols);
+   resp_len+=strlen(curr_col->val)+1;
+   response=(char *) realloc(response, resp_len*sizeof(char));
+   strcat(response, curr_col->val);
+   response[resp_len-1]=col_sep;
+   response[resp_len]='\0';
   }
-  xmld_socket_write(fd, (char *) &row_sep);
+  response=(char *) realloc(response, (++resp_len) * sizeof(char));
+  response[resp_len-1]=row_sep;
+  response[resp_len]='\0';
  }
+ xmld_socket_write(fd, response);
 }

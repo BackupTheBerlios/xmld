@@ -65,12 +65,12 @@ short engine_xmld_prepare(XMLDWork *work) {
  
  if (strcmp(mime, "text/xml") != 0) { /* A XML-only engine! */
   xmld_errno=XMLD_EINVALFILE;
-  /*free(mime);*/
-  /*free(full_name);*/ /* FIXME: This one segfaults! */
+  free(mime);
+  free(full_name);
   return 0;
  }
  
- /*free(mime);*/
+ free(mime);
  if (work->req->type == 4 || work->req->type == 5 || work->req->type == 6
      || work->req->type == 7 || work->req->type == 8 || work->req->type == 9) { /* Operations that need the .format file */
   work->res->data_source=(void *) fmanager_get_ex_fd(full_name);
@@ -81,7 +81,7 @@ short engine_xmld_prepare(XMLDWork *work) {
  
  if (work->res->data_source == NULL) {
   xmld_errno = XMLD_ENOFILE;
-  /*free(full_name);*/ /* FIXME: This one segfaults! */
+  free(full_name);
   return 0;
  }
  
@@ -94,7 +94,7 @@ short engine_xmld_prepare(XMLDWork *work) {
  else {
   *((int *) work->res->store+2)=0;
  }
- /*free(full_name);*/ /* FIXME: This one segfaults! */
+ free(full_name);
 
  return 1;
 }
@@ -118,7 +118,7 @@ void engine_xmld_destroy() {
 int engine_xmld_walk(XMLDWork *work) {
  short token;
  char *tokens[3]={"<", "/>", "</"};
- 
+  
  while (1) {
   token=dmstrstr((FILE *) work->res->data_source, tokens, 3);
   if (token == -1) {
@@ -128,7 +128,10 @@ int engine_xmld_walk(XMLDWork *work) {
    return ++(*((int *) work->res->store));
   }
   else if (token == 1 || token == 2) {
-  (*((int *) work->res->store))--;
+   (*((int *) work->res->store))--;
+   if ((*((int *) work->res->store)) == 0) {
+    return 0;
+   }
   }
  }
 }
@@ -355,10 +358,17 @@ char *engine_xmld_get_column_value(XMLDWork *work, char *col_name) {
  else if (strcmp(col_name, "*") == 0) {
   char *atts=engine_xmld_get_column_value(work, "@");
   char *text=engine_xmld_get_column_value(work, "(text)");
-  ret=(char *) malloc((strlen(atts)+strlen(text)+2)*sizeof(char));
+  if (text != NULL) {
+   ret=(char *) malloc((strlen(atts)+strlen(text)+2)*sizeof(char));
+  }
+  else {
+   ret=(char *) malloc((strlen(atts)+1)*sizeof(char));
+  }
   strcpy(ret, atts);
-  ret[strlen(atts)]=col_sep;
-  strcat(ret, text);
+  if (text != NULL) {
+   ret[strlen(atts)]=col_sep;
+   strcat(ret, text);
+  } 
  }
  else if (strcmp(col_name, "@") == 0) {
   ret=(char *) malloc(sizeof(char));

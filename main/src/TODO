@@ -354,13 +354,26 @@ NO MULTIPLEXING ANYMORE! (done)
 
 * Real string handling in xmld-sql.lex.
 
-* Remove the quotes from a given string in the query parser!!!
+* Remove the quotes from a given string in the query parser!!! (done)
 
 * if curr_dir == '/', it must not be concatenated in XMLDWork_get_full
-_file.
+_file. (done)
 
 * Fix that freeing full_file/mime segfaults in twalker_handle and
-engine_xmld_prepare.
+engine_xmld_prepare. (done)
+
+* xmld_socket_read contains an over-flow possibility.
+
+* XMLDResponse_flush must call xmld_socket_write
+only once. (done)
+
+* cfg_parser_parse_token doesn't recognize special characters for the
+type char (e.g \t). (done)
+
+* Fix that '@' character that was put in front of a second attribute.
+
+* Fix that the query parser has generated an error when an attribute
+name 'name' was given.
 
 **** Checks: ****
 

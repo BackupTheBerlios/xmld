@@ -39,7 +39,12 @@ int xmld_socket_accept(int sockfd) {
  return accept(sockfd, NULL, NULL);
 }
 int xmld_socket_write(int sockfd, char *str) {
- return write(sockfd, (void *) str, strlen(str)+1);
+ if (str != NULL) {
+  return write(sockfd, (void *) str, strlen(str)+1);
+ }
+ else {
+  return 0;
+ }
 }
 
 char *xmld_socket_read(int sockfd) {

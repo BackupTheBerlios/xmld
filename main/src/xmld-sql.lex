@@ -1,4 +1,17 @@
 %{
+/*                                                                *
+ * -------------------------------------------------------------- *
+ * The OpenXMLD                                                   *
+ * -------------------------------------------------------------- *
+ * This source file is subject to the GNU General Public licence, *
+ * which can be obtained through the world-wide-web at:           *
+ *                                                                *
+ *  http://www.gnu.org/copyleft/gpl.html                          *
+ * -------------------------------------------------------------- *
+ * Authors: Khalid Al-Kary (khalid_kary@hotmail.com)              *
+ * -------------------------------------------------------------- * 
+ */
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -55,8 +68,9 @@ struct XMLDEngine;
 "between" return BETWEEN;
 "not between" return NBETWEEN;
 \"[^\n]+\" {
-            lvalp->qval=(char *) malloc((strlen(yytext)+1)*sizeof(char));
-	    strcpy(lvalp->qval, yytext);
+            lvalp->qval=(char *) malloc(strlen(yytext+1)-1*sizeof(char));
+	    strncpy(lvalp->qval, yytext+1, strlen(yytext+1)-1);
+	    lvalp->qval[strlen(yytext+1)]='\0';
             return QVAL;
 	   }
 [A-Z][A-Z0-9]* {

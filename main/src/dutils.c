@@ -21,29 +21,35 @@
  * buf: the buffer information object which
  * gets initialized by the user function.
  */ 
+/*
+ * FIXME: really implement getc_buf and buf_dump
+ * in order to gain the performance enhancement related
+ * to buffering.
+ */
 char getc_buf(FILE *fd, buf_t *buf) {
- int stat;
- if (buf == NULL) {
-  buf=(buf_t *) malloc(sizeof(buf_t));
-  stat=fread((void *) buf->val, sizeof(char), BUFFER_SIZE, fd);
+ return (char) getc(fd);
+ /*int stat;
+ if (strlen(buf->val) == 0) {
+  stat=fread((void *) buf->val, sizeof(char), BUFFER_SIZE-1, fd);
   if (stat == 0) {
    return EOF;
   }
-  buf->val[stat-1]='\0';
+  buf->val[stat]='\0';
   buf->curr=buf->val;
  }
- else if (buf->curr == (buf->val)+BUFFER_SIZE) {
-  stat=fread((void *) buf->val, sizeof(char), BUFFER_SIZE, fd);
+ else if (buf->curr == (buf->val)+BUFFER_SIZE-1) {
+  stat=fread((void *) buf->val, sizeof(char), BUFFER_SIZE-1, fd);
   if (stat == 0) {
    return EOF;
   }
-  buf->val[stat-1]='\0';
+  buf->val[stat]='\0';
   buf->curr=buf->val;
  }
  else {
   buf->curr++;
  }
  return *(buf->curr);
+ */
 }
 
 /*
@@ -55,11 +61,11 @@ char getc_buf(FILE *fd, buf_t *buf) {
  * by getc_buf on the same buf and fd.
  */ 
 void buf_dump(FILE *fd, buf_t *buf) {
- char *last=buf->curr;
+ /*char *last=buf->curr;
  while (*last != '\0' && *last != EOF) {
   last++;
  }
- fseek(fd, buf->curr -  last, SEEK_CUR);
+ fseek(fd, buf->curr - last + 1, SEEK_CUR);*/
  free(buf);
 }
 
@@ -77,8 +83,9 @@ int dmstrstr(FILE *fd, char **tokens, int num) {
  int *cur=(int *) calloc(num, sizeof(int));
  char c;
  int i;
- buf_t *buf=NULL;
-
+ buf_t *buf=(buf_t *) malloc(sizeof(buf_t));
+ buf->val[0]='\0';
+ 
  while (1) {
   c=getc_buf(fd, buf);
   if (c == EOF) {
@@ -89,7 +96,7 @@ int dmstrstr(FILE *fd, char **tokens, int num) {
   for (i = 0; i < num; i++) {
    if (c == tokens[i][cur[i]]) {
     cur[i]++;
-    if (cur[i] == strlen(tokens[i])+1) {
+    if (cur[i] == strlen(tokens[i])) {
      free(cur);
      buf_dump(fd, buf);
      return i;
@@ -110,7 +117,8 @@ int dmstrstr(FILE *fd, char **tokens, int num) {
 int dmstrchr(FILE *fd, char *tokens, int num) {
  char c;
  int i;
- buf_t *buf=NULL;
+ buf_t *buf=(buf_t *) malloc(sizeof(buf_t));
+ buf->val[0]='\0';
 
  while (1) {
   c=getc_buf(fd, buf);
@@ -141,7 +149,8 @@ int dmstrchr(FILE *fd, char *tokens, int num) {
 char *dmcstrchr(FILE *fd, char *tokens, int num) {
  char c;
  int i;
- buf_t *buf=NULL;
+ buf_t *buf=(buf_t *) malloc(sizeof(buf_t));
+ buf->val[0]='\0';
  char *cap;
  cap=(char *) malloc(sizeof(char));
  cap[0]='\0';

@@ -207,7 +207,15 @@ void cfg_parser_parse_token(char *token, short mode) {
    curr_dir->value.string_array_value=str_split(token, ',');
   }
   else if (curr_dir->type == 4) {
-   sscanf(token, "%c", &curr_dir->value.char_value);
+   if (strcmp(token, "\\t") == 0) {
+    curr_dir->value.char_value='\t';
+   }
+   else if (strcmp(token, "\\r") == 0) {
+    curr_dir->value.char_value='\r';
+   }
+   else {
+    curr_dir->value.char_value=token[0];
+   } 
   }
  }
 }
