@@ -20,6 +20,7 @@
 #include "sosel.h"
 #include "fmanager.h"
 #include "qp.h"
+#include "twalker.h"
 
 void qp_handle(void *conn) {
  struct XMLDWork *work=(struct XMLDWork *) malloc(sizeof(struct XMLDWork));
@@ -46,5 +47,11 @@ void qp_handle(void *conn) {
   ERROR_RESPONSE("There was an error accessing the requested file.");
   return;
  }
- /* tree walker */
+ stat=twalker_handle(work);
+ if (stat==XMLD_FAILURE) {
+  ERROR_RESPONSE("Error during implementing query");
+  return;
+ }
+ /* send through the socket*/
+ /* readd the socket */
 }
