@@ -14,10 +14,10 @@
 #ifndef HAVE_CFG_PARSER_H
 #define HAVE_CFG_PARSER_H
 
-XMLDList *cfg_tree; /* list of XMLDDirective */
+XMLDList *cfg_tree=NULL; /* list of XMLDDirective */
 
 short cfg_parser_parse();
-void cfg_parser_parse_token(char *, int);
+void cfg_parser_parse_token(char *, short);
 short cfg_parser_clean();
 
 #endif /* HAVE_CFG_PARSER_H */
