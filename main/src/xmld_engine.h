@@ -15,13 +15,46 @@
 #define HAVE_XMLD_ENGINE_H
 
 struct XMLDEngine {
- char *name;
- void *(*init) (XMLDWork *);
- void *(*destroy) (XMLDWork *);
- short (*walk) (XMLDWork *);
- char *(*eval_expr) (XMLDWork *, XMLDExpr *);
- short (*eval_cond) (XMLDWork *, XMLDCond *);
- char *(*eval_aggr_expr) (XMLDWork *, XMLDExpr *);
+ char *name; /* The engine's name */
+ void (*init) (void); /* The function that's called once the engine
+		       * is added to the engine_list.
+		       */
+ short (*prepare) (XMLDWork *); /* The function called before each
+				 * request the engine serves.
+				 */
+ 
+ void (*cleanup) (XMLDWork *); /* The function called after each
+				*  request the engine serves.
+				*/
+ void (*destroy) (void); /* The function called before the engine
+			  * is removed from engine_list.
+			  */
+ 
+ short (*walk) (XMLDWork *); /* The function which the tree walker
+			      * calls for the engine to give a next
+			      * result from its data source. 
+			      */
+ 
+ char *(*eval_expr) (XMLDWork *, XMLDExpr *); /* The function which
+					       * the tree walker calls
+					       * to get the value of
+					       * an expression from the
+					       * engine. 	 
+					       */
+ 
+ short (*eval_cond) (XMLDWork *, XMLDCond *); /* The function which
+					       * the tree walker calls
+					       * when it needs the eng-
+					       * ine to evaluate a con-
+					       * dition.
+					       */
+ 
+ char *(*eval_aggr_expr) (XMLDWork *, XMLDExpr *); /* The function which
+						    * the tree walker calls
+						    * when it needs the en-
+						    * gine to evaluate an 
+						    * aggregate expression.                                                   *
+						    */  
 };
 
 #ifndef XMLDENGINE_TYPE_DEFINED
