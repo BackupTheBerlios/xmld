@@ -18,7 +18,13 @@
 #include "xmld_list.h"
 #include "xmld_connection.h"
 #include "cfg.h"
-#include "mtasker.h"
+
+#ifdef USE_PTASKER
+ #include "ptasker/ptasker.h"
+ #define MULTI_PROC_MTASKER
+ #undef MULTI_THREAD_MTASKER 
+#endif /* USE_PTASKER */
+
 #include "somanager.h"
 #include "sosel.h"
 

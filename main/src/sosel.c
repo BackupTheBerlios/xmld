@@ -23,7 +23,13 @@
 #include "xmld_list.h"
 #include "xmld_connection.h"
 #include "sosel.h"
-#include "mtasker.h"
+
+#ifdef USE_PTASKER
+ #include "ptasker/ptasker.h"
+ #define MULTI_PROC_MTASKER
+ #undef MULTI_THREAD_MTASKER
+#endif /* USE_PTASKER */
+
 #include "qp.h"
 /*
  * Organize XMLDConnection removal (somanager_remove and sosel_shutdown) so
