@@ -12,34 +12,7 @@
  * -------------------------------------------------------------- * 
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
-#include "xmld_list.h"
-struct XMLDFunc;
-#ifndef XMLD_FUNC_TYPE_DEFINED
-#define XMLD_FUNC_TYPE_DEFINED
- typedef struct XMLDFunc XMLDFunc;
-#endif /* XMLD_FUNC_TYPE_DEFINED */
-#include "xmld_expr.h"
-#include "xmld_func.h"
-#include "xmld_cond.h"
-#include "xmld_col.h"
-#include "xmld_row.h"
-#include "xmld_aggr_table.h"
-struct XMLDEngine;
-#ifndef XMLDENGINE_TYPE_DEFINED
-#define XMLDENGINE_TYPE_DEFINED
- typedef struct XMLDEngine XMLDEngine;
-#endif /* XMLDENGINE_TYPE_DEFINED */
-#include "xmld_request.h"
-#include "xmld_response.h"
-#include "xmld_resource.h"
-#include "xmld_connection.h"
-#include "xmld_work.h"
-#include "xmld_engine.h"
-#include "xmld_errors.h"
+#include "includes.h"
 #include "func_list.h"
 #include "xmld-sql.tab.h"
 #include "qp.h"
@@ -93,7 +66,7 @@ struct XMLDEngine;
 		                         return IDENTIFIER;
                                         }
 [0-9]+"."[0-9]+ {
-                 lvalp->fnum=atof(yytext, NULL);
+                 lvalp->fnum=atof(yytext);
 		 return FNUM;
                 }
 [0-9]+ {

@@ -11,39 +11,9 @@
  * -------------------------------------------------------------- * 
  */
  
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <errno.h>
 #include <limits.h>
 #include <math.h>
-#include "../xmlddef.h"
-#include "../mutils.h"
-#include "../dutils.h"
-#include "../sutils.h"
-#include "../xmld_list.h"
-#include "../xmld_col.h"
-#include "../xmld_row.h"
-struct XMLDFunc;
-#ifndef XMLD_FUNC_TYPE_DEFINED
-#define XMLD_FUNC_TYPE_DEFINED
- typedef struct XMLDFunc XMLDFunc;
-#endif /* XMLD_FUNC_TYPE_DEFINED */
-#include "../xmld_expr.h"
-#include "../xmld_func.h"
-#include "../xmld_aggr_table.h"
-#include "../xmld_cond.h"
-struct XMLDEngine;
-#ifndef XMLDENGINE_TYPE_DEFINED
-#define XMLDENGINE_TYPE_DEFINED
- typedef struct XMLDEngine XMLDEngine;
-#endif /* XMLDENGINE_TYPE_DEFINED */
-#include "../xmld_resource.h"
-#include "../xmld_response.h"
-#include "../xmld_request.h"
-#include "../xmld_connection.h"
-#include "../xmld_work.h"
-#include "../xmld_engine.h"
+#include "../includes.h"
 #include "../cfg.h"
 #include "../mfigure.h"
 #include "../fmanager.h"
@@ -186,21 +156,20 @@ char *engine_xmld_eval_expr(XMLDWork *work, XMLDExpr *expr, int level) {
 XMLDBool engine_xmld_eval_cond(XMLDWork *work, XMLDCond *cond, int level) {
  XMLDBool val;
  if (cond->type == XMLD_CONDITION) {
-  XMLDExpr *left, right;
-  if (XMLDExpr_is_complex(expr->left)) {
-   left=engine_xmld_simplify_expr(work, expr->left, level);
+  XMLDExpr *left;
+  XMLDExpr *right;
+  if (XMLDExpr_is_complex(cond->left)) {
+   left=engine_xmld_simplify_expr(work, cond->left, level);
   }
   else {
-   left=expr->left;
+   left=cond->left;
   }
-  if (XMLDExpr_is_complex(expr->right)) {
-   right=engine_xmld_simplify_expr(work, expr->right, level);
+  if (XMLDExpr_is_complex(cond->right)) {
+   right=engine_xmld_simplify_expr(work, cond->right, level);
   }
   else {
-   right=expr->right;
+   right=cond->right;
   }
-  XMLDExpr *left=engine_xmld_simplify_expr(work, cond->left, level);
-  XMLDExpr *right=engine_xmld_simplify_expr(work, cond->right, level);
   
   if (left == NULL || right == NULL) {
    return XMLD_FALSE;
@@ -286,13 +255,13 @@ XMLDBool engine_xmld_eval_cond(XMLDWork *work, XMLDCond *cond, int level) {
     }
    break;
    case XMLD_COND_OP_NE:
-    else if (left->type == right->type) {
+    if (left->type == right->type) {
      switch(left->type) {
-      case XMLD_QVAL:
-       val=!(strcmp(left->qval, right->qval) == 0);
-      break;
       case XMLD_INTEGER:
        val=(left->nval != right->nval);
+      break;
+      case XMLD_QVAL:
+       val=!(strcmp(left->qval, right->qval) == 0);
       break;
       case XMLD_FLOAT:
        val=(left->fnval != right->fnval);
@@ -379,10 +348,10 @@ XMLDBool engine_xmld_eval_cond(XMLDWork *work, XMLDCond *cond, int level) {
    break;
   }
  
-  if (XMLDExpr_is_complex(expr->left)) {
+  if (XMLDExpr_is_complex(cond->left)) {
    XMLDExpr_free(left);
   }
-  if (XMLDExpr_is_complex(expr->right)) {
+  if (XMLDExpr_is_complex(cond->right)) {
    XMLDExpr_free(right);
   }	  
  }
@@ -415,7 +384,8 @@ else if (cond->type == XMLD_CONDITION_VOID) {
 XMLDExpr *engine_xmld_simplify_expr(XMLDWork *work, XMLDExpr *expr, int level) {
  XMLDExpr *ret;
  if (expr->type == XMLD_OPERATION) {
-  XMLDExpr *left, right;
+  XMLDExpr *left;
+  XMLDExpr *right;
   if (XMLDExpr_is_complex(expr->left)) {
    left=engine_xmld_simplify_expr(work, expr->left, level);
   }
@@ -460,7 +430,7 @@ XMLDExpr *engine_xmld_simplify_expr(XMLDWork *work, XMLDExpr *expr, int level) {
       ret->type=XMLD_FLOAT;
       ret->fnval=left->fnval + right->nval;
      }
-     else if (left->type == XML_INTEGER && right->type == XMLD_FLOAT) {
+     else if (left->type == XMLD_INTEGER && right->type == XMLD_FLOAT) {
       ret=XMLDExpr_create();
       ret->type=XMLD_FLOAT;
       ret->fnval=left->nval + right->fnval;
@@ -491,7 +461,7 @@ XMLDExpr *engine_xmld_simplify_expr(XMLDWork *work, XMLDExpr *expr, int level) {
       ret->type=XMLD_FLOAT;
       ret->fnval=left->fnval - right->nval;
      }
-     else if (left->type == XML_INTEGER && right->type == XMLD_FLOAT) {
+     else if (left->type == XMLD_INTEGER && right->type == XMLD_FLOAT) {
       ret=XMLDExpr_create();
       ret->type=XMLD_FLOAT;
       ret->fnval=left->nval - right->fnval;
@@ -522,7 +492,7 @@ XMLDExpr *engine_xmld_simplify_expr(XMLDWork *work, XMLDExpr *expr, int level) {
       ret->type=XMLD_FLOAT;
       ret->fnval=left->fnval * right->nval;
      }
-     else if (left->type == XML_INTEGER && right->type == XMLD_FLOAT) {
+     else if (left->type == XMLD_INTEGER && right->type == XMLD_FLOAT) {
       ret=XMLDExpr_create();
       ret->type=XMLD_FLOAT;
       ret->fnval=left->nval * right->fnval;
@@ -553,14 +523,14 @@ XMLDExpr *engine_xmld_simplify_expr(XMLDWork *work, XMLDExpr *expr, int level) {
       ret->type=XMLD_FLOAT;
       ret->fnval=(right->nval != 0) ? left->fnval / right->nval : INT_MAX;
      }
-     else if (left->type == XML_INTEGER && right->type == XMLD_FLOAT) {
+     else if (left->type == XMLD_INTEGER && right->type == XMLD_FLOAT) {
       ret=XMLDExpr_create();
       ret->type=XMLD_FLOAT;
       ret->fnval=(right->fnval != 0) ? left->nval / right->fnval : INT_MAX;
      }
     }
    break;
-   case XMLD_OP_EXPO;
+   case XMLD_OP_EXPO:
     if (left->type == XMLD_QVAL || right->type == XMLD_QVAL) {
      return NULL;
     }
@@ -584,7 +554,7 @@ XMLDExpr *engine_xmld_simplify_expr(XMLDWork *work, XMLDExpr *expr, int level) {
       ret->type=XMLD_FLOAT;
       ret->fnval=pow(left->fnval, right->nval);
      }
-     else if (left->type == XML_INTEGER && right->type == XMLD_FLOAT) {
+     else if (left->type == XMLD_INTEGER && right->type == XMLD_FLOAT) {
       ret=XMLDExpr_create();
       ret->type=XMLD_FLOAT;
       ret->fnval=pow(left->nval, right->fnval);
@@ -602,7 +572,7 @@ XMLDExpr *engine_xmld_simplify_expr(XMLDWork *work, XMLDExpr *expr, int level) {
       ret->nval=-right->nval;
      break;
      case XMLD_FLOAT:
-      ret->XMLDExpr_create();
+      ret=XMLDExpr_create();
       ret->type=XMLD_FLOAT;
       ret->fnval=-right->fnval;
      break;
@@ -674,7 +644,7 @@ XMLDExpr *engine_xmld_simplify_expr(XMLDWork *work, XMLDExpr *expr, int level) {
   }
   ret=XMLDExpr_create();
   ret->type=XMLD_QVAL;
-  ret->qval=engine_xmld_get_column_value(expr->file, (expr->wildcard == XMLD_WILDCARD_ALL) ? 0 : 1);
+  ret->qval=engine_xmld_get_column_value(expr->file, (expr->wildcard == XMLD_WILDCARD_ALL) ? "*" : "@");
  }
  return ret;
 }
@@ -801,7 +771,7 @@ XMLDStatus engine_xmld_set_column_value(XMLDFile *file, char *col_name, char *va
   }
  }
  else {
-  if (engine_xmld_locate_att((FILE *) file->data), col_name) {
+  if (engine_xmld_locate_att((FILE *) file->data, col_name)) {
    len=engine_xmld_get_element_att_length((FILE *) file->store, file->level, tagname, col_name);
    if (len > 0) {
     if (fwrite((void *) value, sizeof(char), len, (FILE *) file->data) > 0) {

@@ -11,17 +11,7 @@
  * -------------------------------------------------------------- * 
  */
 
-#include <stdlib.h>
-#include "mutils.h"
-#include "xmld_list.h"
-struct XMLDFunc;
-#ifndef XMLD_FUNC_TYPE_DEFINED
-#define XMLD_FUNC_TYPE_DEFINED
- typedef struct XMLDFunc XMLDFunc;
-#endif /* XMLD_FUNC_TYPE_DEFINED */
-#include "xmld_expr.h"
-#include "xmld_func.h"
-#include "xmld_cond.h"
+#include "includes.h"
 
 /*
  * : Creates a new condition structure.
@@ -84,7 +74,7 @@ void XMLDCond_copy(XMLDCond *src, XMLDCond *dest) {
    dest->cright=src->cright;
    dest->cop=src->cop;
   break;
-  case XMLD_CONDITION_LIST
+  case XMLD_CONDITION_LIST:
    dest->conds=src->conds;
   break;
  }

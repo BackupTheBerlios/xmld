@@ -13,6 +13,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include "xmlddef.h"
 #include "mutils.h"
 #include "xmld_list.h"
 #include "xmld_directive.h"
@@ -62,7 +63,7 @@ void XMLDDirective_free_content(void *directive) {
   }
   cfree(dir->value.string_array_value);
  }
- if (dir->type != XMLD_DIR_ERROR) {
+ if (dir->type != XMLD_DIR_ERR) {
   cfree(dir->name);
  }
 }
@@ -82,7 +83,7 @@ XMLDDirectiveList *XMLDDirectiveList_create() {
  * list: the list to which the new element is to be added.
  * returns: a pointer to the newly added element.
  */
-XMLDDirective *XMLDDirectiveList_add_(XMLDDirectiveList *list) {
+XMLDDirective *XMLDDirectiveList_add(XMLDDirectiveList *list) {
  XMLDDirective *dir=(XMLDDirective *) XMLDList_add(list);
  dir->name=NULL;
  dir->type=XMLD_DIR_STR;

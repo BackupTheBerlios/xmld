@@ -11,19 +11,7 @@
  * -------------------------------------------------------------- * 
  */
 
-#include <stdlib.h>
-#include <string.h>
-#include "mutils.h"
-#include "xmld_list.h"
-struct XMLDFunc;
-#ifndef XMLD_FUNC_TYPE_DEFINED
-#define XMLD_FUNC_TYPE_DEFINED
- typedef struct XMLDFunc XMLDFunc;
-#endif /* XMLD_FUNC_TYPE_DEFINED */
-#include "xmld_expr.h"
-#include "xmld_func.h"
-#include "xmld_col.h"
-#include "xmld_aggr_table.h"
+#include "includes.h"
 
 /*
  * : Creates a new aggregate expression table.
@@ -133,7 +121,7 @@ XMLDAggrTable *XMLDAggrTableList_add(XMLDAggrTableList *list) {
  * returns: a pointer to the aggregate expression table which has an aggregate
  * expression aggr, or NULL if not found.
  */
-XMLDAggrTableList *XMLDAggrTableList_search_by_expr(XMLDAggrTableList *list, XMLDExpr *aggr) {
+XMLDAggrTable *XMLDAggrTableList_search_by_expr(XMLDAggrTableList *list, XMLDExpr *aggr) {
  XMLDList_reset(list);
  XMLDAggrTable *table=NULL;
  while (XMLDList_next(list)) {
@@ -159,8 +147,8 @@ void XMLDAggrTable_internal_assoc(XMLDAggrTable *table, XMLDExpr *expr) {
  }
  switch (expr->type) {
   case XMLD_OPERATION:
-   XMLDAggrTable_resolve_expr(table, expr->left);
-   XMLDAggrTable_resolve_expr(table, expr->right);
+   XMLDAggrTable_internal_assoc(table, expr->left);
+   XMLDAggrTable_internal_assoc(table, expr->right);
   break;
   case XMLD_FUNCTION:
    if (expr->func->aggr == XMLD_TRUE) {
@@ -168,13 +156,13 @@ void XMLDAggrTable_internal_assoc(XMLDAggrTable *table, XMLDExpr *expr) {
    }
    XMLDList_reset(expr->arg_list);
    while (XMLDList_next(expr->arg_list)) {
-    XMLDAggrTable_resolve_expr(table, (XMLDExpr *) XMLDList_curr(expr->arg_list));
+    XMLDAggrTable_internal_assoc(table, (XMLDExpr *) XMLDList_curr(expr->arg_list));
    }
   break;
-  case XMLD_LIST: /* for completeness -- not used */
+  case XMLD_LIST:
    XMLDList_reset(expr->exprs);
    while (XMLDList_next(expr->exprs)) {
-    XMLDAggrTable_resolve_expr(table, (XMLDExpr *) XMLDList_curr(expr->exprs));
+    XMLDAggrTable_internal_assoc(table, (XMLDExpr *) XMLDList_curr(expr->exprs));
    }
   break;
  }

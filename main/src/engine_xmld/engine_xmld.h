@@ -19,10 +19,10 @@ XMLDStatus engine_xmld_prepare (XMLDWork *, XMLDFile *, int);
 void engine_xmld_cleanup (XMLDWork *, XMLDFile *);
 void engine_xmld_destroy (void);
 int engine_xmld_walk (XMLDWork *, XMLDFile *);
-char *engine_xmld_eval_expr (XMLDWork *, XMLDExpr *, XMLDAggrTable *, int);
-XMLDBool engine_xmld_eval_cond (XMLDWork *, XMLDCond * int);
+char *engine_xmld_eval_expr (XMLDWork *, XMLDExpr *, int);
+XMLDBool engine_xmld_eval_cond (XMLDWork *, XMLDCond *, int);
 char *engine_xmld_get_column_value (XMLDFile *, char *);
-XMLDStatus engine_xmld_set_column_value (XMLDWork *, char *, char *);
+XMLDStatus engine_xmld_set_column_value (XMLDFile *, char *, char *);
 XMLDExpr *engine_xmld_simplify_expr (XMLDWork *, XMLDExpr *, int);
 
 #endif /* __ENGINE_XMLD_H */

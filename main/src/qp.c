@@ -11,34 +11,8 @@
  * -------------------------------------------------------------- * 
  */
  
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include "xmlddef.h"
+#include "includes.h"
 #include "xmld_sockets.h"
-#include "xmld_list.h"
-#include "xmld_col.h"
-#include "xmld_row.h"
-struct XMLDFunc;
-#ifndef XMLD_FUNC_TYPE_DEFINED
-#define XMLD_FUNC_TYPE_DEFINED
- typedef struct XMLDFunc XMLDFunc;
-#endif /* XMLD_FUNC_TYPE_DEFINED */
-#include "xmld_expr.h"
-#include "xmld_func.h"
-#include "xmld_aggr_table.h"
-#include "xmld_cond.h"
-struct XMLDEngine;
-#ifndef XMLDENGINE_TYPE_DEFINED
-#define XMLDENGINE_TYPE_DEFINED
- typedef struct XMLDEngine XMLDEngine;
-#endif /* XMLDENGINE_TYPE_DEFINED */
-#include "xmld_resource.h"
-#include "xmld_response.h"
-#include "xmld_request.h"
-#include "xmld_connection.h"
-#include "xmld_work.h"
-#include "xmld_engine.h"
 #include "cfg.h"
 #include "qp.h"
 #include "twalker.h"
@@ -111,7 +85,7 @@ void qp_handle(void *conn) {
   
   char *query=protoimpl_read_sequence(work->conn->fd, NULL);
   
-  if (strcmp(query, DISCONNECT_MESSAGE) == 0) {
+  if (strcmp(query, DISCONNECTION_MESSAGE) == 0) {
    break;
   }
   
@@ -134,7 +108,7 @@ void qp_handle(void *conn) {
   }
   XMLDResponse_free(work->resp);
   XMLDRequest_free(work->req);
-  XMLDResource_free(work->res);
+  XMLDList_free(work->files);
  }
  xmld_socket_shutdown(work->conn->fd);
  XMLDWork_free(work);

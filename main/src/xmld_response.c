@@ -11,22 +11,7 @@
  * -------------------------------------------------------------- * 
  */
 
-#include <stdlib.h>
-#include <string.h>
-#include "xmlddef.h"
-#include "mutils.h"
-#include "xmld_list.h"
-#include "xmld_col.h"
-#include "xmld_row.h"
-struct XMLDFunc;
-#ifndef XMLD_FUNC_TYPE_DEFINED
-#define XMLD_FUNC_TYPE_DEFINED
- typedef struct XMLDFunc XMLDFunc;
-#endif /* XMLD_FUNC_TYPE_DEFINED */
-#include "xmld_expr.h"
-#include "xmld_func.h"
-#include "xmld_aggr_table.h"
-#include "xmld_response.h"
+#include "includes.h"
 
 /*
  * : Creates a new response structure.
@@ -157,7 +142,7 @@ void XMLDResponse_reset_aggr(XMLDResponse *resp) {
 XMLDExpr *XMLDResponse_curr_aggr_expr(XMLDResponse *resp) {
  XMLDAggrTable *table=(XMLDAggrTable *) XMLDList_curr(resp->tables);
  if (table != NULL) {
-  return table->aggr;
+  return table->expr;
  }
  else {
   return NULL;

@@ -11,12 +11,7 @@
  * -------------------------------------------------------------- * 
  */
 
-#include <stdlib.h>
-#include <string.h>
-#include "mutils.h"
-#include "xmlddef.h"
-#include "xmld_list.h"
-#include "xmld_file.h"
+#include "includes.h"
 #include "cfg.h"
 
 /*
@@ -24,11 +19,11 @@
  * name: The name of the file.
  * returns: The newly created file structure.
  */
-XMLDFIle *XMLDFile_create(char *name) {
+XMLDFile *XMLDFile_create(char *name) {
  XMLDFile *file=(XMLDFile *) malloc(sizeof(XMLDFile));
  if (name != NULL) {
   file->name=(char *) malloc((strlen(name)+1)*sizeof(char));
-  strcpy(ret->name, name);
+  strcpy(file->name, name);
  }
  file->data=NULL;
  file->store=NULL;
@@ -101,7 +96,7 @@ XMLDFile *XMLDFileList_add(XMLDFileList *list, char *name) {
  XMLDFile *file=(XMLDFile *) XMLDList_add(list);
  if (name != NULL) {
   file->name=(char *) malloc((strlen(name)+1)*sizeof(char));
-  strcpy(ret->name, name);
+  strcpy(file->name, name);
  }
  file->data=NULL;
  file->store=NULL;

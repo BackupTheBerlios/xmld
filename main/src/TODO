@@ -673,12 +673,15 @@ editions are put online. (done)
 
 * A capability-demonstrating client in src/client.
 
-* compile
+* compile (done)
 
-* repair includes across all code.
+* repair includes across all code. (done)
 
-* run and fix!
+* repair the tooooo many typos across all code (done)
 
+* run (done)
+
+* fix 
 --------------- Start of The OpenXMLD 0.6.0 part:
 
 Goal: Clean it up more and PUMP a lot of features in!

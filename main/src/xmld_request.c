@@ -11,11 +11,7 @@
  * -------------------------------------------------------------- * 
  */
 
-#include <stdlib.h>
-#include "xmlddef.h"
-#include "mutils.h"
-#include "xmld_list.h"
-#include "xmld_request.h"
+#include "includes.h"
 
 /*
  * : Creates a new request structure.
@@ -26,7 +22,6 @@ XMLDRequest *XMLDRequest_create() {
  req->retr=NULL;
  req->vals=NULL;
  req->where=NULL;
- req->misc=NULL;
  return req;
 }
 
@@ -49,7 +44,6 @@ void XMLDRequest_free_content(void *req) {
  XMLDList_free(((XMLDRequest *) req)->retr);
  XMLDList_free(((XMLDRequest *) req)->vals);
  XMLDList_free(((XMLDRequest *) req)->where);
- XMLDList_free(((XMLDRequest *) req)->misc);
 }
 
 /*
@@ -71,6 +65,5 @@ XMLDRequest *XMLDRequestList_add(XMLDRequestList *list) {
  req->retr=NULL;
  req->vals=NULL;
  req->where=NULL;
- req->misc=NULL;
  return req;
 }

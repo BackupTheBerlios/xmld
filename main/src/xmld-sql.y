@@ -12,33 +12,7 @@
  * -------------------------------------------------------------- * 
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include "xmlddef.h"
-#include "xmld_list.h"
-struct XMLDFunc;
-#ifndef XMLD_FUNC_TYPE_DEFINED
-#define XMLD_FUNC_TYPE_DEFINED
- typedef struct XMLDFunc XMLDFunc;
-#endif /* XMLD_FUNC_TYPE_DEFINED */
-#include "xmld_expr.h"
-#include "xmld_func.h"
-#include "xmld_cond.h"
-#include "xmld_col.h"
-#include "xmld_row.h"
-#include "xmld_aggr_table.h"
-struct XMLDEngine;
-#ifndef XMLDENGINE_TYPE_DEFINED
-#define XMLDENGINE_TYPE_DEFINED
- typedef struct XMLDEngine XMLDEngine;
-#endif /* XMLDENGINE_TYPE_DEFINED */
-#include "xmld_request.h"
-#include "xmld_response.h"
-#include "xmld_resource.h"
-#include "xmld_connection.h"
-#include "xmld_work.h"
-#include "xmld_engine.h"
+#include "includes.h"
 #include "func_list.h"
 #define YYPARSE_PARAM work
 #include "qp.h"
@@ -109,12 +83,12 @@ query: SELECT expr_list FROM expr {
 				   ((XMLDWork *) work)->req->type=XMLD_SQL_SELECT;
                                    ((XMLDWork *) work)->files=XMLDFileList_create();
                                    if ($4->type == XMLD_QVAL) {
-                                    XMLDFileList_add(((XMLDWork *) work)->res->files, $4->qval);
+                                    XMLDFileList_add(((XMLDWork *) work)->files, $4->qval);
                                    }
                                    else if ($4->type == XMLD_LIST) {
                                     XMLDList_reset($4->exprs);
                                     while (XMLDList_next($4->exprs)) {
-                                     XMLDFileList_add(((XMLDWork *) work)->res->files, ((XMLDExpr *) XMLDList_curr($4->exprs)->qval);
+                                     XMLDFileList_add(((XMLDWork *) work)->files, ((XMLDExpr *) XMLDList_curr($4->exprs))->qval);
                                     }
                                    }
 	                           XMLDExpr_free($4);
@@ -125,12 +99,12 @@ query: SELECT expr_list FROM expr {
 			     	                     ((XMLDWork *) work)->req->type=XMLD_SQL_SELECT_WHERE;
                                                      ((XMLDWork *) work)->files=XMLDFileList_create();
                                                      if ($4->type == XMLD_QVAL) {
-                                                      XMLDFileList_add(((XMLDWork *) work)->res->files, $4->qval);
+                                                      XMLDFileList_add(((XMLDWork *) work)->files, $4->qval);
                                                      }
                                                      else if ($4->type == XMLD_LIST) {
                                                       XMLDList_reset($4->exprs);
                                                       while (XMLDList_next($4->exprs)) {
-	                                               XMLDFileList_add(((XMLDWork *) work)->res->files, ((XMLDExpr *) XMLDList_curr($4->exprs)->qval);
+	                                               XMLDFileList_add(((XMLDWork *) work)->files, ((XMLDExpr *) XMLDList_curr($4->exprs))->qval);
                                                       }
 			                             }
 			                             XMLDExpr_free($4);
@@ -142,12 +116,12 @@ query: SELECT expr_list FROM expr {
 				    ((XMLDWork *) work)->req->type=XMLD_SQL_UPDATE;
                                     ((XMLDWork *) work)->files=XMLDFileList_create();
                                     if ($2->type == XMLD_QVAL) {
-                                     XMLDFileList_add(((XMLDWork *) work)->res->files, $2->qval);
+                                     XMLDFileList_add(((XMLDWork *) work)->files, $2->qval);
                                     }
                                     else if ($2->type == XMLD_LIST) {
                                      XMLDList_reset($2->exprs);
                                      while (XMLDList_next($2->exprs)) {
-	                              XMLDFileList_add(((XMLDWork *) work)->res->files, ((XMLDExpr *) XMLDList_curr($2->exprs)->qval);
+	                              XMLDFileList_add(((XMLDWork *) work)->files, ((XMLDExpr *) XMLDList_curr($2->exprs))->qval);
                                      }
 			            }
 			            XMLDExpr_free($2);
@@ -158,12 +132,12 @@ query: SELECT expr_list FROM expr {
 				                    ((XMLDWork *) work)->req->type=XMLD_SQL_UPDATE_WHERE;
 	                                            ((XMLDWork *) work)->files=XMLDFileList_create();
 	                                            if ($2->type == XMLD_QVAL) {
-                                                     XMLDFileList_add(((XMLDWork *) work)->res->files, $2->qval);
+                                                     XMLDFileList_add(((XMLDWork *) work)->files, $2->qval);
 	                                            }
 	                                            else if ($2->type == XMLD_LIST) {
 	                                             XMLDList_reset($2->exprs);
 	                                             while (XMLDList_next($2->exprs)) {
-			                              XMLDFileList_add(((XMLDWork *) work)->res->files, ((XMLDExpr *) XMLDList_curr($2->exprs)->qval);
+			                              XMLDFileList_add(((XMLDWork *) work)->files, ((XMLDExpr *) XMLDList_curr($2->exprs))->qval);
 			                             }
 			                            }
 			                            XMLDExpr_free($2);
@@ -175,12 +149,12 @@ query: SELECT expr_list FROM expr {
  		           ((XMLDWork *) work)->req->type=XMLD_SQL_DELETE;
 	                   ((XMLDWork *) work)->files=XMLDFileList_create();
 	                   if ($3->type == XMLD_QVAL) {
-                            XMLDFileList_add(((XMLDWork *) work)->res->files, $3->qval);
+                            XMLDFileList_add(((XMLDWork *) work)->files, $3->qval);
 	                   }
 	                   else if ($3->type == XMLD_LIST) {
 	                    XMLDList_reset($3->exprs);
 	                    while (XMLDList_next($3->exprs)) {
-			     XMLDFileList_add(((XMLDWork *) work)->res->files, ((XMLDExpr *) XMLDList_curr($3->exprs)->qval);
+			     XMLDFileList_add(((XMLDWork *) work)->files, ((XMLDExpr *) XMLDList_curr($3->exprs))->qval);
 			    }
 			   }
 			   XMLDExpr_free($3);
@@ -190,12 +164,12 @@ query: SELECT expr_list FROM expr {
  		                           ((XMLDWork *) work)->req->type=XMLD_SQL_DELETE_WHERE;
 			                   ((XMLDWork *) work)->files=XMLDFileList_create();
 			                   if ($3->type == XMLD_QVAL) {
-                                            XMLDFileList_add(((XMLDWork *) work)->res->files, $3->qval);
+                                            XMLDFileList_add(((XMLDWork *) work)->files, $3->qval);
 			                   }
 			                   else if ($3->type == XMLD_LIST) {
 			                    XMLDList_reset($3->exprs);
 				            while (XMLDList_next($3->exprs)) {
-				             XMLDFileList_add(((XMLDWork *) work)->res->files, ((XMLDExpr *) XMLDList_curr($3->exprs)->qval);
+				             XMLDFileList_add(((XMLDWork *) work)->files, ((XMLDExpr *) XMLDList_curr($3->exprs))->qval);
 				            }
 			                   }
 			                   XMLDExpr_free($3);
@@ -206,12 +180,12 @@ query: SELECT expr_list FROM expr {
  		               ((XMLDWork *) work)->req->type=XMLD_SQL_DELETE;
 			       ((XMLDWork *) work)->files=XMLDFileList_create();
 			       if ($4->type == XMLD_QVAL) {
-                                XMLDFileList_add(((XMLDWork *) work)->res->files, $4->qval);				
+                                XMLDFileList_add(((XMLDWork *) work)->files, $4->qval);				
 			       }
 			       else if ($4->type == XMLD_LIST) {
 			        XMLDList_reset($4->exprs);
 				while (XMLDList_next($4->exprs)) {
-				 XMLDFileList_add(((XMLDWork *) work)->res->files, ((XMLDExpr *) XMLDList_curr($4->exprs)->qval);
+				 XMLDFileList_add(((XMLDWork *) work)->files, ((XMLDExpr *) XMLDList_curr($4->exprs))->qval);
 				}
 			       }
 			       XMLDExpr_free($4);
@@ -227,7 +201,7 @@ query: SELECT expr_list FROM expr {
 						                      else if ($3->type == XMLD_LIST) {
 						                       name=((XMLDExpr *) XMLDList_first($3->exprs))->qval;
 						                      }
-						                      XMLDFileList_add(((XMLDWork *) work)->res->files, name);
+						                      XMLDFileList_add(((XMLDWork *) work)->files, name);
 								      XMLDExpr_free($3);
 								      ((XMLDWork *) work)->req->retr=$5;
 								      ((XMLDWork *) work)->req->vals=$9;
@@ -243,7 +217,7 @@ query: SELECT expr_list FROM expr {
 						    else if ($3->type == XMLD_LIST) {
 						     name=((XMLDExpr *) XMLDList_first($3->exprs))->qval;
 						    }
-						    XMLDFileList_add(((XMLDWork *) work)->res->files, name);
+						    XMLDFileList_add(((XMLDWork *) work)->files, name);
 						    XMLDExpr_free($3);
 					            ((XMLDWork *) work)->req->vals=$6;
 						    YYACCEPT;
@@ -258,7 +232,7 @@ query: SELECT expr_list FROM expr {
 								                      else if ($3->type == XMLD_LIST) {
 								                       name=((XMLDExpr *) XMLDList_first($3->exprs))->qval;
 								                      }
-								                      XMLDFileList_add(((XMLDWork *) work)->res->files, name);
+								                      XMLDFileList_add(((XMLDWork *) work)->files, name);
 										      XMLDExpr_free($3);
 										      ((XMLDWork *) work)->req->retr=$5;
 										      ((XMLDWork *) work)->req->vals=$9;
@@ -275,7 +249,7 @@ query: SELECT expr_list FROM expr {
 								    else if ($3->type == XMLD_LIST) {
 								     name=((XMLDExpr *) XMLDList_first($3->exprs))->qval;
 								    }
-								    XMLDFileList_add(((XMLDWork *) work)->res->files, name);
+								    XMLDFileList_add(((XMLDWork *) work)->files, name);
 								    XMLDExpr_free($3);
 								    ((XMLDWork *) work)->req->vals=$6;
 								    ((XMLDWork *) work)->req->where=$9;

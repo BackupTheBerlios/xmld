@@ -12,9 +12,12 @@
  */
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include "xmlddef.h"
 #include "mutils.h"
+#include "sutils.h"
+#include "dutils.h"
 #include "xmld_list.h"
 #include "xmld_col.h"
 #include "xmld_row.h"

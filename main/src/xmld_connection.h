@@ -31,6 +31,6 @@ void XMLDConnection_free_content(void *);
 /* List functions */
 
 XMLDConnectionList *XMLDConnectionList_create(void);
-XMLDConnection *XMLDConnectionList_add(XMLDConnectionList *, int, char *);
+XMLDConnection *XMLDConnectionList_add(XMLDConnectionList *, int, char *, char *);
 
 #endif /* __XMLD_CONNECTION_H */

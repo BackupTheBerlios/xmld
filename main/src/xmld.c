@@ -11,24 +11,7 @@
  * -------------------------------------------------------------- * 
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <sys/types.h>
-#include <unistd.h>
-#include <signal.h>
-#include <string.h>
-#include "xmlddef.h"
-#include "cfg.h"
-#include "xmld_list.h"
-#include "xmld_connection.h"
-#include "xmld_list.h"
-struct XMLDFunc;
-#ifndef XMLD_FUNC_TYPE_DEFINED
-#define XMLD_FUNC_TYPE_DEFINED
- typedef struct XMLDFunc XMLDFunc;
-#endif /* XMLD_FUNC_TYPE_DEFINED */
-#include "xmld_expr.h"
-#include "xmld_func.h"
+#include "includes.h"
 
 #ifdef USE_PTASKER
  #include "ptasker/ptasker.h"
@@ -36,6 +19,10 @@ struct XMLDFunc;
  #undef MULTI_THREAD_MTASKER
 #endif /* USE_PTASKER */
 
+#include <sys/types.h>
+#include <unistd.h>
+#include <signal.h>
+#include "cfg.h"
 #include "somanager.h"
 #include "init.h"
 #include "engine_list.h"
@@ -100,14 +87,10 @@ void init_create_part(struct xmld_part *part, XMLDStatus (*init_func) (void), XM
 }
 
 void init_shutdown_parts(int signum) {
- int t;
- int s;
- for (t = NUM_PARTS - 1; t >= 0; t--) {
-  if (parts[t].ok == XMLD_TRUE) {
-   s = (*(parts[t].shutdown_func))();
-   if (s == XMLD_FAILURE) {
-    perror("init_shutdown_parts");
-   }
-  } 
- }
+ mtasker_shutdown();
+ somanager_shutdown();
+ func_list_shutdown();
+ engine_list_shutdown();
+ cfg_shutdown();
+ exit(0);
 }
