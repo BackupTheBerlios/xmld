@@ -13,8 +13,13 @@
 
 #include <stdlib.h>
 #include "xmld_list.h"
-#include "xmld_func.h"
+struct XMLDFunc;
+#ifndef XMLD_FUNC_TYPE_DEFINED
+#define XMLD_FUNC_TYPE_DEFINED
+ typedef struct XMLDFunc XMLDFunc;
+#endif /* XMLD_FUNC_TYPE_DEFINED */
 #include "xmld_expr.h"
+#include "xmld_func.h"
 #include "xmld_cond.h"
 
 /*
