@@ -14,28 +14,42 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "xmld_mempool.h"
-#include "xmld_types.h"
+#include "xmld_list.h"
+#include "xmld_col.h"
+#include "xmld_func.h"
+#include "xmld_expr.h"
+#include "xmld_aggr_table.h"
+#include "xmld_cond.h"
+struct XMLDEngine;
+#ifndef XMLDENGINE_TYPE_DEFINED
+#define XMLDENGINE_TYPE_DEFINED
+ typedef struct XMLDEngine XMLDEngine;
+#endif /* XMLDENGINE_TYPE_DEFINED */
+#include "xmld_resource.h"
+#include "xmld_response.h"
+#include "xmld_request.h"
+#include "xmld_connection.h"
+#include "xmld_work.h"
+#include "xmld_engine.h"
 #include "sosel.h"
 #include "fmanager.h"
 #include "qp.h"
 #include "twalker.h"
 
 void qp_handle(void *conn) {
- struct XMLDWork *work=(struct XMLDWork *) malloc(sizeof(struct XMLDWork));
- /* FIXME the number of segments must come from config */
- struct XMLDMemPool *expr_pool=XMLDMemPool_create(sizeof(struct expr), 20, expr_free_content);
- struct XMLDMemPool *cond_pool=XMLDMemPool_create(sizeof(struct cond), 10, NULL);
- work->conn=(struct XMLDConnection *) malloc(sizeof(struct XMLDConnection));
- memcpy((void *) work->conn, conn, sizeof(conn));
+ XMLDWork *work=XMLDWork_create();
+ work->conn=XMLDConnection_create(((XMLDConnection *) conn)->fd, ((XMLDConnection
+ *))->curr_dir);
  sosel_remove(conn);
- work->req=(struct XMLDRequest *) malloc(sizeof(struct XMLDRequest));
+ work->req=XMLDRequest_create();
  /* FIXME: what should yyin be assigned to ? */
  yyin=fopen(work->conn->fd, "r");
  int status=yyparse();
  if (status==-1) {
-  XMLDMemPool_unget_all(expr_pool);
-  XMLDMemPool_unget_all(cond_pool);
+  /*
+   * should find a safe way to free
+   * the memory used inside yyparse
+   */
   return;
  }
  status=fmanager_handle(work);
