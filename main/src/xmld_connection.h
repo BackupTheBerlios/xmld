@@ -18,17 +18,18 @@
 struct XMLDConnection {
  int fd;
  int sfd;
- char *curr_dir; /* the current directory */
+ char *curr_dir; /* the current directory of the connection */
 };
 
 typedef struct XMLDConnection XMLDConnection;
 
-XMLDConnection *XMLDConnection_create(int, int, char *);
+XMLDConnection *XMLDConnection_create(int, char *);
 void XMLDConnection_free(XMLDConnection *);
+void XMLDConnection_free_content(void *);
 
 /* List functions */
 
 XMLDList *XMLDConnection_create_list(void);
-void XMLDConnection_add_to_list(XMLDList *, int, int, char *);
+XMLDConnection *XMLDConnection_add_to_list(XMLDList *, int, char *);
 
 #endif /* HAVE_XMLD_CONNECTION_H */
