@@ -74,7 +74,7 @@ void XMLDAggrTable_fill(XMLDAggrTable *table, char *val) {
  XMLDList_reset(table->col_ptrs);
  while (XMLDList_next(table->col_ptrs)) {
   XMLDCol **col_ptr=(XMLDCol **) XMLDList_curr(table->col_ptrs);
-  (*col_ptr)->val=realloc((*col_ptr)->val, strlen(val)*sizeof(char));
+  (*col_ptr)->val=realloc((*col_ptr)->val, (strlen(val)+1)*sizeof(char));
   strcpy((*col_ptr)->val, val);
  }
 }
