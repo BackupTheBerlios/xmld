@@ -30,9 +30,11 @@
  */
 int max_conn;
 struct connection_table *conn_table;
+int wait;
 
 short sosel_init() {
  max_conn=*((int*) cfg_get("sosel.max_conn"));
+ wait_period=*((int *) cfg_get("sosel.timeout"));
  /* FIXME: should check ftok's usage */
  key_t key=ftok("cfg.h", 'X');
  int id=shmget(key, sizeof(struct connection_table), IPC_CREAT);
@@ -74,7 +76,7 @@ void sosel_run(void *data) {
   FD_ZERO(&fds);
   j=0;
   timeout.tv_sec=0;
-  timeout.tv_usec=100; /* FIXME: this value should depend on cfg */
+  timeout.tv_usec=wait_period; /* FIXME: this value should depend on cfg */
   for (i=0;i<max_conn;i++) {
    if (conn_table->conn[i].sfd==1) {
     FD_SET(conn_table->conn[i].fd, &fds);
