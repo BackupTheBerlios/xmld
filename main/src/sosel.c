@@ -35,13 +35,15 @@
  * Organize XMLDConnection removal (somanager_remove and sosel_shutdown) so
  * they don't cause segfaults or conflicts.
  */
+
 int max_conn;
 struct connection_table *conn_table;
 int wait;
 
 short sosel_init() {
- max_conn=*((int*) cfg_get("sosel.max_conn"));
  wait=*((int *) cfg_get("sosel.timeout"));
+ max_conn=*((int*) cfg_get("sosel.max_conn"));
+#ifdef MULTI_PROC_MTASKER
  /* FIXME: should check ftok's usage */
  key_t key=ftok("cfg.h", 'X');
  int id=shmget(key, sizeof(struct connection_table), IPC_CREAT);
@@ -52,6 +54,11 @@ short sosel_init() {
  id=shmget(key, max_conn*sizeof(XMLDConnection), IPC_CREAT);
  conn_table->conn=(XMLDConnection *)shmat(id, 0, 0); 
  shmctl(id, IPC_RMID, 0);
+#else /* not a multi-process mtasker */
+ conn_table=(struct connection_table *) malloc(sizeof(struct conn_table));
+ conn_table->used=0;
+ conn_table->conn=(XMLDConnection *) malloc(sizeof(XMLDConnection));
+#endif /* MULTI_PROC_MTASKER */
  short stat=mtasker_handle(sosel_run, (void *) 0);
  if (stat!=0) {
   return -1;
@@ -69,7 +76,13 @@ short sosel_shutdown() {
    free(conn_table->conn[i].curr_dir);
   } 
  }
+#ifdef MULTI_PROC_MTASKER
+ shmdt((void *)conn_table->conn);
  shmdt((void *)conn_table);
+#else /* not a multi-pocess multi-tasker */
+ free(conn_table->conn);
+ free(conn_table);
+#endif /* MULTI_PROC_MTASKER */
  return 0;
 }
 void sosel_run(void *data) {
