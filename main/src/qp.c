@@ -37,14 +37,13 @@ struct XMLDEngine;
 
 void qp_handle(void *conn) {
  XMLDWork *work=XMLDWork_create();
- work->conn=XMLDConnection_create(((XMLDConnection *) conn)->fd, ((XMLDConnection
- *))->curr_dir);
+ work->conn=XMLDConnection_create(((XMLDConnection *) conn)->fd, ((XMLDConnection *) conn)->curr_dir);
  sosel_remove(conn);
  work->req=XMLDRequest_create();
  /*
   * Here should go lexing and parsing.
   */
- status=twalker_handle(work);
+ int status=twalker_handle(work);
  if (status==-1) {
   ERROR_RESPONSE();
   sosel_add(work->conn->fd, work->conn->curr_dir);
