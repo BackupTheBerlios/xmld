@@ -689,13 +689,25 @@ listening to under the PID. (done)
 
 * record set parsing and showing in xmldclient. (done)
 
-* handle SIGINT in client and send disconnet to the
+* handle SIGINT in client and send disconnect to the
 server on receiving it. (done)
 
 * fix interrupted system call on server side on reciving
-of DISCONNECT.
+of DISCONNECT and correction of a wrong pass.
 
-* segfault on the server side on simplest retr.
+* check the curr_max_level bug. (done)
+
+* simplify expr should never return NULL but XMLD_QVAL
+with NULL values.
+
+* xmldclient should contain arguments for username and pass.
+
+* why doesn't the up-level of zero show in the response.
+
+* stabilize record set in PROTO and in implementation.
+
+* why does the server segfault just after serving
+up the request -- is it ptasker ?
 
 * fix 
 

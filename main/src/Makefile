@@ -30,3 +30,4 @@ clean:
 	rm -f ptasker/*.o
 	rm -f engine_xmld/*.o
 	rm -f xmld-sql.tab.h xmld-sql.tab.c lex.yy.c
+	rm -f core

@@ -109,7 +109,6 @@ XMLDStatus twalker_handle(XMLDWork *work) {
      num_up++;
      XMLDList_prev(work->req->retr);
     }
-    
     XMLDList_reset(work->files);
     ret_all=XMLD_WALK_UP;
     while (XMLDList_next(work->files)) {
@@ -126,7 +125,7 @@ XMLDStatus twalker_handle(XMLDWork *work) {
      } 
     }
     if (ret_all != XMLD_WALK_END) {
-     curr_max_level == XMLDFileList_get_max_level(work->files);
+     curr_max_level = XMLDFileList_get_max_level(work->files);
     }
    }
    
@@ -147,7 +146,7 @@ XMLDStatus twalker_handle(XMLDWork *work) {
    while (XMLDList_next(work->files)) {
     XMLDFile *curr_file=(XMLDFile *) XMLDList_curr(work->files);
     (*(curr_file->engine->cleanup)) (work, curr_file);
-   }	   
+   }
   break;
   case XMLD_SQL_SELECT_WHERE:
    XMLDList_reset(work->files);
@@ -293,7 +292,7 @@ XMLDStatus twalker_handle(XMLDWork *work) {
      } 
     }
     if (ret_all != XMLD_WALK_END) {
-     curr_max_level == XMLDFileList_get_max_level(work->files);
+     curr_max_level = XMLDFileList_get_max_level(work->files);
     }
    }
    

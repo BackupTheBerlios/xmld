@@ -11,3 +11,4 @@ all: ${OBJECTS}
 clean: 
 	rm -f xmldclient
 	rm -f *.o
+	rm -f core

@@ -15,6 +15,7 @@
 #define __XMLDCLIENT_H
 
 #define PROMPT "xmld> "
+#define STAR_LINE "\n---------------------------------------------------\n"
 
 struct conn_info {
  char col_sep;

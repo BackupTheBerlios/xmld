@@ -43,13 +43,14 @@ int main(int argc, char **argv) {
   port=atoi(argv[0]);
  }
  
- while (1) {
+ while (port == 0) {
   xmldclient_get_port(&port);
-  if (port == 0) {
-   continue;
-  }
+ }
+ 
   fd=socket(PF_INET, SOCK_STREAM, 0);
   main_fd=fd;
+
+ while (1) {
   struct sockaddr_in addr;
   addr.sin_family=PF_INET;
   addr.sin_port=htons(port);
@@ -58,6 +59,7 @@ int main(int argc, char **argv) {
 
   if (status == -1) {
    xmldclient_print_err("Unable to connect to the given port");
+   xmldclient_get_port(&port);
    continue;
   }
   curr_msg=protoimpl_read_sequence(fd, NULL);
@@ -288,14 +290,15 @@ void xmldclient_print_record_set(char *rs, struct conn_info *info) {
  char *curr=rs;
  char *curr_col=NULL;
  int curr_col_len=0;
- int level;
+ int level=0;
  int i;
  
+ printf(STAR_LINE);
  while (*curr != '\0') {
   if (*curr == info->row_sep) {
-   printf("\n");
+   printf("a");
    for (i = 0; i < level; i++) {
-    printf("\t");
+    printf("b");
    }
   }
   else if (*curr == info->col_sep) {
@@ -317,7 +320,9 @@ void xmldclient_print_record_set(char *rs, struct conn_info *info) {
    curr_col[curr_col_len]=*curr;
    curr_col_len++;
   }
+  curr++;
  }
+ printf(STAR_LINE);
 }
 
 void xmldclient_free_info(struct conn_info *info) {
@@ -348,6 +353,7 @@ char *xmldclient_input_string(char *msg) {
 void xmldclient_disconnect(int signum) {
  if (main_fd != 0) {
   protoimpl_write_sequence(main_fd, DISCONNECTION_MESSAGE, 1);
+  shutdown(main_fd, 2);
  } 
  printf("\nGoodbye!\n");
  exit(0);
