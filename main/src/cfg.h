@@ -11,11 +11,12 @@
  * -------------------------------------------------------------- * 
  */
 
-#ifndef HAVE_CFG_H
-#define HAVE_CFG_H
+#ifndef __CFG_H
+#define __CFG_H
 
 char col_sep;
 char row_sep;
+char *document_root.
 
 short cfg_init(void);
 void *cfg_get(char *);
@@ -25,4 +26,4 @@ char *cfg_get_mime_engine(char *);
 void cfg_set_mime_engine(char *, char *);
 short cfg_shutdown(void);
 
-#endif /* HAVE_CFG_H */
+#endif /* __CFG_H */
