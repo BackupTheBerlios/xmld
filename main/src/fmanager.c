@@ -13,12 +13,29 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "xmld_types.h" /* FIXME: replace with new structures */
+#include "xmld_list.h"
+#include "xmld_col.h"
+#include "xmld_func.h"
+#include "xmld_expr.h"
+#include "xmld_aggr_table.h"
+#include "xmld_cond.h"
+struct XMLDEngine;
+#ifndef XMLDENGINE_TYPE_DEFINED
+#define XMLDENGINE_TYPE_DEFINED
+ typedef struct XMLDEngine XMLDEngine;
+#endif /* XMLDENGINE_TYPE_DEFINED */
+#include "xmld_resource.h"
+#include "xmld_response.h"
+#include "xmld_request.h"
+#include "xmld_connection.h"
+#include "xmld_work.h"
+#include "xmld_engine.h"
 #include "cfg.h"
 #include "engine_list.h"
+#include "fmanager.h"
 
 short fmanager_handle(XMLDWork *work) {
- work->res=(struct XMLDResource *) malloc(sizeof(struct XMLDResource));
+ work->res=XMLDResource_create();
  char *full_file=XMLDWork_get_full_file(work);
  work->res->engine=XMLDEngine_search_list_by_name(engine_list, cfg_get_engine(full_file));
  free(full_file);
