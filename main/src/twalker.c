@@ -75,6 +75,7 @@ short twalker_handle(XMLDWork *work) {
    XMLDResponse_fill_aggr(work->resp, (*(work->res->engine->eval_aggr_expr)) (work, XMLDResponse_curr_aggr(work->resp)));
    XMLDResponse_aggr_next(work->resp);
   }
+  XMLDResponse_flush(work->resp, work->conn->fd);
   XMLDList_free(work->resp->tables);
   (*(work->res->engine->cleanup)) (work);
  }
