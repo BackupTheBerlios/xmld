@@ -58,3 +58,16 @@ count the null character.
 on the realloc'd memory segment. These iterators must
 be updated for realloc may change the address of the
 realloc'd segment.
+
+* Fix usage of cfg in all the parts that currently
+use it incorrectly: somanager, mtasker.
+
+* Use cfg in sosel to determine the timeout period
+of select().
+
+* Use *_engine cfg functions to get the engine
+which is to be used with a given file in
+fmanager.
+
+* Remove usage of XMLDMemPool from qp, and check
+for usage of it in other parts.
