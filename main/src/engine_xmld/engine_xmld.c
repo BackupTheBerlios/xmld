@@ -71,7 +71,8 @@ short engine_xmld_prepare(XMLDWork *work) {
  }
  
  free(mime);
- if (work->req->type == 2) { /* FIXME: put INSERT type here */
+ if (work->req->type == 4 || work->req->type == 5 || work->req->type == 6
+     || work->req->type == 7 || work->req->type == 8 || work->req->type == 9) { /* Operations that need the .format file */
   work->res->data_source=(void *) fmanager_get_ex_fd(full_name);
  }
  else {
@@ -121,7 +122,7 @@ int engine_xmld_walk(XMLDWork *work) {
    return ++(*((int *) work->res->store));
   }
   else if (token == 1 || token == 2) {
-   (*((int *) work->res->store))--;
+  (*((int *) work->res->store))--;
   }
  }
 }
@@ -130,7 +131,7 @@ int engine_xmld_walk(XMLDWork *work) {
 char *engine_xmld_eval_expr(XMLDWork *work, XMLDExpr *expr) {
  char *ret;
  if (expr->type == 0) { /* expr is of a numeric type */
-  return itoa(expr->nval);
+  return ltoa(expr->nval);
  }
  else if (expr->type == 2) { /* expr is a column name */
   return engine_xmld_get_column_value(work, expr->ident);  
@@ -278,13 +279,13 @@ void engine_xmld_simplify_expr(XMLDWork * work, XMLDExpr *expr) {
   if (temp_left->type == 2) {
    temp_left->type=0;
    col_value=engine_xmld_get_column_value(work, temp_left->ident);
-   temp_left->nval=atoi(col_value);
+   temp_left->nval=atol(col_value);
    free(col_value);
   }
   if (temp_right->type == 2) {
    temp_right->type=0;
    col_value=engine_xmld_get_column_value(work, temp_right->ident);
-   temp_right->nval=atoi(col_value);
+   temp_right->nval=atol(col_value);
    free(col_value);
   }
   
@@ -301,17 +302,17 @@ void engine_xmld_simplify_expr(XMLDWork * work, XMLDExpr *expr) {
    }
    else if (expr->op == 3) {
     if (temp_right->nval == 0) {
-     expr->nval=INT_MAX;
+     expr->nval=LONG_MAX;
     }
     else {
-     expr->nval=temp_left->nval / temp_right->nval;
+     expr->nval=(long) (temp_left->nval / temp_right->nval);
     } 
    }
    else if (expr->op == 4) {
-    expr->nval=pow(temp_left->nval, temp_right->nval);
+    expr->nval=(long) pow(temp_left->nval, temp_right->nval);
    }
    else if (expr->op == 5) {
-    expr->nval=-1 * temp_right->nval;
+    expr->nval=(long) (-1 * temp_right->nval);
    }    
   }
   XMLDExpr_free(temp_left);
