@@ -34,6 +34,7 @@ XMLDExpr *XMLDExpr_create() {
  expr->left=NULL;
  expr->right=NULL;
  expr->ident=NULL;
+ expr->file=NULL;
  expr->func=NULL;
  expr->arg_list=NULL;
  expr->qval=NULL;
@@ -98,6 +99,7 @@ void XMLDExpr_copy(XMLDExpr *src, XMLDExpr *dest) {
   break;
   case XMLD_IDENTIFIER:
    dest->ident=src->ident;
+   dest->file=src->file;
   break;
   case XMLD_FUNCTION:
    dest->func=src->func;
@@ -139,6 +141,7 @@ XMLDExpr *XMLDExprList_add(XMLDExprList *list) {
  expr->left=NULL;
  expr->right=NULL;
  expr->ident=NULL;
+ expr->file=NULL;
  expr->func=NULL;
  expr->arg_list=NULL;
  expr->qval=NULL;

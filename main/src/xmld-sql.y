@@ -100,64 +100,70 @@ struct XMLDEngine;
 %left NEG
 %right '^'
 
+/* Relation operator */
+%nonassoc '.'
+
 %%
 
-query: SELECT expr_list FROM QVAL {
+query: SELECT expr_list FROM expr {
 				   ((XMLDWork *) work)->req->type=XMLD_SQL_SELECT;
 				   ((XMLDWork *) work)->req->file=$4;
 				   ((XMLDWork *) work)->req->retr=$2;
 				   YYACCEPT;
                                   }
-       | SELECT expr_list FROM QVAL WHERE cond_list {
+       | SELECT expr_list FROM expr WHERE cond_list {
 			     	                     ((XMLDWork *) work)->req->type=XMLD_SQL_SELECT_WHERE;
 				                     ((XMLDWork *) work)->req->file=$4;
 				                     ((XMLDWork *) work)->req->retr=$2;
 						     ((XMLDWork *) work)->req->where=$6;
 						     YYACCEPT;
                                                     }
-       | UPDATE QVAL SET cond_list {
+       | UPDATE expr SET cond_list {
 				    ((XMLDWork *) work)->req->type=XMLD_SQL_UPDATE;
 				    ((XMLDWork *) work)->req->file=$2;
 				    ((XMLDWork *) work)->req->vals=$4;
 				    YYACCEPT;
                                    }
-       | UPDATE QVAL SET cond_list WHERE cond_list {
+       | UPDATE expr SET cond_list WHERE cond_list {
 				                    ((XMLDWork *) work)->req->type=XMLD_SQL_UPDATE_WHERE;
 				                    ((XMLDWork *) work)->req->file=$2;
 				                    ((XMLDWork *) work)->req->vals=$4;
 						    ((XMLDWork *) work)->req->where=$6;
 						    YYACCEPT;
                                                    }
-       | DELETE FROM QVAL {
+       | DELETE FROM expr {
  		           ((XMLDWork *) work)->req->type=XMLD_SQL_DELETE;
 			   ((XMLDWork *) work)->req->file=$3;
 			   YYACCEPT;
                           }
-       | DELETE FROM QVAL WHERE cond_list {
+       | DELETE FROM expr WHERE cond_list {
  		                           ((XMLDWork *) work)->req->type=XMLD_SQL_DELETE_WHERE;
 			                   ((XMLDWork *) work)->req->file=$3;
 					   ((XMLDWork *) work)->req->where=$5;
 					   YYACCEPT;
                                           }
-       | DELETE '*' FROM QVAL {
+       | DELETE '*' FROM expr {
  		               ((XMLDWork *) work)->req->type=XMLD_SQL_DELETE;
 			       ((XMLDWork *) work)->req->file=$4;
 			       YYACCEPT;
                               }
-       | INSERT INTO QVAL '(' expr_list ')' VALUES '(' expr_list ')' {
+       | INSERT INTO expr '(' expr_list ')' VALUES '(' expr_list ')' {
+                                                                      /* FIXME: only first expr */
                                                                       ((XMLDWork *) work)->req->type=XMLD_SQL_INSERT_COL;
 								      ((XMLDWork *) work)->req->file=$3;
 								      ((XMLDWork *) work)->req->retr=$5;
 								      ((XMLDWork *) work)->req->vals=$9;
 								      YYACCEPT;
 								     }								     
-       | INSERT INTO QVAL VALUES '(' expr_list ')' {
+       | INSERT INTO expr VALUES '(' expr_list ')' {
+                                                    /* FIXME: only first expr */
                                                     ((XMLDWork *) work)->req->type=XMLD_SQL_INSERT;
 					            ((XMLDWork *) work)->req->file=$3;
 					            ((XMLDWork *) work)->req->vals=$6;
 						    YYACCEPT;
                                                    }
-       | INSERT INTO QVAL '(' expr_list ')' VALUES '(' expr_list ')' WHERE cond_list {
+       | INSERT INTO expr '(' expr_list ')' VALUES '(' expr_list ')' WHERE cond_list {
+                                                                                      /* FIXME: only first expr */
                                                                                       ((XMLDWork *) work)->req->type=XMLD_SQL_INSERT_COL_WHERE;
 										      ((XMLDWork *) work)->req->file=$3;
 										      ((XMLDWork *) work)->req->retr=$5;
@@ -165,14 +171,16 @@ query: SELECT expr_list FROM QVAL {
 										      ((XMLDWork *) work)->req->where=$12;
 										      YYACCEPT;
 										     }
-       | INSERT INTO QVAL VALUES '(' expr_list ')' WHERE cond_list {
+       | INSERT INTO expr VALUES '(' expr_list ')' WHERE cond_list {
+                                                                    /* FIXME: only first expr*/
                                                                     ((XMLDWork *) work)->req->type=XMLD_SQL_INSERT_WHERE;
 						                    ((XMLDWork *) work)->req->file=$3;
 								    ((XMLDWork *) work)->req->vals=$6;
 								    ((XMLDWork *) work)->req->where=$9;
 								    YYACCEPT;
                                                                    }
-       | USE QVAL {
+       | USE expr {
+                   /* FIXME: use only the first expression if provided as list */
                    ((XMLDWork *) work)->req->type=XMLD_SQL_USE;
 		   ((XMLDWork *) work)->req->file=$2;
 		   YYACCEPT;
@@ -489,6 +497,10 @@ expr: '(' expr ')' {
                   $$=$2;
 		  $$->cross_level=XMLD_TRUE;
                  }
+     /* Support for column -> file association */
+     | expr '.' expr {
+                       /* remember to check for $1 being qval */
+                     }
 ;
 
 %%

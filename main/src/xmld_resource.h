@@ -17,9 +17,7 @@
 /* carries per-request resources */
 struct XMLDResource {
  XMLDEngine *engine; /* the engine to be used */
- void *data_source; /* the data_source (fd/memory tree/whatever) */
- void *store; /* a pointer to whatever data the engine in use would
-	       like to keep in a per-request way */
+ XMLDFileList *files; /* files used by the request */
 }; 
 
 typedef struct XMLDResource XMLDResource;

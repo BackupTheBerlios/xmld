@@ -590,14 +590,26 @@ a hard checker.
 * Fix xmld_socket_accept: Interupted system call on DISC
 ONNECT. (check how of xmld_socket_shutdown).
 
-* check if it's neccessary to put \0 at end of &col_sep 
-(...) in val_carry in qp_handle initialization sequence.
+* Attach NULLs at the end of -sep characters in qp's init
+message. (done)
 
-* protect the auth.xml document. (priv it to root only, and make it 
-system unreadable).
+* Implement multiple files support:
+ 
+ * QUERY.html (done)
+ * xmld-sql.(y|lex) (add support for expr . expr, use expr 
+ instead  of QVAL in <file name> field, implement FIXME items)
+ * XMLDRequest (remove file and use XMLDFileList in XMLDResource
+ -- done)
+ * XMLDFile (creation -- void* -> filename association, store, level
+ -- done)
+ * XMLDResource (remove data_source and store, add XMLDFileList
+ instead -- done).
+ * XMLDExpr (ident should have a XMLDFile with it -- done)
+ * XMLDEngine (walk, get_level should receive XMLDFile* -- done)
+ * twalker
 
-* Implement multiple files support, and expression->
-file association.
+* sync includes across all code according to the editions
+above.
 
 * Engine-XMLD must be rewritten with consideration of
 [1] availablity of column types [2] access levels.
@@ -605,7 +617,7 @@ file association.
 float type [5] nval -> back to int. [6] store+1 poin
 ts out availbility of format file. [7] the major
 changes in simplify_expr. [8] Multiple file support
-and expression -> file association. [9] format
+and column name -> file association. [9] format
 manipulation functions may return NULL or 0 (issue
 XMLD_EMALFORMAT in that case. [11] itostr and ftostr.
 [12] tagname/attribute name conflicts. [13] XMLD*List 
@@ -615,8 +627,6 @@ should evaluate only the first condition of a given
 condition list. [18] aggregate expression should 
 return a pointer to the last value expression in
 the given aggregate expression table.
-
-* Handle quotes inside strings in xmld-sql.lex
 
 * Define and implement the exec_assign engine
 function and the UPDATE and UPDATE with
@@ -628,7 +638,7 @@ WHERE request types in twalker.
 * Add two SQL functions in func_list and create a dir-
 ectory "functions" for them. (one aggregate and one scalar).
 
-* A very basic capability demonstrating client in src/client.
+* A very basic capability-demonstrating client in src/client.
 
 --------------- Start of The OpenXMLD 0.6.0 part:
 
@@ -663,7 +673,8 @@ and Sorting")
 
 * Create a hash table implementation for places where
 search speed is important (XMLDHashTable), and provide
-APIs in XMLDEngine and XMLDFunc (...?) in that form:
+APIs in XMLDEngine, XMLDFunc and XMLDFile (..?)  in that 
+form:
 
 XMLDEngineHashtable_create(...)
 
@@ -672,6 +683,11 @@ XMLDEngineHashtable_create(...)
 * ptasker task queue maintenance.
 
 * values returned from cfg must be checked for being NULLs.
+
+* protect the auth.xml document. (priv it to root only, and make it 
+system unreadable).
+
+* Handle quotes inside strings in xmld-sql.lex
 
 *--------------- Start of The OpenXMLD 0.7.0 part:
 

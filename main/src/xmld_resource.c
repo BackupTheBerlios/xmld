@@ -15,6 +15,7 @@
 #include "xmlddef.h"
 #include "mutils.h"
 #include "xmld_list.h"
+#include "xmld_file.h"
 #include "xmld_col.h"
 #include "xmld_row.h"
 struct XMLDFunc;
@@ -45,8 +46,7 @@ struct XMLDEngine;
 XMLDResource *XMLDResource_create() {
  XMLDResource *res=(XMLDResource *) malloc(sizeof(XMLDResource));
  res->engine=NULL;
- res->data_source=NULL;
- res->store=NULL;
+ res->files=NULL;
  return res;
 }
 
@@ -66,9 +66,7 @@ void XMLDResource_free(XMLDResource *res) {
  * res: the resource structure whose internal memory is to be freed.
  */
 void XMLDResource_free_content(void *res) {
-/*
- * Freeing data items of this structure is an engine specific task.
- */ 
+ XMLDList_free(((XMLDResource *) res)->files);
 }
 
 /*
@@ -89,7 +87,6 @@ XMLDResourceList *XMLDResourceList_create() {
 XMLDResource *XMLDResourceList_add(XMLDResourceList *list) {
  XMLDResource *res=(XMLDResource *) XMLDList_add(list);
  res->engine=NULL;
- res->data_source=NULL;
- res->store=NULL;
+ res->files=NULL;
  return res;
 }

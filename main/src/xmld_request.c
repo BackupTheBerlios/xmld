@@ -23,7 +23,6 @@
  */
 XMLDRequest *XMLDRequest_create() {
  XMLDRequest *req=(XMLDRequest *) malloc(sizeof(XMLDRequest));
- req->file=NULL;
  req->retr=NULL;
  req->vals=NULL;
  req->where=NULL;
@@ -47,7 +46,6 @@ void XMLDRequest_free(XMLDRequest *req) {
  * req: the structure whose internally memory is to be freed.
  */
 void XMLDRequest_free_content(void *req) {
- cfree(((XMLDRequest *) req)->file);
  XMLDList_free(((XMLDRequest *) req)->retr);
  XMLDList_free(((XMLDRequest *) req)->vals);
  XMLDList_free(((XMLDRequest *) req)->where);
@@ -70,7 +68,6 @@ XMLDRequestList *XMLDRequestList_create() {
  */
 XMLDRequest *XMLDRequestList_add(XMLDRequestList *list) {
  XMLDRequest *req=(XMLDRequest *) XMLDList_add(list);
- req->file=NULL;
  req->retr=NULL;
  req->vals=NULL;
  req->where=NULL;

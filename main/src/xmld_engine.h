@@ -45,13 +45,13 @@ struct XMLDEngine {
 			  * is removed from engine_list.
 			  */
  
- int (*walk) (XMLDWork *); /* The function which the tree walker
-			    * calls for the engine to give a next
-			    * result from its data source.
-			    */
- int (*get_level) (XMLDWork *); /* The function which gets the current
-				 * level in the document.
-				 */ 
+ int (*walk) (XMLDWork *, XMLDFile *); /* The function which the tree walker
+			                * calls for the engine to give a next
+			                * result from its data source.
+			                */
+ int (*get_level) (XMLDWork *, XMLDFile *); /* The function which gets the current
+				             * level in the document.
+				             */ 
  char *(*eval_expr) (XMLDWork *, XMLDExpr *, XMLDAggrTable *); /* The function which
 					                        * the tree walker calls
 					                        * to get the value of

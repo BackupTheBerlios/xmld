@@ -53,6 +53,7 @@ struct XMLDExpr {
  int op; 
  /*-------------------*/
  char *ident; /* type 2 */
+ XMLDFile *file;
  /*-------------------*/
  XMLDFunc *func; /* type 3:
 	          * a function call

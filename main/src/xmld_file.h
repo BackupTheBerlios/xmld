@@ -10,28 +10,28 @@
  * Authors: Khalid Al-Kary (khalid_kary@hotmail.com)              *
  * -------------------------------------------------------------- * 
  */
- 
-#ifndef __XMLD_REQUEST_H
-#define __XMLD_REQUEST_H
 
-/* carries the parsed query */
-struct XMLDRequest {
- int type; /* type of the query */
- XMLDExprList *retr;  /* list of action expressions (query type dependent) */
- XMLDExprList *vals;  /* A list of values for the above expressions  (query type dependent) */
- XMLDExprList *where; /* A condition for each level */
+#ifndef __XMLD_FILE_H
+#define __XMLD_FILE_H
+
+struct XMLDFile {
+ char *name;  /* The name of the file       */
+ void *data;  /* File's data representation */
+ void *store; /* Additional storage field   */
+ int level; /* The current level in the file */
 };
 
-typedef struct XMLDRequest XMLDRequest;
-typedef XMLDList XMLDRequestList;
+typedef struct XMLDFile XMLDFile;
+typedef XMLDList XMLDFileList;
 
-XMLDRequest *XMLDRequest_create(void);
-void XMLDRequest_free(XMLDRequest *);
-void XMLDRequest_free_content(void *);
+XMLDFile *XMLDFile_create(char *);
+void XMLDFile_free(XMLDFile *);
+void XMLDFile_free_content(void *);
 
 /* List functions */
 
-XMLDRequestList *XMLDRequestList_create(void);
-XMLDRequest *XMLDRequestList_add(XMLDRequestList *);
+XMLDFileList *XMLDFileList_create(void);
+XMLDFile *XMLDFileList_add(XMLDFileList *, char *);
+XMLDFile *XMLDFileList_search_by_name(XMLDFileList *, char *);
 
-#endif /* __XMLD_REQUEST_H */
+#endif /* __XMLD_FILE_H */
