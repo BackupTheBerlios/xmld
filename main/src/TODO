@@ -33,8 +33,12 @@ Foundation:
   cleanliness reasons.
   * Write cfg_parser.lex (done).
   * Write cfg_parser.y. (done -- grammer only)
-  * XMLDCfgTree (with support for subtrees for sections).
-  * XMLDDirective refinement.
+  * XMLDCfgSection (with support for subsections -- done).
+  * XMLDDirective refinement. -> (XMLDCfgDirective -- done)
+  * XMLDCfgValue (done).
+  * Write code for grammar rules.
+  * XMLDCfgValue_copy (copies only the string pointer in case
+    of strings).
   * New cfg_parser.c API.
   * Modify cfg.c accrodingly.
   * xmld.conf must not contain types of directives nor 
