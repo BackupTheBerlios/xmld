@@ -645,10 +645,10 @@ of a given condition list. (done)
 [19] simplify_expr level checks (ignored if 0). (done)
 [20] no aggregate expression support. (done)
 
-* sync includes across all code according to the editions
-above.
+* it maybe neccessary to fgetpos-fsetpos at simplify_expr
+with identifiers.
 
-* fix engine_xmld_set_column_value radically.
+* fix engine_xmld_set_column_value radically. (done)
 
 * Define and implement the exec_assign engine
 function and the UPDATE and UPDATE with
@@ -674,6 +674,8 @@ existent in SQL. Add LENGTH and CONCAT instead. (done)
  * make 
  * make client
 
+* repair includes across all code.
+
 * remove BETWEEN and NOT BETWEEN from conditions, those are special
 statements that must not be mixed with normal conditions. (done)
 
@@ -682,6 +684,9 @@ editions are put online.
 --------------- Start of The OpenXMLD 0.6.0 part:
 
 Goal: PUMP the features in!
+
+* wildcards must be turned into multiple expressions within
+twalker.
 
 * Response must contain a record set header (update PROTO).
 

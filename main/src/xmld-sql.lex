@@ -64,6 +64,8 @@ struct XMLDEngine;
 "<>" return NE;
 "<=" return LE;
 ">=" return GE;
+"<" return '<';
+">" return '>';
 "like" return LIKE;
 "between" return BETWEEN;
 "not between" return NBETWEEN;

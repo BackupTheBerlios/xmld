@@ -208,18 +208,168 @@ XMLDBool engine_xmld_eval_cond(XMLDWork *work, XMLDCond *cond, int level) {
   
   switch(cond->op) {
    case XMLD_COND_OP_EQUAL:
+    if (left->type == right->type) {
+     switch(left->type) {
+      case XMLD_QVAL:
+       val=(strcmp(left->qval, right->qval) == 0);
+      break;
+      case XMLD_INTEGER:
+       val=(left->nval == right->nval);
+      break;
+      case XMLD_FLOAT:
+       val=(left->fnval == right->fnval);
+      break;
+     }
+    }
+    else {
+     if (left->type == XMLD_INTEGER && right->type == XMLD_FLOAT) {
+      val=(left->nval == right->fnval);
+     }
+     else if (left->type == XMLD_FLOAT && right->type == XMLD_INTEGER) {
+      val=(left->fnval == right->nval);
+     }
+     else {
+      val=XMLD_FALSE;
+     }
+    }
    break;
    case XMLD_COND_OP_L:
+    if (left->type == XMLD_QVAL || right->type == XMLD_QVAL) {
+     val=XMLD_FALSE;
+    }
+    else if (left->type == right->type) {
+     switch(left->type) {
+      case XMLD_INTEGER:
+       val=(left->nval < right->nval);
+      break;
+      case XMLD_FLOAT:
+       val=(left->fnval < right->fnval);
+      break;
+     }
+    }
+    else {
+     if (left->type == XMLD_INTEGER && right->type == XMLD_FLOAT) {
+      val=(left->nval < right->fnval);
+     }
+     else if (left->type == XMLD_FLOAT && right->type == XMLD_INTEGER) {
+      val=(left->fnval < right->nval);
+     }
+     else {
+      val=XMLD_FALSE;
+     }
+    }
    break;
    case XMLD_COND_OP_G:
+    if (left->type == XMLD_QVAL || right->type == XMLD_QVAL) {
+     val=XMLD_FALSE;
+    }
+    else if (left->type == right->type) {
+     switch(left->type) {
+      case XMLD_INTEGER:
+       val=(left->nval > right->nval);
+      break;
+      case XMLD_FLOAT:
+       val=(left->fnval > right->fnval);
+      break;
+     }
+    }
+    else {
+     if (left->type == XMLD_INTEGER && right->type == XMLD_FLOAT) {
+      val=(left->nval > right->fnval);
+     }
+     else if (left->type == XMLD_FLOAT && right->type == XMLD_INTEGER) {
+      val=(left->fnval > right->nval);
+     }
+     else {
+      val=XMLD_FALSE;
+     }
+    }
    break;
    case XMLD_COND_OP_NE:
+    else if (left->type == right->type) {
+     switch(left->type) {
+      case XMLD_QVAL:
+       val=!(strcmp(left->qval, right->qval) == 0);
+      break;
+      case XMLD_INTEGER:
+       val=(left->nval != right->nval);
+      break;
+      case XMLD_FLOAT:
+       val=(left->fnval != right->fnval);
+      break;
+     }
+    }
+    else {
+     if (left->type == XMLD_INTEGER && right->type == XMLD_FLOAT) {
+      val=(left->nval != right->fnval);
+     }
+     else if (left->type == XMLD_FLOAT && right->type == XMLD_INTEGER) {
+      val=(left->fnval != right->nval);
+     }
+     else {
+      val=XMLD_FALSE;
+     }
+    }
    break;
    case XMLD_COND_OP_LE:
+    if (left->type == XMLD_QVAL || right->type == XMLD_QVAL) {
+     val=XMLD_FALSE;
+    }
+    else if (left->type == right->type) {
+     switch(left->type) {
+      case XMLD_INTEGER:
+       val=(left->nval <= right->nval);
+      break;
+      case XMLD_FLOAT:
+       val=(left->fnval <= right->fnval);
+      break;
+     }
+    }
+    else {
+     if (left->type == XMLD_INTEGER && right->type == XMLD_FLOAT) {
+      val=(left->nval <= right->fnval);
+     }
+     else if (left->type == XMLD_FLOAT && right->type == XMLD_INTEGER) {
+      val=(left->fnval <= right->nval);
+     }
+     else {
+      val=XMLD_FALSE;
+     }
+    }
    break;
    case XMLD_COND_OP_GE:
+    if (left->type == XMLD_QVAL || right->type == XMLD_QVAL) {
+     val=XMLD_FALSE;
+    }
+    else if (left->type == right->type) {
+     switch(left->type) {
+      case XMLD_INTEGER:
+       val=(left->nval >= right->nval);
+      break;
+      case XMLD_FLOAT:
+       val=(left->fnval >= right->fnval);
+      break;
+     }
+    }
+    else {
+     if (left->type == XMLD_INTEGER && right->type == XMLD_FLOAT) {
+      val=(left->nval >= right->fnval);
+     }
+     else if (left->type == XMLD_FLOAT && right->type == XMLD_INTEGER) {
+      val=(left->fnval >= right->nval);
+     }
+     else {
+      val=XMLD_FALSE;
+     }
+    }
    break;
    case XMLD_COND_OP_LIKE:
+    if (left->type == right->type && left->type == XMLD_QVAL) {
+     val=str_like(left->qval, right->qval);
+    }
+    else {
+     val=XMLD_FALSE;
+    }
    break;
    case XMLD_COND_OP_BET:
     val = XMLD_TRUE;
@@ -609,67 +759,65 @@ char *engine_xmld_get_column_value(XMLDFile *file, char *col_name) {
  return ret;
 }
 
-/* FIXME: always use the format file */
-XMLDStatus engine_xmld_set_column_value(XMLDWork *work, char *col_name, char *value) {
+/*
+ * Sets the value of a column associated to _file_.
+ */ 
+XMLDStatus engine_xmld_set_column_value(XMLDFile *file, char *col_name, char *value) {
+ if (file->store == NULL) {
+  return XMLD_FAILURE;
+ }
  fpos_t pos;
- fgetpos((FILE *) work->res->data_source, &pos);
- short ret;
- if (*((int *) work->res->store+2)) { /* we have got a format file */
-  int stat;
-  char *tag_name=engine_xmld_get_tagname((FILE *) work->res->data_source);
-  if (strcasecmp(col_name, "[text]") == 0) {
-   if (engine_xmld_locate_text((FILE *) work->res->data_source)) {
-    int len=engine_xmld_get_element_att_length((FILE *) work->res->store+1, *((int*) work->res->store, "[text]"),
-		    tag_name);
-    fgetc((FILE *) work->res->data_source); /* Eat the quote up */
-    if (strlen(value) >= len) {
-     stat=fwrite((void *) value, sizeof(char), len, (FILE *) work->res->data_source);
+ fgetpos((FILE *) file->data, &pos);
+ int ret;
+ 
+ char *tagname=engine_xmld_get_tagname((FILE *) file->data);
+ int len;
+ if (strcasecmp(col_name, "[text]") == 0) {
+  if (engine_xmld_locate_text((FILE *) file->data)) {
+   len=engine_xmld_get_element_att_length((FILE *) file->store, file->level, tagname, "[text]");
+   if (len > 0) {
+    if (fwrite((void *) value, sizeof(char), len, (FILE *) file->data) > 0) {
+     ret=XMLD_SUCCESS;
     }
-    else {
-     stat=fwrite((void *) value, sizeof(char), strlen(value), (FILE *) work->res->data_source);
-    }
-    ret = (stat == 0) ? 0 : 1;
    }
    else {
-    ret=0;
+    ret=XMLD_FAILURE;
    }
   }
   else {
-   if (engine_xmld_locate_att((FILE *) work->res->data_source, col_name)) {
-    int len=engine_xmld_get_element_att_length((FILE *) work->res->store+1, *((int*) work->res->store),
-		    tag_name, col_name);
-    if (strlen(value) >= len) {
-     stat=fwrite((void *) value, sizeof(char), len, (FILE *) work->res->data_source);
-    }
-    else {
-     stat=fwrite((void *) value, sizeof(char), strlen(value), (FILE *) work->res->data_source);
-    }
-    ret = (stat == 0) ? 0 : 1;
-   }
-   else {
-    ret=0;
+   ret=XMLD_FAILURE;
+  }
+ }
+ else if (strcasecmp(col_name, "[tagname]") == 0) {
+  len=engine_xmld_get_element_att_length((FILE *) file->store, file->level, tagname, "[tagname]");
+  if (len > 0) {
+   fsetpos((FILE *) file->data, &pos);
+   if (fwrite((void *) value, sizeof(char), len, (FILE *) file->data) > 0) {
+    ret=XMLD_SUCCESS;
    }
   }
-  free(tag_name);
+  else {
+   ret=XMLD_FAILURE;
+  }
  }
  else {
-  if (strcasecmp(col_name, "[text]") == 0) {
-   if (engine_xmld_locate_text((FILE *) (work->res->data_source))) {
-    ret=engine_xmld_set_text_value((FILE *) (work->res->data_source), value);
+  if (engine_xmld_locate_att((FILE *) file->data), col_name) {
+   len=engine_xmld_get_element_att_length((FILE *) file->store, file->level, tagname, col_name);
+   if (len > 0) {
+    if (fwrite((void *) value, sizeof(char), len, (FILE *) file->data) > 0) {
+     ret=XMLD_SUCCESS;
+    }
    }
    else {
-    ret=0;
+    ret=XMLD_FAILURE;
    }
   }
   else {
-   if (engine_xmld_locate_att((FILE *) (work->res->data_source), col_name)) {
-    ret=engine_xmld_set_curr_att_value((FILE *) (work->res->data_source), value);
-   }
-   else {
-    ret=0;
-   }
+   ret=XMLD_FAILURE;
   }
- } 
- fsetpos((FILE *) work->res->data_source, &pos);
+ }
+ 
+ free(tagname);
+ fsetpos((FILE *) file->data, &pos);
  return ret;
 }
