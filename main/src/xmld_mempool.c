@@ -34,8 +34,10 @@ void *XMLDMemPool_get_segment(struct XMLDMemPool *pool) {
  }
  else {
   pool->num_seg++;
-  pool->pool=(void**) realloc(pool->pool,pool->num_seg*sizeof(void**));
-  pool->pool[pool->num_seg-1]=(void*) calloc(1, pool->segsize);
+  if (realloc(pool->pool,pool->num_seg*sizeof(void**))==NULL) {
+   return NULL;
+  }
+  pool->pool[pool->num_seg-1]=calloc(1, pool->segsize);
   pool->num_used++;
   ((int*) (pool->pool[pool->num_seg-1]))[0]=1;
   return pool->pool[pool->num_seg-1];
