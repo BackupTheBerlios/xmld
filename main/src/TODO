@@ -13,7 +13,7 @@ just as a dynamically allocated one.
 
 * Create a generic XMLDTable structure to maintain
 static size lists of objects. And modify structures
-to use XMLDTable where useful.
+to use XMLDTable where useful. (done)
 
 * Use a XMLDTable of XMLDConnection's in sosel.
 
