@@ -32,4 +32,9 @@ void XMLDConnection_free_content(void *);
 XMLDList *XMLDConnection_create_list(void);
 XMLDConnection *XMLDConnection_add_to_list(XMLDList *, int, char *);
 
+/* Table functions */
+
+XMLDTable *XMLDConnection_create_table(int);
+XMLDConnection *XMLDConnection_add_to_table(XMLDTable *, int, char *);
+
 #endif /* HAVE_XMLD_CONNECTION_H */

@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "xmld_list.h"
+#include "xmld_table.h"
 #include "xmld_connection.h"
 
 /*
@@ -55,13 +56,13 @@ void XMLDConnection_free_content(void *conn) {
  * returns: the newly created list.
  */
 XMLDList *XMLDConnection_create_list() {
- XMLDList *list=XMLDList_create(sizeof(XMLDConnection), XMLDConnection_free_content);
- return list;
+ return XMLDList_create(sizeof(XMLDConnection), XMLDConnection_free_content);
 }
 
 /*
  * : Adds a new element to a list of connection structures.
- * fd, dir: see XMLDConnection_create
+ * list: the list to which the new element is to be added.
+ * fd, curr_dir: see XMLDConnection_create
  * returns: a pointer to the newly added element.
  */
 XMLDConnection *XMLDConnection_add_to_list(XMLDList *list, int fd, char *curr_dir) {
@@ -71,5 +72,33 @@ XMLDConnection *XMLDConnection_add_to_list(XMLDList *list, int fd, char *curr_di
   conn->curr_dir=(char *) malloc(strlen(curr_dir)*sizeof(char));
   strcpy(conn->curr_dir, curr_dir);
  } 
+ return conn;
+}
+
+/*
+ * : Creates a static-size preallocated table of connection structures.
+ * num: the number of connections the table will carry.
+ * returns: the newly created table.
+ */
+XMLDTable *XMLDConnection_create_table(int num) {
+ return XMLDTable_create(sizeof(XMLDConnection), num, XMLDConnection_free_content);
+}
+
+/*
+ * : Adds a new element to a static-size preallocated table of connection structures.
+ * table: the table to which the new element is to be added.
+ * fd, curr_dir: see XMLDConnection_create.
+ * returns: a pointer to the newly added element, or NULL if the segments allocated
+ * in the table were all used.
+ */
+XMLDConnection *XMLDConnection_add_to_table(XMLDTable *table, int fd, char *curr_dir) {
+ XMLDConnection *conn=(XMLDConnection *) XMLDTable_add(table);
+ if (conn != NULL) {
+  conn->fd=fd;
+  if (curr_dir != NULL) {
+   conn->curr_dir=(char *) malloc(strlen(curr_dir)*sizeof(char));
+   strcpy(conn->curr_dir, curr_dir);
+  }
+ }
  return conn;
 }
