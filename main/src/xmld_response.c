@@ -13,7 +13,7 @@
 
 #include <stdlib.h>
 #include "string.h"
-#inlucde "xmld_sockets.h"
+#include "xmld_sockets.h"
 #include "xmld_list.h"
 #include "xmld_col.h"
 #include "xmld_row.h"
@@ -191,7 +191,7 @@ XMLDResponse *XMLDResponse_add_to_list(XMLDList *list) {
  resp->rows=XMLDRow_create_list();
  resp->tables=XMLDAggrTable_create_list();
  return resp;
-i}
+}
 
 /*
  * : Flushes contents of the given response
