@@ -24,6 +24,7 @@ struct XMLDWork {
 typedef struct XMLDWork XMLDWork;
 
 XMLDWork *XMLDWork_create(XMLDRequest *, XMLDResponse *, XMLDConnection *, XMLDResource *);
+char *XMLDWork_get_full_file(XMLDWork *);
 void XMLDWork_free(XMLDWork *);
 void XMLDWork_free_content(void *);
 

@@ -12,6 +12,7 @@
  */
 
 #include <stdlib.h>
+#include <string.h>
 #include "xmld_list.h"
 #include "xmld_func.h"
 #include "xmld_expr.h"
@@ -61,6 +62,22 @@ void XMLDWork_free(XMLDWork *work) {
  * work: the work structure whose memory is to be freed.
  */
 void XMLDWork_free_content(void *work) {
+}
+
+/*
+ * : Returns the full file name of the request structure
+ * associated with the given work structure concatenated to
+ * the current directory of the connection structure associated
+ * to the given work structure.
+ * work: The work structure mentioned.
+ * returns: The full file location from the root of the given
+ * work structure.
+ */
+char *XMLDWork_get_full_file(XMLDWork *work) {
+ char *full_file=(char *) malloc(strlen((work->conn->curr_dir)+strlen(work->req->file)+1)*sizeof(char));
+ strcpy(full_file, work->conn->curr_dir);
+ strcat(full_file, work->req->file);
+ return full_file;
 }
 
 /*
