@@ -59,3 +59,29 @@ void XMLDRow_fill_col(XMLDRow *row, char *val, short cpy) {
  XMLDCol *col=(XMLDCol *) XMLDList_last(row->cols);
  XMLDCol_fill(col, val, cpy);
 }
+
+/*
+ * : Creates a XMLDList of XMLDRow's.
+ * returns: the newly created list.
+ */
+XMLDList *XMLDRow_create_list() {
+ XMLDList *list=XMLDList_create(sizeof(XMLDRow));
+ return list;
+}
+
+/*
+ * : Adds a new element to a XMLDList of XMLDRow's.
+ * list: the list to which the new XMLDRow is to be added.
+ * cols (optional): a pointer to an already established list of columns.
+ * returns: a 
+ */
+XMLDRow *XMLDRow_add_to_list(XMLDList *list, XMLDList *cols) {
+ XMLDRow *row=(XMLDRow *) XMLDList_add(list);
+ if (cols==NULL) {
+  row->cols=XMLDCol_create_list();
+ }
+ else {
+  row->cols=cols;
+ }
+ return row;
+}

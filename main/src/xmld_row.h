@@ -29,6 +29,6 @@ void XMLDRow_free(XMLDRow *);
 /* List functions */
 
 XMLDList *XMLDRow_create_list(void);
-void XMLDRow_add_to_list(XMLDList *, XMLDList *);
+XMLDRow *XMLDRow_add_to_list(XMLDList *, XMLDList *);
 
 #endif /* HAVE_XMLD_ROW_H */
