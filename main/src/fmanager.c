@@ -13,7 +13,6 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "errors.h"
 #include "xmld_types.h"
 #include "engine_xmld.h"
 
@@ -23,14 +22,14 @@
  * this only one engine 
  */
 
-xmld_status_t fmanager_handle(struct XMLDWork *work) {
+short fmanager_handle(struct XMLDWork *work) {
  work->res=(struct XMLDResource *) malloc(sizeof(struct XMLDResource));
  work->res->engine=&engine_xmld;
  work->res->data_source=(*(work->res->engine->init)) (work);
  if (work->res->data_source==0) {
-  return XMLD_FAILURE;
+  return -1;
  }
  else {
-  return XMLD_SUCCESS;
+  return 0;
  }
 }

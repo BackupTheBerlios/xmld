@@ -16,7 +16,6 @@
 #include <stdio.h>
 #include "xmld_sockets.h"
 #include "xmld_types.h"
-#include "errors.h"
 #include "cfg.h"
 #include "mtasker.h"
 #include "somanager.h"
@@ -29,14 +28,13 @@ int num_sock;
 /*
  * FIXME: find a safe way of getting ports from cfg
  */ 
-xmld_status_t somanager_init() {
+short somanager_init() {
  num_sock=cfg_get("somanager.num_listeners");
  fds=(int*) malloc(num_sock*sizeof(int));
  ports=(int*) malloc(num_sock*sizeof(int));
  int port=6060;
  int i;
  int status;
- xmld_status_t stat;
 
  for (i=0;i<num_sock;i++) {
   fds[i]=xmld_socket_create();
@@ -44,28 +42,28 @@ xmld_status_t somanager_init() {
   
   if (fds[i]==-1) {
    perror("xmld_socket_create");
-   return XMLD_FAILURE;
+   return -1;
   }
   status=xmld_socket_bind(fds[i], ports[i]);
   if (status==-1) {
    perror("xmld_socket_bind");
-   return XMLD_FAILURE;
+   return -1;
   }
   status=xmld_socket_listen(fds[i]);
   if (status==-1) {
    perror("xmld_socket_listen");
-   return XMLD_FAILURE;
+   return -1;
   }
-  stat=mtasker_handle(somanager_handle, (void*) fds[i]);
-  if (stat!=XMLD_SUCCESS) {
+  status=mtasker_handle(somanager_handle, (void*) fds[i]);
+  if (status!=0) {
    perror("mtasker_handle");
-   return XMLD_FAILURE;
+   return -1;
   }
  }
- return XMLD_SUCCESS;
+ return 0;
 }
 
-xmld_status_t somanager_shutdown() {
+short somanager_shutdown() {
  int i;
  int status;
  for (i=0;i<num_sock;i++) {
@@ -78,7 +76,7 @@ xmld_status_t somanager_shutdown() {
  }
  free(fds);
  free(ports);
- return XMLD_SUCCESS;
+ return 0;
 }
 
 void somanager_handle(void *sockfd) {
