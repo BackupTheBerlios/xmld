@@ -79,6 +79,8 @@ XMLDExpr *XMLDExpr_create(void);
 void XMLDExpr_copy(XMLDExpr *, XMLDExpr *);
 void XMLDExpr_free(XMLDExpr *);
 void XMLDExpr_free_content(void *);
+XMLDBool XMLDExpr_is_complex(XMLDExpr *);
+
 /* List functions */
 
 XMLDExprList *XMLDExprList_create(void);

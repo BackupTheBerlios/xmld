@@ -121,6 +121,21 @@ void XMLDExpr_copy(XMLDExpr *src, XMLDExpr *dest) {
  dest->alias=src->alias;
 }
 
+
+/*
+ * Tells whether the given expression needs processing
+ * before being able to get a direct value out of it.
+ */
+XMLDBool XMLDExpr_is_complex(XMLDExpr *expr) {
+ if (expr == NULL || expr->type == XMLD_INTEGER
+     || expr->type == XMLD_QVAL || expr->type == XMLD_FLOAT) {
+  return XMLD_FALSE;
+ }
+ else {
+  return XMLD_TRUE;
+ }
+}
+
 /*
  * : Create a list of expressions.
  * returns: the newly created expression list.

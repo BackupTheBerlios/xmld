@@ -185,8 +185,26 @@ char *engine_xmld_eval_expr(XMLDWork *work, XMLDExpr *expr, int level) {
 XMLDBool engine_xmld_eval_cond(XMLDWork *work, XMLDCond *cond, int level) {
  XMLDBool val;
  if (cond->type == XMLD_CONDITION) {
+  XMLDExpr *left, right;
+  if (XMLDExpr_is_complex(expr->left)) {
+   left=engine_xmld_simplify_expr(work, expr->left, level);
+  }
+  else {
+   left=expr->left;
+  }
+  if (XMLDExpr_is_complex(expr->right)) {
+   right=engine_xmld_simplify_expr(work, expr->right, level);
+  }
+  else {
+   right=expr->right;
+  }
   XMLDExpr *left=engine_xmld_simplify_expr(work, cond->left, level);
   XMLDExpr *right=engine_xmld_simplify_expr(work, cond->right, level);
+  
+  if (left == NULL || right == NULL) {
+   return XMLD_FALSE;
+  }
+  
   switch(cond->op) {
    case XMLD_COND_OP_EQUAL:
    break;
@@ -209,8 +227,13 @@ XMLDBool engine_xmld_eval_cond(XMLDWork *work, XMLDCond *cond, int level) {
     val = XMLD_TRUE;
    break;
   }
-  XMLDExpr_free(left);
-  XMLDExpr_free(right);
+ 
+  if (XMLDExpr_is_complext(expr->left)) {
+   XMLDExpr_free(left);
+  }
+  if (XMLDExpr_is_complext(expr->right)) {
+   XMLDExpr_free(right);
+  }	  
  }
  else if (cond->type == XMLD_CONDITION_GRP) {
   if (cond->cop == XMLD_COND_GRP_AND) {
@@ -239,72 +262,45 @@ else if (cond->type == XMLD_CONDITION_VOID) {
  * Simplifies a XMLDExpr to a basic type.
  */
 XMLDExpr *engine_xmld_simplify_expr(XMLDWork * work, XMLDExpr *expr, int level) {
- if (expr->type == 1) {
-  XMLDExpr *temp_left=XMLDExpr_create();
-  XMLDExpr *temp_right=XMLDExpr_create();
-  XMLDExpr_copy(expr->left, temp_left);
-  XMLDExpr_copy(expr->right, temp_right);
-  engine_xmld_simplify_expr(work, temp_left);
-  engine_xmld_simplify_expr(work, temp_right);
-  
-  /* identifier resolution */
-  char *col_value;
-  if (temp_left->type == 2) {
-   temp_left->type=0;
-   col_value=engine_xmld_get_column_value(work, temp_left->ident);
-   temp_left->nval=atol(col_value);
-   free(col_value);
+ XMLDExpr *ret=XMLDExpr_create();
+ if (expr->type == XMLD_OPERATION) {
+  XMLDExpr *left, right;
+  if (XMLDExpr_is_complex(expr->left)) {
+   left=engine_xmld_simplify_expr(work, expr->left, level);
   }
-  if (temp_right->type == 2) {
-   temp_right->type=0;
-   col_value=engine_xmld_get_column_value(work, temp_right->ident);
-   temp_right->nval=atol(col_value);
-   free(col_value);
+  else {
+   left=expr->left;
+  }
+  if (XMLDExpr_is_complex(expr->right)) {
+   right=engine_xmld_simplify_expr(work, expr->right, level);
+  }
+  else {
+   right=expr->right;
   }
   
-  if (temp_left->type == 0) {
-   if (expr->op == 0) {
-    expr->type = 0;
-    expr->nval=temp_left->nval+temp_right->nval;
-   }
-   else if (expr->op == 1) {
-    expr->nval=temp_left->nval-temp_right->nval;
-   }
-   else if (expr->op == 2) {
-    expr->nval=temp_left->nval * temp_right->nval;
-   }
-   else if (expr->op == 3) {
-    if (temp_right->nval == 0) {
-     expr->nval=LONG_MAX;
-    }
-    else {
-     expr->nval=(long) (temp_left->nval / temp_right->nval);
-    } 
-   }
-   else if (expr->op == 4) {
-    expr->nval=(long) pow(temp_left->nval, temp_right->nval);
-   }
-   else if (expr->op == 5) {
-    expr->nval=(long) (-1 * temp_right->nval);
-   }    
+  /* type checking and evaluation */
+  
+  if (XMLDExpr_is_complext(expr->left)) {
+   XMLDExpr_free(left);
   }
-  XMLDExpr_free(temp_left);
-  XMLDExpr_free(temp_right);
+  if (XMLDExpr_is_complext(expr->right)) {
+   XMLDExpr_free(right);
+  }	  
  }
- else if (expr->type == 3) {
-  if (expr->func->aggr == 1) {
-   XMLDExpr *work_expr=XMLDExpr_add_to_list(expr->arg_list);
-   work_expr->nval=(long) work;
+ else if (expr->type == XMLD_IDENTIFIER) {
+  if (expr->file == NULL) {
+   expr->file = (XMLDFile *) XMLDList_first(work->files);
   }
-  XMLDExpr *func_res=(*(expr->func->func)) (expr->arg_list);
-  XMLDExpr_copy(func_res, expr);
-  XMLDExpr_free(func_res);
+  
  }
+ else if (expr->type == XMLD_FUNCTION) {
+ }
+ return ret;
 }
 
 /*
  * Gets the value of a particular column (attribute/text)
- * relative to the current element.
+ * relative to the current element in the given file.
  */ 
 char *engine_xmld_get_column_value(XMLDFile *file, char *col_name) {
  fpos_t pos;
@@ -332,7 +328,7 @@ char *engine_xmld_get_column_value(XMLDFile *file, char *col_name) {
   else {
    ret=(char *) malloc((strlen(atts)+1)*sizeof(char));
   }
-  strcpy(ret, atts);
+gat da7'a  strcpy(ret, atts);
   if (text != NULL) {
    ret[strlen(atts)]=col_sep;
    strcat(ret, text);

@@ -608,7 +608,7 @@ message. (done)
 (done)
 
 * simplify_expr returns a simplified version of the given 
-expression.
+expression. (done)
 
 * column resolution and NULL file checking goes inside
 simplify expr.
@@ -619,9 +619,10 @@ simplify_expr. (done)
 * remove support for between and not between statements
 for now. (done)
 
-* expect NULL from simplify_expr in all of engine_xmld.
-
-* A function should report failure by returning NULL.
+* create a function XMLDExpr_is_complex and call it to
+know whether the expression requires simplification.
+XMLDExpr_is_complex should handle NULL expressions
+normally. (done)
 
 * Engine-XMLD must be rewritten with consideration of
 [1] availablity of column types [2] access levels.
