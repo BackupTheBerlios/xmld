@@ -23,7 +23,7 @@
  */
 XMLDRow *XMLDRow_create(XMLDList *cols) {
  XMLDRow *row=(XMLDRow *) malloc(sizeof(XMLDRow));
- if (cols==NULL) {
+ if (cols == NULL) {
   row->cols=XMLDCol_create_list();
  }
  else {
@@ -37,8 +37,16 @@ XMLDRow *XMLDRow_create(XMLDList *cols) {
  * row: the row to free.
  */
 void XMLDRow_free(XMLDRow *row) {
- XMLDList_free(row->cols);
+ XMLDRow_free_content((void *) row);
  free(row);
+}
+
+/*
+ * : Frees the memory internally allocated by a row.
+ * row: the row whose memory is to be freed.
+ */
+void XMLDRow_free_content(void *row) {
+ XMLDList_free(((XMLDRow *)row)->cols);
 }
 
 /*
@@ -65,7 +73,7 @@ void XMLDRow_fill_col(XMLDRow *row, char *val, short cpy) {
  * returns: the newly created list.
  */
 XMLDList *XMLDRow_create_list() {
- XMLDList *list=XMLDList_create(sizeof(XMLDRow));
+ XMLDList *list=XMLDList_create(sizeof(XMLDRow), XMLDRow_free_content);
  return list;
 }
 
