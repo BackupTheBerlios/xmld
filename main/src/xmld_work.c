@@ -70,7 +70,14 @@ void XMLDWork_free_content(void *work) {
  * work structure.
  */
 char *XMLDWork_get_full_file(XMLDWork *work) {
- char *full_file=(char *) malloc(strlen((work->conn->curr_dir)+strlen(work->req->file)+1)*sizeof(char));
+ char *full_file;
+ if (*(work->req->file) == '/') {
+  full_file=(char *) malloc((strlen(work->req->file)+1)*sizeof(char));
+  strcpy(full_file, work->req->file);
+  return full_file;
+ }
+
+ full_file=(char *) malloc(strlen((work->conn->curr_dir)+strlen(work->req->file)+1)*sizeof(char));
  strcpy(full_file, work->conn->curr_dir);
  strcat(full_file, work->req->file);
  return full_file;
