@@ -160,7 +160,7 @@ be persistent in a variable (in cfg.h), thereafter, use
 them in XMLDResponse_flush. (done)
 
 * Add "char" type to XMLDDirective, make consideration in
-cfg_parser_parse, and in cfg_get.
+cfg_parser_parse, and in cfg_get. (done)
 
 * sosel should read MULTI_PROC_MTASKER to decide whether
 to use a shared memory segment for storing connection
@@ -169,7 +169,7 @@ configuration option.
 
 * Find a good way of reporting out-of-request errors.
 
-* macros inside mtasker -> ptasker ;-)
+* macros inside mtasker -> ptasker ;-) (done)
 
 * XMLDResponse_flush must be a request type specific thing
 (i.e remove it from qp and add it conditionally inside 
