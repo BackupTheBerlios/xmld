@@ -16,6 +16,10 @@
 #include <string.h>
 #include "xmld_types.h"
 #include "xmld_mempool.h"
+/* FIXME
+ * - Number of pool segments should come from config.
+ * - request should be external and already allocated.
+ */
 struct XMLDMemPool *expr_pool=XMLDMemPool_create(sizeof(struct expr), 20);
 struct XMLDMemPool *cond_pool=XMLDMemPool_create(sizeof(struct cond), 10);
 int yyerror(char *);
@@ -100,7 +104,7 @@ cond_list: cond {
 ;
 
 cond: expr '=' expr {
-                     $$=(struct cond *) XMLDMemPool_get_segment(cond_expr);
+                     $$=(struct cond *) XMLDMemPool_get_segment(cond_pool);
 		     $$->type=0;
 		     $$->negate=0;
 		     $$->left=$1;
@@ -108,7 +112,7 @@ cond: expr '=' expr {
 		     $$->op=0;
                     }
       | expr '<' expr {
-                       $$=(struct cond *) XMLDMemPool_get_segment(cond_expr);
+                       $$=(struct cond *) XMLDMemPool_get_segment(cond_pool);
 		       $$->type=0;
 		       $$->negate=0;
 		       $$->left=$1;
@@ -116,7 +120,7 @@ cond: expr '=' expr {
 		       $$->op=1;
                       }  
       | expr '>' expr {
-                       $$=(struct cond *) XMLDMemPool_get_segment(cond_expr);
+                       $$=(struct cond *) XMLDMemPool_get_segment(cond_pool);
 		       $$->type=0;
 		       $$->negate=0;
 		       $$->left=$1;
@@ -124,7 +128,7 @@ cond: expr '=' expr {
 		       $$->op=2;
                       } 
       | expr NE expr {
-                      $$=(struct cond *) XMLDMemPool_get_segment(cond_expr);
+                      $$=(struct cond *) XMLDMemPool_get_segment(cond_pool);
 		      $$->type=0;
 		      $$->negate=0;
 		      $$->left=$1;
@@ -132,7 +136,7 @@ cond: expr '=' expr {
 		      $$->op=3;
                      }
       | expr LE expr {
-                      $$=(struct cond *) XMLDMemPool_get_segment(cond_expr);
+                      $$=(struct cond *) XMLDMemPool_get_segment(cond_pool);
 		      $$->type=0;
 		      $$->negate=0;
 		      $$->left=$1;
@@ -140,7 +144,7 @@ cond: expr '=' expr {
 		      $$->op=4;
                      }
       | expr GE expr {
-                      $$=(struct cond *) XMLDMemPool_get_segment(cond_expr);
+                      $$=(struct cond *) XMLDMemPool_get_segment(cond_pool);
 		      $$->type=0;
 		      $$->negate=0;
 		      $$->left=$1;
@@ -148,7 +152,7 @@ cond: expr '=' expr {
 		      $$->op=5;
                      }
       | expr LIKE expr {
-                        $$=(struct cond *) XMLDMemPool_get_segment(cond_expr);
+                        $$=(struct cond *) XMLDMemPool_get_segment(cond_pool);
 			$$->type=0;
 			$$->negate=0;
 			$$->left=$1;
