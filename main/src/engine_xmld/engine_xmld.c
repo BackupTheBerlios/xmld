@@ -18,6 +18,7 @@
 #include <limits.h>
 #include <math.h>
 #include "../dutils.h"
+#include "../sutils.h"
 #include "../xmld_list.h"
 #include "../xmld_col.h"
 #include "../xmld_func.h"
@@ -153,69 +154,83 @@ short engine_xmld_eval_cond(XMLDWork *work, XMLDCond *cond) {
  char *left_val;
  char *right_val;
  if (cond->type == 0) {
-  left_val=engine_xmld_eval_expr(work, cond->left);
-  right_val=engine_xmld_eval_expr(work, cond->right);
-  switch(cond->op) {
-   case 0:
-    if (strcmp(left_val, right_val) == 0) {
-     val=1;
-    }
-    else {
-     val=0;
-    }
-   break;
-   case 1:
-    if (atoi(left_val) < atoi(right_val)) {
-     val=1;
-    }
-    else {
-     val=0;
-    }
-   break;
-   case 2:
-    if (atoi(left_val) > atoi(right_val)) {
-     val=1;
-    }
-    else {
-     val=0;
-    }
-   break;
-   case 3:
-    if (atoi(left_val) != atoi(right_val)) {
-     val=1;
-    }
-    else {
-     val=0;
-    }
-   break;
-   case 4:
-    if (atoi(left_val) <= atoi(right_val)) {
-     val=1;
-    }
-    else {
-     val=0;
-    }
-   break;
-   case 5:
-    if (atoi(left_val) >= atoi(right_val)) {
-     val=1;
-    }
-    else {
-     val=0;
-    }
-   break;
-   case 6:
-    val=engine_xmld_like(left_val, right_val);
-   break;
-   case 7:
-    val=engine_xmld_between(left_val, right_val);
-   break;
-   case 8:
-    val=!engine_xmld_between(left_val, right_val);
-   break;
+  if (cond->op == 7) {
+   left_val=engine_xmld_eval_expr(work, cond->left);
+   char *bet_left=engine_xmld_eval_expr(work, cond->right->left);
+   char *bet_right=engine_xmld_eval_expr(work, cond->right->right);
+   val=str_between(left_val, bet_left, bet_right);
+   free(left_val);
+   free(bet_left);
+   free(bet_right);
   }
-  free(left_val);
-  free(right_val);
+  else if (cond->op == 8) {
+   left_val=engine_xmld_eval_expr(work, cond->left);
+   char *bet_left=engine_xmld_eval_expr(work, cond->right->left);
+   char *bet_right=engine_xmld_eval_expr(work, cond->right->right);
+   val=!str_between(left_val, bet_left, bet_right);
+   free(left_val);
+   free(bet_left);
+   free(bet_right);
+  }
+  else {
+   left_val=engine_xmld_eval_expr(work, cond->left);
+   right_val=engine_xmld_eval_expr(work, cond->right);
+   switch(cond->op) {
+    case 0:
+     if (strcmp(left_val, right_val) == 0) {
+      val=1;
+     }
+     else {
+      val=0;
+     }
+    break;
+    case 1:
+     if (atoi(left_val) < atoi(right_val)) {
+      val=1;
+     }
+     else {
+      val=0;
+     }
+    break;
+    case 2:
+     if (atoi(left_val) > atoi(right_val)) {
+      val=1;
+     }
+     else {
+      val=0;
+     }
+    break;
+    case 3:
+     if (atoi(left_val) != atoi(right_val)) {
+      val=1;
+     }
+     else {
+      val=0;
+     }
+    break;
+    case 4:
+     if (atoi(left_val) <= atoi(right_val)) {
+      val=1;
+     }
+     else {
+      val=0;
+     }
+    break;
+    case 5:
+     if (atoi(left_val) >= atoi(right_val)) {
+      val=1;
+     }
+     else {
+      val=0;
+     }
+    break;
+    case 6:
+     val=engine_xmld_like(left_val, right_val);
+    break;
+   }
+   free(left_val);
+   free(right_val);
+  }
  }
  else if (cond->type == 1) {
   if (cond->cop == 0) {
@@ -399,12 +414,4 @@ short engine_xmld_set_column_value(XMLDWork *work, char *col_name, char *value) 
    return 0;
   }
  }
-}
-
-short engine_xmld_like(XMLDExpr *left, XMLDExpr *right) {
- return 0;
-}
-
-short engine_xmld_between(XMLDExpr *left, XMLDExpr *right) {
- return 0;
 }
