@@ -597,7 +597,7 @@ message. (done)
  
  * QUERY.html (done)
  * xmld-sql.(y|lex) (add support for expr . expr, use expr 
- instead  of QVAL in <file name> field, implement FIXME items)
+ instead  of QVAL in <file name> field -- done)
  * XMLDRequest (remove file and use XMLDFileList in XMLDResource
  -- done)
  * XMLDFile (creation -- void* -> filename association, store, level
@@ -610,6 +610,8 @@ message. (done)
 
 * sync includes across all code according to the editions
 above.
+
+* remove "proposed" from query, proto.
 
 * Engine-XMLD must be rewritten with consideration of
 [1] availablity of column types [2] access levels.
@@ -626,7 +628,8 @@ grouping. [16] hard type checking. [17] eval_cond
 should evaluate only the first condition of a given
 condition list. [18] aggregate expression should 
 return a pointer to the last value expression in
-the given aggregate expression table.
+the given aggregate expression table. [19] NULL
+file checks.
 
 * Define and implement the exec_assign engine
 function and the UPDATE and UPDATE with

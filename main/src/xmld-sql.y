@@ -107,87 +107,188 @@ struct XMLDEngine;
 
 query: SELECT expr_list FROM expr {
 				   ((XMLDWork *) work)->req->type=XMLD_SQL_SELECT;
-				   ((XMLDWork *) work)->req->file=$4;
+                                   ((XMLDWork *) work)->res->files=XMLDFileList_create();
+                                   if ($4->type == XMLD_QVAL) {
+                                    XMLDFileList_add(((XMLDWork *) work)->res->files, $4->qval);
+                                   }
+                                   else if ($4->type == XMLD_LIST) {
+                                    XMLDList_reset($4->exprs);
+                                    while (XMLDList_next($4->exprs)) {
+                                     XMLDFileList_add(((XMLDWork *) work)->res->files, ((XMLDExpr *) XMLDList_curr($4->exprs)->qval);
+                                    }
+                                   }
+	                           XMLDExpr_free($4);
 				   ((XMLDWork *) work)->req->retr=$2;
 				   YYACCEPT;
                                   }
        | SELECT expr_list FROM expr WHERE cond_list {
 			     	                     ((XMLDWork *) work)->req->type=XMLD_SQL_SELECT_WHERE;
-				                     ((XMLDWork *) work)->req->file=$4;
+                                                     ((XMLDWork *) work)->res->files=XMLDFileList_create();
+                                                     if ($4->type == XMLD_QVAL) {
+                                                      XMLDFileList_add(((XMLDWork *) work)->res->files, $4->qval);
+                                                     }
+                                                     else if ($4->type == XMLD_LIST) {
+                                                      XMLDList_reset($4->exprs);
+                                                      while (XMLDList_next($4->exprs)) {
+	                                               XMLDFileList_add(((XMLDWork *) work)->res->files, ((XMLDExpr *) XMLDList_curr($4->exprs)->qval);
+                                                      }
+			                             }
+			                             XMLDExpr_free($4);
 				                     ((XMLDWork *) work)->req->retr=$2;
 						     ((XMLDWork *) work)->req->where=$6;
 						     YYACCEPT;
                                                     }
        | UPDATE expr SET cond_list {
 				    ((XMLDWork *) work)->req->type=XMLD_SQL_UPDATE;
-				    ((XMLDWork *) work)->req->file=$2;
+                                    ((XMLDWork *) work)->res->files=XMLDFileList_create();
+                                    if ($2->type == XMLD_QVAL) {
+                                     XMLDFileList_add(((XMLDWork *) work)->res->files, $2->qval);
+                                    }
+                                    else if ($2->type == XMLD_LIST) {
+                                     XMLDList_reset($2->exprs);
+                                     while (XMLDList_next($2->exprs)) {
+	                              XMLDFileList_add(((XMLDWork *) work)->res->files, ((XMLDExpr *) XMLDList_curr($2->exprs)->qval);
+                                     }
+			            }
+			            XMLDExpr_free($2);
 				    ((XMLDWork *) work)->req->vals=$4;
 				    YYACCEPT;
                                    }
        | UPDATE expr SET cond_list WHERE cond_list {
 				                    ((XMLDWork *) work)->req->type=XMLD_SQL_UPDATE_WHERE;
-				                    ((XMLDWork *) work)->req->file=$2;
+	                                            ((XMLDWork *) work)->res->files=XMLDFileList_create();
+	                                            if ($2->type == XMLD_QVAL) {
+                                                     XMLDFileList_add(((XMLDWork *) work)->res->files, $2->qval);
+	                                            }
+	                                            else if ($2->type == XMLD_LIST) {
+	                                             XMLDList_reset($2->exprs);
+	                                             while (XMLDList_next($2->exprs)) {
+			                              XMLDFileList_add(((XMLDWork *) work)->res->files, ((XMLDExpr *) XMLDList_curr($2->exprs)->qval);
+			                             }
+			                            }
+			                            XMLDExpr_free($2);
 				                    ((XMLDWork *) work)->req->vals=$4;
 						    ((XMLDWork *) work)->req->where=$6;
 						    YYACCEPT;
                                                    }
        | DELETE FROM expr {
  		           ((XMLDWork *) work)->req->type=XMLD_SQL_DELETE;
-			   ((XMLDWork *) work)->req->file=$3;
+	                   ((XMLDWork *) work)->res->files=XMLDFileList_create();
+	                   if ($3->type == XMLD_QVAL) {
+                            XMLDFileList_add(((XMLDWork *) work)->res->files, $3->qval);
+	                   }
+	                   else if ($3->type == XMLD_LIST) {
+	                    XMLDList_reset($3->exprs);
+	                    while (XMLDList_next($3->exprs)) {
+			     XMLDFileList_add(((XMLDWork *) work)->res->files, ((XMLDExpr *) XMLDList_curr($3->exprs)->qval);
+			    }
+			   }
+			   XMLDExpr_free($3);
 			   YYACCEPT;
                           }
        | DELETE FROM expr WHERE cond_list {
  		                           ((XMLDWork *) work)->req->type=XMLD_SQL_DELETE_WHERE;
-			                   ((XMLDWork *) work)->req->file=$3;
+			                   ((XMLDWork *) work)->res->files=XMLDFileList_create();
+			                   if ($3->type == XMLD_QVAL) {
+                                            XMLDFileList_add(((XMLDWork *) work)->res->files, $3->qval);
+			                   }
+			                   else if ($3->type == XMLD_LIST) {
+			                    XMLDList_reset($3->exprs);
+				            while (XMLDList_next($3->exprs)) {
+				             XMLDFileList_add(((XMLDWork *) work)->res->files, ((XMLDExpr *) XMLDList_curr($3->exprs)->qval);
+				            }
+			                   }
+			                   XMLDExpr_free($3);
 					   ((XMLDWork *) work)->req->where=$5;
 					   YYACCEPT;
                                           }
        | DELETE '*' FROM expr {
  		               ((XMLDWork *) work)->req->type=XMLD_SQL_DELETE;
-			       ((XMLDWork *) work)->req->file=$4;
+			       ((XMLDWork *) work)->res->files=XMLDFileList_create();
+			       if ($4->type == XMLD_QVAL) {
+                                XMLDFileList_add(((XMLDWork *) work)->res->files, $4->qval);				
+			       }
+			       else if ($4->type == XMLD_LIST) {
+			        XMLDList_reset($4->exprs);
+				while (XMLDList_next($4->exprs)) {
+				 XMLDFileList_add(((XMLDWork *) work)->res->files, ((XMLDExpr *) XMLDList_curr($4->exprs)->qval);
+				}
+			       }
+			       XMLDExpr_free($4);
 			       YYACCEPT;
                               }
        | INSERT INTO expr '(' expr_list ')' VALUES '(' expr_list ')' {
-                                                                      /* FIXME: only first expr */
                                                                       ((XMLDWork *) work)->req->type=XMLD_SQL_INSERT_COL;
-								      ((XMLDWork *) work)->req->file=$3;
+								      ((XMLDWork *) work)->res->files=XMLDFileList_create();
+		                                                      char *name=NULL;
+						                      if ($3->type == XMLD_QVAL) {
+						                       name=$3->qval;
+						                      }
+						                      else if ($3->type == XMLD_LIST) {
+						                       name=((XMLDExpr *) XMLDList_first($3->exprs))->qval;
+						                      }
+						                      XMLDFileList_add(((XMLDWork *) work)->res->files, name);
+								      XMLDExpr_free($3);
 								      ((XMLDWork *) work)->req->retr=$5;
 								      ((XMLDWork *) work)->req->vals=$9;
 								      YYACCEPT;
 								     }								     
        | INSERT INTO expr VALUES '(' expr_list ')' {
-                                                    /* FIXME: only first expr */
                                                     ((XMLDWork *) work)->req->type=XMLD_SQL_INSERT;
-					            ((XMLDWork *) work)->req->file=$3;
+					            ((XMLDWork *) work)->res->files=XMLDFileList_create();
+		                                    char *name=NULL;
+						    if ($3->type == XMLD_QVAL) {
+						     name=$3->qval;
+						    }
+						    else if ($3->type == XMLD_LIST) {
+						     name=((XMLDExpr *) XMLDList_first($3->exprs))->qval;
+						    }
+						    XMLDFileList_add(((XMLDWork *) work)->res->files, name);
+						    XMLDExpr_free($3);
 					            ((XMLDWork *) work)->req->vals=$6;
 						    YYACCEPT;
                                                    }
        | INSERT INTO expr '(' expr_list ')' VALUES '(' expr_list ')' WHERE cond_list {
-                                                                                      /* FIXME: only first expr */
                                                                                       ((XMLDWork *) work)->req->type=XMLD_SQL_INSERT_COL_WHERE;
-										      ((XMLDWork *) work)->req->file=$3;
+										      ((XMLDWork *) work)->res->files=XMLDFileList_create();
+								                      char *name=NULL;
+								                      if ($3->type == XMLD_QVAL) {
+								                       name=$3->qval;
+								                      }
+								                      else if ($3->type == XMLD_LIST) {
+								                       name=((XMLDExpr *) XMLDList_first($3->exprs))->qval;
+								                      }
+								                      XMLDFileList_add(((XMLDWork *) work)->res->files, name);
+										      XMLDExpr_free($3);
 										      ((XMLDWork *) work)->req->retr=$5;
 										      ((XMLDWork *) work)->req->vals=$9;
 										      ((XMLDWork *) work)->req->where=$12;
 										      YYACCEPT;
 										     }
        | INSERT INTO expr VALUES '(' expr_list ')' WHERE cond_list {
-                                                                    /* FIXME: only first expr*/
                                                                     ((XMLDWork *) work)->req->type=XMLD_SQL_INSERT_WHERE;
-						                    ((XMLDWork *) work)->req->file=$3;
+						                    ((XMLDWork *) work)->res->files=XMLDFileList_create();
+								    char *name=NULL;
+								    if ($3->type == XMLD_QVAL) {
+								     name=$3->qval;
+								    }
+								    else if ($3->type == XMLD_LIST) {
+								     name=((XMLDExpr *) XMLDList_first($3->exprs))->qval;
+								    }
+								    XMLDFileList_add(((XMLDWork *) work)->res->files, name);
+								    XMLDExpr_free($3);
 								    ((XMLDWork *) work)->req->vals=$6;
 								    ((XMLDWork *) work)->req->where=$9;
 								    YYACCEPT;
                                                                    }
-       | USE expr {
-                   /* FIXME: use only the first expression if provided as list */
-                   ((XMLDWork *) work)->req->type=XMLD_SQL_USE;
-		   ((XMLDWork *) work)->req->file=$2;
-		   YYACCEPT;
-                  }
+       | USE expr_list {
+                        ((XMLDWork *) work)->req->type=XMLD_SQL_USE;
+		        ((XMLDWork *) work)->req->retr=$2;
+		        YYACCEPT;
+                       }
        | error {
                 xmld_errno=XMLD_EPARSE;
-                YYABORT; 
+                YYABORT;
                }
 ;
 
@@ -499,7 +600,9 @@ expr: '(' expr ')' {
                  }
      /* Support for column -> file association */
      | expr '.' expr {
-                       /* remember to check for $1 being qval */
+		      $$=$3;
+		      $$->file=XMLDFile_create($1->qval);
+		      XMLDExpr_free($1);
                      }
 ;
 
