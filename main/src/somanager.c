@@ -11,7 +11,6 @@
  * -------------------------------------------------------------- * 
  */
  
-#include <sys/types.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include "xmld_sockets.h"
@@ -20,6 +19,7 @@
 #include "cfg.h"
 
 #ifdef USE_PTASKER
+ #include <sys/types.h>
  #include "ptasker/ptasker.h"
  #define MULTI_PROC_MTASKER
  #undef MULTI_THREAD_MTASKER 
