@@ -36,3 +36,6 @@ oriented foundation.
 * Add a name field to XMLDEngine. This should normally
 involve creation of a function that searches a list
 of XMLDEngine's by name. (done)
+
+* Write a skeleton do-nothing engine, and attach it to
+the list of XMLDEngine's which serve the requests.
