@@ -18,19 +18,19 @@ xmld_status_t twalker_handle(struct XMLDWork *work) {
  int status;
  struct expr *curr_retr;
  struct cond *curr_cond;
- XMLDResponse_init(work->req);
+ XMLDResponse_init(work->resp);
  /* this if() may need to contain other values for type such as
   * SELECT + SORT */
  if (work->req->type==0) { /* a SELECT query */
   curr_retr=work->req->retr[0];
   while ((status=(*(work->res->engine->walk)) (work))!=-1) {
-   XMLDResponse_add_row(work->req);
+   XMLDResponse_add_row(work->resp);
    while (curr_retr!=0) {
     if (curr_retr->aggr==1) { /* an aggregate expression */
-     XMLDResponse_add_aggr(work->req, curr_retr);
+     XMLDResponse_add_aggr(work->resp, curr_retr);
     }
     else {
-     XMLDResponse_add_col(work, (*(work->res->engine->eval_expr)) (work, curr_retr));
+     XMLDResponse_add_col(work->resp, (*(work->res->engine->eval_expr)) (work, curr_retr));
     }
    }
   }
@@ -38,10 +38,10 @@ xmld_status_t twalker_handle(struct XMLDWork *work) {
  if (work->req->type==1) { /* a SELECT + WHERE query */
   /* to be continued */
  }
- XMLDResponse_aggr_reset(work->req);
- while (XMLDResponse_curr_aggr(work->req)!=0) {
-  XMLDResponse_fill_aggr(work->req, (*(work->res->engine->eval_aggr_expr)) (work, XMLDResponse_curr_aggr(work->req)));
-  XMLDResponse_aggr_next(work->req);
+ XMLDResponse_aggr_reset(work->resp);
+ while (XMLDResponse_curr_aggr(work->resp)!=0) {
+  XMLDResponse_fill_aggr(work->resp, (*(work->res->engine->eval_aggr_expr)) (work, XMLDResponse_curr_aggr(work->resp)));
+  XMLDResponse_aggr_next(work->resp);
  }
  return XMLD_SUCCESS;
 };
