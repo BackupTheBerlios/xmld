@@ -21,3 +21,5 @@
   * XMLDEngine
   * and check for others that may need so.
 * XMLD*Table -> XMLD*List
+* Add XMLD*Table_last() and rename XMLD*Table_reset() to 
+  XMLD*Table_first().
