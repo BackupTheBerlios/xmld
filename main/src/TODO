@@ -692,22 +692,27 @@ listening to under the PID. (done)
 * handle SIGINT in client and send disconnect to the
 server on receiving it. (done)
 
-* fix interrupted system call on server side on reciving
-of DISCONNECT and correction of a wrong pass.
-
 * check the curr_max_level bug. (done)
 
-* simplify expr should never return NULL but XMLD_QVAL
-with NULL values.
+* xmldclient should contain a username argument. (done)
 
-* xmldclient should contain arguments for username and pass.
+* simplify expr may return NULL, eval_expr must check.
+(done)
 
 * why doesn't the up-level of zero show in the response.
+(done)
 
-* stabilize record set in PROTO and in implementation.
+* col_sep and row_sep come before the values and not 
+after them. (done)
 
 * why does the server segfault just after serving
-up the request -- is it ptasker ?
+up the request. (done)
+
+* fix that a second query isn't sent correctly
+by the client. (done)
+
+* fix interrupted system call on server side on reciving
+of DISCONNECT and correction of a wrong pass.
 
 * fix 
 
@@ -762,6 +767,8 @@ system unreadable).
 * we are using snprintf!
 
 * handle special character decoding in the client.
+
+* Hide the password during input in the client (getch).
 
 *--------------- Start of the OpenXMLD 0.7.0 part:
 

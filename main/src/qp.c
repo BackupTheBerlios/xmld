@@ -82,15 +82,14 @@ void qp_handle(void *conn) {
  
  while (1) {
   work->req=XMLDRequest_create();
-  
   char *query=protoimpl_read_sequence(work->conn->fd, NULL);
   
   if (strcmp(query, DISCONNECTION_MESSAGE) == 0) {
    break;
   }
-  
-  YY_BUFFER_STATE buf=yy_scan_string(query);
+
   printf("%s\n", query);
+  YY_BUFFER_STATE buf=yy_scan_string(query);
   XMLDStatus status=yyparse((void *) work);
   yy_delete_buffer(buf);
   if (status == 1) {
@@ -109,6 +108,7 @@ void qp_handle(void *conn) {
   XMLDResponse_free(work->resp);
   XMLDRequest_free(work->req);
   XMLDList_free(work->files);
+  work->req=work->resp=work->files=NULL;
  }
  xmld_socket_shutdown(work->conn->fd);
  XMLDWork_free(work);

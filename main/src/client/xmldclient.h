@@ -28,7 +28,7 @@ struct conn_info {
  char *up_level_enc;
 };
 
-XMLDStatus xmldclient_auth(int);
+XMLDStatus xmldclient_auth(int, char **, int);
 XMLDStatus xmldclient_process_info_msg(char *, struct conn_info *);
 void xmldclient_print_record_set(char *, struct conn_info *);
 void xmldclient_print_err(char *);

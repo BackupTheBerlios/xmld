@@ -49,6 +49,10 @@ char *resptrans_handle(XMLDWork *work) {
    response[resp_len-1]='\0';
   }
   
+  response=(char *) realloc(response, (++resp_len) * sizeof(char));
+  response[resp_len-2]=row_sep;
+  response[resp_len-1]='\0';
+  
   XMLDList_reset(curr_row->cols);
   while (XMLDList_next(curr_row->cols)) {
    curr_col=(XMLDCol *) XMLDList_curr(curr_row->cols);
@@ -57,13 +61,16 @@ char *resptrans_handle(XMLDWork *work) {
     free(curr_col->val);
     curr_col->val=tmp;
    }
-   resp_len+=((curr_col->val != NULL) ? strlen(curr_col->val) : 0)+1;
-   response=(char *) realloc(response, resp_len*sizeof(char));
-   if (curr_col->val != NULL) {
-    strcat(response, curr_col->val);
-   } 
+   
+   response=(char *) realloc(response, (++resp_len) * sizeof(char));
    response[resp_len-2]=col_sep;
    response[resp_len-1]='\0';
+  
+   if (curr_col->val != NULL) {
+    resp_len+=strlen(curr_col->val);
+    response=(char *) realloc(response, resp_len*sizeof(char));
+    strcat(response, curr_col->val);
+   } 
   }
   
   for (i = 0; i < curr_row->num_up; i++) {
@@ -72,9 +79,6 @@ char *resptrans_handle(XMLDWork *work) {
    response[resp_len-1]='\0';
   }
   
-  response=(char *) realloc(response, (++resp_len) * sizeof(char));
-  response[resp_len-2]=row_sep;
-  response[resp_len-1]='\0';
  }
  return response;
 }

@@ -70,7 +70,7 @@ int main(int argc, char **argv) {
    xmldclient_print_err("An error has occured while processing initialization message");
    continue;
   }
-  status=xmldclient_auth(fd);
+  status=xmldclient_auth(fd, argv, argc);
   if (status == XMLD_FAILURE) {
    xmldclient_free_info(&info);
    xmldclient_print_err("Unable to authenticate user");
@@ -91,40 +91,47 @@ int main(int argc, char **argv) {
     scanf("%c", &curr);
    }
    status=protoimpl_write_sequence(fd, query, 1);
+   free(query);
+   query=NULL;
+   curr_char=0;
    if (status == XMLD_FAILURE) {
     xmldclient_print_err("Unable to send query");
-    free(query);
-    query=NULL;
-    curr_char=0;
     continue;
    }
    curr_msg=protoimpl_read_sequence(fd, &status);
    if (status == XMLD_FAILURE) {
     xmldclient_print_server_err_msg(curr_msg);
     free(curr_msg);
-    free(query);
-    curr_char=0;
     continue;
    }
+   printf("%s\n", curr_msg);
    xmldclient_print_record_set(curr_msg, &info);
    free(curr_msg);
-   free(query);
-   curr_char=0;
   } 
   xmldclient_free_info(&info);
  }
  return 0;
 }
 
-XMLDStatus xmldclient_auth(int fd) {
+XMLDStatus xmldclient_auth(int fd, char **argv, int argc) {
  char *args[1]={USER_NAME_FIELD};
  char *vals[1];
  XMLDStatus stat;
  
+ if (argc > 1) {
+  vals[0]=argv[1];
+ }
+ else {
+  vals[0]=NULL;
+ }
+ 
  while (1) {
-  vals[0]=xmldclient_input_string("User name");
+  if (vals[0] == NULL) {
+   vals[0]=xmldclient_input_string("User name");
+  } 
   char *msg=protoimpl_compose_msg(args, vals, 1, 0);
   free(vals[0]);
+  vals[0]=NULL;
   if (protoimpl_write_sequence(fd, msg, 1) == XMLD_FAILURE) {
    free(msg);
    return XMLD_FAILURE;
@@ -296,22 +303,42 @@ void xmldclient_print_record_set(char *rs, struct conn_info *info) {
  printf(STAR_LINE);
  while (*curr != '\0') {
   if (*curr == info->row_sep) {
-   printf("a");
+   if (curr_col != NULL) {
+    printf("%s\n", curr_col);
+    free(curr_col);
+    curr_col=NULL;
+    curr_col_len=0;
+   } 
+   printf("\n");
    for (i = 0; i < level; i++) {
-    printf("b");
+    printf("\t");
    }
   }
   else if (*curr == info->col_sep) {
+   if (curr_col != NULL) {
+    printf("%s\n", curr_col);
+    free(curr_col);
+    curr_col=NULL;
+    curr_col_len=0;
+   } 
    printf(" ");
-   printf("%s\n", curr_col);
-   free(curr_col);
-   curr_col=NULL;
-   curr_col_len=0;
   }
   else if (*curr == info->down_level) {
+   if (curr_col != NULL) {
+    printf("%s\n", curr_col);
+    free(curr_col);
+    curr_col=NULL;
+    curr_col_len=0;
+   } 
    level++;
   }
   else if (*curr == info->up_level) {
+   if (curr_col != NULL) {
+    printf("%s\n", curr_col);
+    free(curr_col);
+    curr_col=NULL;
+    curr_col_len=0;
+   } 
    level--;
   }
   else {
@@ -322,6 +349,12 @@ void xmldclient_print_record_set(char *rs, struct conn_info *info) {
   }
   curr++;
  }
+ if (curr_col != NULL) {
+  printf("%s\n", curr_col);
+  free(curr_col);
+  curr_col=NULL;
+  curr_col_len=0;
+ } 
  printf(STAR_LINE);
 }
 

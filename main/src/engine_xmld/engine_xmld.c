@@ -105,12 +105,7 @@ int engine_xmld_walk(XMLDWork *work, XMLDFile *file) {
    buf=getc((FILE *) file->data);
    if (buf == '/') {
     file->level--;
-    if (file->level == 0) {
-     return XMLD_WALK_END;
-    }
-    else {
-     return XMLD_WALK_UP;
-    }
+    return XMLD_WALK_UP;
    }
    else {
     fseek((FILE *) file->data, -1, SEEK_CUR);
@@ -120,12 +115,7 @@ int engine_xmld_walk(XMLDWork *work, XMLDFile *file) {
   }
   else if (token == 1) {
    file->level--;
-   if (file->level == 0) {
-    return XMLD_WALK_END;
-   }
-   else {
-    return XMLD_WALK_UP;
-   }
+   return XMLD_WALK_UP;
   }
  }
 }
@@ -149,6 +139,9 @@ char *engine_xmld_eval_expr(XMLDWork *work, XMLDExpr *expr, int level) {
  }
  else {
   XMLDExpr *tmp=engine_xmld_simplify_expr(work, expr, level);
+  if (tmp == NULL) {
+   return NULL;
+  }
   ret=engine_xmld_eval_expr(work, tmp, level);
   XMLDExpr_free(tmp);
   return ret;
@@ -612,9 +605,11 @@ XMLDExpr *engine_xmld_simplify_expr(XMLDWork *work, XMLDExpr *expr, int level) {
    free(tagname);
   
    if (type == NULL) {
-    return NULL;
+    ret=XMLDExpr_create();
+    ret->type = XMLD_QVAL;
+    ret->qval=engine_xmld_get_column_value(expr->file, expr->ident);
    }
-   if (strcasecmp(type, XMLD_TYPE_CHAR) == 0) {
+   else if (strcasecmp(type, XMLD_TYPE_CHAR) == 0) {
     ret=XMLDExpr_create();
     ret->type = XMLD_QVAL;
     ret->qval=engine_xmld_get_column_value(expr->file, expr->ident);
@@ -636,7 +631,9 @@ XMLDExpr *engine_xmld_simplify_expr(XMLDWork *work, XMLDExpr *expr, int level) {
     ret->qval=NULL;
    }
    else {
-    return NULL;
+    ret=XMLDExpr_create();
+    ret->type = XMLD_QVAL;
+    ret->qval=engine_xmld_get_column_value(expr->file, expr->ident);
    }
    free(type);
   } 
