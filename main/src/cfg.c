@@ -13,6 +13,7 @@
 
 #include <stdlib.h>
 #include "xmld_list.h"
+#include "xmld_directive.h"
 #include "cfg_parser.h"
 #include "cfg.h"
 
@@ -21,8 +22,8 @@
  * returns: whether successful.
  */
 short cfg_init() {
- cfg_parser_parse();
- return 1;
+ cfg_tree=NULL;
+ return cfg_parser_parse();
 }
 
 /*
@@ -35,7 +36,25 @@ short cfg_init() {
  * or if an error occured during retrieval.
  */ 
 void *cfg_get(char *key) {
- return (void *) NULL;
+ XMLDDirective *dir=XMLDDirective_search_list_by_name(cfg_tree, key);
+ if (dir == NULL) {
+  return (void *) NULL;
+ }
+ if (dir->type == 0) {
+  return (void *) &dir->value.int_value;
+ }
+ else if (dir->type == 1) {
+  return (void *) dir->value.int_array_value;
+ }
+ else if (dir->type == 2) {
+  return (void *) dir->value.string_value;
+ }
+ else if (dir->type == 3) {
+  return (void *) dir->value.string_array_value;
+ }
+ else {
+  return (void *) NULL;
+ }
 }
 
 /*
