@@ -90,9 +90,22 @@ order to be able to resolve wildcards correctly. (done)
 
 * Every column must have a name:
   * XMLDExpr_to_string: support whatever kind of expressions.
-    XMLD_OPERATION: (done)    
+    XMLD_OPERATION: (done)
+    XMLD_IDENTIFIER: (done)
+    XMLD_SPECIAL_IDENTIFIER:
+    XMLD_FUNCTION:
+    XMLD_WILDCARD:    
   * twalker_simplify_expr: use XMLDExpr_to_string and fill ret->ident.
     XMLD_OPERATION: (done)
+    XMLD_IDENTIFIER:
+    XMLD_SPECIAL_IDENTIFIER:
+    XMLD_FUNCTION:
+    XMLD_WILDCARD:    
+
+* Take alias handling inside XMLDExpr_to_string.
+
+* Should we support all types in XMLDExpr_to_boolean and take them out
+  of twalker_simplify_expr.
 
 * There Ain't No Such Function As XMLDExpr_simplify. (done)
 

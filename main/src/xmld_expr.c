@@ -240,6 +240,10 @@ char *XMLDExpr_to_string(XMLDExpr *expr) {
    strcat(ret, " NOT ");
   }
  }
+ else if (expr->type == XMLD_IDENTIFIER) {
+  ret = (char *) malloc((strlen(expr->ident)+1) * sizeof(char));
+  strcpy(ret, expr->ident);
+ }
  else if (expr->type == XMLD_QVAL) {
   if (expr->qval == NULL) {
    return NULL;

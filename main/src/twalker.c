@@ -973,14 +973,7 @@ XMLDExpr *twalker_simplify_expr(XMLDExpr *expr, XMLDWork *work, int level) {
  else if (expr->type == XMLD_IDENTIFIER) {
   char *type = (*(expr->file->engine->get_attribute_type)) (expr->file, expr->ident);
   ret = XMLDExpr_create();
-  if (expr->alias == NULL) {
-   ret->ident = (char *) malloc((strlen(expr->ident)+1) * sizeof(char));
-   strcpy(ret->ident, expr->ident);
-  }
-  else {
-   ret->ident = (char *) malloc((strlen(expr->alias)+1) * sizeof(char));
-   strcpy(ret->ident, expr->alias);
-  }
+  ret->ident = XMLDExpr_to_string(expr);
   ret->qval=(*(expr->file->engine->get_attribute)) (expr->file, expr->ident);
   XMLDExpr_apply_type(ret, type);
   free(type);
