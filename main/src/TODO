@@ -5,6 +5,14 @@
 
   * XMLDContext: to represent a thread/process for the
     mtasker. (with usage of XMLDList instead of proc
-    table).
+    table). (cancelled, because it won't be used
+    of the mtasker itself)
 
 * Use XMLDList (of XMLDConnection) in sosel.
+* Create a hash table implementation for places where
+search speed is important (XMLDHashTable), and provide
+APIs in XMLDEngine and XMLDFunc (...?) in that form:
+
+XMLDEngine_create_hashtable(...)
+XMLDEngine_add_to_hashtable(...)
+XMLDEngine_search_hashtable(...)
