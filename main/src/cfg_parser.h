@@ -17,6 +17,7 @@
 XMLDList *cfg_tree; /* list of XMLDDirective */
 
 short cfg_parser_parse();
+void cfg_parser_parse_token(char *, int);
 short cfg_parser_clean();
 
 #endif /* HAVE_CFG_PARSER_H */
