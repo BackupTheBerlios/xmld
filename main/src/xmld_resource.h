@@ -22,13 +22,13 @@ struct XMLDResource {
 
 typedef struct XMLDResource XMLDResource;
 
-XMLDResource *XMLDResource_create(XMLDEngine *, void *);
+XMLDResource *XMLDResource_create(void);
 void XMLDResource_free(XMLDResource *);
 void XMLDResource_free_content(void *);
 
 /* List functions */
 
 XMLDList *XMLDResource_create_list(void);
-XMLDResource *XMLDResource_add_to_list(XMLDList *, XMLDEngine *, void *);
+XMLDResource *XMLDResource_add_to_list(XMLDList *);
 
 #endif /* HAVE_XMLD_RESOURCE_H */

@@ -13,8 +13,22 @@
 
 #include <stdlib.h>
 #include "xmld_list.h"
-#include "xmld_engine.h"
+#include "xmld_col.h"
+#include "xmld_func.h"
+#include "xmld_expr.h"
+#include "xmld_aggr_table.h"
+#include "xmld_cond.h"
+struct XMLDEngine;
+#ifndef XMLDENGINE_TYPE_DEFINED
+#define XMLDENGINE_TYPE_DEFINED
+ typedef struct XMLDEngine XMLDEngine;
+#endif /* XMLDENGINE_TYPE_DEFINED */
 #include "xmld_resource.h"
+#include "xmld_response.h"
+#include "xmld_request.h"
+#include "xmld_connection.h"
+#include "xmld_work.h"
+#include "xmld_engine.h"
 
 /*
  * : Creates a new resource structure.
@@ -23,10 +37,8 @@
  * engine will work.
  * returns: the newly created resource structure.
  */
-XMLDResource *XMLDResource_create(XMLDEngine *engine, void *data_source) {
+XMLDResource *XMLDResource_create() {
  XMLDResource *res=(XMLDResource *) malloc(sizeof(XMLDResource));
- res->engine=engine;
- res->data_source=data_source;
  return res;
 }
 
@@ -44,12 +56,11 @@ void XMLDResource_free(XMLDResource *res) {
  * res: the resource structure whose internal memory is to be freed.
  */
 void XMLDResource_free_content(void *res) {
- /*
-  * Note: data_source isn't freed, should be freed with destroy() of 
-  * the engine, which must have been called before freeing the engine
-  * itself (unless init() of the engine wasn't called).
-  */ 
- XMLDEngine_free(((XMLDResource *) res)->engine);
+/*
+ * Note: data_source isn't freed, should be freed with destroy() of 
+ * the engine, which must have been called before freeing the engine
+ * itself (unless init() of the engine wasn't called).
+ */ 
 }
 
 /*
@@ -67,9 +78,7 @@ XMLDList *XMLDResource_create_list() {
  * list: the list to which the new element is to be added.
  * returns: a pointer to the newly added element.
  */
-XMLDResource *XMLDResource_add_to_list(XMLDList *list, XMLDEngine *engine, void *data_source) {
+XMLDResource *XMLDResource_add_to_list(XMLDList *list) {
  XMLDResource *res=(XMLDResource *) XMLDList_add(list);
- res->engine=engine;
- res->data_source=data_source;
  return res;
 }
