@@ -1,6 +1,6 @@
 Date: Thrusday, 6th of November                       Written by:  Khalid Al-Kary
 
-                             The XMLD Project Guidelines
+                           The OpenXMLD Project Guidelines
 =================================================================================
 
 Table of contents:
@@ -13,33 +13,33 @@ Table of contents:
 =================================================================================
 * Definition:
 -------------
- The XMLD is a native XML database server.
+ The OpenXMLD is a native XML database server.
  
 * General goals:
 ----------------
  * Increase usability of native XML databases.
- * The XMLD will be licenced under the GNU GPL.
+ * The OpenXMLD will be licenced under the GNU GPL.
 
 * Technical goals:
 ------------------
- * The XMLD must implement its own query language defined in the QUERY file.
- * The XMLD must implement its own protocol defined in the PROTOCOL file.
- * The XMLD should be cross-platform (At some point. Initially write it to
+ * The OpenXMLD must implement its own query language defined in the QUERY file.
+ * The OpenXMLD must implement its own protocol defined in the PROTOCOL file.
+ * The OpenXMLD should be cross-platform (At some point. Initially write it to
    facilitate this in the future).
- * The XMLD must parse documents on-disk.
- * The XMLD must provide support for speedy in-memory parsing of documents.
- * The XMLD must provide a plugin architecture.
- * The XMLD project must maintain (or provide the foundation of) a basic C client 
+ * The OpenXMLD must parse documents on-disk.
+ * The OpenXMLD must provide support for speedy in-memory parsing of documents.
+ * The OpenXMLD must provide a plugin architecture.
+ * The OpenXMLD project must maintain (or provide the foundation of) a basic C client 
    library.
- * The XMLD xml processors should be splittable.
- * The XMLD must be easy to use.
- * The XMLD mustn't hide any of XML's data storage capabilities.
+ * The OpenXMLD xml processors should be splittable.
+ * The OpenXMLD must be easy to use.
+ * The OpenXMLD mustn't hide any of XML's data storage capabilities.
  * As performant as possible. (least processing time, least memory consumption po-
    ssible)
 
 * Management:
 -------------
- * The XMLD will contain a PARTS document which will contain a list of the parts 
+ * The OpenXMLD will contain a PARTS document which will contain a list of the parts 
    forming it (e.g Query parser)
  * Every part will have a separate README document (README.<part>), everyone working in that
    part should read this document first.
