@@ -16,6 +16,7 @@
 #include "somanager.h"
 #include "sosel.h"
 #include "init.h"
+#include "engine_list.h"
 
 struct xmld_part parts[4];
 short status;
@@ -26,7 +27,8 @@ int main() {
  xmld_create_part(&parts[1], mtasker_init, mtasker_shutdown);
  xmld_create_part(&parts[2], somanager_init, somanager_shutdown);
  xmld_create_part(&parts[3], sosel_init, sosel_shutdown);
- 
+ xmld_create_part(&parts[4], engine_list_init, engine_list_shutdown);
+
  for (i=0;i<4;i++) {
   status=(*(parts[i].init_func))();
   if (status!=0) {
@@ -37,7 +39,7 @@ int main() {
    parts[i].ok=1;
   }
  }
- return XMLD_SUCCESS;
+ return 0;
 }
 
 void init_create_part(struct xmld_part *part, short (*init_func) (void), short (*shutdown_func) (void)) {
