@@ -12,6 +12,7 @@
  */
 
 #include <stdlib.h>
+#include <string.h>
 #include <sys/types.h>
 #include <stdio.h>
 #include <errno.h>
@@ -92,7 +93,7 @@ short cfg_parser_parse() {
      }
     }
     else if (mode == 3) {
-     else if (buf == ';') {
+     if (buf == ';') {
       cfg_parser_parse_token(curr_data, 3);
       ign_ws=1;
       mode=0;
@@ -110,15 +111,46 @@ short cfg_parser_parse() {
      }
     }
    }
-  }
- 
+  } 
  }
+ return 1;
 }
 
 /*
  * : A small parser to parse tokens extracted by cfg_parser_parse.
+ * returns: whether successful.
  */
 void cfg_parser_parse_token(char *token, short mode) {
+ if (cfg_tree == NULL) {
+  cfg_tree=XMLDDirective_create_list();
+ }
+ XMLDDirective *curr_dir;
+ if (mode == 0) {
+  curr_dir=XMLDDirective_add_to_list(cfg_tree);
+  XMLDList_next(cfg_tree);
+  if (strcmp(token, "int") == 0) {
+   curr_dir->type=0;
+  }
+  else if (strcmp(token, "int*") == 0) {
+   curr_dir->type=1;
+  }
+  else if (strcmp(token, "char*") == 0) {
+   curr_dir->type=2;
+  }
+  else {
+   curr_dir->type=-1;
+  }
+ }
+ if (mode == 1) {
+  curr_dir=(XMLDDirective *) XMLDList_curr(cfg_tree);
+  if (curr_dir->type==-1) {
+   return;
+  }
+  else {
+   curr_dir->name=(char *) malloc(strlen(token)*sizeof(char));
+   strcpy(curr_dir->name, token);   
+  }
+ }
 }
 
 /*
