@@ -86,7 +86,8 @@ that with cfg_get_engine, such that if an engine
 for the given file wasn't found, mfigurer is used
 to figure out the mime type of that file, and cfg_
 get_engine finally returns the value returned by
-cfg_get_mime_engine.
+cfg_get_mime_engine. (done -- as a skeleton that
+always returns "text/xml" (for now!))
 
 * Add a field to XMLDRequest that carries the full
 file name + path from the root in order to use it
