@@ -30,6 +30,8 @@ struct XMLDEngine;
 #include "xmld_connection.h"
 #include "xmld_work.h"
 #include "xmld_engine.h"
+#include "cfg.h"
+#include "engine_list.h"
 #include "twalker.h"
 
 short twalker_handle(XMLDWork *work) {
@@ -37,10 +39,25 @@ short twalker_handle(XMLDWork *work) {
  /* this if() may need to contain other values for type such as
   * SELECT + SORT */
  if (work->req->type == 0) { /* a SELECT query */
+  work->res=XMLDResource_create();
+  
+  char *full_file=XMLDWork_get_full_file(work);
+  work->res->engine=XMLDEngine_search_list_by_name(engine_list, cfg_get_engine(full_file));
+  free(full_file);
+  
+  if (work->res->engine == NULL) {
+   xmld_errno=XMLD_ENOENGINE;
+   return -1;
+  }
+  
+  if (((*(work->res->engine->prepare)) (work)) == 0) {
+   xmld_errno=XMLD_EPREPAREFAIL;
+   return -1;
+  }
+  
   XMLDExpr *curr_retr;
-  XMLDCond *curr_cond;
   work->resp=XMLDResponse_create();
-  curr_retr=work->req->retr[0];
+  curr_retr=(XMLDExpr *) XMLDList_first(work->req->retr);
   while ((status=(*(work->res->engine->walk)) (work)) != -1) {
    XMLDResponse_add_row(work->resp);
    while (curr_retr != 0) {
@@ -58,10 +75,10 @@ short twalker_handle(XMLDWork *work) {
    XMLDResponse_aggr_next(work->resp);
   }
   XMLDList_free(work->resp->tables);
+  (*(work->res->engine->cleanup)) (work);
  }
  if (work->req->type==1) { /* a SELECT + WHERE query */
   /* to be continued */
  }
- (*(work->res->engine->cleanup)) (work);
  return 0;
 };
