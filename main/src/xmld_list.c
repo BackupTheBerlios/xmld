@@ -61,9 +61,9 @@ void *XMLDList_add(XMLDList *list) {
  }
  else {
   void *lcontent=list->content;
-  list->content=realloc(list->content, (list->last_element - lcontent + 2)*list->item_size);
-  list->last_element=list->content + (list->last_element - lcontent + 1);
-  if (list->curr_element != 0) {
+  list->content=realloc(list->content, (((list->last_element - lcontent) / list->item_size) + 2*list->item_size)*list->item_size);
+  list->last_element=list->content + (list->last_element - lcontent + list->item_size);
+  if (list->curr_element != NULL) {
    list->curr_element=list->content + (list->curr_element - lcontent);
   }
   return list->last_element;
@@ -97,12 +97,12 @@ short XMLDList_next(XMLDList *list) {
  if (list->curr_element == list->last_element) {
   return 0;
  }
- else if (list->curr_element == 0) {
+ else if (list->curr_element == NULL) {
   list->curr_element=list->content;
   return 1;
  }
  else {
-  list->curr_element++;
+  list->curr_element+=list->item_size;
   return 1;
  } 
 }
@@ -116,12 +116,12 @@ short XMLDList_prev(XMLDList *list) {
  if (list->curr_element == list->content) {
   return 0;
  }
- else if (list->curr_element == 0) {
+ else if (list->curr_element == NULL) {
   list->curr_element = list->last_element;
   return 1;
  }
  else {
-  list->curr_element--;
+  list->curr_element-=list->item_size;
   return 1;
  }
 }
