@@ -51,6 +51,7 @@ struct XMLDCond {
 typedef struct XMLDCond XMLDCond;
 
 XMLDCond *XMLDCond_create(void);
+void XMLDCond_copy(XMLDCond *, XMLDCond *);
 void XMLDCond_free(XMLDCond *);
 void XMLDCond_free_content(void*);
 
