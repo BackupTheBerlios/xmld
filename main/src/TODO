@@ -88,9 +88,18 @@ to figure out the mime type of that file, and cfg_
 get_engine finally returns the value returned by
 cfg_get_mime_engine.
 
-* Add a filed to XMLDRequest that carries the full
+* Add a field to XMLDRequest that carries the full
 file name + path from the root in order to use it
-easily in fmanager (full_file).
+easily in fmanager (full_file). (cancelled)
+
+* Instead of using full_file and consuming memory
+in XMLDRequest, create a function of XMLDWork
+-- XMLDWork_get_full_file, which concatenates
+curr_dir of XMLDConnection with file of XMLDRequest.
+(done)
 
 * Create the engine_list global variable in a sepa
 rate module file.
+
+* Replace usage of xmld_types.h every where with
+the new structures of the object-oriented foundation.
