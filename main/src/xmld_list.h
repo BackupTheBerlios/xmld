@@ -17,7 +17,8 @@
 struct XMLDList {
  void *content;
  void *last_element;
- void *curr_element; 
+ void *curr_element;
+ int item_size;
 };
 
 typedef struct XMLDList XMLDList;
