@@ -136,11 +136,34 @@ order to be able to resolve wildcards correctly. (done)
  * twalker (Remove initial privilege checking) (done)
  * XMLDFile (store the priv of each file inside it) (done)
  * twalker_simplify_expr (Check the privileges of a file 
- to which a column is associated on each operation)
+ to which a column is associated on each operation) (done)
 
  * There shouldn't be a XMLD_ACCESS_NOTHING we can't limit
    usage of format files. (done)
  
+ * Support for multiple query parsers and switching of parsers
+   on the fly:
+   * XMLDInterface structure. (done)
+   * Stabilize the new Interface model.
+   * Create the interface_list part.
+   * Should each interface has its own listening port ?
+     * somanager should check the interface list for ports.
+     * xmld.conf should contain that as well.
+     * XMLDWork should contain a field containing the desired
+       interface to use.
+   * Put XMLD-SQL parser into a separate directory.
+   * resptrans, twalker [... ?] must be put inside the interface.
+   * XMLDWork must contain a void* field like that of XMLDFile
+     to contain per-request request/response information.
+   * Change the request handling model - shouldn't be called qp.c
+     anymore and should play with the interfaces just after authe-
+     ntication.
+   * Interfaces can handle new connections and disconnections.
+   * [...]
+ 
+* Try to use generic naming in engine functions. (with specific
+  engine correspondants ?)
+
 * Response must contain a record set header (update PROTO).
 
 --- Features:
