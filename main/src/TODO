@@ -23,18 +23,6 @@ where and use int (such that 0 = success, -1 = error
 and other numbers mean special return values) instead.
 (done)
 
-* Create a hash table implementation for places where
-search speed is important (XMLDHashTable), and provide
-APIs in XMLDEngine and XMLDFunc (...?) in that form:
-
-XMLDEngine_create_hashtable(...)
-XMLDEngine_add_to_hashtable(...)
-XMLDEngine_search_hashtable(...)
-
-* Rewrite the query parser (xmld-sql.y) to [1] fit the 
-new query specification and [2] to respect the object-
-oriented foundation.
-
 * Add a name field to XMLDEngine. This should normally
 involve creation of a function that searches a list
 of XMLDEngine's by name. (done)
@@ -55,11 +43,6 @@ the list of XMLDEngine's which serve the requests.
 must be strlen+1->malloc->strcpy, because strlen doesn't
 count the null character. (done)
 
-* Check all the code for realloc() while iterators are
-on the realloc'd memory segment. These iterators must
-be updated for realloc may change the address of the
-realloc'd segment.
-
 * Fix usage of cfg in all the parts that currently
 use it incorrectly: sosel, somanager, mtasker. (done)
 
@@ -72,18 +55,6 @@ fmanager. (done)
 
 * Remove usage of XMLDMemPool from qp, and check
 for usage of it in other parts. (done)
-
-* Implement ERROR_RESPONSE such that it depends
-on a variable (e.g xmld_errno, in file xmld_errors
-.h). (done)
-
-* Use ERROR_RESPONSE instead of perror and other
-error reporting routines, and make sure that
-all the code sets xmld_errno appropriately.
-remember to include xmld_sockets.h each time
-you include xmld_errors.h. (done)
-
-* Remove/Secure usage of SIGUSR1 in mtasker.
 
 * Add a MIME figurer part (mfigure) which det-
 rmines the mime type of a given file, and
@@ -121,6 +92,8 @@ in:
  - XMLDResource (fmanager?) (done)
  - XMLDRow (XMLDResponse) (done)
  - XMLDAggrTable (XMLDResponse) (done)
+
+--------- Start of The OpenXMLD 0.4.0 part:
 
 * Implement XMLDResponse_flush which sends the response
 contents as string chunks to the fd of the listener
@@ -165,7 +138,7 @@ cfg_parser_parse, and in cfg_get. (done)
 * sosel should read MULTI_PROC_MTASKER to decide whether
 to use a shared memory segment for storing connection
 information and whether to obey the sosel.max_conn
-configuration option.
+iconfiguration option.
 
 * Find a good way of reporting out-of-request errors.
 
@@ -179,3 +152,55 @@ twalker) (done)
 
 * Implement XMLDResponse_curr_col/row which returns the current column/row.
 (done)
+
+* Remove/Secure usage of SIGUSR1 in mtasker.
+
+* Create a hash table implementation for places where
+search speed is important (XMLDHashTable), and provide
+APIs in XMLDEngine and XMLDFunc (...?) in that form:
+
+XMLDEngine_create_hashtable(...)
+XMLDEngine_add_to_hashtable(...)
+XMLDEngine_search_hashtable(...)
+
+* Rewrite the query parser (xmld-sql.y) to [1] fit the 
+new query specification and [2] to respect the object-
+oriented foundation.
+
+* Check all the code for realloc() while iterators are
+on the realloc'd memory segment. These iterators must
+be updated for realloc may change the address of the
+realloc'd segment.
+
+* Implement ERROR_RESPONSE such that it depends
+on a variable (e.g xmld_errno, in file xmld_errors
+.h). (done)
+
+* Use ERROR_RESPONSE instead of perror and other
+error reporting routines, and make sure that
+all the code sets xmld_errno appropriately.
+remember to include xmld_sockets.h each time
+you include xmld_errors.h. (done)
+
+* Implement Engine-XMLD !!!
+
+* Add a 'level' member to XMLDResource.
+
+* Add a 'return_type' member to XMLDFunc.
+
+* Make multiple function containers in
+XMLDFunc that depend on return_type.
+
+* Implement func_list like engine_list.
+
+* Aggregate expression resolution must
+be redone with each iteration over new
+elements, using the type of the expre-
+sion to decide the way of merging with
+the value currently put in the columns.
+
+* Add the 'store' element to XMLDResou-
+rce.
+* short return values that indiciate
+success/failure must use 0 for failure
+and 1 for success in all the code.
