@@ -59,6 +59,9 @@ FILE *engine_xmld_load_format_file(char *full_file, XMLDBool ex) {
  */
 int engine_xmld_get_element_att_length(FILE *fd, int level, char *tagname, char *attribute) {
  char *format=engine_xmld_get_element_att_format(fd, level, tagname, attribute);
+ if (format == NULL) {
+  return 0;
+ }
  char *stroke=strchr(format, '|');
  *stroke='\0';
  int ret;
@@ -72,6 +75,9 @@ int engine_xmld_get_element_att_length(FILE *fd, int level, char *tagname, char 
  */ 
 char *engine_xmld_get_element_att_type(FILE *fd, int level, char *tagname, char *attribute) {
  char *format=engine_xmld_get_element_att_format(fd, level, tagname, attribute);
+ if (format == NULL) {
+  return NULL;
+ } 
  char *stroke=strchr(format, '|');
  strcpy(format, stroke+1);
  format[strlen(stroke+1)]='\0';
@@ -80,31 +86,68 @@ char *engine_xmld_get_element_att_type(FILE *fd, int level, char *tagname, char 
 }
 
 /*
- * Gets the attribute barely other functions use either the type
- * or the length.
+ * Gets the attribute barely. Other functions use either the type
+ * or the length. (attribute form: attname="length|type").
  */ 
 char *engine_xmld_get_element_att_format(FILE *fd, int level, char *tagname, char *attribute) {
- char *tokens[]={"<", "/>", "</"};
+ char *tokens[]={"<level>", "</level>"};
  int curr_level=0;
+ XMLDBool proceed=XMLD_FALSE;
+ fpos_t pos;
+ int tok;
+ 
  while (1) {
-  int tok=dmstrstr(fd, tokens, 3);
+  fgetpos(fd, &pos);
+  tok=dmstrstr(fd, tokens, 3);
   if (tok == -1) {
    return NULL;
   }
   else if (tok == 0) {
    curr_level++;
+   if (curr_level == level) {
+    proceed = XMLD_TRUE;
+   }
   }
-  else if (tok == 1 || tok == 2) {
+  else if (tok == 1) {
+   fsetpos(fd, &pos);
+   proceed = XMLD_TRUE;
    curr_level--;
   }
-  if (curr_level == level) {
+  if (proceed) {
    char *tname=str_prepend(tagname, "<");
-   char *tokens2[1];
+   char *tokens2[2];
    tokens2[0]=tname;
-   dmstrstr(fd, tokens2, 1);
-   free(tname);
-   engine_xmld_locate_att(fd, attribute);
-   return engine_xmld_get_curr_att_value(fd);
+   tokens2[1]="</level>";
+   tok=dmstrstr(fd, tokens2, 2);
+   if (tok == 0) {
+    free(tname);
+    if (engine_xmld_locate_att(fd, attribute)) {
+     return engine_xmld_get_curr_att_value(fd);
+    }
+    else {
+     return NULL;
+    }
+   }
+   else {
+    fsetpos(fd, &pos);
+    free(tname);
+    tname=str_prepend("!", "<");
+    tokens2[0]=tname;
+    tok=dmstrstr(fd, tokens2, 2);
+    if (tok == 0) {
+     free(tname);
+     if (engine_xmld_locate_att(fd, attribute)) {
+      return engine_xmld_get_curr_att_value(fd);
+     }
+     else {
+      return NULL;
+     }
+    }
+    else {
+     free(tname);
+     return NULL;
+    }
+   }
   }
  } 
 }

@@ -52,7 +52,7 @@ age-1
 Aggregate Expression (agr_expr):
 --------------------------------
 An aggregate expression is identically a scalar expression
-with the exceptions that it can contain aggregate functions.
+with the exception that it can contain aggregate functions.
  
 From my understanding, an aggregate function is a function whose
 value depends on more than one element, so the XML processor 
@@ -85,7 +85,8 @@ The Conditional:
 ----------------
 A conditional statement:
 
- expr <condition> expr
+[1] expr <condition> expr
+[2] ! (void condition)
 
 Ofcourse, expr can be either scalar or aggregate, in which cases
 the conditional would be called a scalar conditional (sc_cond) 
@@ -101,6 +102,10 @@ condition can be:
  [*] LIKE
  [*] BETWEEN
  [*] NOT BETWEEN
+
+A void condition (represented by the single exclamation mark '!') is
+used to maintain an always true condition. The use of that one is 
+to be discussed later (in Multi-level conditionals).
 
 Conditional Negation:
 ---------------------
@@ -151,6 +156,12 @@ Scalar:
 
 Aggregate:
 count(*)=5 : count(name)=7
+
+Usage of void conditions: You may need to defined a condition for
+a particular level, while keeping the level before it be selected
+unconditionally, the case in which you will need to use the void 
+condition (!) to keep the order while maintaining the right semantic
+of an "Always true" condition.
 
 Assignment:
 -----------

@@ -388,8 +388,6 @@ must be encoded before sending by XMLDResponse_flush.
 
 * Implement mstrchr_replace. (done)
 
-* Handle quotes inside strings in xmld-sql.lex
-
 * cfg_parser must handle # inside values correctly,
 that is, # must mean commenting only if it was at 
 the beginning of the line. (done)
@@ -400,9 +398,6 @@ the beginning of the line. (done)
 * Implement the DISCONNECT query in xmld-sql.y and remeber
 to close the client socket. (done)
 
-* Fix xmld_socket_accept: Interupted system call on DISC
-ONNECT.
-
 * XMLDExpr must contain a floating-point type (e.g double).
 Support that in xmld-sql.(lex|y).
 (done)
@@ -412,17 +407,6 @@ itoa (both using ctype.h).
 
 * Convert nval back to int. in xmld-sql.lex, xmld-sql.y
 XMLDExpr. (done)
-
-* Make sure that mtasker_handle_idle is called whensever
-a child is no longer busy, and install a semaphore on ttable
-if you are going to handle it in any process.
-
-* Implement read buffering in dutils.
-
-* Add a number of SQL functions in func_list and create a dir-
-ectory "functions" for them.
-
-* Remove/Secure usage of SIGUSR1 in ptasker.
 
 * Remove engine_xmld_get_element_text_length use
 att_length with (text) instead. (done)
@@ -439,15 +423,9 @@ levels. (done)
 be a binary 0 no execlusive to format or 1 execlusive
 to format. (done)
 
-* Engine-XMLD must be rewritten with consideration of
-[1] availablity of column types [2] access levels.
-[3] type and access level enumerations. [4] the new
-float type [5] nval -> back to int. [6] the change
-in format_manip's load_format_file.
-
 * All lists of numeric --> meaning association in all
 structures/functions must be converted to correspon-
-ding enumerations/macros.
+ding enumerations/macros. (done)
 
 * The access level given to prepare must be defined
 as macros of three bits OR'ing them gives a proper
@@ -460,8 +438,8 @@ and twalker. (done)
 
 * Add XMLD_ENOFORMAT to xmld_errors.(h/c). (done)
 
-* All success/failure -> back to int. and XMLD_SUCCESS
-and XMLD_FAILURE and XMLD_SPECIAL.
+* All success/failure -> back to int (XMLD_SUCCESS
+, XMLD_FAILURE and XMLD_SPECIAL).
 
 * XMLDDirective now has type macros change cfg_parser
 to conform. (done)
@@ -477,39 +455,97 @@ bitmask. (done)
 * engine_xmld_prepare doesn't use BIT_ISSET correctly
 (done)
 
-* in cfg_parser convert mode to macros
-
-* Specify a (in and out) query header format and 
-create header manipulation functions.
-
-* Add the header_length configuration option.
-
-* XMLDResponse_flush must send header information
-(message length and status code) to the user
-before sending the message. using header manipula
-tion functions. (headmanip part).
-
-* The server must send internal header length config
-option value to the user just when the connection
-is initialized.
-
-* The user must respond with authentication 
-information. (user name) then password.
-
-* Add authentication support and an authman part.
-
-* Multiple query parsers support and on-the-fly query
-parser switching.
-
-* Implement multiple files support, and expression->
-file association.
+* in cfg_parser convert mode to macros (done)
 
 * format_manip's load_format_file must return a pointer
 to the opened file rather than a status indiciator
 and NULL in case of failure (fix prepare to conform).
+(done)
 
-* XMLD_TRUE and XMLD_FALSE and XMLDBool type and take
-all to xmlddef.h.
+* define XMLD_TRUE, XMLD_FALSE, XMLDBool type, 
+XMLD_SUCCESS, XMLD_FAILURE, XMLD_SPECIAL and 
+BIT_ISSET and take all to xmlddef.h. (done)
+
+* move contents of xmld_errors -> xmlddef (done)
+
+* #include bitutils.h and xmld_errors.h -> 
+#include xmlddef.
+
+* Use global XMLD_* macros everywhere.
+
+* If the level in question given to one of 
+format_manip functions is higher than the actual
+levels in the format document, the last level
+must be considered infinite. Add that a level
+is represented by a "<level>" element in the
+format document. (done)
+
+* The format document must support a <!>
+tagname format in each level, that is -- if
+no corresponding tagname was found, default
+is used. (done)
+
+* engine_xmld_get_element_att_format when
+returns NULL other format manip should
+return 0 or NULL as well, higher level
+functions must produce an XMLD_EMALFORMAT
+error. (done)
+
+* Check for tagname/attribute name conflict
+if both are the same, should it cause
+problems ? (in locate_att).
+
+* Add void conditions to QUERY.html (done)
+
+* Specify and fully implement a communication protocol.
+
+* Add authentication support and an authman part.
+
+* Handle quotes inside strings in xmld-sql.lex
+
+* Implement read buffering in dutils.
+
+* Make sure that mtasker_handle_idle is called whensever
+a child is no longer busy, and install a semaphore on ttable
+if you are going to handle it in any process.
+
+* Remove/Secure usage of SIGUSR1 in ptasker.
+
+* Fix xmld_socket_accept: Interupted system call on DISC
+ONNECT.
+
+* Implement multiple files support, and expression->
+file association.
+
+* Multiple query parsers support and on-the-fly query
+parser switching.
+
+* Engine-XMLD must be rewritten with consideration of
+[1] availablity of column types [2] access levels.
+[3] type and access level enumerations. [4] the new
+float type [5] nval -> back to int. [6] store+1 poin
+ts out availbility of format file. [7] the major
+changes in simplify_expr. [8] Multiple file support
+and expression -> file association. [9] that format
+manipulation functions may return NULL or 0 (issue
+XMLD_EMALFORMAT in that case. [10] Multiple
+query parsers support.
+
+* Define and implement the exec_assign engine
+function, implement the UPDATE and UPDATE with
+WHERE request types in twalker.
+
+* Implement CREATE TABLE/FILE (with all the hard
+meanings such a word should carry -- requires
+expansion of QUERY.html).
+
+* Add a number of SQL functions in func_list and create a dir-
+ectory "functions" for them.
+
+* Add the file/engine association document, and mime/engine
+association document, and implement cfg functions that
+play with them.
+
 --------------- Start of The OpenXMLD 0.6.0 part:
 
 Goal: PUMP the features in it!
@@ -518,8 +554,7 @@ Goal: PUMP the features in it!
 and specify the corresponding engine functions
 and implement them in Engine-XMLD.
 
-* Expand QUERY.html and implement it accordingly
-(especially CREATE FILE/TABLE).
+* Expand QUERY.html and implement it accordingly.
 
 * Implement alphabetical comparsion in str_between.
 (check the GNU C Library documentation for "Searching
@@ -539,10 +574,6 @@ APIs in XMLDEngine and XMLDFunc (...?) in that form:
 XMLDEngine_create_hashtable(...)
 XMLDEngine_add_to_hashtable(...)
 XMLDEngine_search_hashtable(...)
-
-* Add the file/engine association document, and mime/engine
-association document, and implement cfg functions that
-play with them.
 
 *--------------- Start of The OpenXMLD 0.7.0 part:
 

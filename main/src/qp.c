@@ -14,8 +14,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "xmlddef.h"
 #include "xmld_sockets.h"
-#include "xmld_errors.h"
 #include "xmld_list.h"
 #include "xmld_col.h"
 #include "xmld_row.h"
@@ -49,7 +49,6 @@ struct XMLDEngine;
  #undef MULTI_THREAD_MTASKER
 #endif /* USE_PTASKER */
 
-#include <sys/socket.h> /* remove that when you are done */
 struct yy_buffer_state;
 typedef struct yy_buffer_state *YY_BUFFER_STATE;
 YY_BUFFER_STATE yy_scan_string(const char *);
@@ -69,7 +68,7 @@ void qp_handle(void *conn) {
   char *query=xmld_socket_read(work->conn->fd);
   YY_BUFFER_STATE buf=yy_scan_string(query);
   printf("%s\n", query);
-  int status=yyparse((void *) work);
+  XMLDStatus status=yyparse((void *) work);
   yy_delete_buffer(buf);
   if (status == 1) {
    ERROR_RESPONSE;
@@ -78,7 +77,7 @@ void qp_handle(void *conn) {
   }
   
   free(query);
-  status=twalker_handle(work);
+  status = twalker_handle(work);
   if (status == XMLD_SPECIAL) {
    xmld_socket_write(work->conn->fd, "Disconnected");
    xmld_socket_shutdown(work->conn->fd);

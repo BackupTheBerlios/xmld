@@ -58,6 +58,8 @@ int main() {
  }
  
  printf("The OpenXMLD is up and running:\n\t* PID: %d\n", getpid());
+ 
+ /* Error Messages */
  err_str[0]="The request file couldn't be opened.";
  err_str[1]="The given engine does not exist.";
  err_str[2]="Invalid file type.";
@@ -65,6 +67,8 @@ int main() {
  err_str[4]="An error has occured while parsing the given query.";
  err_str[5]="The given query is not yet implemented.";
  err_str[6]="Couldn't open a description file for the request file.";
+ err_str[7]="Mal-formed description file for the request file.";
+ 
  init_create_part(&parts[0], cfg_init, cfg_shutdown);
  init_create_part(&parts[1], engine_list_init, engine_list_shutdown);
  init_create_part(&parts[2], func_list_init, func_list_shutdown);

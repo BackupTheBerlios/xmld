@@ -36,9 +36,10 @@ enum xmld_error {
  XMLD_ENOAGGR,
  XMLD_EPARSE,
  XMLD_ENOTIMPL,
- XMLD_ENOFORMAT
+ XMLD_ENOFORMAT,
+ XMLD_EMALFORMAT
 } xmld_errno;
 
-char *err_str[7];
+char *err_str[8];
 
 #endif /* __XMLDDEF_H */

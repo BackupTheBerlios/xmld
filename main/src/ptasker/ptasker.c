@@ -20,7 +20,7 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <stdio.h>
-#include "../xmld_errors.h"
+#include "../xmlddef.h"
 #include "../cfg.h"
 #include "../passfd.h"
 #include "ptasker.h"
@@ -36,7 +36,7 @@ int init_proc;
 int max_proc;
 int max_idle_proc;
 
-int mtasker_init() {
+XMLDStatus mtasker_init() {
  int i;
  struct sigaction action;
  action.sa_handler=mtasker_handle_idle;
@@ -55,7 +55,7 @@ int mtasker_init() {
  max_idle_proc=*((int *) cfg_get("mtasker.max_idle_proc"));
 
  if (init_proc > max_proc) {
-  init_proc=max_proc;
+  init_proc = max_proc;
  }
  
  key_t tablekey=ftok("xmld.c",'X');
@@ -83,7 +83,11 @@ int mtasker_init() {
   table->num++;
   table->children[i].pid=-1;
   table->children[i].fd=-1;
-    
+  table->children[i].func=NULL;
+  table->children[i].data=NULL;
+  table->children[i].busy=XMLD_FALSE;
+  table->children[i].die=XMLD_FALSE;
+      
   if(socketpair(PF_UNIX, SOCK_STREAM, 0, table->children[i].sp) != 0) {
    table->children[i].pid=0;
    perror("mtasker_spawn");
@@ -97,27 +101,27 @@ int mtasker_init() {
    mtasker_shutdown();
    return XMLD_FAILURE;
   }
-  else if (curr_pid==0) {
+  else if (curr_pid == 0) {
    table->children[i].pid=getpid();
    signal(SIGCHLD, SIG_IGN);
    
    while (1) {
-    if (table->children[i].func != 0) {
+    if (table->children[i].func != NULL) {
      if (table->children[i].fd != -1) {
       passed_fd=recvfd(table->children[i].sp[1]);
      }
      (*(table->children[i].func))(table->children[i].data);
-     table->children[i].busy=0;
-     table->children[i].func=0;
-     table->children[i].data=0;
+     table->children[i].busy=XMLD_FALSE;
+     table->children[i].func=NULL;
+     table->children[i].data=NULL;
      table->children[i].fd=-1;
      table->num_busy--;
      kill(getppid(), SIGUSR1);
     } 
-    if (table->children[i].die==1) {
+    if (table->children[i].die == XMLD_TRUE) {
      table->children[i].pid=0;
      table->num--;
-     table->children[i].die=0;
+     table->children[i].die=XMLD_FALSE;
      break;
     }
    }
@@ -126,7 +130,7 @@ int mtasker_init() {
  }
  return XMLD_SUCCESS;
 }
-int mtasker_shutdown() {
+XMLDStatus mtasker_shutdown() {
  int i;
  for (i = 0; i < max_proc; i++) {
   shutdown(table->children[i].sp[0], 2);
@@ -134,17 +138,17 @@ int mtasker_shutdown() {
   if (table->children[i].pid != 0) {
    kill(table->children[i].pid, SIGTERM);
   } 
-  table->children[i].die=1;
+  table->children[i].die = XMLD_TRUE;
  }
  free(ttable.tasks);
  return XMLD_SUCCESS;
 }
-int mtasker_handle(void (*func) (void *), void *data, int fd) {
+XMLDStatus mtasker_handle(void (*func) (void *), void *data, int fd) {
  int i;
  struct proc *use_proc;
  if (table->num > table->num_busy) {
-  for (i=0;i<max_proc;i++) {
-   if (table->children[i].busy == 0 && table->children[i].pid != 0) {
+  for (i = 0; i < max_proc; i++) {
+   if (table->children[i].busy == XMLD_FALSE && table->children[i].pid != 0) {
     use_proc=&table->children[i];
     break;
    }
@@ -164,13 +168,13 @@ int mtasker_handle(void (*func) (void *), void *data, int fd) {
   }
  }
 
- if (use_proc!=0) {
+ if (use_proc != 0) {
   use_proc->func=func;
   use_proc->data=data;
   if (fd != -1 && sendfd(use_proc->sp[0], fd)) {
    use_proc->fd=fd;
   } 
-  use_proc->busy=1;
+  use_proc->busy = XMLD_TRUE;
   table->num_busy++;
   return XMLD_SUCCESS;
  }
@@ -181,7 +185,7 @@ int mtasker_handle(void (*func) (void *), void *data, int fd) {
 
 struct proc *mtasker_spawn() {
  int i;
- if (table->num > max_proc) {
+ if (table->num >= max_proc) {
   return NULL;
  }
  else {
@@ -190,6 +194,10 @@ struct proc *mtasker_spawn() {
     table->num++;
     table->children[i].pid=-1;
     table->children[i].fd=-1;
+    table->children[i].func=NULL;
+    table->children[i].data=NULL;
+    table->children[i].busy=XMLD_FALSE;
+    table->children[i].die=XMLD_FALSE;
     
     if(socketpair(PF_UNIX, SOCK_STREAM, 0, table->children[i].sp) != 0) {
      table->children[i].pid=0;
@@ -198,31 +206,31 @@ struct proc *mtasker_spawn() {
     }
     curr_pid=fork();
     
-    if (curr_pid==-1) {
+    if (curr_pid == -1) {
      table->children[i].pid=0;
      perror("mtasker_spawn");
      return NULL;
     }
-    else if (curr_pid==0) {
+    else if (curr_pid == 0) {
      table->children[i].pid=getpid();
      signal(SIGCHLD, SIG_IGN);
      
      while (1) {
-      if (table->children[i].func!=0) {
+      if (table->children[i].func != NULL) {
        if (table->children[i].fd != -1) {
         passed_fd=recvfd(table->children[i].sp[1]);
        }
        (*(table->children[i].func))(table->children[i].data);
-       table->children[i].busy=0;
-       table->children[i].func=0;
-       table->children[i].data=0;
+       table->children[i].busy=XMLD_FALSE;
+       table->children[i].func=NULL;
+       table->children[i].data=NULL;
        table->children[i].fd=-1;
        table->num_busy--;
        kill(getppid(), SIGUSR1);
       } 
-      if (table->children[i].die==1) {
+      if (table->children[i].die == XMLD_TRUE) {
        table->children[i].pid=0;
-       table->children[i].die=0;
+       table->children[i].die=XMLD_FALSE;
        table->num--;
        break;
       }
@@ -239,9 +247,9 @@ struct proc *mtasker_spawn() {
 void mtasker_kill(int num_proc) {
  int i;
  int killed_proc=0;
- for (i=0;i<max_proc;i++) {
-  if (table->children[i].busy != 1 && table->children[i].pid != 0) {
-   table->children[i].die=1;
+ for (i = 0; i < max_proc; i++) {
+  if (table->children[i].busy != XMLD_TRUE && table->children[i].pid != 0) {
+   table->children[i].die = XMLD_TRUE;
    if (++killed_proc >= num_proc) {
     break;
    }
@@ -251,17 +259,17 @@ void mtasker_kill(int num_proc) {
 
 void mtasker_handle_idle(int signum) {
  int j;
- int status;
- if (ttable.num_tasks>0) {
-  status=mtasker_handle(ttable.tasks[0].func, ttable.tasks[0].data, ttable.tasks[0].fd);
-  if (status!=0) {
+ XMLDStatus status;
+ if (ttable.num_tasks > 0) {
+  status = mtasker_handle(ttable.tasks[0].func, ttable.tasks[0].data, ttable.tasks[0].fd);
+  if (status != XMLD_SUCCESS) {
    return;
   }
   for (j = 0; j < ttable.num_tasks-1; j++) {
    ttable.tasks[j]=ttable.tasks[j+1];
   }
-  ttable.tasks[ttable.num_tasks-1].func=0;
-  ttable.tasks[ttable.num_tasks-1].data=0;
+  ttable.tasks[ttable.num_tasks-1].func=NULL;
+  ttable.tasks[ttable.num_tasks-1].data=NULL;
   ttable.tasks[ttable.num_tasks-1].fd=-1;
   ttable.num_tasks--;
   ttable.tasks=realloc(ttable.tasks, ttable.num_tasks*sizeof(struct task));
