@@ -119,8 +119,17 @@ struct XMLDRequest {
  struct cond **where; /* A condition for each level */
 };
 
+struct col {
+ char *val;
+};
+
+struct row {
+ struct col *cols;
+};
+
 /* carries the response to be sent */
 struct XMLDResponse {
+ struct row *rows; 
 };
 
 struct XMLDWork;
@@ -129,6 +138,9 @@ struct XMLDWork;
 struct XMLDEngine {
  void *(*init) (struct XMLDWork *);
  void *(*destroy) (struct XMLDWork *);
+ int (*walk) (struct XMLDWork *);
+ char *(*eval_expr) (struct XMLDWork *, struct expr *);
+ int (*eval_cond) (struct XMLDWork *, struct cond *); 
 };
 
 /* carries per-request resources */
