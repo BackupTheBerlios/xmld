@@ -48,10 +48,37 @@ XMLDStatus mtasker_init() {
  signal(SIGCHLD, SIG_IGN);
  ttable.num_tasks=0;
  ttable.tasks=0;
- 
- init_proc=*((int *) (XMLDList_first(cfg_get("PTasker", "InitProc", NULL))->value));
- max_proc=*((int *) (XMLDList_first(cfg_get("PTasker", "MaxProc", NULL))->value));
- max_idle_proc=*((int *) (XMLDList_first(cfg_get("PTasker", "MaxIdleProc", NULL))->value));
+ XMLDCfgSection *ptasker_section = XMLDCfgSection_get_section(cfg_tree, "PTasker", 1);
+ if (ptasker_section == NULL) {
+  return XMLD_FAILURE;
+ }
+ XMLDCfgDirective *curr_directive = XMLDCfgSection_get_directive(ptasker_section, "InitProc", 1);
+ if (curr_directive == NULL) {
+  return XMLD_FAILURE;
+ }
+ XMLDCfgValue *curr_value = XMLDCfgDirective_get_value(curr_directive, 0);
+ if (curr_value == NULL || curr_value->type != XMLD_CFG_INTEGER) {
+  return XMLD_FAILURE;
+ }
+ init_proc = (int) curr_value->value;
+ XMLDCfgDirective *curr_directive = XMLDCfgSection_get_directive(ptasker_section, "MaxProc", 1);
+ if (curr_directive == NULL) {
+  return XMLD_FAILURE;
+ }
+ XMLDCfgValue *curr_value = XMLDCfgDirective_get_value(curr_directive, 0);
+ if (curr_value == NULL || curr_value->type != XMLD_CFG_INTEGER) {
+  return XMLD_FAILURE;
+ }
+ max_proc= (int) curr_value->value;
+ XMLDCfgDirective *curr_directive = XMLDCfgSection_get_directive(ptasker_section, "MaxIdleProc", 1);
+ if (curr_directive == NULL) {
+  return XMLD_FAILURE;
+ }
+ XMLDCfgValue *curr_value = XMLDCfgDirective_get_value(curr_directive, 0);
+ if (curr_value == NULL || curr_value->type != XMLD_CFG_INTEGER) {
+  return XMLD_FAILURE;
+ }
+ max_idle_proc= (int) curr_value->value;
 
  if (init_proc > max_proc) {
   init_proc = max_proc;

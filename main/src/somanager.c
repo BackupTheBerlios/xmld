@@ -31,18 +31,8 @@ int *ports;
 int num_sock;
 
 XMLDStatus somanager_init() {
- XMLDCfgSection *ports_section = XMLDCfgSectionList_search_by_name(cfg_tree, "Ports");
- if (ports_section == NULL) {
-  return XMLD_FAILURE;
- }
- ports = NULL;
- XMLDList_reset(ports_section->directives);
- int num_sock = 0;
- while (XMLDList_next(ports_section->directives)) {
-  ports = (int *) realloc(ports, (num_sock+1) * sizeof(int));
-  ports[num_sock] = XMLDList_first(((XMLDCfgDirective *) XMLDList_curr(ports_section->directives))->values)
- }
  ports=(int *) cfg_get("somanager.listeners");
+ num_sock = 0 //?;
  fds=(int*) malloc(num_sock*sizeof(int));
  int t;
  int s;

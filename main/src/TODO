@@ -54,7 +54,7 @@ Foundation:
          XMLDCfgDirective_get_value, that receives an argument: (done)
 	 * The index of the parameter to retrieve (0 for the main value).
     * Modify all parts.
-      * ptasker
+      * ptasker (done)
       * somanager
     * modify initialization of document_root.
     * XMLDList_first and XMLDList_last should return NULL in case of
@@ -70,7 +70,7 @@ Foundation:
   * Support for directive parameters. (ok)
   * # Support for comments in cfg_parser.lex (done)
   * expected bug in cfg.c: The first directive of a set of directives
-    that have the same name is the only one we can retrieve.
+    that have the same name is the only one we can retrieve. (fixed)
 
 * Real implementation of interface specification according
   to the configuration file with support for interface parameters.
