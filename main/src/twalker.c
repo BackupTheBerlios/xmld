@@ -36,7 +36,6 @@ struct XMLDEngine;
 #include "twalker.h"
 
 short twalker_handle(XMLDWork *work) {
- short status;
  /* this if() may need to contain other values for type such as
   * SELECT + SORT */
  if (work->req->type == 0) { /* a SELECT query */
@@ -59,21 +58,24 @@ short twalker_handle(XMLDWork *work) {
   XMLDExpr *curr_retr;
   work->resp=XMLDResponse_create();
   curr_retr=(XMLDExpr *) XMLDList_first(work->req->retr);
-  while ((status=(*(work->res->engine->walk)) (work)) != -1) {
+  while ((*(work->res->engine->walk)) (work) != -1) {
    XMLDResponse_add_row(work->resp);
    while (curr_retr != 0) {
     if (curr_retr->aggr == 1) { /* an aggregate expression */
-     XMLDResponse_add_aggr(work->resp, curr_retr);
+     XMLDResponse_add_col(work->resp);
+     XMLDResponse_assoc_col_to_aggr(work->resp, curr_retr, XMLDResponse_curr_col(work->resp));
     }
     else {
-     XMLDResponse_add_col(work->resp, (*(work->res->engine->eval_expr)) (work, curr_retr));
+     XMLDResponse_add_col(work->resp);
+     XMLDResponse_fill_col(work->resp,  (*(work->res->engine->eval_expr)) (work, curr_retr));
     }
    }
+   
   }
-  XMLDResponse_aggr_reset(work->resp);
-  while (XMLDResponse_curr_aggr(work->resp)!=0) {
-   XMLDResponse_fill_aggr(work->resp, (*(work->res->engine->eval_aggr_expr)) (work, XMLDResponse_curr_aggr(work->resp)));
-   XMLDResponse_aggr_next(work->resp);
+  XMLDResponse_reset_aggr(work->resp);
+  while (XMLDResponse_curr_aggr_expr(work->resp) != NULL) {
+   XMLDResponse_fill_curr_aggr(work->resp, (*(work->res->engine->eval_aggr_expr)) (work, XMLDResponse_curr_aggr_expr(work->resp)));
+   XMLDResponse_next_aggr(work->resp);
   }
   XMLDResponse_flush(work->resp, work->conn->fd);
   XMLDList_free(work->resp->tables);
