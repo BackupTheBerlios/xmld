@@ -274,9 +274,6 @@ to refer to its new position.
 XMLDWork shouldn't concatenate it to
 curr_dir in such a case. (done)
 
-* Write a skeleton parser that returns the same XMLDRequest
-each time.
-
 * Compile the OpenXMLD.
 
 * Implement str_like, str_between in sutils. (done)
@@ -290,21 +287,23 @@ between and not between conditionals. (done)
 
 * itoa -> sutils. (done)
 
-* Implement XMLDExpr_copy.
+* Implement XMLDExpr_copy, XMLDCond_copy. (done)
 
 * Try to compile engine_xmld. (done successfully)
 
-* Add SELECT + WHERE type to twalker.
-
 * in XMLDExpr, nval must be long to handle big
 numeric values, make consideration for that
-every where.
+every where. (done)
 
-* Add XMLD_ENOAGGR to xmld_errors.h.
+* Add XMLD_ENOAGGR to xmld_errors.h. (done)
 
-* Add XMLDAssign.
+* Add types and fields in XMLDRequest 
+for INSERT, DELETE, UPDATE and USE 
+statements. (done)
 
-* Add types and fields in XMLDRequest for
-INSERT, DELETE, UPDATE and USE statements.
+* Add all request types to twalker. (done)
 
-* Define and implement XMLDCond_copy.
+* Make consideration of the new types in
+Engine-XMLD's fmanager_get_*_fd calls. (done)
+
+* Implement request types in twalker.
