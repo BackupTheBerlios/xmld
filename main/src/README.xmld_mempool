@@ -13,10 +13,16 @@ Source Files:
 API:
 ----
 
-struct XMLDMemPool *XMLDMemPool_create(int segsize, int segnum)
+struct XMLDMemPool *XMLDMemPool_create(int segsize, int segnum, void (*free_func) (void *))
  
- This function is used to create a memory pool with a number 
+ This function is used to create a memory pool with a number
  of initial segments _segnum_ each of size _segsize_ bytes.
+ And makes it use _free_func_ when it gets to free/unget
+ each of its segments, so that resources used internally
+ by a segment can be freed without leaking memory. If there
+ isn't such requirement (i.e there isn't memory internally
+ allocated by the segments) _free_func_ can be provided as 
+ NULL.
 
 void *XMLDMemPool_get_segment(struct XMLDMemPool *pool) 
 
@@ -30,11 +36,18 @@ void *XMLDMemPool_get_segment(struct XMLDMemPool *pool)
 void XMLDMemPool_free(struct XMLDMemPool *pool)
 
  Frees all the resources used by this memory pool and its
- segments.
+ segments. And calls _free_func_ on each of them before
+ freeing.
 
 void XMLDMemPool_unget_segment(struct XMLDMemPool *pool, void *segment)
  
  This function ungets the segment whose pointer value is _segment_ 
- in the memory pool, so other calls to XMLMemPool_get_segment can
- use it.
+ in the memory pool, and calls _free_func_ on it, so that other calls 
+ to XMLMemPool_get_segment can use it.
+
+void XMLDMemPool_unget_all(struct XMLDMemPool *pool)
+
+ This function ungets all the segments and calls _free_func_
+ on each of them.
+
 -------------------------------------------------------------
