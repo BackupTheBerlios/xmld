@@ -50,12 +50,13 @@ struct XMLDCond {
 
 typedef struct XMLDCond XMLDCond;
 
-XMLDCond *XMLDCond_create(short, XMLDExpr *, XMLDExpr *, short, XMLDCond *, XMLDCond *, short, short);
+XMLDCond *XMLDCond_create(void);
 void XMLDCond_free(XMLDCond *);
+void XMLDCond_free_content(void*);
 
 /* List functions */
 
 XMLDList *XMLDCond_create_list(void);
-void XMLDCond_add_to_list(XMLDList *, short, XMLDExpr *, XMLDExpr *, short, XMLDCond *, XMLDCond *, short, short);
+XMLDCond *XMLDCond_add_to_list(XMLDList *);
 
 #endif /* HAVE_XMLD_COND_H */
