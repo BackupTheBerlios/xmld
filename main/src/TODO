@@ -744,16 +744,16 @@ useful as something useful.
 --- Foundation:
 
 * Expression tree walking must happen out of the engine.
- * xmld_errno must have a default no-error value.
+ * xmld_errno must have a default no-error value. (done)
  * XMLDExpr (Implement XMLDExpr_simplify)
   * Notes:
    * lists must be returned as is.
-   * column names must be put in the ident after getting 
-   their values.
+   * column names must be put in the ident field after 
+   getting their values.
    * in case of error, NULL is returned with setting 
    of xmld_errno to something useful.
-   * to distinguish between NULL columns and error
-   conditions clear xmld_errno.
+   * NULL columns are indiciated by XMLD_QVAL return
+   values with NULL values of the qval field.
  * XMLDEngine (Modify according to requirements
  of XMLDExpr_simplify)
  * engine_list (Modify according to XMLDEngine changes)

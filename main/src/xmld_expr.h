@@ -79,9 +79,10 @@ struct XMLDExpr {
 
 XMLDExpr *XMLDExpr_create(void);
 void XMLDExpr_copy(XMLDExpr *, XMLDExpr *);
+XMLDBool XMLDExpr_is_complex(XMLDExpr *);
+XMLDExpr *XMLDExpr_simplify(XMLDExpr *, XMLDWork *, int);
 void XMLDExpr_free(XMLDExpr *);
 void XMLDExpr_free_content(void *);
-XMLDBool XMLDExpr_is_complex(XMLDExpr *);
 
 /* List functions */
 

@@ -57,6 +57,13 @@ int main() {
  err_str[7]="Mal-formed description file for the request file.";
  err_str[8]="Read privileges not available for the request file";
  err_str[9]="Write privileges not available for the request file";
+ err_str[10]="Invalid usage of the addition operator with string operand(s).";
+ err_str[11]="Invalid usage of the binary substraction operator with string operand(s).";
+ err_str[12]="Invalid usage of the multiplication operator with string operand(s).";
+ err_str[13]="invalid usage of the division operator with string operand(s).";
+ err_str[14]="Not allowed division by zero value.";
+ err_str[15]="Invalid usage of the exponential operator with string operand(s).";
+ err_str[16]="Invalid usage of the unary substraction operator with a string operand.";
 
  init_create_part(&parts[0], cfg_init, cfg_shutdown);
  init_create_part(&parts[1], engine_list_init, engine_list_shutdown);

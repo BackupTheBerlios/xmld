@@ -40,6 +40,7 @@ typedef int XMLDBool;
 typedef int XMLDStatus;
 
 enum xmld_error {
+ XMLD_ENOERROR = -1,
  XMLD_ENOFILE,
  XMLD_ENOENGINE,
  XMLD_EINVALFILE,
@@ -49,7 +50,13 @@ enum xmld_error {
  XMLD_ENOFORMAT,
  XMLD_EMALFORMAT,
  XMLD_ENORPRIV,
- XMLD_ENOWPRIV
+ XMLD_ENOWPRIV,
+ XMLD_ESTRADD,
+ XMLD_ESTRBNEG,
+ XMLD_ESTRMULTIP,
+ XMLD_ESTRDIV,
+ XMLD_EZERODIV,
+ XMLD_ESTREXPO
 } xmld_errno;
 
 char *err_str[10];

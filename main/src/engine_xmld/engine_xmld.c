@@ -11,8 +11,6 @@
  * -------------------------------------------------------------- * 
  */
  
-#include <limits.h>
-#include <math.h>
 #include "../includes.h"
 #include "../cfg.h"
 #include "../mfigure.h"
