@@ -34,12 +34,12 @@ struct XMLDEngine;
 
 short twalker_handle(XMLDWork *work) {
  short status;
- XMLDExpr *curr_retr;
- XMLDCond *curr_cond;
- work->resp=XMLDResponse_create();
  /* this if() may need to contain other values for type such as
   * SELECT + SORT */
  if (work->req->type == 0) { /* a SELECT query */
+  XMLDExpr *curr_retr;
+  XMLDCond *curr_cond;
+  work->resp=XMLDResponse_create();
   curr_retr=work->req->retr[0];
   while ((status=(*(work->res->engine->walk)) (work)) != -1) {
    XMLDResponse_add_row(work->resp);
@@ -52,14 +52,15 @@ short twalker_handle(XMLDWork *work) {
     }
    }
   }
+  XMLDResponse_aggr_reset(work->resp);
+  while (XMLDResponse_curr_aggr(work->resp)!=0) {
+   XMLDResponse_fill_aggr(work->resp, (*(work->res->engine->eval_aggr_expr)) (work, XMLDResponse_curr_aggr(work->resp)));
+   XMLDResponse_aggr_next(work->resp);
+  }
+  XMLDList_free(work->resp->tables);
  }
  if (work->req->type==1) { /* a SELECT + WHERE query */
   /* to be continued */
- }
- XMLDResponse_aggr_reset(work->resp);
- while (XMLDResponse_curr_aggr(work->resp)!=0) {
-  XMLDResponse_fill_aggr(work->resp, (*(work->res->engine->eval_aggr_expr)) (work, XMLDResponse_curr_aggr(work->resp)));
-  XMLDResponse_aggr_next(work->resp);
  }
  (*(work->res->engine->cleanup)) (work);
  return 0;
