@@ -769,26 +769,29 @@ useful as something useful.
  * XMLDCol (must contain a XMLDExpr field such that
  _is_complex returns XMLD_FALSE -- done).
  * XMLDExpr (Implement XMLDExpr_to_string -- done)
+ * XMLDRequest, XMLDExpr and XMLDCond are XMLD-SQL specific
+ structures: (done)
+  * put request types in xmld_request.h
+  * put XMLDExpr macros back into xmld_expr.h
+ * Merge XMLDCond and XMLDExpr:
+  * XMLDExpr (Put XMLDCond along with its macros and stuff into it -- done)
+  * XMLDCond (remove -- done)
+  * xmld-sql.(y|lex) (resolve condition rules as expressions)
+    * Notes:
+     * conditional operators must be left associative.
+     * Care about operator priority.
+  * twalker_simplify_expr (Merge XMLDCond constructs)
+  * XMLDExpr_to_string (resolve conditions as well)
+  * XMLDExpr_to_boolean (remeber to resolve expression correctly)
  * twalker (call twalker_simplify_expr if is_complex returns
  true)
  * twalker (twalker_handle must resolve XMLD_LIST recursively
  using twalker_simplify_expr)
+ * No special resolution for conditions in twalker.
  * resptrans (call XMLDExpr_to_string on each column).
  * Engine-XMLD (Implement the required functions)
  * XMLDResponse_fill_col/XMLDCol_fill might need to fill the
  expr and not the string.
-
-* Merge XMLDCond and XMLDExpr:
- * XMLDExpr (Put XMLDCond along with its macros and stuff into it)
- * XMLDCond (remove)
- * xmld-sql.(y|lex) (resolve condition rules as expressions)
-   * Notes:
-    * conditional operators must be left associative.
-    * Care about operator priority.
- * twalker_simplify_expr (Merge XMLDCond constructs)
- * twalker_handle (SELECT with WHERE needs modification)
- * XMLDExpr_to_string (resolve conditions as well)
- * XMLDExpr_to_boolean (remeber to resolve expression correctly)
 
 * If the above gets stabilized, remove unused functions
 in Engine-XMLD, XMLDResponse [...?].

@@ -26,9 +26,40 @@ i * -------------------------------------------------------------- *
 #define XMLD_VOID_LIST 8        /* Void Expression list type */
 #define XMLD_SPECIAL_IDENTIFIER /* Special Identifier type   */
 
+/* XMLD-SQL Operation Types */
+/* Arithmetic: */
+#define XMLD_OP_ADD 0    /* Addition                  */
+#define XMLD_OP_BNEG 1   /* Binary substraction       */
+#define XMLD_OP_MULTIP 2 /* Multiplication            */
+#define XMLD_OP_DIV 3    /* Division                  */
+#define XMLD_OP_EXPO 4   /* Exponentation             */
+#define XMLD_OP_UNEG 5   /* Sign switching            */
+
+/* Checkers: */
+#define XMLD_OP_EQUAL 6  /* Equals                    */
+#define XMLD_OP_L 7      /* Less than                 */
+#define XMLD_OP_G 8      /* Greater than              */
+#define XMLD_OP_NE 9     /* Inequality                */
+#define XMLD_OP_LE 10    /* Less than or equal        */
+#define XMLD_OP_GE 11    /* Greater than or equal     */
+#define XMLD_OP_LIKE 12  /* LIKE!		      */
+
+/* Groupers: */
+#define XMLD_OP_AND 13   /* AND grouping */
+#define XMLD_OP_OR  14   /* OR grouping  */
+
+
+/* XMLD-SQL Special identifier types */
+#define XMLD_SIDENT_TEXT 0    /* [text]    */
+#define XMLD_SIDENT_TAGNAME 1 /* [tagname] */
+
+/* XMLD-SQL Wildcard types */
+#define XMLD_WILDCARD_ALL 0  /* All columns     */
+#define XMLD_WILDCARD_ATTS 1 /* Attributes only */
+
 struct XMLDExpr {
  int type; 
- XMLDBool aggr, cross_level; /* Whether it's an aggregate expression */
+ XMLDBool aggr, cross_level;
  int nval; /* type 0 */
  /*--------------------*/
  struct XMLDExpr *left; /* type 1:
