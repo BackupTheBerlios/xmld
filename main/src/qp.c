@@ -18,6 +18,7 @@
 #include "xmld_errors.h"
 #include "xmld_list.h"
 #include "xmld_col.h"
+#include "xmld_row.h"
 struct XMLDFunc;
 #ifndef XMLD_FUNC_TYPE_DEFINED
 #define XMLD_FUNC_TYPE_DEFINED
@@ -47,10 +48,18 @@ void qp_handle(void *conn) {
  work->conn=XMLDConnection_create(((XMLDConnection *) conn)->fd, ((XMLDConnection *) conn)->curr_dir);
  sosel_remove(conn);
  work->req=XMLDRequest_create();
- /*
-  * Here should go lexing and parsing.
-  */
- int status=twalker_handle(work);
+ 
+ char *query=xmld_socket_read(work->conn->fd);
+ yy_scan_string(query);
+ int status=yyparse((void *) work);
+ if (status == 1) {
+  ERROR_RESPONSE;
+  sosel_add(work->conn->fd, work->conn->curr_dir);
+  XMLDWork_free(work);
+  return;
+ }
+ 
+ status=twalker_handle(work);
  if (status==-1) {
   ERROR_RESPONSE;
   sosel_add(work->conn->fd, work->conn->curr_dir);
