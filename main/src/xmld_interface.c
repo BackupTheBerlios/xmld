@@ -39,7 +39,6 @@ void XMLDInterface_free(XMLDInterface *interface) {
  * req: the structure whose internally memory is to be freed.
  */
 void XMLDInterface_free_content(void *interface) {
- free(((XMLDInterface *) interface)->name);
 }
 
 /*

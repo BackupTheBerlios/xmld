@@ -167,5 +167,43 @@ void somanager_user_connection(void *conn) {
   return;
  }
 
+ if (work->interface->prepare_conn(work) == XMLD_FAILURE) {
+  xmld_socket_shutdown(fd);
+  return;
+ }
+ 
  work->conn=XMLDConnection_create(fd, val_carry[1], val_carry[0]);
+ 
+ while (1) {
+  if (work->interface->prepare(work) == XMLD_FAILURE) {
+   break;
+  }
+  char *query=protoimpl_read_sequence(work->conn->fd, NULL);
+  
+  if (strcmp(query, DISCONNECTION_MESSAGE) == 0) {
+   break;
+  }
+
+  if (work->interface->parse(work, query) == XMLD_FAILURE) {
+   free(query);
+   ERROR_RESPONSE;
+   work->interface->cleanup(work);
+   continue;
+  }
+ 
+  free(query);
+  if (work->interface->walk(work) == XMLD_FAILURE) {
+   ERROR_RESPONSE;
+   work->interface->cleanup(work);
+   continue;
+  }
+  
+  query = work->interface->get_response(work); /* The response and NOT the query */
+  protoimpl_write_sequence(work->conn->fd, query, 1);
+  free(query);
+  work->interface->cleanup(work);
+ }
+ work->interface->cleanup_conn(work);
+ xmld_socket_shutdown(work->conn->fd);
+ XMLDWork_free(work);
 }
