@@ -36,52 +36,107 @@ struct XMLDEngine;
 #include "twalker.h"
 
 short twalker_handle(XMLDWork *work) {
- /* this if() may need to contain other values for type such as
-  * SELECT + SORT */
- if (work->req->type == 0) { /* a SELECT query */
-  work->res=XMLDResource_create();
+ switch(work->req->type) {
+  case 0: /* SELECT */
+   work->res=XMLDResource_create();
   
-  char *full_file=XMLDWork_get_full_file(work);
-  work->res->engine=XMLDEngine_search_list_by_name(engine_list, cfg_get_engine(full_file));
-  free(full_file);
-  
-  if (work->res->engine == NULL) {
-   xmld_errno=XMLD_ENOENGINE;
-   return -1;
-  }
-  
-  if (((*(work->res->engine->prepare)) (work)) == 0) {
-   return -1;
-  }
-  
-  XMLDExpr *curr_retr;
-  work->resp=XMLDResponse_create();
-  curr_retr=(XMLDExpr *) XMLDList_first(work->req->retr);
-  while ((*(work->res->engine->walk)) (work) != 0) {
-   XMLDResponse_add_row(work->resp);
-   while (curr_retr != 0) {
-    if (curr_retr->aggr == 1) { /* an aggregate expression */
-     XMLDResponse_add_col(work->resp);
-     XMLDResponse_assoc_col_to_aggr(work->resp, curr_retr, XMLDResponse_curr_col(work->resp));
-    }
-    else {
-     XMLDResponse_add_col(work->resp);
-     XMLDResponse_fill_col(work->resp,  (*(work->res->engine->eval_expr)) (work, curr_retr));
-    }
+   char *full_file=XMLDWork_get_full_file(work);
+   work->res->engine=XMLDEngine_search_list_by_name(engine_list, cfg_get_engine(full_file));
+   free(full_file);
+   
+   if (work->res->engine == NULL) {
+    xmld_errno=XMLD_ENOENGINE;
+    return 0;
    }
    
-  }
-  XMLDResponse_reset_aggr(work->resp);
-  while (XMLDResponse_curr_aggr_expr(work->resp) != NULL) {
-   XMLDResponse_fill_curr_aggr(work->resp, (*(work->res->engine->eval_aggr_expr)) (work, XMLDResponse_curr_aggr_expr(work->resp)));
-   XMLDResponse_next_aggr(work->resp);
-  }
-  XMLDResponse_flush(work->resp, work->conn->fd);
-  XMLDList_free(work->resp->tables);
-  (*(work->res->engine->cleanup)) (work);
- }
- if (work->req->type==1) { /* a SELECT + WHERE query */
-  /* to be continued */
- }
- return 0;
+   if (((*(work->res->engine->prepare)) (work)) == 0) {
+    return 0;
+   }
+  
+   work->resp=XMLDResponse_create();
+   while ((*(work->res->engine->walk)) (work) != 0) {
+    XMLDList_reset(work->req->retr);
+    XMLDResponse_add_row(work->resp);
+    while (XMLDList_next(work->req->retr)) {
+     XMLDResponse_add_col(work->resp);
+     if (((XMLDExpr *) XMLDList_curr(work->req->retr))->aggr == 1) {
+      XMLDResponse_assoc_col_to_aggr(work->resp, (XMLDExpr *) XMLDList_curr(work->req->retr), XMLDResponse_curr_col(work->resp));
+     }
+     else {
+      XMLDResponse_fill_col(work->resp,  (*(work->res->engine->eval_expr)) (work, (XMLDExpr *) XMLDList_curr(work->req->retr)));
+     }
+    }
+   }
+   XMLDResponse_reset_aggr(work->resp);
+   while (XMLDResponse_curr_aggr_expr(work->resp) != NULL) {
+    XMLDResponse_fill_curr_aggr(work->resp, (*(work->res->engine->eval_aggr_expr)) (work, XMLDResponse_curr_aggr_expr(work->resp)));
+    XMLDResponse_next_aggr(work->resp);
+   }
+   XMLDResponse_flush(work->resp, work->conn->fd);
+   XMLDList_free(work->resp->tables);
+   (*(work->res->engine->cleanup)) (work);
+  break;
+  case 1: /* SELECT with WHERE */
+   work->res=XMLDResource_create();
+  
+   char *full_file=XMLDWork_get_full_file(work);
+   work->res->engine=XMLDEngine_search_list_by_name(engine_list, cfg_get_engine(full_file));
+   free(full_file);
+   
+   if (work->res->engine == NULL) {
+    xmld_errno=XMLD_ENOENGINE;
+    return 0;
+   }
+   
+   if (((*(work->res->engine->prepare)) (work)) == 0) {
+    return 0;
+   }
+   
+   work->resp=XMLDResponse_create();
+   int level=(*(work->res->engine->walk)) (work);   
+   while (level != 0) {
+    if ((*(work->res->engine->eval_cond)) (work, (XMLDCond *) ((work->req->where->content)+level-1))) {
+     XMLDList_reset(work->req->retr);
+     XMLDResponse_add_row(work->resp);
+     while (XMLDList_next(work->req->retr)) {
+      XMLDResponse_add_col(work->resp);
+      if (((XMLDExpr *) XMLDList_curr(work->req->retr))->aggr == 1) {
+       XMLDResponse_assoc_col_to_aggr(work->resp, (XMLDExpr *) XMLDList_curr(work->req->retr), XMLDResponse_curr_col(work->resp));
+      }
+      else {
+       XMLDResponse_fill_col(work->resp,  (*(work->res->engine->eval_expr)) (work, (XMLDExpr *) XMLDList_curr(work->req->retr)));
+      }
+     }
+    }
+    level=(*(work->res->engine->walk)) (work);   
+   }
+   XMLDResponse_reset_aggr(work->resp);
+   while (XMLDResponse_curr_aggr_expr(work->resp) != NULL) {
+    XMLDResponse_fill_curr_aggr(work->resp, (*(work->res->engine->eval_aggr_expr)) (work, XMLDResponse_curr_aggr_expr(work->resp)));
+    XMLDResponse_next_aggr(work->resp);
+   }
+   XMLDResponse_flush(work->resp, work->conn->fd);
+   XMLDList_free(work->resp->tables);
+   (*(work->res->engine->cleanup)) (work);
+  break;
+  case 2: /* UPDATE */
+  break;
+  case 3: /* UPDATE with WHERE */
+  break;
+  case 4: /* DELETE or (DELETE *) */
+  break;
+  case 5: /* DELETE with WHERE */
+  break;
+  case 6: /* INSERT with column list */
+  break;
+  case 7: /* INSERT with column list with WHERE */
+  break;
+  case 8: /* INSERT with WHERE */
+  break;
+  case 9: /* INSERT */
+  break;
+  case 10: /* USE */
+  break;
+ } 
+ return 1;
 };
