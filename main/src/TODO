@@ -38,5 +38,9 @@ oriented foundation.
 involve creation of a function that searches a list
 of XMLDEngine's by name. (done)
 
+* For XMLDEngine, make the engine functions return
+short instead of int to indiciate success/failure of
+operation in order to use memory more wisely (?).
+
 * Write a skeleton do-nothing engine, and attach it to
 the list of XMLDEngine's which serve the requests.
