@@ -57,7 +57,7 @@ short twalker_handle(XMLDWork *work) {
   XMLDExpr *curr_retr;
   work->resp=XMLDResponse_create();
   curr_retr=(XMLDExpr *) XMLDList_first(work->req->retr);
-  while ((*(work->res->engine->walk)) (work) != -1) {
+  while ((*(work->res->engine->walk)) (work) != 0) {
    XMLDResponse_add_row(work->resp);
    while (curr_retr != 0) {
     if (curr_retr->aggr == 1) { /* an aggregate expression */
