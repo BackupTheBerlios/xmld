@@ -21,6 +21,7 @@ XMLDWork *XMLDWork_create() {
  work->files=NULL;
  work->conn=NULL;
  work->interface=NULL;
+ work->store=NULL;
  return work;
 }
 
@@ -64,5 +65,6 @@ XMLDWork *XMLDWorkList_add(XMLDWorkList *list) {
  work->files=NULL;
  work->conn=NULL;
  work->interface=NULL;
+ work->store=NULL;
  return work;
 }
