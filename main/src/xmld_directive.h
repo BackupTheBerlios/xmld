@@ -18,6 +18,7 @@ union cfg_value {
   int int_value;
   int *int_array_value;
   char *string_value;
+  char **string_array_value;
 };
 
 /* Represents a configuration directive */
