@@ -23,7 +23,7 @@ typedef struct XMLDCol XMLDCol;
 typedef XMLDList XMLDColList;
 
 XMLDCol *XMLDCol_create(void);
-void XMLDCol_fill(XMLDCol *, char *);
+void XMLDCol_fill(XMLDCol *, XMLDExpr *);
 void XMLDCol_free(XMLDCol *);
 void XMLDCol_free_content(void *);
 

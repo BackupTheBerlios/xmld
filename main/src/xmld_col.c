@@ -54,8 +54,8 @@ void XMLDCol_free_content(void *col) {
  * col: the column to fill.
  * val: the value.
  */
-void XMLDCol_fill(XMLDCol *col, char *val) {
- col->val=val;
+void XMLDCol_fill(XMLDCol *col, XMLDExpr *expr) {
+ col->expr=expr;
 }
 
 /*

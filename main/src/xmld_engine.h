@@ -38,19 +38,21 @@ struct XMLDEngine {
 				                       * above)
 				                       */
  
- void (*cleanup) (XMLDWork *, XMLDFile *); /* The function called after each
+ void (*cleanup) (XMLDFile *); /* The function called after each
 				            * request the engine serves.
 				            */
  void (*destroy) (void); /* The function used for removal of the 
 			  * engine from engine_list.
 			  */
  
- int (*walk) (XMLDWork *, XMLDFile *); /* The function which makes the engine
+ int (*walk) (XMLDFile *); /* The function which makes the engine
 			                * give a next result from the given file.
 			                */
  char *(*get_attribute_type) (XMLDFile *, char *);
+ int (*get_attribute_length) (XMLDFile *, char *);
  char *(*get_attribute) (XMLDFile *, char *);
  char *(*get_text_type) (XMLDFile *);
+ int (*get_text_length (XMLDFile *);
  char *(*get_text) (XMLDFile *);
  char *(*get_tagname) (XMLDFile *);
 
@@ -59,6 +61,7 @@ struct XMLDEngine {
  XMLDBool (*next_attribute) (XMLDFile *);
  char *(*get_curr_attribute_type) (XMLDFile *);
  char *(*get_curr_attribute_name) (XMLDFile *);
+ int (*get_curr_attribute_length) (XMLDFile *);
  char *(*get_curr_attribute_value) (XMLDFile *);
 };
 

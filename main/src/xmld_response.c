@@ -70,8 +70,8 @@ void XMLDResponse_add_col(XMLDResponse *resp) {
  * resp: the mentioned response structure.
  * val: the content with which the last added column is to be filled. (copied)
  */
-void XMLDResponse_fill_col(XMLDResponse *resp, char *val) {
- XMLDCol_fill(XMLDResponse_curr_col(resp), val);
+void XMLDResponse_fill_col(XMLDResponse *resp, XMLDExpr *expr) {
+ XMLDCol_fill(XMLDResponse_curr_col(resp), expr);
 }
 
 /*

@@ -26,7 +26,7 @@ typedef XMLDList XMLDResponseList;
 XMLDResponse *XMLDResponse_create(void);
 void XMLDResponse_add_row(XMLDResponse *);
 void XMLDResponse_add_col(XMLDResponse *);
-void XMLDResponse_fill_col(XMLDResponse *, char *);
+void XMLDResponse_fill_col(XMLDResponse *, XMLDExpr *);
 
 /* Aggregate expression tables manipulation functions */
 XMLDAggrTable *XMLDResponse_assoc_col_to_aggr(XMLDResponse *, XMLDExpr *, XMLDCol *);

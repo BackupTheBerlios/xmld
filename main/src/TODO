@@ -419,14 +419,16 @@ useful as something useful.
    * Rewrite format_manip functions inside engine_xmld.c (done)
    * Remove consideration of tag name-specific formatting
      for performance reasons. (done)
-   * Add the new format functions to engine_list and XMLDEngine
-     and remove XMLDWork from them.
+   * Add the new format functions to engine_list and XMLDEngine (done)
  * XMLDResponse_fill_col/XMLDCol_fill might need to fill the
- expr and not the string.
+ expr and not the string. (done)
  * wisely remove mime checking from prepare for performance (if possible!).
 
 * Engine functions should never know about the XMLDWork structure,
-  XMLDFile one MUST be enough.
+  XMLDFile one MUST be enough. (done)
+
+* twalker should respect the changes in engine functions and in
+  XMLDCol_fill and XMLDResponse_fill_col.
 
 * If the above gets stabilized, remove unused functions
 in Engine-XMLD (done), XMLDResponse [...?].
