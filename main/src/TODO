@@ -92,13 +92,13 @@ order to be able to resolve wildcards correctly. (done)
   * XMLDExpr_to_string: support whatever kind of expressions.
     XMLD_OPERATION: (done)
     XMLD_IDENTIFIER: (done)
-    XMLD_SPECIAL_IDENTIFIER:
+    XMLD_SPECIAL_IDENTIFIER: (done)
     XMLD_FUNCTION:
     XMLD_WILDCARD:    
   * twalker_simplify_expr: use XMLDExpr_to_string and fill ret->ident.
     XMLD_OPERATION: (done)
     XMLD_IDENTIFIER: (done)
-    XMLD_SPECIAL_IDENTIFIER:
+    XMLD_SPECIAL_IDENTIFIER: (done)
     XMLD_FUNCTION:
     XMLD_WILDCARD:    
 

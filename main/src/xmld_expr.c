@@ -244,6 +244,16 @@ char *XMLDExpr_to_string(XMLDExpr *expr) {
   ret = (char *) malloc((strlen(expr->ident)+1) * sizeof(char));
   strcpy(ret, expr->ident);
  }
+ else if (expr->type == XMLD_SPECIAL_IDENTIFER) {
+  if (expr->sident == XMLD_SIDENT_TEXT) {
+   ret = (char *) malloc((strlen(XMLD_SIDENT_TEXT)+1) * sizeof(char));
+   strcpy(ret, XMLD_SIDENT_TEXT);
+  }
+  else if (expr->sident == XMLD_SIDENT_TAGNAME) {
+   ret = (char *) malloc((strlen(XMLD_SIDENT_TAGNAME)+1) * sizeof(char));
+   strcpy(ret, XMLD_SIDENT_TAGNAME);
+  }  
+ }
  else if (expr->type == XMLD_QVAL) {
   if (expr->qval == NULL) {
    return NULL;
