@@ -21,6 +21,7 @@ to use XMLDTable where useful. (done -- and not used)
 * Remove xmld_status_t (and errors.h) from every
 where and use int (such that 0 = success, -1 = error 
 and other numbers mean special return values) instead.
+(done)
 
 * Create a hash table implementation for places where
 search speed is important (XMLDHashTable), and provide
