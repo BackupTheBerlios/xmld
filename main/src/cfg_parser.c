@@ -187,7 +187,7 @@ void cfg_parser_parse_token(char *token, short mode) {
     num++;
     curr_dir->value.int_array_value=(int *) realloc(curr_dir->value.int_array_value, 
 		    num*sizeof(int));
-    curr_dir->value.int_array_value[num-1]=NULL;
+    curr_dir->value.int_array_value[num-1]=0;
     curr_dir->value.int_array_value[num-2]=atoi(*str_array);
     free(*str_array);
     str_array++;
