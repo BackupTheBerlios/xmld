@@ -6,25 +6,41 @@ Foundation:
 -----------
 
 * The engine interface must be generic, with support for:
-  * Multi-levelled data sets.
-  * Node labelling (tagnames in XML).
+  * Multi-levelled data sets. (done)
+  * Node labelling (tagnames in XML). (done)  
+
+* Engine capability level specification bitmask. (done)
+
+* Engine access level macros should be generic and simpler. (done)
+
+* Better passage of file names from the tree walker to the engine.
+  * XMLDFile can contain an additional field that carries the full
+    actual file path ?  
+  * No longer should XMLDFile_get_full file be needed.
+
+* Addition of data source modification functions to the engine API.
+  * Capability bit.
+
+* Data source creation functions.
+  * A new access level bit ?
+  * Ability to use the engine on an empty XMLDFile.
+  * Capability bit.
+
+* Data source alteration (reshaping) functions.
+  * Capability bit.
 
 * cfg_parser must be rewritten using bison and flex for
   cleanliness reasons.
-
-* xmld.conf must not contain types of directives nor 
+  * xmld.conf must not contain types of directives nor 
   somanager.num_listeners.
-
-* Support for interface parameters.
+  * Support for interface parameters.
 
 * Real implementation of interface specification according
-  to the configuration file.
+  to the configuration file with support for interface parameters.
 
 * Real implementation of mfigure.
 
 * Real implementation of engine configuration functions.
-
-* ptasker may not handle tasks in the task queue well.
 
 * Usage of autoconf to decide the modules to be compiled.
 
@@ -35,13 +51,16 @@ Issues:
 
 * Encode user passwords.
 
-* rename XMLDFile.element_pos.
+* rename XMLDFile.element_pos to XMLDFile.node_pos (done).
+
+* Configuration of the user and the group under which
+  OpenXMLD is to run.
 
 *--------------- Start of OpenXMLD 0.8.0 part:
 
 Goal: Portability.
 
-* Thread-safe OpenXMLD.
+* Thread-safe core.
 
 * Implement a multi-threaded multi-
 tasker (Macro: USE_TTASKER).

@@ -14,56 +14,47 @@
 #ifndef __XMLD_ENGINE_H
 #define __XMLD_ENGINE_H
 
-/* Access level bits */
-#define XMLD_ACCESS_NOTHING 0 /* Nothing special */
-#define XMLD_ACCESS_FORMAT 1     /* Whether to open a format file */
-#define XMLD_ACCESS_EX 2         /* Whether to execlusively access the file */
-#define XMLD_ACCESS_FORMAT_EX 4  /* Whether to execlusively access the format file */
+/* Access level bitmask */
+#define XMLD_ACCESS_READ  0  /* Read Access                  */
+#define XMLD_ACCESS_WRITE 1  /* Write Access                 */
+#define XMLD_ACCESS_ALTER 2  /* Alteration of Document Shape */
 
 /* walk return values */
 #define XMLD_WALK_UP -1  /* One level shallower */
 #define XMLD_WALK_END 0  /* End of document     */
 #define XMLD_WALK_DOWN 1 /* One level deeper    */
 
-struct XMLDEngine {
- char *name; /* The engine's name */
- void (*init) (void); /* The function that's called once the engine
-		       * is added to the engine_list.
-		       */
- XMLDBool (*is_valid_mime) (char *);
- XMLDStatus (*prepare) (char *, XMLDFile *, int); /* The function called before each
-				                       * request the engine serves.
-				                       * The integer argument is named level
-				                       * and determines access levels of the
-				                       * request. (see the access level bits
-				                       * above)
-				                       */
- 
- void (*cleanup) (XMLDFile *); /* The function called after each
-				            * request the engine serves.
-				            */
- void (*destroy) (void); /* The function used for removal of the 
-			  * engine from engine_list.
-			  */
- 
- int (*walk) (XMLDFile *); /* The function which makes the engine
-			                * give a next result from the given file.
-			                */
- char *(*get_attribute_type) (XMLDFile *, char *);
- int (*get_attribute_length) (XMLDFile *, char *);
- char *(*get_attribute) (XMLDFile *, char *);
- char *(*get_text_type) (XMLDFile *);
- int (*get_text_length) (XMLDFile *);
- char *(*get_text) (XMLDFile *);
- char *(*get_tagname) (XMLDFile *);
+/* Engine Capabilities Bitmask */
+#define ENGINE_CAP_MULTI_LEVEL 1
+#define ENGINE_CAP_NODE_NAME 2
+#define ENGINE_CAP_NODE_ABSOLUTE_VALUE 4
+#define ENGINE_CAP_LABEL_ITERATION 6
 
- /* Sequential attribute selection API */
- void (*reset_element) (XMLDFile *);
- XMLDBool (*next_attribute) (XMLDFile *);
- char *(*get_curr_attribute_type) (XMLDFile *);
- char *(*get_curr_attribute_name) (XMLDFile *);
- int (*get_curr_attribute_length) (XMLDFile *);
- char *(*get_curr_attribute_value) (XMLDFile *);
+struct XMLDEngine {
+ char *name;
+ int engine_cap;
+ void (*init) (void);
+ XMLDBool (*is_valid_mime) (char *);
+ XMLDStatus (*prepare) (char *, XMLDFile *, int); 
+ void (*cleanup) (XMLDFile *);
+ void (*destroy) (void);
+ int (*walk) (XMLDFile *);
+ char *(*get_labeled_node_value_type) (XMLDFile *, char *);
+ int (*get_labeled_node_value_length) (XMLDFile *, char *);
+ char *(*get_labeled_node_value) (XMLDFile *, char *);
+ char *(*get_absolute_node_value_type) (XMLDFile *);
+ int (*get_absoulte_node_value_length) (XMLDFile *);
+ char *(*get_absolute_node_value) (XMLDFile *);
+ char *(*get_node_name) (XMLDFile *);
+
+ /* Iterative labeled node value selection API */
+ 
+ void (*reset_node) (XMLDFile *);
+ XMLDBool (*next_label) (XMLDFile *);
+ char *(*get_current_label) (XMLDFile *);
+ char *(*get_current_labeled_value_type) (XMLDFile *);
+ int (*get_current_labeled_value_length) (XMLDFile *);
+ char *(*get_current_labeled_value) (XMLDFile *);
 };
 
 #ifndef XMLDENGINE_TYPE_DEFINED

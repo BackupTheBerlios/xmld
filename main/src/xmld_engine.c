@@ -20,7 +20,7 @@
  */
 XMLDEngine *XMLDEngine_create(char *name) {
  XMLDEngine *engine=(XMLDEngine *) malloc(sizeof(XMLDEngine));
- engine->name=name;
+ engine->name = name;
  return engine;
 }
 
@@ -58,7 +58,7 @@ XMLDEngineList *XMLDEngineList_create() {
  */
 XMLDEngine *XMLDEngineList_add(XMLDEngineList *list, char *name) {
  XMLDEngine *engine=(XMLDEngine *) XMLDList_add(list);
- engine->name=name;
+ engine->name = name;
  return engine;
 }
 

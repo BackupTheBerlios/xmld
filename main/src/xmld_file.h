@@ -15,13 +15,13 @@
 #define __XMLD_FILE_H
 
 struct XMLDFile {
- char *name;  /* The name of the file       */
- void *data;  /* File's data representation */
+ char *name;
+ void *data;
  XMLDFile *store; /* Additional storage field   */
- XMLDEngine *engine; /* The engine to be used for this file */
- int level; /* The current level in the file */
- int priv; /* The privileges of the current user to the file */
- fpos_t element_pos; /* The position of the beginning of the current element in the file */
+ XMLDEngine *engine;
+ int level;
+ int priv;
+ fpos_t node_pos;
 };
 
 #ifndef XMLDFILE_TYPE_DEFINED
