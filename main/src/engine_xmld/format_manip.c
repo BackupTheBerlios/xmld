@@ -30,7 +30,7 @@
 short engine_xmld_load_format_file(FILE *fd, char *full_file, short type) {
  full_file=(char *) realloc(full_file, (strlen(full_file)+8)*sizeof(char));
  strcat(full_file, ".format");
- if (type == 5) {/* FIXME: add query types that require ex to .format */
+ if (type == 12) {/* FIXME: add query types that require ex to .format */
   fd=fmanager_get_ex_fd(full_file);
  }
  else {
