@@ -17,11 +17,14 @@
 /*
  * : Creates a new list
  * item_size: the size of each item in the list (sizeof(item))
+ * free_func: the function which is invoked on each element before
+ * freeing the element array.
  * returns: the newly created list.
  */ 
-XMLDList *XMLDList_create(int item_size) {
+XMLDList *XMLDList_create(int item_size, void (*free_func) (void *)) {
  XMLDList *list=(XMLDList *) malloc(sizeof(XMLDList));
  list->item_size=item_size;
+ list->free_func=(free_func == NULL) ? default_free_func : free_func;
  list->content=0;
  list->last_element=0;
  list->curr_element=0;
@@ -33,6 +36,10 @@ XMLDList *XMLDList_create(int item_size) {
  * list: the list to free.
  */
 void XMLDList_free(XMLDList *list) {
+ XMLDList_reset(list);
+ while (XMLDList_next(list)) {
+  (*(list->free_func)) (XMLDList_curr(list));
+ }
  free(list->content);
  free(list);
 }
@@ -120,4 +127,11 @@ void *XMLDList_curr(XMLDList *list) {
  */
 void XMLDList_reset(XMLDList *list) {
  list->curr_element=0;
+}
+
+/*
+ * The default free_func used if the user provided it as NULL in 
+ * the constructor
+ */
+void default_free_func(void *seg) {
 }
