@@ -24,6 +24,6 @@ short engine_xmld_eval_cond (XMLDWork *, XMLDCond *);
 char *engine_xmld_eval_aggr_expr (XMLDWork *, XMLDExpr *);
 char *engine_xmld_get_column_value (XMLDWork *, char *);
 short engine_xmld_set_column_value (XMLDWork *, char *, char *);
-void engine_xmld_simplify_expr (XMLDExpr *);
+void engine_xmld_simplify_expr (XMLDWork *, XMLDExpr *);
 
 #endif /* __ENGINE_XMLD_H */
