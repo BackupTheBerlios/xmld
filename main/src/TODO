@@ -496,6 +496,8 @@ error. (done)
 
 * Implement the communication protocol.
 
+* resptrans in twalker instead of XMLDResponse_flush. (done)
+
 * Add a basic client authentication support (an authman 
 part) without support for per-file user previliges. 
 (done)

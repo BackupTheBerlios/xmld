@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "xmlddef.h"
+#include "xmld_sockets.h"
 #include "xmld_list.h"
 #include "xmld_col.h"
 #include "xmld_row.h"
@@ -41,6 +42,7 @@ struct XMLDEngine;
 #include "engine_list.h"
 #include "twalker.h"
 #include "xmld-sql.h"
+#include "resptrans.h"
 
 XMLDStatus twalker_handle(XMLDWork *work) {
  switch(work->req->type) {
@@ -83,8 +85,9 @@ XMLDStatus twalker_handle(XMLDWork *work) {
     XMLDResponse_fill_curr_aggr(work->resp, (*(work->res->engine->eval_expr)) (work, XMLDResponse_curr_aggr_expr(work->resp)));
     XMLDResponse_next_aggr(work->resp);
    }
-   XMLDResponse_flush(work->resp, work->conn->fd);
-   XMLDList_free(work->resp->tables);
+   char *resp=resptrans_handle(work);
+   xmld_socket_write(work->conn->fd, resp);
+   free(resp);
    (*(work->res->engine->cleanup)) (work);
   break;
   case XMLD_SQL_SELECT_WHERE:
@@ -175,8 +178,9 @@ XMLDStatus twalker_handle(XMLDWork *work) {
     XMLDResponse_fill_curr_aggr(work->resp, (*(work->res->engine->eval_expr)) (work, XMLDResponse_curr_aggr_expr(work->resp)));
     XMLDResponse_next_aggr(work->resp);
    }
-   XMLDResponse_flush(work->resp, work->conn->fd);
-   XMLDList_free(work->resp->tables);
+   resp=resptrans_handle(work);
+   xmld_socket_write(work->conn->fd, resp);
+   free(resp);
    (*(work->res->engine->cleanup)) (work);
   break;
   case XMLD_SQL_UPDATE:
@@ -218,5 +222,6 @@ XMLDStatus twalker_handle(XMLDWork *work) {
   case XMLD_SQL_DISCONNECT: /* DISCONNECT */
    return XMLD_SPECIAL;
   break;
- } 
-};
+ }
+ return XMLD_SUCCESS;
+}
