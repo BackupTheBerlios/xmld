@@ -14,6 +14,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "xmld_sockets.h"
+#include "xmld_errors.h"
 #include "xmld_list.h"
 #include "xmld_col.h"
 #include "xmld_func.h"
@@ -45,7 +47,7 @@ void qp_handle(void *conn) {
   */
  int status=twalker_handle(work);
  if (status==-1) {
-  ERROR_RESPONSE();
+  ERROR_RESPONSE;
   sosel_add(work->conn->fd, work->conn->curr_dir);
   XMLDWork_free(work);
   return;
