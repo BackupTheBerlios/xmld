@@ -12,8 +12,10 @@
  */
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include "sutils.h"
+#define NUMERIC_LENGTH 10
 
 /*
  * : Returns an array of strings extracted
@@ -125,4 +127,22 @@ short str_like(char *str, char *patern) {
 short str_between(char *str, char *min, char *max) {
  int val=atol(str);
  return (val >= atol(min) && val <= atol(max));
+}
+
+/*
+ * Turns a given integer to its string representation.
+ * i.e atoi inverse.
+ * FIXME: make it snprintf-independent.
+ */
+char *itoa(int num) {
+ char *ret=(char *) malloc(NUMERIC_LENGTH*sizeof(char));
+ conv=snprintf(ret, NUMERIC_LENGTH, "%d", num);
+ if (conv > 0) {
+  ret=(char *) realloc((NUMERIC_LENGTH+conv)*sizeof(char));
+  snprintf(ret, NUMERIC_LENGTH+conv, "%d", num);
+ }
+ else if (strlen(ret)+1 < NUMERIC_LENGTH) {
+  ret=(char *) realloc(ret, (strlen(ret)+1)*sizeof(char));
+ }
+ return ret;
 }
