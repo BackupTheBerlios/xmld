@@ -9,7 +9,7 @@
 Author(s):
 Khalid Al-Kary
 
-Revision: 1.0
+Revision: 1.1
 ------------------------------------------------------------------		  
 Introduction:
 -------------
@@ -29,108 +29,80 @@ avoid any needs to learn something new (except for XML itself),
 however, the more SQL-compliance XMLD-SQL offers, the better
 it's.
 
-Scalar Expressions (sc_expr):
-----------------------------
+Note: readers of this document must have a SQL background.
+it's not a documentation--it's a temproary implementation
+guide.
+
+Expressions:
+------------
 A scalar expression can be one of the following:
  
  [*] A column name.
- [*] A scalar function call.
+ [*] A function call.
  [*] A mathematical expression.
  [*] A sequence of characters.
+ [*[ A wildcard.
 
 Note: a column in XML is generally an XML element's attribute,
-in addition to these two special cases:
+in addition to these two special values:
   
  [*] "(text)" is the text of an element.
  [*] "(tagname)" is the name of an element's tag.
 
-According to that, the following are valid XMLD-SQL expressions:
+Note that accodring to XML an attribute name can't have a bracket in
+it -- so (text) and (tagname) never conflict with normal attribute
+names.
+
+A wildcard can be:
+
+ [*] * -- All columns
+ [*] @ -- All attributes (All columns execluding "(text)" and "(tagname)")
+ 
+According to that specification, the following are valid XMLD-SQL 
+expressions:
   
 name
 age
 STRCAT(UCASE((text)),UCASE(age))
 STRLEN(name)+5
+SIN(5+6)
+COUNT(*)
 age-1
 "my name is a name"
 
-Aggregate Expression (agr_expr):
---------------------------------
-An aggregate expression is identically a scalar expression
-with the exception that it can contain aggregate functions.
- 
-From my understanding, an aggregate function is a function whose
-value depends on more than one element that the XML processor 
-needs to go through all the elements to get its value, and it has 
-one value for all of the elements.
+Note: there are two types of functions--aggregate and scalar. 
+Scalar functions do their processing in a per-row manner they
+need nothing but values extracted from the current row in the
+table:
 
-An example of an aggregate function call:
+SIN(angle)
 
-COUNT(*) -- counts the number of rows.
-COUNT(age) -- counts the number of rows that have non-NULL values 
-for the age column.
+On the other hand, aggregate functions need to be given the
+ability to process all the rows in a file in order to properly
+get their value:
 
-Expression list:
-----------------
+COUNT(name) -- Number of rows that have non-NULL values of the
+column named "name"
+
+As you can see in the example, this functions needs to look at
+the whole table to know the number of rows that have non-NULL 
+values of the "name" column. Aggregate functions are not
+allowed in some contexts, which are a going to be mentioned
+individually later in this document.
+
+Expression lists:
+-----------------
 An expression list is a group of expressions separated by
 commas:
 
 expr1, expr2, expr3 ...
 
-You can expect these two types of expression lists:
- 
- [*] A scalar expression list: which contains only scalar 
- expressions. (namely sc_expr_list)
- [*] An aggregate expression list: which can contain both scalar
- and aggregate expressions. (namely agr_expr_list)
+Those are used in places like the select statement:
 
-Note: a single expression is still considered an expression list.
+select age, name, gender from "persons.xml"
 
-The Conditional:
-----------------
-A conditional statement:
-
-[1] expr <condition> expr
-[2] ! (void condition)
-
-Ofcourse, expr can be either scalar or aggregate, in which cases
-the conditional would be called a scalar conditional (sc_cond) 
-or an aggregate conditional (agr_cond) respectively.
-
-condition can be:
-
- [*] equal '='
- [*] greater than '>'
- [*] smaller than '<'
- [*] greater than or equal '>='
- [*] smaller than or equal '<='
- [*] LIKE
- [*] BETWEEN
- [*] NOT BETWEEN
-
-A void condition (represented by the single exclamation mark '!') is
-used to maintain an always true condition. The use of that one is 
-to be discussed later (in Multi-level conditionals).
-
-Conditional Negation:
----------------------
-To negate a condition:
-
- NOT expr <condition> expr
-
-this is after all treated as a condition (sc_cond and agr_cond)
-
-Conditional Grouping:
----------------------
-A group of conditionals grouped by AND, OR and brackets, such as:
-
-cond1 AND NOT ((cond1 OR cond2) AND cond3)
-cond5
-
-Note: a single conditional is still considered a group.
-Hint: sc_cond_group, agr_cond_group ?
-
-Multi-level Conditionals:
--------------------------
+A XML file is not a flat table:
+-------------------------------
 XML is multi-levelled:
 
 <root>
@@ -139,113 +111,250 @@ XML is multi-levelled:
  </level1>
 </root>
 
-For that reason Multi-level conditionals are required, which are
-infact a collection of conditional groups (either scalar or ag-
-gregate) separated by colons--each condition stands for one 
-level in the XML tree corresponding to its index in the 
-Multi-level conditional:
+This point must need special care within XMLD-SQL in 
+order to achieve full XML proccessing capability. 
+Consider this SQL query:
 
-Scalar Multi-level Conditional (sc_cond_level):
+select age, name, gender from persons
 
-sc_cond_group [: sc_cond_group [: sc_cond_group ...]]
+this should get age, name and gender column values
+from all the single-level table, that is meaningful in
+such context, but for XML this should normally mean trial
+to retrieve age, name and gender attributes from all the
+levels of the document, and this is probably not the 
+wanted behaviour. XMLD-SQL offers a per-level specification
+of the attributes to be retrieved/updated/checked/whatever
+using the ":" operator, which is going to be further
+explained later:
 
-Aggregate Multi-level Conditional (agr_cond_level):
+Level-sensitive expression lists:
+---------------------------------
+Here's an example from the implication which the name carries
+with it:
 
-agr_cond_group [: agr_cond_group [: agr_cond_group ...]]
+name, age, gender:type, color, size
 
-Example:
+Because XML is multi-levelled, the need for level-sensitive
+expression lists arises, that is--this expression list when
+the current level is 1 (root) evaluates to:
 
-Scalar: 
-(tagname)="people" AND country="country1" : LCASE(name)="myname"
+name, age, gender
 
-Aggregate:
-count(*)=5 : count(name)=7
+And when the current level is 2, it evaluates to:
 
-Usage of void conditions: You may need to define a condition for
-a particular level while keeping the level before it be selected
-unconditionally. In such case you will need to use the void condition 
-(!) to keep the order while maintaining the semantic of an "Always true" 
-condition.
+type, color, size
 
-Assignment:
------------
-Syntax:
+This one can be used in a XML-SQL specific query:
 
-<column_name> = sc_expr (scalar assignment--sc_assign)
-<column_name> = agr_expr (aggregate assignment--agr_assign)
+select name, age, gender:type, color, size from "persons.xml"
 
-Assignment groups:
-------------------
-Syntax:
+Void expression lists:
+----------------------
+Recalling multiexpression lists:
 
-sc_assign[, sc_assign[, sc_assign]] (scalar assignment group--
-sc_assign_group)
+name, age, gender:type, color, size
 
-Such as:
+As you can see, each level in that expression does two tasks--
+preserving the level order and specifying the expressions
+used for that level. In some cases you may need to do only the
+first task--preserving the level order--in order to specify
+the expressions used for a deeper level.
+
+That is, you will need something like this:
+
+:type, color, size
+
+So, if the current level is one, this expression is supposed
+to evaluate to "nothing" and if it was 2 it evaluates to
+type, color, size. However, the empty string can't be easily
+tracked down by a modest query parser, and doesn't make the
+meaning be apparent enough, therefore, usage of the special
+'!' character is to do that purpose. thus, the correct form
+of the expression list above is:
+
+!:type, color, size
+
+Note that it can go between two levels:
+
+name, age, gender:!:vendor
+
+Conditionals:
+----------------
+A conditional statement:
+
+expression <condition> expression
+
+The condition itself can be:
+
+ [*] Equal "="
+ [*] Greater than ">"
+ [*] Smaller than "<"
+ [*] Greater than or equal ">="
+ [*] Smaller than or equal "<="
+ [*] Not equal "<>"
+ [*] LIKE
+ [*] BETWEEN
+ [*] NOT BETWEEN
+
+Note: neither the left nor the right expressions can be wildcards.
+Wildcards are normally useful for retrieval operations. 
+
+Conditional negation:
+---------------------
+To negate a condition:
+
+ NOT expr <condition> expr
+
+Conditional grouping:
+---------------------
+Grouping of conditionals can be achieved using AND, OR and brackets, such as:
+
+age > 150 AND (gender = "male" OR haircolor = "yellow")
+
+Level-sensitive conditionals:
+-----------------------------
+Exactly the same as level-sensitive expression lists, example:
+
+age = 50 AND gender = "male":type = "shoes" OR size = 10
+
+Void conditionals are used for exactly the same purpose as
+void expression lists, they always evaluate to true, that is--
+keeping the level order and do nothing themselves.
+
+!:type="shoes" OR size=10
+
+Assignments:
+------------
+
+<column name> = <expression>
+
+Means: Assign <expression>'s value to the column named <column name>.
+
+Note: the right hand expressin must not be an aggregate one.
+
+Assignment lists:
+-----------------
+A group of assignments grouped by commas:
 
 name = "bb52", age = "20"
 bugs_status = "too many"
 
-An aggregate assignment group is the one that contains at least
-one aggregate assignment. Aggregate assignments and aggregate 
-assignment groups are currently unusable, just written for com-
-pleteness and for there might be a use for them at a later point.
+Level-sensitive assignements:
+-----------------------------
 
-The FILE string:
-----------------
-Is a special case of an expression, that can only contain a quoted
-sequence of characters that represents a XML file name relative
-to the current directory or absolute starting from the server root.
+name = "b552", age="20":!:vendor="worst one"
+
+And yes! there are void assignment lists.
+
+Handling infinite levelling:
+----------------------------
+As previously mentioned, the ":" character is used to maintain 
+level-sensitivity in various contexts, however, in many situations
+the number of levels in the XML tree is greater than those which
+are mentioned in a level-sensitive language construct. Actually
+in some situations, the number of levels can't even be known!
+
+There are two ways to take when it comes to levels larger than
+the mentioned in a language construct:
+
+[1] Ignore them.
+[2] Apply semantics of the last mentioned level to them.
+
+Ignoring is the default behaviour, that is:
+
+name, age, gender
+
+will evaluate to nothing in level 2.
+
+In XML-SQL, the '~' prefix operator is used to apply the 
+semantics of the language construct just after it to
+all the deeper levels, that is:
+
+~name, age, gender
+
+will evaluate to:
+
+name, age, gender
+
+in level 2.
+
+Note: the '~' operator can only be used in the last mentioned
+level in a level-sensitive language construct.
+
+Note: the '~' operator can appear before a void condition/expression
+/assignment list ('!'), but it has a real meaning only in case of 
+condition lists:
+
+Condition lists: Evaluate to true all the deeper levels.
+Assignment lists: Don't assign anything for all the deeper levels
+(that's the default behaviour).
+Expression lists: Don't retrieve anything from deeper levels
+(that is also the default behaviour).
+
+Table name representation:
+--------------------------
+
+XML files are not database tables, the are files that have extensions
+that contain dots, the reason for which these files names when mentioned
+inside a query have to be quoted for the dots and other special characters
+not to be mixed ith other uses for them inside the query:
 
 "subdirectory1/file1.xml"
 "file2.xml"
 "sub2/file3.xml"
 "/file4.xml"
 
-The DIR string:
----------------
-Is a special case of an expression, that can only contain a quoted
-sequence of characters that represents a path either relative to the
-current directory, or absolute starting from the server's root.
+Database name representation:
+-----------------------------
+XMLD-SQL uses native file system "folders" to represent databases, allowing
+for useful ideas like database nesting. When a database name is to be used
+inside a query, it has to be quoted for the same reason of file name 
+quoting:
 
 "/db1"
 "db2"
 
+OpenXMLD specific: '/' at the beginning in files and folders doesn't mean 
+the root of the server machine, but means the document root of the OpenXMLD.
+
 The USE clause:
 ---------------
-The USE clause changes the current path to DIR.
+The USE clause changes the current path to a particular path:
 
-USE DIR
+USE <path>
 
-Note: XMLD-SQL is case-insensitive.
+OpenXMLD specific: XMLD-SQL is case-insensitive.
 
 The SELECT clause:
 ------------------
 
-SELECT agr_expr_list FROM FILE
-SELECT agr_expr_list FROM FILE WHERE sc_cond_level
+SELECT <level-sensitive expression list> FROM <file name>
+SELECT <level-sensitive expression list> FROM <file name> FILE WHERE <level sensitive condition list>
+
+Note: the level sensitive condition list of the WHERE statement (wherever WHERE is used)
+must not contain aggregate expressions.
 
 The UPDATE clause:
 ------------------
 
-UPDATE FILE SET sc_assign_group
-UPDATE FILE SET sc_assign_group WHERE sc_cond_level
+UPDATE <file name> SET <level-sensitive assignment list>
+UPDATE <file name> SET <level-sensitive assignment list>  WHERE <level-sensiitve condition list>
 
 The DELETE clause:
 ------------------
 
-DELETE FROM FILE
-DELETE FROM FILE WHERE sc_cond_level
+DELETE FROM <file name>
+DELETE FROM <file name> WHERE <level-sensitive condition list>
 DELETE * FROM FILE
 
 The INSERT clause:
 ------------------
 
-INSERT INTO FILE [(<column_name>[, <column_name> [...]])]
-VALUES (sc_expr[, sc_expr [...]])
+INSERT INTO <file name> [( <level-sensitive column names list> )] VALUES ( <level-sensitive 
+expression list> )
 
-INSERT INTO FILE [(<column_name>[, <column_name> [...]])]
-VALUES (sc_expr[, sc_expr [...]]) WHERE sc_cond_level
+INSERT INTO FILE [( <level-sensitive column names list> )] VALUES 
+( <level-sensitive expression list> ) WHERE <level-sensitive condition list>
 
 -- to be continued
 </xmp></pre>
