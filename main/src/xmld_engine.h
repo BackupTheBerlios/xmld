@@ -25,6 +25,7 @@ struct XMLDEngine {
 
 typedef struct XMLDEngine XMLDEngine;
 
+XMLDEngine *XMLDEngine_create(void *(*)(XMLDWork *), void *(*)(XMLDWork *), int (*)(XMLDWork *), char *(*)(XMLDWork *, XMLDExpr *), int (*) (XMLDWork *, XMLDCond *), char *(*) (XMLDWork *, XMLDExpr *));
 void XMLDEngine_free_content(XMLDEngine *);
 void XMLDEngine_free(XMLDEngine *);
 

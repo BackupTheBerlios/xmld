@@ -22,6 +22,7 @@ struct XMLDCondTable {
 
 typedef struct XMLDCondTable XMLDCondTable;
 
+XMLDCondTable *XMLDCondTable_create(void);
 void XMLDCondTable_free_content(XMLDCondTable *);
 void XMLDCondTable_free(XMLDCondTable *);
 void XMLDCondTable_add(XMLDCondTable *, XMLDExpr *, XMLDExpr *, short, XMLDCond *, XMLDCond *, short, short);

@@ -23,6 +23,7 @@ struct XMLDConnection {
 
 typedef struct XMLDConnection XMLDConnection;
 
+XMLDConnection *XMLDConnection_create(int, int, char *);
 void XMLDConnection_free_content(XMLDConnection *);
 void XMLDConnection_free(XMLDConnection *);
 

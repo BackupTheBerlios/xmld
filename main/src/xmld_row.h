@@ -16,12 +16,12 @@
 
 /* Represents a row of response */
 struct XMLDRow {
- XMLDCol *cols;
- XMLDCol *last_col; /* A pointer to the last column */
+ XMLDColTable *cols;
 };
 
 typedef struct XMLDRow XMLDRow;
 
+XMLDRow *XMLDRow_create(XMLDColTable *);
 void XMLDRow_add_col(XMLDRow *);
 void XMLDRow_fill_col(XMLDRow *, char *);
 void XMLDRow_free_content(XMLDRow *);

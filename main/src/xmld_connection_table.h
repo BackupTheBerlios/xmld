@@ -22,6 +22,7 @@ struct XMLDConnectionTable {
 
 typedef struct XMLDConnectionTable XMLDConnectionTable;
 
+XMLDConnectionTable *XMLDConnectionTable_create(void);
 void XMLDConnectionTable_free_content(XMLDConnectionTable *);
 void XMLDConnectionTable_free(XMLDConnectionTable *);
 void XMLDConnectionTable_add(XMLDConnectionTable *, int, int, char *);

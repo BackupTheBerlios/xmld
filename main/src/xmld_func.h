@@ -16,7 +16,7 @@
 
 struct XMLDFunc {
  char *name;
- void (*func) (XMLDExprTable *);
+ void *(*func) (XMLDExprTable *);
  short aggr; /*
                * 1 = Aggregate function
                * 0 = Scalar function
@@ -25,6 +25,7 @@ struct XMLDFunc {
 
 typedef struct XMLDFunc XMLDFunc;
 
+XMLDFunc *XMLDFunc_create(char *, void *(*) (XMLDExprTable *), short);
 void XMLDFunc_free_content(XMLDFunc *);
 void XMLDFunc_free(XMLDFunc *);
 

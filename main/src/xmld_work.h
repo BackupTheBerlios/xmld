@@ -23,6 +23,7 @@ struct XMLDWork {
 
 typedef struct XMLDWork XMLDWork;
 
+XMLDWork *XMLDWork_create(XMLDRequest *, XMLDResponse *, XMLDConnection *, XMLDResource *);
 void XMLDWork_free_content(XMLDWork *);
 void XMLDWork_free(XMLDWork *);
 

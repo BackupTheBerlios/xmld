@@ -70,6 +70,7 @@ struct XMLDExpr {
 
 typedef struct XMLDExpr XMLDExpr;
 
+XMLDExpr *XMLDExpr_create(short, short, int, XMLDExpr *, XMLDExpr *, short, char *, XMLDFunc *, XMLDExprTable *, char *, short, char *);
 void XMLDExpr_free_content(XMLDExpr *);
 void XMLDExpr_free(XMLDExpr *);
 

@@ -22,6 +22,7 @@ struct XMLDAggrTable {
 
 typedef struct XMLDAggrTable XMLDAggrTable;
 
+XMLDAggrTable *XMLDAggrTable_create(XMLDExpr *, XMLDRow *);
 void XMLDAggrTable_free_content(XMLDAggrTable *);
 void XMLDAggrTable_free(XMLDAggrTable *);
 void XMLDAggrTable_add_col(XMLDAggrTable *, XMLDCol *);

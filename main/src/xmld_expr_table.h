@@ -22,6 +22,7 @@ struct XMLDExprTable {
 
 typedef struct XMLDExprTable XMLDExprTable;
 
+XMLDExprTable *XMLDExprTable_create(void);
 void XMLDExprTable_free_content(XMLDExprTable *);
 void XMLDExprTable_free(XMLDExprTable *);
 void XMLDExprTable_add(XMLDExprTable *, short, short, int, XMLDExpr *, XMLDExpr *, short, char *, XMLDFunc *, XMLDExprTable *, char *, short, char *);

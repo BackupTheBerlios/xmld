@@ -50,6 +50,7 @@ struct XMLDCond {
 
 typedef struct XMLDCond XMLDCond;
 
+XMLDCond *XMLDCond_create(short, XMLDExpr *, XMLDExpr *, short, XMLDCond *, XMLDCond *, short, short);
 void XMLDCond_free_content(XMLDCond *);
 void XMLDCond_free(XMLDCond *);
 

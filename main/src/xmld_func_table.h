@@ -24,7 +24,7 @@ typedef struct XMLDFuncTable XMLDFuncTable;
 
 void XMLDFuncTable_free_content(XMLDFuncTable *);
 void XMLDFuncTable_free(XMLDFuncTable *);
-void XMLDFuncTable_add(XMLDFuncTable *, char *, void (*) (XMLDExprTable *), short);
+void XMLDFuncTable_add(XMLDFuncTable *, char *, void *(*) (XMLDExprTable *), short);
 void XMLDFuncTable_reset(XMLDFuncTable *);
 void XMLDFuncTable_next(XMLDFuncTable *);
 void XMLDFuncTable_prev(XMLDFuncTable *);

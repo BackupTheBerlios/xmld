@@ -22,6 +22,7 @@ struct XMLDResource {
 
 typedef struct XMLDResource XMLDResource;
 
+XMLDResource *XMLDResource_create(XMLDEngine *, void *);
 void XMLDResource_free_content(XMLDResource *);
 void XMLDResource_free(XMLDResource *);
 
