@@ -47,6 +47,7 @@ i * -------------------------------------------------------------- *
 /* Groupers: */
 #define XMLD_OP_AND 13   /* AND grouping */
 #define XMLD_OP_OR  14   /* OR grouping  */
+#define XMLD_OP_NOT 15   /* Logical NOT  */
 
 
 /* XMLD-SQL Special identifier types */

@@ -776,10 +776,10 @@ useful as something useful.
  * Merge XMLDCond and XMLDExpr:
   * XMLDExpr (Put XMLDCond along with its macros and stuff into it -- done)
   * XMLDCond (remove -- done)
-  * xmld-sql.(y|lex) (resolve condition rules as expressions)
+  * xmld-sql.(y|lex) (resolve condition rules as expressions -- done)
     * Notes:
-     * conditional operators must be left associative.
-     * Care about operator priority.
+     * conditional operators must be left associative. (done)
+     * Care about operator priority. (done)
   * twalker_simplify_expr (Merge XMLDCond constructs)
   * XMLDExpr_to_string (resolve conditions as well)
   * XMLDExpr_to_boolean (remeber to resolve expression correctly)

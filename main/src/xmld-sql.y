@@ -21,7 +21,6 @@
 
 %union {
  XMLDExpr *expr;
- XMLDCond *cond;
  XMLDList *list;
  char *qval;
  int num;
@@ -30,11 +29,9 @@
 
 /* We may have a multi-threaded mtasker later */
 %pure_parser
-%expect 10
 
 /* Keywords */
 %token SELECT
-%token DISCONNECT
 %token FROM
 %token WHERE
 %token UPDATE
@@ -48,33 +45,25 @@
 
 /* Type Definitions */
 %type <expr> expr
-%type <cond> cond
-%type <list> expr_list cond_list
+%type <list> expr_list
 
 /* Other Tokens  */
 %token <qval> QVAL IDENTIFIER
 %token <num> NUM
 %token <fnum> FNUM
 
-/* Level Handling Operators */
+/* Operators */
 %left ':'
-%left '~'
-
-/* Composition Operator */
+%right '~'
 %left ','
-
-/* Logical Operators */
 %left AND OR
-%nonassoc '=' '<' '>' NE LE GE LIKE BETWEEN NBETWEEN
-%left NOT
-
-/* Mathematical Operators */
+%left '=' NE
+%left '<' '>' GE LE LIKE
 %left '+' '-'
 %left '*' '/'
 %left NEG
 %right '^'
-
-/* Relation operator */
+%right NOT
 %nonassoc '.'
 
 %%
@@ -95,7 +84,7 @@ query: SELECT expr_list FROM expr {
 				   ((XMLDWork *) work)->req->retr=$2;
 				   YYACCEPT;
                                   }
-       | SELECT expr_list FROM expr WHERE cond_list {
+       | SELECT expr_list FROM expr WHERE expr_list {
 			     	                     ((XMLDWork *) work)->req->type=XMLD_SQL_SELECT_WHERE;
                                                      ((XMLDWork *) work)->files=XMLDFileList_create();
                                                      if ($4->type == XMLD_QVAL) {
@@ -112,7 +101,7 @@ query: SELECT expr_list FROM expr {
 						     ((XMLDWork *) work)->req->where=$6;
 						     YYACCEPT;
                                                     }
-       | UPDATE expr SET cond_list {
+/*       | UPDATE expr SET cond_list {
 				    ((XMLDWork *) work)->req->type=XMLD_SQL_UPDATE;
                                     ((XMLDWork *) work)->files=XMLDFileList_create();
                                     if ($2->type == XMLD_QVAL) {
@@ -239,7 +228,7 @@ query: SELECT expr_list FROM expr {
 										      ((XMLDWork *) work)->req->where=$12;
 										      YYACCEPT;
 										     }
-       | INSERT INTO expr VALUES '(' expr_list ')' WHERE cond_list {
+       | INSERT INTO expr VALUES '(' expr_list ')' WHERE expr_list {
                                                                     ((XMLDWork *) work)->req->type=XMLD_SQL_INSERT_WHERE;
 						                    ((XMLDWork *) work)->files=XMLDFileList_create();
 								    char *name=NULL;
@@ -255,11 +244,11 @@ query: SELECT expr_list FROM expr {
 								    ((XMLDWork *) work)->req->where=$9;
 								    YYACCEPT;
                                                                    }
-       | USE expr_list {
-                        ((XMLDWork *) work)->req->type=XMLD_SQL_USE;
-		        ((XMLDWork *) work)->req->retr=$2;
-		        YYACCEPT;
-                       }
+       | USE expr {
+                   ((XMLDWork *) work)->req->type=XMLD_SQL_USE;
+		   ((XMLDWork *) work)->req->retr=$2;
+		   YYACCEPT;
+                  }*/
        | error {
                 xmld_errno=XMLD_EPARSE;
                 YYABORT;
@@ -267,20 +256,6 @@ query: SELECT expr_list FROM expr {
 ;
 
 				     
-cond_list: cond {
-                 $$=XMLDCondList_create();
-		 XMLDCond *cond=XMLDCondList_add($$);
-		 XMLDCond_copy($1, cond);
-		 free($1);
-                }
-	   | cond_list ':' cond {
-                                 $$=$1;
-		                 XMLDCond *cond=XMLDCondList_add($$);
-		                 XMLDCond_copy($3, cond);
-		                 free($3);
-	                        }
-;
-
 expr_list: expr {
                  $$=XMLDExprList_create();
 		 XMLDExpr *expr=XMLDExprList_add($$);
@@ -293,151 +268,6 @@ expr_list: expr {
 		                 XMLDExpr_copy($3, expr);
 		                 free($3);
 	                        }
-	   /* These two rules are to handle void expression lists */
-	   | expr_list ':' cond {                         
-                                 $$=$1;
-		                 free($3);
-		                 XMLDExpr *expr=XMLDExprList_add($$);
-		                 expr->type = XMLD_VOID_LIST;
-				 expr->aggr = XMLD_FALSE;
-	                        }
-	   | cond_list ':' expr {
-	                    $$=XMLDExprList_create();
-			    XMLDList_free($1);
-		            XMLDExpr *expr=XMLDExprList_add($$);
-			    expr->type = XMLD_VOID_LIST;
-			    expr->aggr = XMLD_FALSE;
-			    expr=XMLDExprList_add($$);
-			    XMLDExpr_copy($3, expr);
-			    free($3);
-			   }
-;
-
-cond: '(' cond ')' {
-                    $$=$2;
-		   }		   
-      | expr '=' expr {
-                       $$=XMLDCond_create();
-		       $$->negate=XMLD_FALSE;
-		       $$->type=XMLD_CONDITION;
-		       $$->left=$1;
-		       $$->right=$3;
-		       $$->op=XMLD_COND_OP_EQUAL;
-                      }
-      | expr '<' expr {
-                       $$=XMLDCond_create();
-		       $$->negate=XMLD_FALSE;
-		       $$->type=XMLD_CONDITION;
-		       $$->left=$1;
-		       $$->right=$3;
-		       $$->op=XMLD_COND_OP_L;
-                      }
-      | expr '>' expr {
-                       $$=XMLDCond_create();
-		       $$->negate=XMLD_FALSE;
-		       $$->type=XMLD_CONDITION;
-		       $$->left=$1;
-		       $$->right=$3;
-		       $$->op=XMLD_COND_OP_G;
-                      }
-      | expr NE expr {
-                      $$=XMLDCond_create();
-		      $$->negate=XMLD_FALSE;
-		      $$->type=XMLD_CONDITION;
-		      $$->left=$1;
-		      $$->right=$3;
-		      $$->op=XMLD_COND_OP_NE;
-                     }
-      | expr LE expr {
-                      $$=XMLDCond_create();
-		      $$->negate=XMLD_FALSE;
-		      $$->type=XMLD_CONDITION;
-		      $$->left=$1;
-		      $$->right=$3;
-		      $$->op=XMLD_COND_OP_LE;
-		     } 
-      | expr GE expr {
-                      $$=XMLDCond_create();
-		      $$->negate=XMLD_FALSE;
-		      $$->type=XMLD_CONDITION;
-		      $$->left=$1;
-		      $$->right=$3;
-		      $$->op=XMLD_COND_OP_GE;
-		     }
-      | expr LIKE expr {
-                        $$=XMLDCond_create();
-                        $$->negate=XMLD_FALSE;
-                        $$->type=XMLD_CONDITION;
-                        $$->left=$1;
-                        $$->right=$3;
-			$$->op=XMLD_COND_OP_LIKE;
-		       }
-      | expr BETWEEN expr  {
-                            $$=XMLDCond_create();
-			    $$->negate=XMLD_FALSE;
-			    $$->type=XMLD_CONDITION;
-			    $$->left=$1;
-			    $$->right=$3;
-			    $$->op=XMLD_COND_OP_BET;
-                           }
-      | expr NBETWEEN expr {
-                            $$=XMLDCond_create();
-			    $$->negate=XMLD_FALSE;
-			    $$->type=XMLD_CONDITION;
-			    $$->left=$1;
-			    $$->right=$3;
-			    $$->op=XMLD_COND_OP_NBET;
-                           }
-      | cond AND cond {
-                       $$=XMLDCond_create();
-		       $$->negate=XMLD_FALSE;
-		       $$->type=XMLD_CONDITION_GRP;
-		       $$->cleft=$1;
-		       $$->cright=$3;
-		       $$->cop=XMLD_COND_GRP_AND;
-		      } 
-      | cond OR cond {
-                      $$=XMLDCond_create();
-		      $$->negate=XMLD_FALSE;
-		      $$->type=XMLD_CONDITION_GRP;
-		      $$->cleft=$1;
-		      $$->cright=$3;
-		      $$->cop=XMLD_COND_GRP_OR;
-                     }
-      | NOT cond {
-                  $$=$2;
-		  $$->negate=!($$->negate);
-                 }
-      | '!' { /* void condition */
-             $$=XMLDCond_create();
-	     $$->type=XMLD_CONDITION_VOID;
-            }
-      | cond ',' cond {
-                       XMLDCond *cond;
-		       if ($1->type != XMLD_CONDITION_LIST) {
-		        $$=XMLDCond_create();
-			$$->type = XMLD_CONDITION_LIST;
-			$$->negate=XMLD_FALSE;
-			$$->conds = XMLDCondList_create();
-			cond=XMLDCondList_add($$->conds);
-			XMLDCond_copy($1, cond);
-			free($1);
-			cond=XMLDCondList_add($$->conds);
-			XMLDCond_copy($3, cond);
-			free($3);
-		       }
-		       else {
-		        $$=$1;
-			$$->negate=XMLD_FALSE;
-			cond=XMLDCondList_add($$->conds);
-			XMLDCond_copy($3, cond);
-			free($3);
-		       }
-		      }
-     | '~' cond {
-                 $$=$2;
-		 $2->cross_level=XMLD_TRUE;
-                }
 ;
 
 expr: '(' expr ')' {
@@ -502,14 +332,6 @@ expr: '(' expr ')' {
 			    $$->right=$2;
 			    $$->op=XMLD_OP_UNEG;
                            }
-      | expr AND expr {
-                       $$=XMLDExpr_create();
-		       $$->aggr=($1->aggr || $3->aggr);
-		       $$->type=XMLD_OPERATION;
-		       $$->left=$1;
-		       $$->right=$3;
-		       $$->op=XMLD_OP_AND;
-                      }
       | IDENTIFIER {
                     $$=XMLDExpr_create();
 		    $$->aggr=XMLD_FALSE;
@@ -560,42 +382,125 @@ expr: '(' expr ')' {
 	     $$->type=XMLD_WILDCARD;
 	     $$->wildcard=XMLD_WILDCARD_ATTS;
             }
-      | expr AS QVAL {
-                      $$=$1;
-		      $$->alias=$3;		      
+     | expr '=' expr {
+                      $$=XMLDExpr_create();
+	              $$->aggr = $1->aggr || $3->aggr;
+	              $$->type = XMLD_OPERATION;
+		      $$->op = XMLD_OP_EQUAL;
+		      $$->left=$1;
+		      $$->right=$3;
                      }
-      | expr ',' expr {
-                       XMLDExpr *expr;
-		       if ($1->type != XMLD_LIST) {
-		        $$=XMLDExpr_create();
-			$$->type = XMLD_LIST;
-			$$->aggr=$1->aggr || $3->aggr;
-			$$->exprs = XMLDExprList_create();
-			expr=XMLDExprList_add($$->exprs);
-			XMLDExpr_copy($1, expr);
-			free($1);
-			expr=XMLDExprList_add($$->exprs);
-			XMLDExpr_copy($3, expr);
-			free($3);
-		       }
-		       else {
-		        $$=$1;
-			$$->aggr = $$->aggr || $3->aggr;
-			expr=XMLDExprList_add($$->exprs);
-			XMLDExpr_copy($3, expr);
-			free($3);
-		       }
+     | expr '<' expr {
+                      $$=XMLDExpr_create();
+	              $$->aggr = $1->aggr || $3->aggr;
+	              $$->type = XMLD_OPERATION;
+		      $$->op = XMLD_OP_L;
+		      $$->left=$1;
+		      $$->right=$3;
+                     }
+     | expr '>' expr {
+                      $$=XMLDExpr_create();
+	              $$->aggr = $1->aggr || $3->aggr;
+	              $$->type = XMLD_OPERATION;
+		      $$->op = XMLD_OP_G;
+		      $$->left=$1;
+		      $$->right=$3;
+                     }
+     | expr NE expr {
+                     $$=XMLDExpr_create();
+	             $$->aggr = $1->aggr || $3->aggr;
+	             $$->type = XMLD_OPERATION;
+		     $$->op = XMLD_OP_NE;
+		     $$->left=$1;
+		     $$->right=$3;
+                    }
+     | expr LE expr {
+                     $$=XMLDExpr_create();
+	             $$->aggr = $1->aggr || $3->aggr;
+	             $$->type = XMLD_OPERATION;
+		     $$->op = XMLD_OP_LE;
+		     $$->left=$1;
+		     $$->right=$3;
+                    }
+     | expr GE expr {
+                     $$=XMLDExpr_create();
+		     $$->aggr = $1->aggr || $3->aggr;
+		     $$->type = XMLD_OPERATION;
+		     $$->op = XMLD_OP_GE;
+		     $$->left=$1;
+		     $$->right=$3;
+                    }
+     | expr LIKE expr {
+                       $$=XMLDExpr_create();
+		       $$->aggr = $1->aggr || $3->aggr;
+		       $$->type = XMLD_OPERATION;
+		       $$->op = XMLD_OP_LIKE;
+		       $$->left=$1;
+		       $$->right=$3;
                       }
-      | '~' expr {
-                  $$=$2;
-		  $$->cross_level=XMLD_TRUE;
-                 }
+     | expr AND expr {
+                      $$=XMLDExpr_create();
+		      $$->aggr = $1->aggr || $3->aggr;
+		      $$->type = XMLD_OPERATION;
+		      $$->op = XMLD_OP_AND;
+		      $$->left=$1;
+		      $$->right=$3;
+                     }
+     | expr OR expr {
+                     $$=XMLDExpr_create();
+		     $$->aggr = $1->aggr || $3->aggr;
+		     $$->type = XMLD_OPERATION;
+		     $$->op = XMLD_OP_OR;
+		     $$->left=$1;
+		     $$->right=$3;
+                    }
+     | NOT expr {
+                 $$=XMLDExpr_create();
+	         $$->aggr=$2->aggr;
+	         $$->type=XMLD_OPERATION;
+		 $$->op = XMLD_OP_NOT;
+		 $$->right = $2;
+                }
+     | expr AS QVAL {
+                     $$=$1;
+	             $$->alias=$3;		      
+                    }
+     | expr ',' expr {
+                      XMLDExpr *expr;
+	              if ($1->type != XMLD_LIST) {
+		       $$=XMLDExpr_create();
+		       $$->type = XMLD_LIST;
+		       $$->aggr=$1->aggr || $3->aggr;
+		       $$->exprs = XMLDExprList_create();
+		       expr=XMLDExprList_add($$->exprs);
+		       XMLDExpr_copy($1, expr);
+		       free($1);
+		       expr=XMLDExprList_add($$->exprs);
+		       XMLDExpr_copy($3, expr);
+		       free($3);
+		      }
+		      else {
+		       $$=$1;
+		       $$->aggr = $$->aggr || $3->aggr;
+		       expr=XMLDExprList_add($$->exprs);
+		       XMLDExpr_copy($3, expr);
+		       free($3);
+		      }
+                     }
+     | '~' expr {
+                 $$=$2;
+	         $$->cross_level=XMLD_TRUE;
+                }
      /* Support for column -> file association */
      | expr '.' expr {
 		      $$=$3;
 		      $$->file=XMLDFile_create($1->qval);
 		      XMLDExpr_free($1);
                      }
+     | '!' {
+            $$=XMLDExpr_create();
+	    $$->type = XMLD_VOID_LIST;
+	   }
 ;
 
 %%

@@ -38,7 +38,6 @@ struct XMLDFile;
  typedef XMLDList XMLDFileList;
 #endif /* XMLDFILE_TYPE_DEFINED */
 #include "xmld_work.h"
-#include "xmld_cond.h"
 #include "xmld_engine.h"
 #include "xmld_file.h"
 struct XMLDFunc;

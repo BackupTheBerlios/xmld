@@ -40,8 +40,6 @@
 "<" return '<';
 ">" return '>';
 "like" return LIKE;
-"between" return BETWEEN;
-"not between" return NBETWEEN;
 ":" return ':';
 "," return ',';
 "!" return '!';
