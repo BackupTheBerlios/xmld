@@ -97,7 +97,7 @@ Ofcourse, expr can be either scalar or aggregate, in which cases
 the conditional would be called a scalar conditional (sc_cond) 
 or an aggregate conditional (agr_cond) respectively.
 
-Condition can be:
+condition can be:
 
  [*] equal '='
  [*] greater than '>'
@@ -158,6 +158,30 @@ Scalar:
 Aggregate:
 count(*)=5 : count(name)=7
 
+Assignment:
+-----------
+Syntax:
+
+<column_name> = sc_expr (scalar assignment--sc_assign)
+<column_name> = agr_expr (aggregate assignment--agr_assign)
+
+Assignment groups:
+------------------
+Syntax:
+
+sc_assign[, sc_assign[, sc_assign]] (scalar assignment group--
+sc_assign_group)
+
+Such as:
+
+name = 'bb52', age = '20'
+bugs_status = 'too many'
+
+An aggregate assignment group is the one that contains at least
+one aggregate assignment. Aggregate assignments and aggregate 
+assignment groups are currently unusable, just written for com-
+pleteness and for there might be a use for them at a later point.
+
 The FILE string:
 ----------------
 Is a special case of an expression, that can only contain a quoted
@@ -180,21 +204,39 @@ current directory, or absolute starting from the server's root.
 "/db1/"
 '/db2'
 
-The SELECT clause:
-------------------
-
-SELECT agr_expr_list FROM FILE
-
-The WHERE clause:
------------------
-
-SELECT agr_expr_list FROM FILE WHERE sc_cond_level
-
 The USE clause:
 ---------------
 Note: this changes the current path to DIR.
 
 USE DIR
+
+The SELECT clause:
+------------------
+
+SELECT agr_expr_list FROM FILE
+SELECT agr_expr_list FROM FILE WHERE sc_cond_level
+
+The UPDATE clause:
+------------------
+
+UPDATE FILE SET sc_assign_group
+UPDATE FILE SET sc_assign_group WHERE sc_cond_level
+
+The DELETE clause:
+------------------
+
+DELETE FROM FILE
+DELETE FROM FILE WHERE sc_cond_level
+DELETE * FROM FILE
+
+The INSERT clause:
+------------------
+
+INSERT INTO FILE [(<column_name>[, <column_name> [...]])]
+VALUES (sc_expr[, sc_expr [...]])
+
+INSERT INTO FILE [(<column_name>[, <column_name> [...]])]
+VALUES (sc_expr[, sc_expr [...]]) WHERE sc_cond_level
 
 -- to be continued
 </xmp></pre>
