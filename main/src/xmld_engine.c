@@ -14,7 +14,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "xmld_list.h"
-#include "xmld_table.h"
 #include "xmld_col.h"
 #include "xmld_func.h"
 #include "xmld_expr.h"
