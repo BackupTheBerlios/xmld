@@ -129,7 +129,10 @@ struct row {
 
 /* carries the response to be sent */
 struct XMLDResponse {
- struct row *rows; 
+ struct row *rows;
+ struct expr *aggr_expr_list;
+ struct row *aggr_rows; /* each row corresponds to an aggr_expr list
+			 * note that a row is a combination of cols */
 };
 
 struct XMLDWork;
@@ -140,7 +143,8 @@ struct XMLDEngine {
  void *(*destroy) (struct XMLDWork *);
  int (*walk) (struct XMLDWork *);
  char *(*eval_expr) (struct XMLDWork *, struct expr *);
- int (*eval_cond) (struct XMLDWork *, struct cond *); 
+ int (*eval_cond) (struct XMLDWork *, struct cond *);
+ char *(*eval_aggr_expr) (struct XMLDWork *, struct expr *); 
 };
 
 /* carries per-request resources */
