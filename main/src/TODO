@@ -49,3 +49,7 @@ object-oriented foundation and other editions. (done)
 
 * Write a skeleton do-nothing engine, and attach it to
 the list of XMLDEngine's which serve the requests.
+
+* Check all the code for usage of strlen->malloc->strcpy
+must be strlen+1->malloc->strcpy, because strlen doesn't
+count the null character.
