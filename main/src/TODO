@@ -293,3 +293,18 @@ between and not between conditionals. (done)
 * Implement XMLDExpr_copy.
 
 * Try to compile engine_xmld. (done successfully)
+
+* Add SELECT + WHERE type to twalker.
+
+* in XMLDExpr, nval must be long to handle big
+numeric values, make consideration for that
+every where.
+
+* Add XMLD_ENOAGGR to xmld_errors.h.
+
+* Add XMLDAssign.
+
+* Add types and fields in XMLDRequest for
+INSERT, DELETE, UPDATE and USE statements.
+
+* Define and implement XMLDCond_copy.
