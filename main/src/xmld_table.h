@@ -16,6 +16,7 @@
 
 struct XMLDTable {
  XMLDList *list;
+ void *fill; /* the current empty segment (which can be used) */
  int num; /* Number of elements */
  int used; /* Number of used elements */
 };
