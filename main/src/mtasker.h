@@ -38,10 +38,10 @@ struct task_table {
  int num_tasks;
 };
 
-xmld_status_t mtasker_init(void);
-xmld_status_t mtasker_shutdown(void);
-xmld_status_t mtasker_handle(void (*) (void*), void*);
+short mtasker_init(void);
+short mtasker_shutdown(void);
+short mtasker_handle(void (*) (void*), void*);
 struct proc *mtasker_spawn();
-xmld_status_t mtasker_kill(int);
+short mtasker_kill(int);
 void mtasker_handle_idle(int);
 #endif /* HAVE_MTASKER_H */

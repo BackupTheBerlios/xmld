@@ -19,7 +19,6 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <string.h>
-#include "errors.h"
 #include "cfg.h"
 #include "xmld_types.h"
 #include "sosel.h"
@@ -32,7 +31,7 @@
 int max_conn;
 struct connection_table *conn_table;
 
-xmld_status_t sosel_init() {
+short sosel_init() {
  max_conn=cfg_get("sosel.max_conn");
  /* FIXME: should check ftok's usage */
  key_t key=ftok("cfg.h", 'X');
@@ -44,15 +43,15 @@ xmld_status_t sosel_init() {
  id=shmget(key, max_conn*sizeof(struct XMLDConnection), IPC_CREAT);
  conn_table->conn=(struct XMLDConnection*)shmat(id, 0, 0); 
  shmctl(id, IPC_RMID, 0);
- xmld_status_t stat=mtasker_handle(sosel_run, (void *) 0);
- if (stat!=XMLD_SUCCESS) {
-  return XMLD_FAILURE;
+ short stat=mtasker_handle(sosel_run, (void *) 0);
+ if (stat!=0) {
+  return -1;
  }
  else {
-  return XMLD_SUCCESS;
+  return 0;
  }
 }
-xmld_status_t sosel_shutdown() {
+short sosel_shutdown() {
  int i;
  for (i=0;i<max_conn;i++) {
   conn_table->conn[i].sfd=0;
@@ -62,7 +61,7 @@ xmld_status_t sosel_shutdown() {
   } 
  }
  shmdt((void *)conn_table);
- return XMLD_SUCCESS;
+ return 0;
 }
 void sosel_run(void *data) {
  fd_set fds;
@@ -105,32 +104,32 @@ void sosel_run(void *data) {
  }
  free(conns);
 }
-xmld_status_t sosel_sremove(int fd) {
+short sosel_sremove(int fd) {
  int i;
- xmld_status_t stat=XMLD_FAILURE;
+ short stat=-1;
  for (i=0;i<max_conn;i++) {
   if (conn_table->conn[i].fd==fd) {
    conn_table->conn[i].sfd=0;
-   stat=XMLD_SUCCESS;
+   stat=0;
    break;
   }
  }
  return stat;
 }
-xmld_status_t sosel_sadd(int fd) {
+short sosel_sadd(int fd) {
  int i;
- xmld_status_t stat=XMLD_FAILURE;
+ short stat=-1;
  for (i=0;i<max_conn;i++) {
   if (conn_table->conn[i].fd==fd) {
    conn_table->conn[i].sfd=1;
-   stat=XMLD_SUCCESS;
+   stat=0;
    break;
   }
  }
  return stat;
 }
-xmld_status_t sosel_add(int fd, char*dir) {
- xmld_status_t stat=XMLD_FAILURE;
+short sosel_add(int fd, char*dir) {
+ short stat=XMLD_FAILURE;
  int j;
  while (conn_table->used >= max_conn) {
  }
@@ -141,18 +140,18 @@ xmld_status_t sosel_add(int fd, char*dir) {
       strcpy(conn_table->conn[j].curr_dir, dir);
       conn_table->conn[j].fd=fd;
       conn_table->conn[j].sfd=1;
-      stat=XMLD_SUCCESS;
+      stat=0;
       break;
      }
   }
  return stat;
 }
-xmld_status_t sosel_remove(struct XMLDConnection *conn) {
+short sosel_remove(struct XMLDConnection *conn) {
  if (conn->curr_dir) {
   free(conn->curr_dir);
  } 
  conn->fd=0;
  conn->sfd=0;
  conn_table->used--;
- return XMLD_SUCCESS;
+ return 0;
 }
