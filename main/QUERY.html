@@ -1,134 +1,159 @@
 <html>
 <head>
-<title>The XMLD-SQL proposed query specification</title>
-</head>
+<title>The XMLD-SQL proposed Query Specification</title>
+</head>	
 <body>
 <pre><xmp>
-The XMLD-SQL proposed query specification: (by Khalid Al-Kary)
-==========================================
+The XMLD-SQL Proposed Query Specification: (By Khalid Al-Kary)
+------------------------------------------
 
-NOTE: This document requires a big update since it doesn't reflect
-some basic SQL things like using expressions and function calls in
-the RETR string and the WHERE clause. However, this document still 
-reflects the main idea behind being SQL-compliant and XML-capable.
-
-The RETR string:
-----------------
-The RETR string is to specify the attributes/text to be retrieved out of the 
-selected elements. It's a comma-separated list of the required items, for 
-example:
-
-name,age,e-mail
-
-The above retireves the name, age and e-mail attributes of each selected 
-elements.
-
-A second example:
-
-name,age,(text)
-
-The above retrieves the name and age attributes of each selected element in 
-addition to the text of that element.
-
-This RETR string simply means "all" and retrieves all the attributes and 
-the text of each element:
-
-*
-
-This final RETR string retrieves all the attributes of each element:
-
-@
-
-Conditionals:
+Introduction:
 -------------
-SQL-compaitable conditionals are to be supported by the OpenXMLD--treating
-attributes as column names, and the text of an element as a column called 
-"(text)", and the tag name of an element as another attribute called 
-"(tagname)"
 
-The following should be valid:
+As you may have already known, the XMLD-SQL query specification
+aims at being as SQL-compliant as possible while remaining as 
+XML-capable as possible. this may seem to be hard to do at first
+but I could get to some useful ideas that would make it possible,
+However, I think some of SQL's features may not be implementable,
+but I also believe that these will not be needed in a XML-based
+database.
 
-attr1=val AND (attr2=val2 OR attr2=val3)
-(text)=val AND NOT attr1=val2 AND (tagname)=val3
+The idea of being SQL-compliant doesn't mean making current SQL
+applications be portable to the OpenXMLD with no touches, but
+in a greater extent means making the current SQL developers
+avoid any needs to learn something new (except for XML itself),
+however, the more SQL-compliance XMLD-SQL offers, the better
+it's.
 
-[...]
+Scalar Expressions (sc_expr):
+----------------------------
+A scalar expression can be one of the following:
+ 
+ [*] A column name.
+ [*] A scalar function call.
+ [*] A mathmatical expression.
+ [*] A sequence of characters.
 
-The WHERE string:
------------------
-Although conditionals are completely enough for any SQL engine to make
-a WHERE clause, that's not the case within the OpenXMLD, because XML documents 
-aren't flat as database tables are. Therefore the WHERE string of the OpenXMLD,
-is a compound conditional--a group of conditionals separated by colons, each 
-one of them sets the conditional of the level relative to its order in the 
-list.
+Note: a column in XML is generally an XML element's attribute,
+in addition to these two special cases:
+  
+ [*] "[text]" is the text of an element.
+ [*] "[tagname]" is the tag name of an element.
 
-for example:
+According to that, the following are valid XMLD-SQL expressions:
+  
+name
+age
+STRCAT(UCASE([text]),UCASE(age))
+STRLEN(name)+5
+age-1
+"my name is a name"
 
-attr1=val1 AND attr2=val2:attr5=val10 OR attr3=val6: ...
-->LEVEL 1 conditional<---:->LEVEL 2 conditional <--: ...
+Aggregate Expression (agr_expr):
+--------------------------------
+An aggregate expression is identically a scalar expression
+with these two exceptions:
 
-observe that tree:
+ [*] It can contain aggregate functions.
+ [*] It can contain these special wildcards:
+ 
+   [-] "*" which means "all the columns"
+   [-] "@" which means "all the columns but without [text]"
+     
+From my understanding, an aggregate function is a function whose
+value depends on more than one element, so the XML processor 
+needs to go through all the elements to get its value, and it has 
+one value for all of the elements.
 
-<root attr1=[val1] attr2=[val2]>
- <first_level attr5=[val10] attr3=[val6]/> <-- this is the only matching element
- <first_level attr5=[not val10] attr4=[not val6]/>
-</root>
+An example of an aggregate function call:
 
-Note: The default behaviour when there isn't a WHERE statement is to loop
-through all the elements in the tree (in a cross level manner).
+COUNT(*) -- counts the number of rows.
+COUNT(age) -- counts the number of rows that have non-NULL values 
+for the age column.
 
-Note: Not to include a conditional you can write "-" in the corresponding
-level in the where statement.
+Expression list:
+----------------
+An expression list is a group of expressions separated by
+commas:
+
+expr1, expr2, expr3 ...
+
+You can expect these two types of expression lists:
+ 
+ [*] A scalar expression list: which contains only scalar 
+ expressions. (namely sc_expr_list)
+ [*] An aggregate expression list: which can contain both scalar
+ and aggregate expressions. (namely agr_expr_list)
+
+Note: a single expression is still considered an expression list.
+
+The Conditional:
+----------------
+A conditional statement:
+
+ expr <condition> expr
+
+Ofcourse, expr can be either scalar or aggregate, in which cases
+the conditional would be called a scalar conditional (sc_cond) 
+or an aggregate conditional (agr_cond) respectively.
+
+Condition can be:
+
+ [*] equal '='
+ [*] greater than '>'
+ [*] smaller than '<'
+ [*] greater than or equal '>='
+ [*] smaller than or equal '<='
+ [*] LIKE
+ [*] BETWEEN
+ [*] NOT BETWEEN
+
+Conditional Negation:
+---------------------
+To negate a condition:
+
+ NOT expr <condition> expr
+
+this is after all treated as a condition (sc_cond and agr_cond)
+
+Conditional Grouping:
+---------------------
+A group of conditionals grouped by AND, OR and brackets, such as:
+
+cond1 AND NOT ((cond1 OR cond2) AND cond3)
+cond
+
+Note: a single conditional is still considered a group.
+Hint: sc_cond_group, agr_cond_group ?
 
 The FILE string:
 ----------------
-Obviously the FILE string replaces the table name space in the normal SQL q-
-uery. However it's slightly different, because it can contain the path to 
-that file, or even relative to the current directory (explained later).
+Is a special case of an expression, that can only contain a quoted
+sequence of characters that represents a XML file name relative
+to the current directory or absolute starting from the server root.
 
-for example:
-
-"/file1.xml"
-"stock/file2.xml"
-
-
-In this directory structue:
-
-Server Root (/)
-    |
-    |__ first_database <-- this is the current dir
-    	     |
-	     |__ stock
-	     |     |
-	     |     |__ file2.xml
-             |
-             |__ file1.xml
+"file1.xml"
+"subdirectory1/file1.xml"
+'file2.xml'
+'sub2/file3.xml'
+'/file3.xml'
+"/file4.xml"
 
 The DIR string:
 ---------------
-The DIR string is simply a directory in the server's document tree, either r-
-elative to the current directory or absolute starting from the server's root, 
-for example:
+Is a special case of an expression, that can only contain a quoted
+sequence of characters that represents a path either relative to the
+current directory, or absolute starting from the server's root.
 
-"/first_dir"
-"relative_direcory/dir2"
-
-
-The USE clause:
----------------
-The USE caluse of the OpenXMLD does exactly as SQL's USE clause. SQL's use ho-
-wever selects a database, while the USE clause selects a directory and makes 
-it the current directory of the connection.
-
-Rule: use <DIR>
+"/db1/"
+'/db2'
 
 The SELECT clause:
 ------------------
 
-Rule: select <RETR> from <FILE> [where <WHERE>]
+SELECT agr_expr_list FROM FILE
 
---to be continued
-</xmp>
-</pre>
+-- to be continued
+</xmp></pre>
 </body>
 </html>
