@@ -13,8 +13,10 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "xmld_types.h"
-#include "engine_xmld.h"
+#include "xmld_types.h" /* FIXME: replace with new structures */
+#include "cfg.h"
+#include "engine_xmld.h" /* FIXME: replace with global engine list
+			    file */
 
 /* FIXME: file config should be checked to decide the engine to be used.
  * Currently we use only one engine defined in engine_xmld.h
@@ -24,7 +26,13 @@
 
 short fmanager_handle(struct XMLDWork *work) {
  work->res=(struct XMLDResource *) malloc(sizeof(struct XMLDResource));
- work->res->engine=&engine_xmld;
+ char *engine_name=cfg_get_engine(work->req->full_file);
+ work->res->engine=XMLDEngine_search_list_by_name(engine_list, engine_name);
+
+ if (work->res->engine == NULL) {
+  /* Ooooops! couldn't find an engine with the given name */
+ }
+ 
  work->res->data_source=(*(work->res->engine->init)) (work);
  if (work->res->data_source==0) {
   return -1;
