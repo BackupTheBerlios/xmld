@@ -11,6 +11,7 @@
  * -------------------------------------------------------------- * 
  */
  
+#include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -41,5 +42,16 @@ int xmld_socket_write(int sockfd, char *str) {
 }
 
 char *xmld_socket_read(int sockfd) {
+ char *ret=(char *) malloc(1*sizeof(char));
+ int curr=0;
  
+ while (1) {
+  recv(sockfd, (void *) &ret[curr], 1, MSG_NOSIGNAL);
+  if (ret[curr] == '\0') {
+   break;
+  }
+  ret=(char *) realloc(ret, (curr + 2)*sizeof(char));
+  curr++;
+ }
+ return ret;
 }
