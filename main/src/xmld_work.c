@@ -61,10 +61,6 @@ void XMLDWork_free(XMLDWork *work) {
  * work: the work structure whose memory is to be freed.
  */
 void XMLDWork_free_content(void *work) {
- XMLDRequest_free(((XMLDWork *) work)->req);
- XMLDResponse_free(((XMLDWork *) work)->resp);
- XMLDConnection_free(((XMLDWork *) work)->conn);
- XMLDResource_free(((XMLDWork *) work)->res);
 }
 
 /*
