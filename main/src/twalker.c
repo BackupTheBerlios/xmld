@@ -11,21 +11,40 @@
  * -------------------------------------------------------------- * 
  */
 
-#include "xmld_types.h" /* FIXME: replace with new structures */
+#include <stdlib.h>
+#include <string.h>
+#include "xmld_list.h"
+#include "xmld_col.h"
+#include "xmld_func.h"
+#include "xmld_expr.h"
+#include "xmld_aggr_table.h"
+#include "xmld_cond.h"
+struct XMLDEngine;
+#ifndef XMLDENGINE_TYPE_DEFINED
+#define XMLDENGINE_TYPE_DEFINED
+ typedef struct XMLDEngine XMLDEngine;
+#endif /* XMLDENGINE_TYPE_DEFINED */
+#include "xmld_resource.h"
+#include "xmld_response.h"
+#include "xmld_request.h"
+#include "xmld_connection.h"
+#include "xmld_work.h"
+#include "xmld_engine.h"
+#include "twalker.h"
 
-short twalker_handle(struct XMLDWork *work) {
+short twalker_handle(XMLDWork *work) {
  short status;
  XMLDExpr *curr_retr;
  XMLDCond *curr_cond;
  work->resp=XMLDResponse_create();
  /* this if() may need to contain other values for type such as
   * SELECT + SORT */
- if (work->req->type==0) { /* a SELECT query */
+ if (work->req->type == 0) { /* a SELECT query */
   curr_retr=work->req->retr[0];
-  while ((status=(*(work->res->engine->walk)) (work))!=-1) {
+  while ((status=(*(work->res->engine->walk)) (work)) != -1) {
    XMLDResponse_add_row(work->resp);
-   while (curr_retr!=0) {
-    if (curr_retr->aggr==1) { /* an aggregate expression */
+   while (curr_retr != 0) {
+    if (curr_retr->aggr == 1) { /* an aggregate expression */
      XMLDResponse_add_aggr(work->resp, curr_retr);
     }
     else {
