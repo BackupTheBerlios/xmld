@@ -20,7 +20,7 @@
 #include <unistd.h>
 #include <string.h>
 #include "cfg.h"
-#include "xmld_types.h"
+#include "xmld_connection.h"
 #include "sosel.h"
 #include "mtasker.h"
 #include "qp.h"
@@ -40,8 +40,8 @@ short sosel_init() {
  shmctl(id, IPC_RMID, 0);
  conn_table->used=0;
  key=ftok("errors.h", 'X');
- id=shmget(key, max_conn*sizeof(struct XMLDConnection), IPC_CREAT);
- conn_table->conn=(struct XMLDConnection*)shmat(id, 0, 0); 
+ id=shmget(key, max_conn*sizeof(XMLDConnection), IPC_CREAT);
+ conn_table->conn=(XMLDConnection *)shmat(id, 0, 0); 
  shmctl(id, IPC_RMID, 0);
  short stat=mtasker_handle(sosel_run, (void *) 0);
  if (stat!=0) {
@@ -66,7 +66,7 @@ short sosel_shutdown() {
 void sosel_run(void *data) {
  fd_set fds;
  struct timeval timeout;
- struct XMLDConnection **conns=(struct XMLDConnection **)malloc(max_conn*sizeof(struct XMLDConnection*));
+ XMLDConnection **conns=(XMLDConnection **)malloc(max_conn*sizeof(XMLDConnection*));
  int maxfd=0,ret,i,j=1;
  j=1;
  
@@ -128,8 +128,8 @@ short sosel_sadd(int fd) {
  }
  return stat;
 }
-short sosel_add(int fd, char*dir) {
- short stat=XMLD_FAILURE;
+short sosel_add(int fd, char *dir) {
+ short stat=-1;
  int j;
  while (conn_table->used >= max_conn) {
  }
@@ -146,7 +146,7 @@ short sosel_add(int fd, char*dir) {
   }
  return stat;
 }
-short sosel_remove(struct XMLDConnection *conn) {
+short sosel_remove(XMLDConnection *conn) {
  if (conn->curr_dir) {
   free(conn->curr_dir);
  } 

@@ -19,13 +19,13 @@ short sosel_shutdown(void);
 short sosel_sadd(int);
 short sosel_sremove(int);
 short sosel_add(int, char*);
-short sosel_remove(struct XMLDConnection*);
+short sosel_remove(XMLDConnection *);
 void sosel_run(void*);
 
 /* represents a connection table */
 struct connection_table {
  short used; /* Number of used XMLDConnection's */
- struct XMLDConnection *conn;
+ XMLDConnection *conn;
 };
 
 #endif /* HAVE_SOSEL_H */
