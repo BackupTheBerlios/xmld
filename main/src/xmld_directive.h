@@ -19,6 +19,7 @@ union cfg_value {
   int *int_array_value;
   char *string_value;
   char **string_array_value;
+  char char_value;
 };
 
 /* Represents a configuration directive */
@@ -30,6 +31,7 @@ struct XMLDDirective {
               * 1 = int*
 	      * 2 = char*
 	      * 3 = char**
+	      * 4 = char
 	      */
 };
 
