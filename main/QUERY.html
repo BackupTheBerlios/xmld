@@ -9,7 +9,7 @@
 Author(s):
 Khalid Al-Kary
 
-Revision: 1.2
+Revision: 1.3
 ------------------------------------------------------------------		  
 Introduction:
 -------------
@@ -304,6 +304,20 @@ not to be mixed with other uses of them inside the query:
 "sub2/file3.xml"
 "/file4.xml"
 
+File lists:
+-----------
+In SQL, this is valid:
+
+<table name>, <table name>
+
+and it denotes usage of both of the given table names to
+do something.
+
+In XMLD-SQL, this is also valid, with respect to the table name representation
+method mentioned above:
+
+"file4.xml", "dir1/file2.xml"
+
 Database name representation:
 -----------------------------
 XMLD-SQL uses native file system "folders" to represent databases, allowing
@@ -316,6 +330,28 @@ quoting:
 
 Note: '/' at the beginning normally means the document root of the 
 server and not the filesystem root.
+
+File-specific column names:
+---------------------------
+According to the formerly mentioned "File lists", more than one file can 
+be used in the same query, the case in which an association of column names 
+to a particular file is needed. Here's the syntax:
+
+<file name>.<column name>
+
+Means: <column name> of the file named <file name>.
+
+Examples:
+
+"file4.xml".name
+
+This association of column names to files can be used inside expressions of any
+kind to refer to that column's value with respect to the given file name.
+
+If there wasn't multiple files in a query it ofcourse is optional to associate
+the column name to a particular file. If there was multiple files in a query
+and one of the column names in it has no file association, the column is
+automatically associated to the first file mentioned in the query's file list.
 
 The USE clause:
 ---------------
@@ -348,21 +384,21 @@ against that last cross-level condition list are checked independently.
 The SELECT clause:
 ------------------
 
-SELECT <level-sensitive expression list> FROM <file name>
-SELECT <level-sensitive expression list> FROM <file name> WHERE <level-sensitive condition list>
+SELECT <level-sensitive expression list> FROM <file list>
+SELECT <level-sensitive expression list> FROM <file list> WHERE <level-sensitive condition list>
 
 The UPDATE clause:
 ------------------
 
-UPDATE <file name> SET <level-sensitive assignment list>
-UPDATE <file name> SET <level-sensitive assignment list>  WHERE <level-sensiitve condition list>
+UPDATE <file list> SET <level-sensitive assignment list>
+UPDATE <file list> SET <level-sensitive assignment list>  WHERE <level-sensiitve condition list>
 
 The DELETE clause:
 ------------------
 
-DELETE FROM <file name>
-DELETE FROM <file name> WHERE <level-sensitive condition list>
-DELETE * FROM FILE
+DELETE FROM <file list>
+DELETE FROM <file list> WHERE <level-sensitive condition list>
+DELETE * FROM <file list>
 
 The INSERT clause:
 ------------------
