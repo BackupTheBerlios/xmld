@@ -15,11 +15,10 @@
 #define __ELEMENT_OP_H
 
 char *engine_xmld_get_curr_att_name (FILE *);
-void engine_xmld_set_curr_att_value(FILE *);
 char *engine_xmld_get_curr_att_value (FILE *);
 void engine_xmld_discard_curr_att_value(FILE *);
 char *engine_xmld_get_text_value(FILE *);
-char *engine_xmld_get_curr_tagname(FILE *);
+char *engine_xmld_get_tagname(FILE *);
 void engine_xmld_discard_curr_att_name(FILE *);
 short engine_xmld_locate_text(FILE *);
 short engine_xmld_locate_att(FILE *, char *);

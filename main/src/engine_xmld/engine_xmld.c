@@ -65,19 +65,22 @@ short engine_xmld_prepare(XMLDWork *work) {
  }
  
  free(mime);
- work->res->data_source=(void *) fopen(full_name, "rb+");
-
+ if (work->req->type == 2) { /* FIXME: put INSERT type here */
+  work->res->data_source=(void *) fmanager_get_ex_fd(full_name);
+ }
+ else {
+  work->res->data_source=(void *) fmanager_get_sh_fd(full_name);
+ }
+ 
  if (work->res->data_source == NULL) {
-  if (errno == EACCES) {
-   xmld_errno = XMLD_EFNOTFOUND;
-  }
+  xmld_errno = XMLD_ENOFILE;
   free(full_name);
   return 0;
  }
  
  work->res->store=malloc(3*sizeof(int));
  *((int *) work->res->store)=0; /* <-- the current level in the document */
- *((int *) work->res->store+2)=engine_xmld_load_format_file((FILE *) (work->res->store+1), full_name);
+ *((int *) work->res->store+2)=engine_xmld_load_format_file((FILE *) (work->res->store+1), full_name, work->req->type);
  free(full_name);
 
  return 1;
@@ -86,9 +89,11 @@ short engine_xmld_prepare(XMLDWork *work) {
 /* cleanup function */
 void engine_xmld_cleanup(XMLDWork *work) {
  if (*((int *) work->res->store+2)) {
+  fmanager_unlock_fd((FILE *) (work->res->store+1));
   fclose((FILE *) (work->res->store+1));
  }
  free(work->res->store);
+ fmanager_unlock_fd((FILE *) (work->res->data_source));
  fclose((FILE *) work->res->data_source);
 }
 
@@ -298,9 +303,19 @@ char *engine_xmld_get_column_value(XMLDWork *work, char *col_name) {
 
 short engine_xmld_set_column_value(XMLDWork *work, char *col_name, char *value) {
  if (strcmpi(col_name, "(text)") == 0) {
-  return engine_xmld_set_text_value((FILE *) (work->res->data_source), value);
+  if (engine_xmld_locate_text((FILE *) (work->res->data_source))) {
+   return engine_xmld_set_text_value((FILE *) (work->res->data_source), value);
+  }
+  else {
+   return 0;
+  }
  }
  else {
-  return engine_xmld_set_curr_att_value((FILE *) (work->res->data_source), value);
+  if (engine_xmld_locate_att((FILE *) (work->res->data_source), col_name)) {
+   return engine_xmld_set_curr_att_value((FILE *) (work->res->data_source), value);
+  }
+  else {
+   return 0;
+  }
  }
 }

@@ -18,7 +18,7 @@ void engine_xmld_init (void);
 short engine_xmld_prepare (XMLDWork *);
 void engine_xmld_cleanup (XMLDWork *);
 void engine_xmld_destroy (void);
-short engine_xmld_walk (XMLDWork *);
+int engine_xmld_walk (XMLDWork *);
 char *engine_xmld_eval_expr (XMLDWork *, XMLDExpr *);
 short engine_xmld_eval_cond (XMLDWork *, XMLDCond *);
 char *engine_xmld_eval_aggr_expr (XMLDWork *, XMLDExpr *);

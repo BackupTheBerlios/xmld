@@ -17,43 +17,41 @@
 #include "../dutils.h"
 
 char *engine_xmld_get_curr_att_name(FILE *fd) {
- int factor=1; /* factor multiplied by ATTRIBUE_LENGTH if the attribute's length
-  was larger than the original ATTRIBUTE_LENGTH*/
- while (1) {
-  char *att_name=(char *) malloc((ATTRIBUTE_LENGTH+1)*sizeof(char));
-  att_name[15]='\0';
-  int num;
-  fscanf(fd, "%ATTRIBUTE_LENGTH[^=]%n", att_name, &num);
-  if (num < ATTRIBUTE_LENGTH) { /* it was shorter than ATTRIBUTE_LENGTH */
-   att_name=(char *) realloc(att_name, (num+1)*sizeof(char));
-   att_name[num]='\0';
-   break;
-  }
-  else if (num == ATTRIBUTE_LENGTH) {
-   if ((char) fgetc(fd) != '=') {
-    fseek(fd, -1, SEEK_CUR);
-    factor++;
-   }
-   else {
-    break;
-   }
-  }
- }
+ return dmcstrchr(fd, "=", 1);
 }
 
 char *engine_xmld_get_curr_att_value(FILE *fd) {
+ char tokens[1];
+ tokens[0]=fgetc(fd);
+ return dmcstrchr(fd, tokens, 1);
+}
+
+short engine_xmld_set_curr_att_value(FILE *fd, char *value) {
+ char tokens[1];
+ tokens[0]=fgetc(fd);
+ return dmwstrchr(fd, tokens, 1, value);
 }
 
 void engine_xmld_discard_curr_att_value(FILE *fd) {
+ char tokens[1];
+ tokens[0]=fgetc(fd);
+ dmstrchr(fd, tokens, 1);
 }
 
 char *engine_xmld_get_text_value(FILE *fd) {
+ return dmcstrchr(fd, "<", 1, value);
 }
 
-char *engine_xmld_get_curr_tagname(FILE *fd) {
+short engine_xmld_set_text_value(FILE *fd, char *value) {
+ return dmwstrchr(fd, "<", 1, value);
+}
+
+char *engine_xmld_get_tagname(FILE *fd) {
+ return dmcstrchr(fd, " ", 1);
 }
 
 void engine_xmld_discard_curr_att_name(FILE *fd) {
+ dmstrchr(fd, "=", 1);
 }
 
 short engine_xmld_locate_text(FILE *fd) {
