@@ -105,4 +105,9 @@ rate module file. (done)
 * Replace usage of xmld_types.h every where with
 the new structures of the object-oriented foundation,
 and check the code for things like struct cond ... 
-etc.
+etc. (done)
+
+* Remove creation arguments in:
+ - XMLDWork
+ - XMLDResource
+ - Check for more.
