@@ -25,10 +25,11 @@ typedef struct XMLDWork XMLDWork;
 
 XMLDWork *XMLDWork_create(XMLDRequest *, XMLDResponse *, XMLDConnection *, XMLDResource *);
 void XMLDWork_free(XMLDWork *);
+void XMLDWork_free_content(void *);
 
 /* List functions */
 
 XMLDList *XMLDWork_create_list(void);
-void XMLDWork_add_to_list(XMLDList *, XMLDRequest *, XMLDResponse *, XMLDConnection *, XMLDResource *);
+XMLDWork *XMLDWork_add_to_list(XMLDList *, XMLDRequest *, XMLDResponse *, XMLDConnection *, XMLDResource *);
 
 #endif
