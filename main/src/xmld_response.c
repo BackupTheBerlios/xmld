@@ -21,6 +21,7 @@
 #include "xmld_expr.h"
 #include "xmld_aggr_table.h"
 #include "xmld_response.h"
+#include "cfg.h"
 
 /*
  * : Creates a new response structure.
@@ -207,6 +208,8 @@ void XMLDResponse_flush(XMLDResponse *resp, int fd) {
   XMLDList_reset(((XMLDRow *) XMLDList_curr(resp->rows))->cols);
   while (XMLDList_next(((XMLDRow *) XMLDList_curr(resp->rows))->cols)) {
    xmld_socket_write(fd, ((XMLDCol *) XMLDList_curr(((XMLDRow *)XMLDList_curr(resp->rows))->cols))->val);
+   xmld_socket_write(fd, (char *) &col_sep);
   }
+  xmld_socket_write(fd, (char *) &row_sep);
  }
 }
