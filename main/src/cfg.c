@@ -41,10 +41,15 @@ XMLDStatus cfg_init() {
   return XMLD_FAILURE;
  }
  else {
-  document_root = (char *) ((XMLDList_first(cfg_get(NULL, "DocumentRoot", NULL)))->value);
-  if (document_root == NULL) {
+  XMLDCfgDirective *docroot_directive = XMLDCfgSection_get_directive(cfg_tree, "DocumentRoot", 1);
+  if (docroot_directive == NULL) {
    return XMLD_FAILURE;
   }
+  XMLDCfgValue *docroot_value = XMLDCfgDirective_get_value(docroot_directive);
+  if (docroot_value->type != XMLD_CFG_STRING) {
+   return XMLD_FAILURE;
+  }
+  document_root = (char *) docroot_value->value;
   return XMLD_SUCCESS;
  }
 }

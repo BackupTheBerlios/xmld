@@ -46,6 +46,7 @@ XMLDCfgSection *XMLDCfgSection_get_section(XMLDCfgSection *section, char *name, 
    }
   }
  }
+ return NULL;
 }
 
 /*

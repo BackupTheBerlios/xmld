@@ -55,8 +55,8 @@ Foundation:
 	 * The index of the parameter to retrieve (0 for the main value).
     * Modify all parts.
       * ptasker (done)
-      * somanager
-    * modify initialization of document_root.
+      * somanager (done)
+    * modify initialization of document_root. (done)
     * XMLDList_first and XMLDList_last should return NULL in case of
       receiving NULL as an argument. (done)
     * Write a new sample xmld.conf. (done)
@@ -72,12 +72,17 @@ Foundation:
   * expected bug in cfg.c: The first directive of a set of directives
     that have the same name is the only one we can retrieve. (fixed)
 
+* Configuration search functions must return NULL in case the
+  index was not correct, and not the last found element! (done)
+
 * Real implementation of interface specification according
   to the configuration file with support for interface parameters.
   * interface_list_init uses cfg to clone the interfaces.
   * Iterative port API in cfg ?
 
 * Support for re-parsing of the configuration on the fly.
+  * Signal each of the child processes so it reparses the configuration for
+    itself.
 
 * Real implementation of mfigure.
 
@@ -98,6 +103,14 @@ Foundation:
   Each interface will have a predefined set of rules the client
   knows about.
   
+* Implement an EchoServer interface for demonstration.
+
+* Implement a file retrieval engine with a file retrieval interface.
+
+* The communication protocol should be more flexible, allowing
+  for open messaging without headers (support for other protocols
+  such as http).
+
 * Usage of autoconf to decide on the modules to be compiled.
 
 * Separate make files for XMLDSQL, Engine-XMLD and ptasker.

@@ -31,8 +31,25 @@ int *ports;
 int num_sock;
 
 XMLDStatus somanager_init() {
- ports=(int *) cfg_get("somanager.listeners");
- num_sock = 0 //?;
+ XMLDCfgSection *ports_section = XMLDCfgSection_get_section(cfg_tree, "Ports", 1);
+ if (ports_section == NULL) {
+  return XMLD_FAILURE;
+ }
+ XMLDCfgDirective *port_directive;
+ num_sock = 0;
+ while ((port_directive = XMLDCfgSection_get_directive(ports_section, "Port", num_sock+1)) != NULL) {
+  XMLDCfgValue *port_value = XMLDCfgDirective_get_value(port_directive, 0);
+  if (port_value->type != XMLD_CFG_INTEGER) {
+   continue;
+  }
+  ports = (int *) realloc(ports, (num_sock+1)*sizeof(int));
+  ports[num_sock] = (int) port_value->value;
+  num_sock++;
+ }
+ 
+ if (num_sock == 0) {
+  return XMLD_FAILURE;
+ }
  fds=(int*) malloc(num_sock*sizeof(int));
  int t;
  int s;
@@ -65,7 +82,6 @@ XMLDStatus somanager_shutdown() {
   xmld_socket_shutdown(fds[i]);
  }
  free(fds);
- free(ports);
  return XMLD_SUCCESS;
 }
 
