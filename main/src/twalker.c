@@ -11,11 +11,10 @@
  * -------------------------------------------------------------- * 
  */
 
-#include "errors.h"
 #include "xmld_types.h"
 
-xmld_status_t twalker_handle(struct XMLDWork *work) {
- int status;
+short twalker_handle(struct XMLDWork *work) {
+ short status;
  struct expr *curr_retr;
  struct cond *curr_cond;
  XMLDResponse_init(work->resp);
@@ -43,5 +42,5 @@ xmld_status_t twalker_handle(struct XMLDWork *work) {
   XMLDResponse_fill_aggr(work->resp, (*(work->res->engine->eval_aggr_expr)) (work, XMLDResponse_curr_aggr(work->resp)));
   XMLDResponse_aggr_next(work->resp);
  }
- return XMLD_SUCCESS;
+ return 0;
 };

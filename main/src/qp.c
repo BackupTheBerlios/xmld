@@ -14,7 +14,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "errors.h"
 #include "xmld_mempool.h"
 #include "xmld_types.h"
 #include "sosel.h"
@@ -39,19 +38,18 @@ void qp_handle(void *conn) {
   XMLDMemPool_unget_all(cond_pool);
   return;
  }
- xmld_status_t stat;
- stat=fmanager_handle(work);
- if (stat==XMLD_FAILURE) {
+ status=fmanager_handle(work);
+ if (status==-1) {
   /* NOTE: ERROR_RESPONSE must contain readdition of the socket
-   * to conn_table (sosel_add) which will be blocking */
+   * to conn_table (sosel_add) which will be a blocking operation */
   ERROR_RESPONSE("There was an error accessing the requested file.");
   return;
  }
- stat=twalker_handle(work);
- if (stat==XMLD_FAILURE) {
+ status=twalker_handle(work);
+ if (status==-1) {
   ERROR_RESPONSE("Error during implementing query");
   return;
  }
  /* send through the socket*/
- /* readd the socket */
+ /* re-add the socket */
 }
