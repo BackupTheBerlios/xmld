@@ -532,24 +532,27 @@ esponse_flush. and remove XMLDResponse_flush. (done)
 * Support for multi-level retrs and assignments in:
   
   * QUERY.html (done)
-  * XMLDExpr (expression grouping -- done)
+  * XMLDExpr (expression grouping and void expression lists -- done)
   * XMLDCond (condition grouping -- done)
-  * xmld-sql.(y|lex) (expression and condition grouping -- done)
-  * XMLDRow (add level_act field -- done)
-  * twalker (level-sensitive retr, fill rows wrt level_act, expression grouping)
-  * XMLDResponse (XMLDRow has level_act)
-  * resptrans (translation of XMLDRow level_act -- done)
+  * xmld-sql.(y|lex) (expression and condition grouping and void expression lists -- done)
+  * XMLDRow (add num_down and num_up fields -- done)
+  * twalker (level-sensitive retr, fill rows wrt num_(up|down), expression grouping (done),
+             related levels in WHERE)
+  * resptrans (translation of XMLDRow num_up and num_down -- done)
   * cfg (for down_level and up_level and encs -- done)
-  * PROTO.html (for additions to init message) (done)
+  * PROTO.html (for additions to init message, up_level before row_sep --  (done))
 
 * Support for the ~ cross-level operation operator:
 
  * QUERY.html (done)
- * xmld-sql.(lex|y)
- * XMLDExpr and XMLDCond
- * twalker
+ * xmld-sql.(lex|y) (done)
+ * XMLDExpr and XMLDCond (done)
+ * twalker (done)
+ * different related levels for WHERE when ~ is used in twalker. (done)
  
 * Add "Notes on record sets" to PROTO.html. (done)
+
+* Fix QUERY.html typos.
 
 * Implement read buffering in dutils.
 

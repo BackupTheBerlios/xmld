@@ -15,14 +15,15 @@ i * -------------------------------------------------------------- *
 #define __XMLD_EXPR_H
 
 /* Expression types */
-#define XMLD_INTEGER 0    /* Integer type         */
-#define XMLD_OPERATION 1  /* Operation type       */
-#define XMLD_IDENTIFIER 2 /* Identifier type      */
-#define XMLD_FUNCTION 3   /* Function call type   */
-#define XMLD_QVAL 4       /* Quoted value type    */ 
-#define XMLD_WILDCARD 5   /* Wildcard type        */
-#define XMLD_FLOAT 6      /* Floating point type  */
-#define XMLD_LIST 7       /* Expression list type */
+#define XMLD_INTEGER 0    /* Integer type              */
+#define XMLD_OPERATION 1  /* Operation type            */
+#define XMLD_IDENTIFIER 2 /* Identifier type           */
+#define XMLD_FUNCTION 3   /* Function call type        */
+#define XMLD_QVAL 4       /* Quoted value type         */ 
+#define XMLD_WILDCARD 5   /* Wildcard type             */
+#define XMLD_FLOAT 6      /* Floating point type       */
+#define XMLD_LIST 7       /* Expression list type      */
+#define XMLD_VOID_LIST 8  /* Void Expression list type */
 
 /* Operation types */
 #define XMLD_OP_ADD 0    /* Addition                  */
@@ -41,8 +42,7 @@ typedef XMLDList XMLDExprList;
 
 struct XMLDExpr {
  int type; 
- XMLDBool aggr; /* Whether it's an aggregate expression */
-
+ XMLDBool aggr, cross_level; /* Whether it's an aggregate expression */
  int nval; /* type 0 */
  /*--------------------*/
  struct XMLDExpr *left; /* type 1:

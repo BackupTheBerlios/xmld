@@ -17,7 +17,7 @@
 /* Condition types */
 #define XMLD_CONDITION 0      /* Normal condition: expr <cond> expr   */
 #define XMLD_CONDITION_GRP 1  /* Condition group: cond <LOGICAL> cond */
-#define XMLD_CONDITION_VOID 2 /* Void condition (always true)         */
+#define XMLD_CONDITION_VOID 2 /* Void (condition|condition list)      */
 #define XMLD_CONDITION_LIST 3 /* Condition list                       */
 
 /* Conditional operation types */
@@ -40,6 +40,7 @@ typedef XMLDList XMLDCondList;
 /* represents a condition */
 struct XMLDCond {
  int type;
+ XMLDBool cross_level;
  /*---------*/
  XMLDExpr *left; /* type 0 */
  XMLDExpr *right;

@@ -26,7 +26,8 @@
 XMLDRow *XMLDRow_create() {
  XMLDRow *row=(XMLDRow *) malloc(sizeof(XMLDRow));
  row->cols=XMLDColList_create();
- row->level_act=XMLD_ROW_NOTHING;
+ row->num_down=0;
+ row->num_up=0;
  return row;
 }
 
@@ -54,7 +55,7 @@ void XMLDRow_free_content(void *row) {
  * row: the row to which the column is to be added.
  */
 void XMLDRow_add_col(XMLDRow *row) {
- XMLDCol_add_to_list(row->cols);
+ XMLDColList_add(row->cols);
 }
 
 /*
@@ -86,6 +87,7 @@ XMLDRowList *XMLDRowList_create() {
 XMLDRow *XMLDRowList_add(XMLDRowList *list) {
  XMLDRow *row=(XMLDRow *) XMLDList_add(list);
  row->cols=XMLDColList_create();
- row->level_act=XMLD_ROW_NOTHING;
+ row->num_up=0;
+ row->num_down=0;
  return row;
 }

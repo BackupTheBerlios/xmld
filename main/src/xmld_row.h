@@ -14,15 +14,10 @@
 #ifndef __XMLD_ROW_H
 #define __XMLD_ROW_H
 
-/* Row types */
-#define XMLD_ROW_NOTHING 0 /* Does nothing to levels   */
-#define XMLD_ROW_DOWN 1    /* Goes one level deeper    */
-#define XMLD_ROW_UP 2      /* Goes one level shallower */
-
-
 /* Represents a row of response */
 struct XMLDRow {
- int level_act;
+ int num_down;
+ int num_up;
  XMLDColList *cols;
 };
 

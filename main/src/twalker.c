@@ -72,28 +72,42 @@ XMLDStatus twalker_handle(XMLDWork *work) {
    }
 
    work->resp=XMLDResponse_create();
+   XMLDList_reset(work->req->retr);
    int ret=(*(work->res->engine->walk)) (work);
+   XMLDBool retr=XMLD_TRUE;
+   int num_up, num_down;
+   num_up=num_down=0;
+
    while (ret != XMLD_WALK_END) {
     if (ret == XMLD_WALK_DOWN) {
-     XMLDList_reset(work->req->retr);
-     XMLDResponse_add_row(work->resp);
-     while (XMLDList_next(work->req->retr)) {
-      XMLDResponse_add_col(work->resp);
-      if (((XMLDExpr *) XMLDList_curr(work->req->retr))->aggr == 1) {
-       XMLDResponse_assoc_col_to_aggr(work->resp, (XMLDExpr *) XMLDList_curr(work->req->retr), XMLDResponse_curr_col(work->resp));
-      }
-      else {
-       XMLDResponse_fill_col(work->resp, (*(work->res->engine->eval_expr)) (work, (XMLDExpr *) XMLDList_curr(work->req->retr)));
-      }
+     num_down++;
+     retr=XMLDList_next(work->req->retr);
+     if (((XMLDExpr *) XMLDList_curr(work->req->retr))->cross_level == XMLD_TRUE) {
+      retr=XMLD_TRUE;
      }
+     if (retr && !(((XMLDExpr *) XMLDList_curr(work->req->retr))->type == XMLD_VOID_LIST)) {
+      XMLDResponse_add_row(work->resp);
+      XMLDResponse_curr_row(work->resp)->num_down=num_down;
+      XMLDResponse_curr_row(work->resp)->num_up=num_up;
+      num_up=num_down=0;
+      XMLDResponse_add_col(work->resp);
+      XMLDResponse_fill_col(work->resp, (*(work->res->engine->eval_expr)) (work, (XMLDExpr *) XMLDList_curr(work->req->retr)));
+     } 
+    }
+    else {
+     num_up++;
+     XMLDList_prev(work->req->retr);
     }
     ret=(*(work->res->engine->walk)) (work);
    }
-   XMLDResponse_reset_aggr(work->resp);
-   while (XMLDResponse_curr_aggr_expr(work->resp) != NULL) {
-    XMLDResponse_fill_curr_aggr(work->resp, (*(work->res->engine->eval_expr)) (work, XMLDResponse_curr_aggr_expr(work->resp)));
-    XMLDResponse_next_aggr(work->resp);
+   
+   /* Handling of level changes not followed by row retrieval */
+   XMLDRow *last_row=XMLDResponse_curr_row(work->resp);
+   if (last_row != NULL) {
+    last_row->num_up += num_up;
+    last_row->num_down += num_down;
    }
+
    char *resp=resptrans_handle(work);
    if (protoimpl_write_sequence(work->conn->fd, resp, 1) == XMLD_FAILURE) {
     free(resp);
@@ -129,75 +143,71 @@ XMLDStatus twalker_handle(XMLDWork *work) {
    work->resp=XMLDResponse_create();
    XMLDList_reset(work->req->where);
    ret=(*(work->res->engine->walk)) (work);
-   int last_level, curr_level;
-   
+   retr=XMLD_TRUE;
+   XMLDBool where=XMLD_TRUE;
+   num_up=num_down=0;
+   int curr_level=0;
+
    while (ret != XMLD_WALK_END) {
     if (ret == XMLD_WALK_DOWN) {
-     curr_level = XMLDList_next(work->req->where); /* curr_level is a misleading name, it's to reuse 
-						    the same variable */
+     curr_level++;
+     num_down++;
+     retr=XMLDList_next(work->req->retr);
+     if (((XMLDExpr *) XMLDList_curr(work->req->retr))->cross_level == XMLD_TRUE) {
+      retr=XMLD_TRUE;
+     }
+     where=XMLDList_next(work->req->where);
+     if (((XMLDCond *) XMLDList_curr(work->req->where))->cross_level == XMLD_TRUE) {
+      where = XMLD_TRUE;
+     }
+     retr = retr && where;
+     if (retr && !(((XMLDExpr *) XMLDList_curr(work->req->retr))->type == XMLD_VOID_LIST)) {
+      if ((*(work->res->engine->eval_cond)) (work, (XMLDCond *) XMLDList_curr(work->req->where))) {
+       XMLDResponse_add_row(work->resp);
+       XMLDResponse_curr_row(work->resp)->num_down=num_down;
+       XMLDResponse_curr_row(work->resp)->num_up=num_up;
+       XMLDResponse_add_col(work->resp);
+       XMLDResponse_fill_col(work->resp, (*(work->res->engine->eval_expr)) (work, (XMLDExpr *) XMLDList_curr(work->req->retr)));
+      }
+      else {
+       if (((XMLDCond *) XMLDList_curr(work->req->where))->cross_level != XMLD_TRUE) {
+        int tmp_level=curr_level;
+        do {
+         ret = (*(work->res->engine->walk)) (work);
+  	 if (ret == XMLD_WALK_DOWN) {
+	  XMLDList_next(work->req->where);
+	  XMLDList_next(work->req->retr);
+	  curr_level++;
+	 }
+	 if (ret == XMLD_WALK_UP) {
+	  XMLDList_prev(work->req->where);
+	  XMLDList_prev(work->req->retr);
+	  if (--curr_level == tmp_level - 1) {
+	   break;
+	  }
+	 }
+        } while (ret != XMLD_WALK_END);
+        num_up++;
+       }
+      }
+     }
     }
     else {
+     num_up++;
+     curr_level--;
+     XMLDList_prev(work->req->retr);
      XMLDList_prev(work->req->where);
     }
-    if (ret == XMLD_WALK_DOWN) {
-     if (curr_level) {
-      if ((*(work->res->engine->eval_cond)) (work, (XMLDCond *) XMLDList_curr(work->req->where))) {
-       XMLDList_reset(work->req->retr);
-       XMLDResponse_add_row(work->resp);
-       while (XMLDList_next(work->req->retr)) {
-        XMLDResponse_add_col(work->resp);
-        if (((XMLDExpr *) XMLDList_curr(work->req->retr))->aggr == 1) {
-         XMLDResponse_assoc_col_to_aggr(work->resp, (XMLDExpr *) XMLDList_curr(work->req->retr), XMLDResponse_curr_col(work->resp));
-        }
-        else {
-         XMLDResponse_fill_col(work->resp,  (*(work->res->engine->eval_expr)) (work, (XMLDExpr *) XMLDList_curr(work->req->retr)));
-        }
-       }
-      }
-      else { /* the condition isn't true, loop until you reach level-1 */
-       last_level = (*(work->res->engine->get_level)) (work);
-       ret = (*(work->res->engine->walk)) (work);
-       while (ret != XMLD_WALK_END) {
-        if (ret == XMLD_WALK_DOWN) {
-         XMLDList_next(work->req->where);
-        }
-        else {
-         XMLDList_prev(work->req->where);
-        }
-        curr_level = (*(work->res->engine->get_level)) (work);
-        if (curr_level == last_level-1) {
-         break;
-        }
-        ret = (*(work->res->engine->walk)) (work);
-       }
-      }
-     }
-     else { /* levels greater than the number of levels in the condition list
- 	    must be eaten up as well: */
-      last_level = (*(work->res->engine->get_level)) (work);
-      ret = (*(work->res->engine->walk)) (work);
-      while (ret != XMLD_WALK_END) {
-       if (ret == XMLD_WALK_DOWN) {
-        XMLDList_next(work->req->where);
-       }
-       else {
-        XMLDList_prev(work->req->where);
-       }
-       curr_level = (*(work->res->engine->get_level)) (work);
-       if (curr_level == last_level-1) {
-        break;
-       }
-       ret = (*(work->res->engine->walk)) (work);
-      }
-     }
-    } 
     ret=(*(work->res->engine->walk)) (work);   
    }
-   XMLDResponse_reset_aggr(work->resp);
-   while (XMLDResponse_curr_aggr_expr(work->resp) != NULL) {
-    XMLDResponse_fill_curr_aggr(work->resp, (*(work->res->engine->eval_expr)) (work, XMLDResponse_curr_aggr_expr(work->resp)));
-    XMLDResponse_next_aggr(work->resp);
+   
+   /* Handling of level changes not followed by row retrieval */
+   last_row=XMLDResponse_curr_row(work->resp);
+   if (last_row != NULL) {
+    last_row->num_up += num_up;
+    last_row->num_down += num_down;
    }
+
    resp=resptrans_handle(work);
    if (protoimpl_write_sequence(work->conn->fd, resp, 1) == XMLD_FAILURE) {
     free(resp);

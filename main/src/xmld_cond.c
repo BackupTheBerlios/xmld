@@ -112,5 +112,6 @@ XMLDCond *XMLDCondList_add(XMLDCondList *list) {
  cond->cleft=NULL;
  cond->cright=NULL;
  cond->conds=NULL;
+ cond->cross_level=XMLD_FALSE;
  return cond;
 }

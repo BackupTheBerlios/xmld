@@ -71,6 +71,7 @@ struct XMLDEngine;
 "," return ',';
 "!" return '!';
 "=" return '=';
+"~" return '~';
 "\""  BEGIN STR;
 <STR>[^"]* {
 	    lvalp->qval=(char *) malloc(strlen(yytext)*sizeof(char));

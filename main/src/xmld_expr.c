@@ -39,6 +39,7 @@ XMLDExpr *XMLDExpr_create() {
  expr->qval=NULL;
  expr->exprs=NULL;
  expr->alias=NULL;
+ expr->cross_level=XMLD_FALSE;
  return expr;
 }
 
@@ -143,5 +144,6 @@ XMLDExpr *XMLDExprList_add(XMLDExprList *list) {
  expr->qval=NULL;
  expr->exprs=NULL;
  expr->alias=NULL;
+ expr->cross_level=XMLD_FALSE;
  return expr;
 }

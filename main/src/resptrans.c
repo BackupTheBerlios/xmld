@@ -52,6 +52,7 @@ char *resptrans_handle(XMLDWork *work) {
  XMLDList_reset(work->resp->rows);
  XMLDRow *curr_row;
  XMLDCol *curr_col;
+ int i;
  
  /* mstrchr_replace vars */
  char repl_tok[4];
@@ -67,18 +68,10 @@ char *resptrans_handle(XMLDWork *work) {
  
  while (XMLDList_next(work->resp->rows)) {
   curr_row=(XMLDRow *) XMLDList_curr(work->resp->rows);
-  char attach='\0';
   
-  if (curr_row->level_act == XMLD_ROW_DOWN) {
-   attach=down_level;
-  }
-  else if (curr_row->level_act == XMLD_ROW_UP) {
-   attach=up_level;
-  }
-  
-  if (attach != '\0') {
+  for (i = 0; i < curr_row->num_down; i++) {
    response=(char *) realloc(response, (++resp_len) * sizeof(char));
-   response[resp_len-2]=attach;
+   response[resp_len-2]=down_level;
    response[resp_len-1]='\0';
   }
   
@@ -98,6 +91,13 @@ char *resptrans_handle(XMLDWork *work) {
    response[resp_len-2]=col_sep;
    response[resp_len-1]='\0';
   }
+  
+  for (i = 0; i < curr_row->num_up; i++) {
+   response=(char *) realloc(response, (++resp_len) * sizeof(char));
+   response[resp_len-2]=up_level;
+   response[resp_len-1]='\0';
+  }
+  
   response=(char *) realloc(response, (++resp_len) * sizeof(char));
   response[resp_len-2]=row_sep;
   response[resp_len-1]='\0';

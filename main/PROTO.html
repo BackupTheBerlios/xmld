@@ -188,7 +188,7 @@ up-level is ~
 
 According to these values, a record set like this one:
 
-?khalid%18%;~
+?khalid%18%~;
 
 should mean the following (initial level is 0):
 
@@ -197,8 +197,8 @@ khalid -- the first column value of the first row is "khalid"
 % -- end of first column value (and beginning of second one)
 18 -- the second column value of the first row is "18"
 % -- end of second column value (and beginning of third one)
-; -- end of first row value (and beginning of second one)
 ~ -- Current level back to 0
+; -- end of first row value (and beginning of second one)
 
 if "khalid" originally contained any of the four special 
 characters they are encoded to the corresponding *-enc

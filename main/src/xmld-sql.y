@@ -56,7 +56,7 @@ struct XMLDEngine;
 
 /* We may have a multi-threaded mtasker later */
 %pure_parser
-%expect 7
+%expect 10
 
 /* Keywords */
 %token SELECT
@@ -81,6 +81,13 @@ struct XMLDEngine;
 %token <qval> QVAL IDENTIFIER
 %token <num> NUM
 %token <fnum> FNUM
+
+/* Level Handling Operators */
+%left ':'
+%left '~'
+
+/* Composition Operator */
+%left ','
 
 /* Logical Operators */
 %left AND OR
@@ -203,6 +210,24 @@ expr_list: expr {
 		                 XMLDExpr_copy($3, expr);
 		                 free($3);
 	                        }
+	   /* These two rules are to handle void expression lists */
+	   | expr_list ':' cond {                         
+                                 $$=$1;
+		                 free($3);
+		                 XMLDExpr *expr=XMLDExprList_add($$);
+		                 expr->type = XMLD_VOID_LIST;
+				 expr->aggr = XMLD_FALSE;
+	                        }
+	   | cond_list ':' expr {
+	                    $$=XMLDExprList_create();
+			    XMLDList_free($1);
+		            XMLDExpr *expr=XMLDExprList_add($$);
+			    expr->type = XMLD_VOID_LIST;
+			    expr->aggr = XMLD_FALSE;
+			    expr=XMLDExprList_add($$);
+			    XMLDExpr_copy($3, expr);
+			    free($3);
+			   }
 ;
 
 cond: '(' cond ')' {
@@ -309,6 +334,7 @@ cond: '(' cond ')' {
 		       if ($1->type != XMLD_CONDITION_LIST) {
 		        $$=XMLDCond_create();
 			$$->type = XMLD_CONDITION_LIST;
+			$$->negate=XMLD_FALSE;
 			$$->conds = XMLDCondList_create();
 			cond=XMLDCondList_add($$->conds);
 			XMLDCond_copy($1, cond);
@@ -319,11 +345,16 @@ cond: '(' cond ')' {
 		       }
 		       else {
 		        $$=$1;
+			$$->negate=XMLD_FALSE;
 			cond=XMLDCondList_add($$->conds);
 			XMLDCond_copy($3, cond);
 			free($3);
 		       }
-		      } 
+		      }
+     | '~' cond {
+                 $$=$2;
+		 $2->cross_level=XMLD_TRUE;
+                }
 ;
 
 expr: '(' expr ')' {
@@ -437,6 +468,7 @@ expr: '(' expr ')' {
 		       if ($1->type != XMLD_LIST) {
 		        $$=XMLDExpr_create();
 			$$->type = XMLD_LIST;
+			$$->aggr=$1->aggr || $3->aggr;
 			$$->exprs = XMLDExprList_create();
 			expr=XMLDExprList_add($$->exprs);
 			XMLDExpr_copy($1, expr);
@@ -447,11 +479,16 @@ expr: '(' expr ')' {
 		       }
 		       else {
 		        $$=$1;
+			$$->aggr = $$->aggr || $3->aggr;
 			expr=XMLDExprList_add($$->exprs);
 			XMLDExpr_copy($3, expr);
 			free($3);
 		       }
                       }
+      | '~' expr {
+                  $$=$2;
+		  $$->cross_level=XMLD_TRUE;
+                 }
 ;
 
 %%
