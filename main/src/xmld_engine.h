@@ -30,10 +30,10 @@ struct XMLDEngine {
 			  * is removed from engine_list.
 			  */
  
- short (*walk) (XMLDWork *); /* The function which the tree walker
-			      * calls for the engine to give a next
-			      * result from its data source. 
-			      */
+ int (*walk) (XMLDWork *); /* The function which the tree walker
+			    * calls for the engine to give a next
+			    * result from its data source. 
+			    */
  
  char *(*eval_expr) (XMLDWork *, XMLDExpr *); /* The function which
 					       * the tree walker calls
