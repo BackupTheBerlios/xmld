@@ -33,7 +33,7 @@ struct XMLDEngine;
 #include "engine_list.h"
 
 #ifdef USE_ENGINE_XMLD
-#include "engine_xmld.h"
+#include "engine_xmld/engine_xmld.h"
 #endif /* USE_ENGINE_XMLD */
  
 short engine_list_init() {
@@ -41,7 +41,13 @@ short engine_list_init() {
  XMLDEngine *curr_engine;
 #ifdef USE_ENGINE_XMLD
  curr_engine=XMLDEngine_add_to_list(engine_list, "Engine-XMLD");
- /* rest of engine data goes here */
+ curr_engine->init=engine_xmld_init;
+ curr_engine->prepare=engine_xmld_prepare;
+ curr_engine->cleanup=engine_xmld_cleanup;
+ curr_engine->destroy=engine_xmld_destroy;
+ curr_engine->eval_expr=engine_xmld_eval_expr;
+ curr_engine->eval_cond=engine_xmld_eval_cond;
+ curr_engine->eval_aggr_expr=engine_xmld_eval_aggr_expr;
 #endif /* USE_ENGINE_XMLD */
  XMLDList_reset(engine_list);
  while (XMLDList_next(engine_list)) {
