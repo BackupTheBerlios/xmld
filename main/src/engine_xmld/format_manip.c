@@ -27,18 +27,19 @@
  * file is to be associated.
  * full_file: The name of the file whose format file is to
  * be opened.
+ * ex: Whether or not to execlusively access the format file.
  */
-short engine_xmld_load_format_file(FILE *fd, char *full_file, short type) {
+short engine_xmld_load_format_file(FILE **fd, char *full_file, int ex) {
  full_file=(char *) realloc(full_file, (strlen(full_file)+8)*sizeof(char));
  strcat(full_file, ".format");
- if (type == 12) {/* FIXME: add query types that require ex to .format */
-  fd=fmanager_get_ex_fd(full_file);
+ if (type == 0) {
+  *fd=fmanager_get_sh_fd(full_file);
  }
  else {
-  fd=fmanager_get_sh_fd(full_file);
+  *fd=fmanager_get_ex_fd(full_file);
  }
 
- if (fd == NULL) {
+ if (*fd == NULL) {
   return 0;
  }
  else {
@@ -59,12 +60,38 @@ short engine_xmld_load_format_file(FILE *fd, char *full_file, short type) {
  * returned.
  */
 int engine_xmld_get_element_att_length(FILE *fd, int level, char *tagname, char *attribute) {
+ char *format=engine_xmld_get_element_att_format(fd, level, tagname, attribute);
+ char *stroke=strchr(format, '|');
+ *stroke='\0';
+ int ret;
+ sscanf(stroke, "%d", &ret);
+ free(format);
+ return ret;
+}
+
+/*
+ * Gets the type of an attribute.
+ */ 
+char *engine_xmld_get_element_att_type(FILE *fd, int level, char *tagname, char *attribute) {
+ char *format=engine_xmld_get_element_att_format(fd, level, tagname, attribute);
+ char *stroke=strchr(format, '|');
+ strcpy(format, stroke+1);
+ format[strlen(stroke+1)]='\0';
+ format=(char *) realloc(format, (strlen(format)+1)*sizeof(char));
+ return format;
+}
+
+/*
+ * Gets the attribute barely other functions use either the type
+ * or the length.
+ */ 
+char *engine_xmld_get_element_att_format(FILE *fd, int level, char *tagname, char *attribute) {
  char *tokens[]={"<", "/>", "</"};
  int curr_level=0;
  while (1) {
   int tok=dmstrstr(fd, tokens, 3);
   if (tok == -1) {
-   return 0;
+   return NULL;
   }
   else if (tok == 0) {
    curr_level++;
@@ -79,15 +106,7 @@ int engine_xmld_get_element_att_length(FILE *fd, int level, char *tagname, char 
    dmstrstr(fd, tokens2, 1);
    free(tname);
    engine_xmld_locate_att(fd, attribute);
-   char *len=engine_xmld_get_curr_att_value(fd);
-   int ret;
-   sscanf(len, "%d", &ret);
-   free(len);
-   return ret;
+   return engine_xmld_get_curr_att_value(fd);
   }
  } 
-}
-
-int engine_xmld_get_element_text_length(FILE *fd, int level, char *tagname) {
- return engine_xmld_get_element_att_length(fd, level, tagname, "(text)");
 }

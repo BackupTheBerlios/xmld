@@ -90,7 +90,7 @@ struct XMLDEngine;
 		                         return IDENTIFIER;
                                         }
 [0-9]+"."[0-9]+ {
-                 lvalp->fnum=strtod(yytext);
+                 lvalp->fnum=atof(yytext, NULL);
 		 return FNUM;
                 }
 [0-9]+ {

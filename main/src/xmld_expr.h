@@ -67,7 +67,7 @@ struct XMLDExpr {
 		             * 1 = '@'
 		             */
  /*------------------*/
- double fnval; /* type 6: floating point number */
+ float fnval; /* type 6: floating point number */
  /*------------------*/
  char *alias;
 };

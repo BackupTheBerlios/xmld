@@ -14,14 +14,23 @@
 #ifndef __XMLD_ENGINE_H
 #define __XMLD_ENGINE_H
 
+/* Access level bits */
+#define XMLD_ACCESS_FORMAT 1     /* Whether to open a format file */
+#define XMLD_ACCESS_EX 2         /* Whether to execlusively access the file */
+#define XMLD_ACCESS_FORMAT_EX 4  /* Whether to execlusively access the format file */
+
 struct XMLDEngine {
  char *name; /* The engine's name */
  void (*init) (void); /* The function that's called once the engine
 		       * is added to the engine_list.
 		       */
- short (*prepare) (XMLDWork *); /* The function called before each
-				 * request the engine serves.
-				 */
+ short (*prepare) (XMLDWork *, int); /* The function called before each
+				      * request the engine serves.
+				      * The integer argument is named level
+				      * and determines access levels of the
+				      * request. (see the access level bits
+				      * above)
+				      */
  
  void (*cleanup) (XMLDWork *); /* The function called after each
 				*  request the engine serves.

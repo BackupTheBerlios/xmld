@@ -73,9 +73,7 @@ void XMLDExpr_free_content(void *expr) {
    cfree(((XMLDExpr *)expr)->qval);
    break;
  }
- if (((XMLDExpr *)expr)->alias != NULL) {
-  cfree(((XMLDExpr *)expr)->alias);
- }
+ cfree(((XMLDExpr *)expr)->alias);
 }
 
 /*

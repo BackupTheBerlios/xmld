@@ -403,11 +403,10 @@ ONNECT.
 Support that in xmld-sql.(lex|y).
 (done)
 
-* Support for expression type 6 in engine_xmld.
+* Implement ftoa (sutils.h).
 
-* Implement dtoa (sutils.h).
-
-* Consider converting nval back to int.
+* Convert nval back to int. in xmld-sql.lex, xmld-sql.y
+XMLDExpr.
 
 * Make sure that mtasker_handle_idle is called whensever
 a child is no longer busy, and install a semaphore on ttable
@@ -420,13 +419,40 @@ ectory "functions" for them.
 
 * Remove/Secure usage of SIGUSR1 in ptasker.
 
-* engine_xmld_eval_cond must be rewritten using engine_xmld
-_simplify_expr and engine_xmld_get_colum_value and format
-manip get_type functions.
+* Remove engine_xmld_get_element_text_length use
+att_length with (text) instead. (done)
 
-* .format must contain the datatype of each column, eval_
-cond must check .format when it comes to determination of
-column types.
+* Fix implementation of att_length and implement att_type.
+in format_manip. (done)
+
+* Share backend in format_manip (done).
+
+* prepare should take one argument that specifies access
+levels. (done)
+
+* format manip's load_format_file 's last argument must
+be a binary 0 no execlusive to format or 1 execlusive
+to format. (done)
+
+* Engine-XMLD must be rewritten with consideration of
+[1] availablity of column types [2] access levels.
+[3] type and access level enumerations. [4] the new
+float type [5] nval -> back to int.
+
+* All lists of numeric --> meaning association in all
+structures/functions must be converted to correspon-
+ding enumerations.
+
+* The access level given to prepare must be defined
+as macros of four bits OR'ing them gives a proper
+result. (done)
+
+* consider the macro and enumeration thing in xmld-sql.y
+and twalker.
+
+* Implement bitutils.(c|h).
+
+* Add XMLD_ENOFORMAT to xmld_errors.(h/c). (done)
 
 --------------- Start of The OpenXMLD 0.5.0 part:
 

@@ -19,6 +19,7 @@
 #include <math.h>
 #include "../dutils.h"
 #include "../sutils.h"
+#include "../bitutils.h"
 #include "../xmld_list.h"
 #include "../xmld_col.h"
 #include "../xmld_row.h"
@@ -58,8 +59,10 @@ void engine_xmld_init() {
   */
 }
 
-/* prepare function */
-short engine_xmld_prepare(XMLDWork *work) {
+/* prepare function 
+ * level: consult xmld_engine.h
+ * */
+short engine_xmld_prepare(XMLDWork *work, int level) {
  char *full_name=XMLDWork_get_full_file(work);
  char *mime=mfigure_get_mime(full_name);
  
@@ -71,8 +74,7 @@ short engine_xmld_prepare(XMLDWork *work) {
  }
  
  free(mime);
- if (work->req->type == 4 || work->req->type == 5 || work->req->type == 6
-     || work->req->type == 7 || work->req->type == 8 || work->req->type == 9) { /* Operations that need the .format file */
+ if (bit_isset(level, 2)) {
   work->res->data_source=(void *) fmanager_get_ex_fd(full_name);
  }
  else {
@@ -87,9 +89,12 @@ short engine_xmld_prepare(XMLDWork *work) {
  
  work->res->store=malloc(3*sizeof(int));
  *((int *) work->res->store)=0; /* <-- the current level in the document */
- if (work->req->type == 2 || work->req->type == 3 || work->req->type == 4 || work->req->type == 5
-     || work->req->type == 6 || work->req->type == 7 || work->req->type == 8 || work->req->type == 9) {	 
-  *((int *) work->res->store+2)=engine_xmld_load_format_file((FILE *) (work->res->store+1), full_name, work->req->type);
+ if (bit_isset(level, 1)) {	 
+  *((int *) work->res->store+2)=engine_xmld_load_format_file(&(FILE *) (work->res->store+1), full_name, bit_isset(level, 3));
+  if (*((int *) work->res->store+2)==0) {
+   xmld_errno = XMLD_ENOFORMAT;
+   return 0;
+  }  
  }
  else {
   *((int *) work->res->store+2)=0;
@@ -447,7 +452,7 @@ short engine_xmld_set_column_value(XMLDWork *work, char *col_name, char *value) 
   char *tag_name=engine_xmld_get_tagname((FILE *) work->res->data_source);
   if (strcasecmp(col_name, "(text)") == 0) {
    if (engine_xmld_locate_text((FILE *) work->res->data_source)) {
-    int len=engine_xmld_get_element_text_length((FILE *) work->res->store+1, *((int*) work->res->store),
+    int len=engine_xmld_get_element_att_length((FILE *) work->res->store+1, *((int*) work->res->store, "(text)"),
 		    tag_name);
     fgetc((FILE *) work->res->data_source); /* Eat the quote up */
     if (strlen(value) >= len) {

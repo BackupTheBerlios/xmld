@@ -50,7 +50,7 @@ struct XMLDEngine;
  XMLDList *list;
  char *qval;
  long num;
- double fnum;
+ float fnum;
 }
 
 /* We may have a multi-threaded mtasker later */

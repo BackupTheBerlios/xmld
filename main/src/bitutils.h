@@ -11,11 +11,10 @@
  * -------------------------------------------------------------- * 
  */
 
-#ifndef __FORMAT_MANIP_H
-#define __FORMAT_MANIP_H
+#ifndef __BITUTILS_H
+#define __BITUTILS_H
 
-short engine_xmld_load_format_file(FILE **, char *, short);
-int engine_xmld_get_element_att_length(FILE *, int, char *, char *);
-char *engine_xmld_get_element_att_type(FILE *, int, char *, char *);
+int bit_isset(int, int);
+void bit_set(int, int);
 
-#endif /* __FORMAT_MANIP_H */
+#endif /* __BITUTILS_H */
