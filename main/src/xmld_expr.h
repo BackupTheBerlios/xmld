@@ -70,12 +70,12 @@ struct XMLDExpr {
 
 typedef struct XMLDExpr XMLDExpr;
 
-XMLDExpr *XMLDExpr_create(short, short, int, XMLDExpr *, XMLDExpr *, short, char *, XMLDFunc *, XMLDList *, char *, short, char *);
+XMLDExpr *XMLDExpr_create(void);
 void XMLDExpr_free(XMLDExpr *);
-
+void XMLDExpr_free_content(void *);
 /* List functions */
 
 XMLDList *XMLDExpr_create_list(void);
-void XMLDExpr_add_to_list(XMLDList *, short, short, int, XMLDExpr *, XMLDExpr *, short, char *, XMLDFunc *, XMLDList *, char *, short, char *);
+XMLDExpr *XMLDExpr_add_to_list(XMLDList *);
 
 #endif /* HAVE_XMLD_EXPR_H */
