@@ -284,7 +284,7 @@ get_curr_element_att_len(fd of
 .format, level, tagname, attribute
 name). (done)
 
-* Implement write locking, such that
+* Implement locking, such that
 if there's a process running a writing
 operation on one of the files, no readers
 are allowed to access it, and such that not
@@ -292,8 +292,29 @@ more than one writer can access the same
 file, this can be achieved using a file
 table (?).
 
-* XMLDRequest must contain whether the
-request is going to write to the file
-or not, for write locking to be
-successful.
+* Make a part (fmanager) which keeps
+file name -> fd association and 
+implements the methods
+fmanager_get_read_fd(file), 
+fdmanager_get_write_fd(file),
+which block until an fd for
+reading/writing can be obtained.
+(i.e locking is obeyed (in the way
+written above))
 
+* fmanager should also contain
+implementation of fmanager_write_
+(un)lock_fd(fd) and fmanager_read_(un)
+lock_fd(fd) to take fcntl burdens
+out of engine code. (done)
+
+* Stop using pre-forking for multi-
+processing, remove ptasker, implement
+ttasker (POSIX threads), all of that
+for the limits of System V IPC.
+
+* Add fmanager to init.
+
+* Define and implement the XMLDFileAssoc
+data structure with ability of searching
+a list of it using the file_name field.
