@@ -31,12 +31,20 @@ Foundation:
 
 * cfg_parser must be rewritten using bison and flex for
   cleanliness reasons.
+  * Write cfg_parser.lex (done).
+  * Write cfg_parser.y.
+  * XMLDCfgTree (with support for subtrees for sections).
+  * XMLDDirective refinement.
+  * New cfg_parser.c API.
+  * Modify cfg.c accrodingly.
   * xmld.conf must not contain types of directives nor 
   somanager.num_listeners.
   * Support for interface parameters.
 
 * Real implementation of interface specification according
   to the configuration file with support for interface parameters.
+  * interface_list_init uses cfg to clone the interfaces.
+  * Iterative port API in cfg ?
 
 * Real implementation of mfigure.
 
