@@ -12,8 +12,10 @@
  */
  
 #include <iostream.h>
+#include "errors.h"
 #include "xmld_mempool.h"
 #include "xmld_types.h"
+#include "fmanager.h"
 #include "qp.h"
 
 void qp_handle(void *conn) {
@@ -30,5 +32,13 @@ void qp_handle(void *conn) {
   XMLDMemPool_unget_all(cond_pool);
   return;
  }
- /* process req */ 
+ xmld_status_t stat;
+ stat=fmanager_handle(work);
+ if (stat==XMLD_FAILURE) {
+  /* NOTE: ERROR_RESPONSE should contain readdition of the socket
+   * to conn_table (sosel_add) which will be blocking */
+  ERROR_RESPONSE("There was an error accessing the requested file.");
+  return;
+ }
+ /* tree walker */
 }
