@@ -140,31 +140,35 @@ XMLDStatus authman_handle(int fd, char **info) {
  * start directory only if ret is not NULL.
  */ 
 XMLDStatus authman_auth_user(char *user, char **ret) {
- FILE *auth=fopen(AUTH_FILE, "r");
- char *token[1]={AUTH_TAG};
- int tok;
+ /* check for user's availability in the first place */
+ /* if ret is null return XMLD_SUCCESS */	
+ char *full_file = (char *) malloc((strlen(document_root)+strlen(user)+10) * sizeof(char));
+ strcpy(full_file, document_root);
+ strcat(full_file, "xmld/");
+ strcat(full_file, user);
+ strcat(full_file, ".xml");
+
+ XMLDFile *auth = XMLDFile_create(AUTH_FILE);
+ auth->engine = XMLDEngineList_search_by_name(engine_list, cfg_get_engine(full_file));
+ (*(auth->engine->prepare)) (full_file, auth, XMLD_ACCESS_NOTHING);
  
- while (1) {
-  tok=dmstrstr(auth, token, 1);
-  if (tok == -1) {
-   return XMLD_FAILURE;
-  }
-  else if (tok == 0) {
-   engine_xmld_locate_att(auth, AUTH_USER_NAME);
-   char *name=engine_xmld_get_curr_att_value(auth);
-   if (strcmp(name, user) == 0) {
-    free(name);
-    if (ret != NULL) {
-     engine_xmld_locate_att(auth, AUTH_USER_PASS);
-     ret[0]=engine_xmld_get_curr_att_value(auth);
-     engine_xmld_locate_att(auth, AUTH_USER_DIR);
-     ret[1]=engine_xmld_get_curr_att_value(auth);
-    } 
+ int ret = (*(auth->engine->walk)) (auth);
+ int level = 0;
+ while (ret != XMLD_WALK_END) {
+  if (ret == XMLD_WALK_DOWN) {
+   level++;
+   if (level == AUTH_PASS_LEVEL) {
+    ret[0] = (*(auth->engine->get_attribute)) (auth, AUTH_USER_PASS);
+    ret[1] = (*(auth->engine->get_attribute)) (auth, AUTH_USER_DIR);
     return XMLD_SUCCESS;
    }
-   free(name);
   }
+  else if (ret == XMLD_WALK_UP) {
+   level--;
+  }
+  ret = (*(auth->engine->walk)) (auth);
  }
+ return XMLD_SUCCESS;
 }
 
 /*

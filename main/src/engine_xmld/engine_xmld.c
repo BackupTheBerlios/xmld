@@ -156,6 +156,7 @@ char *engine_xmld_get_attribute(XMLDFile *file, char *attribute) {
   }
   free(name);
  }
+ return NULL;
 }
 
 char *_get_attribute_format(XMLDFile *file, char *attribute) {

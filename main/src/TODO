@@ -125,8 +125,14 @@ order to be able to resolve wildcards correctly. (done)
    the normal file operation cycle)
  * Engine configuration files should be put inside the xmld
    database.
- * Real implementation of auth_get_priv.
+ * Real implementation of auth_get_priv. 
 
+* walk no longer receives a work structure parameter.
+  * twalker.
+
+* attribute manipulation functions should handle requestion 
+  of a non-existent attribute.
+  
 * Correct required privilege specification.
  * twalker (Remove initial privilege checking)
  * XMLDFile (store the priv of each file inside it)
