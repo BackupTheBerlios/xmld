@@ -19,12 +19,12 @@ struct XMLDInterafce {
  char *name; /* Parser name */
  void (*init) (void);
  void (*destroy) (void);
- void (*prepare_conn) (XMLDWork *);
+ XMLDStatus (*prepare_conn) (XMLDWork *);
  void (*cleanup_conn) (XMLDWork *);
- void (*prepare) (XMLDWork *);
+ XMLDStatus (*prepare) (XMLDWork *);
  void (*cleanup) (XMLDWork *);
- void (*parse) (XMLDWork *, char *query);
- void (*walk) (XMLDWork *);
+ XMLDStatus (*parse) (XMLDWork *, char *query);
+ XMLDStatus (*walk) (XMLDWork *);
  char *(*get_response) (XMLDWork *);
 };
 

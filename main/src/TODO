@@ -153,6 +153,7 @@ order to be able to resolve wildcards correctly. (done)
        interface to use.
    * Put XMLD-SQL parser into a separate directory.
    * resptrans, twalker [... ?] must be put inside the interface.
+   * data type names in xmlddef should be put inside the interface.   
    * XMLDWork must contain a void* field like that of XMLDFile
      to contain per-request request/response information.
    * Change the request handling model - shouldn't be called qp.c
