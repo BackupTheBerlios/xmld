@@ -25,20 +25,15 @@ int *fds;
 int *ports;
 int num_sock;
 
-/*
- * FIXME: find a safe way of getting ports from cfg
- */ 
 short somanager_init() {
- num_sock=cfg_get("somanager.num_listeners");
+ num_sock=*((int *) cfg_get("somanager.num_listeners"));
+ ports=(int *) cfg_get("somanager.listeners");
  fds=(int*) malloc(num_sock*sizeof(int));
- ports=(int*) malloc(num_sock*sizeof(int));
- int port=6060;
  int i;
  int status;
 
  for (i=0;i<num_sock;i++) {
   fds[i]=xmld_socket_create();
-  ports[i]=port+i;
   
   if (fds[i]==-1) {
    perror("xmld_socket_create");
