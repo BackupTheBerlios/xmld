@@ -17,6 +17,11 @@
 #define BUFFER_SIZE 100
 #include "dutils.h"
 
+/*
+ * A buffered version of the getc call.
+ * buf: the buffer information object which
+ * gets initialized by the user function.
+ */ 
 char getc_buf(FILE *fd, buf_t *buf) {
  if (buf == NULL) {
   buff=(buf_t *) malloc(sizeof(buf_t));
@@ -34,6 +39,14 @@ char getc_buf(FILE *fd, buf_t *buf) {
  return buff->curr;
 }
 
+/*
+ * Dumps the buffer contained in buf
+ * such that if there are characters
+ * not read in it they are returned to 
+ * the stream and the actual stream pointer
+ * is pointed to the last character returned
+ * by getc_buf on the same buf and fd.
+ */ 
 void buf_dump(FILE *fd, buf_t *buf) {
  char *last=buff->curr;
  while (last != '\0' && last != EOF) {
@@ -43,6 +56,16 @@ void buf_dump(FILE *fd, buf_t *buf) {
  free(buf);
 }
 
+/*
+ * d - disk
+ * m - multi
+ * dmstrstr - A multi-token on-disk version
+ * of the strstr function (string.h).
+ *
+ * num: the number of given tokens.
+ * returns: the caught token's index in the
+ * tokens argument. (starting with 0)
+ */ 
 int dmstrstr(FILE *fd, char **tokens, int num) {
  int *cur=(int *) calloc(num, sizeof(int));
  char c;
@@ -69,6 +92,14 @@ int dmstrstr(FILE *fd, char **tokens, int num) {
  }
 }
 
+/*
+ * d - disk
+ * m -  multi
+ * dmstrchr - A multi-token on-disk version of the
+ * strchr function (string.h).
+ * returns: the caught token's index in the tokens
+ * argument. (starting with 0).
+ */ 
 int dmstrchr(FILE *fd, char *tokens, int num) {
  char c;
  int i;
@@ -89,6 +120,17 @@ int dmstrchr(FILE *fd, char *tokens, int num) {
  }
 }
 
+/*
+ * d - disk
+ * m - multi
+ * c - capture
+ * dmcstrchr - A multi-token on-disk version
+ * of the strchr function (string.h) with the
+ * additional functionality of capturing the
+ * characters from the current position to 
+ * the token caught.
+ * returns: the captured string.
+ */ 
 char *dmcstrchr(FILE *fd, char *tokens, int num) {
  char c;
  int i;
@@ -117,6 +159,19 @@ char *dmcstrchr(FILE *fd, char *tokens, int num) {
  }
 }
 
+/*
+ * d - disk
+ * m - multi
+ * w - write
+ * dmwstrchr - A multi-token on-disk version
+ * of the strchr function (string.h) with the
+ * additional functionality of writing the
+ * characters from the given write argument 
+ * from the current position to the token caught.
+ * it stops when it finds one of the tokens or 
+ * when there are no more characters in write.
+ * returns: success/failure.
+ */ 
 short dmwstrchr(FILE *fd, char *tokens, int num, char *write) {
  char c;
  int i;
