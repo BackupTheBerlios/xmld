@@ -12,6 +12,7 @@
  */
  
 /* add all the structures manipulation functions here */
+#include <stdlib.h>
 #include "xmld_types.h"
 
 void expr_free_content(void *segment) {
