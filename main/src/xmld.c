@@ -15,11 +15,10 @@
 #include "mtasker.h"
 #include "somanager.h"
 #include "sosel.h"
-#include "errors.h"
 #include "init.h"
 
 struct xmld_part parts[4];
-xmld_status_t status;
+short status;
 int i;
 
 int main() {
@@ -30,7 +29,7 @@ int main() {
  
  for (i=0;i<4;i++) {
   status=(*(parts[i].init_func))();
-  if (status!=XMLD_SUCCESS) {
+  if (status!=0) {
    perror("Initializer");
    xmld_shutdown_parts();
   }
@@ -41,7 +40,7 @@ int main() {
  return XMLD_SUCCESS;
 }
 
-void init_create_part(struct xmld_part *part, xmld_status_t (*init_func) (void), xmld_status_t (*shutdown_func) (void)) {
+void init_create_part(struct xmld_part *part, short (*init_func) (void), short (*shutdown_func) (void)) {
  part->init_func=init_func;
  part->shutdown_func=shutdown_func;
  part->ok=0;
@@ -50,7 +49,7 @@ void init_shutdown_parts() {
  for (i=3;i>=0;i--) {
   if (parts[i].ok==1) {
    status=(*(parts[i].shutdown_func))();
-   if (status!=XMLD_SUCCESS) {
+   if (status!=0) {
     printf("init_shutdown_parts");
    }
   } 

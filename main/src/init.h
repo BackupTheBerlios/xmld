@@ -16,12 +16,12 @@
 
 /* A structure representing a part that needs initialization */
 struct xmld_part {
- xmld_status_t (*init_func) (void); /* initialization function */
- xmld_status_t (*shutdown_func) (void); /* shutdown function */
+ short (*init_func) (void); /* initialization function */
+ short (*shutdown_func) (void); /* shutdown function */
  int ok; /* whether initilization went fine */
 };
 
-void init_create_part(struct xmld_part*, xmld_status_t (*) (void), xmld_status_t (*) (void));
+void init_create_part(struct xmld_part*, short (*) (void), short (*) (void));
 void init_shutdown_parts(void);
 #endif /* HAVE_INIT_H */
 
