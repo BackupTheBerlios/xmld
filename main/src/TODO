@@ -624,7 +624,7 @@ know whether the expression requires simplification.
 XMLDExpr_is_complex should handle NULL expressions
 normally. (done)
 
-* Engine-XMLD must be rewritten with consideration of
+* Engine-XMLD must be rewritten with consideration of:
 [1] availablity of column types (done -- within simplify_expr)
 [2] access levels. (done -- within prepare)
 [3] type and access level enumerations. (done)
@@ -638,7 +638,7 @@ normally. (done)
 [13] XMLD*List changes. (done)
 [14] Expression grouping. (done)
 [15] condition grouping. (done)
-[16] hard type checking.
+[16] hard type checking. (done)
 [17] eval_cond should evaluate only the first condition 
 of a given condition list. (done)
 [18] NULL file name checks. (done)
@@ -662,6 +662,9 @@ directory.
 
 * A capability-demonstrating client in src/client.
 
+* put the default document root inside the distribution
+along with the example files.
+
 * \n is the end-of-line in proto. (done)
 
 * Erase STRCAT and STRLEN from QUERY.html examples, those aren't 
@@ -670,6 +673,9 @@ existent in SQL. Add LENGTH and CONCAT instead. (done)
 * A make script:
  * make 
  * make client
+
+* remove BETWEEN and NOT BETWEEN from conditions, those are special
+statements that must not be mixed with normal conditions. (done)
 
 * upload QUERY and PROTO to the site, to make sure that all
 editions are put online.

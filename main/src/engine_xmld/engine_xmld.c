@@ -287,18 +287,176 @@ XMLDExpr *engine_xmld_simplify_expr(XMLDWork *work, XMLDExpr *expr, int level) {
 
   switch (expr->op) {
    case XMLD_OP_ADD:
+    if (left->type == XMLD_QVAL || right->type == XMLD_QVAL) {
+     return NULL;
+    }
+    else if (left->type == right->type) {
+     switch(left->type) {
+      case XMLD_INTEGER:
+       ret=XMLDExpr_create();
+       ret->type = XMLD_INTEGER;
+       ret->nval=left->nval + right->nval;
+      break; 
+      case XMLD_FLOAT:
+       ret=XMLDExpr_create();
+       ret->type = XMLD_FLOAT;
+       ret->fnval=left->fnval + right->fnval;
+      break;
+     }
+    }
+    else {
+     if (left->type == XMLD_FLOAT && right->type == XMLD_INTEGER) {
+      ret=XMLDExpr_create();
+      ret->type=XMLD_FLOAT;
+      ret->fnval=left->fnval + right->nval;
+     }
+     else if (left->type == XML_INTEGER && right->type == XMLD_FLOAT) {
+      ret=XMLDExpr_create();
+      ret->type=XMLD_FLOAT;
+      ret->fnval=left->nval + right->fnval;
+     }
+    }
    break;
    case XMLD_OP_BNEG:
+    if (left->type == XMLD_QVAL || right->type == XMLD_QVAL) {
+     return NULL;
+    }
+    else if (left->type == right->type) {
+     switch(left->type) {
+      case XMLD_INTEGER:
+       ret=XMLDExpr_create();
+       ret->type = XMLD_INTEGER;
+       ret->nval=left->nval - right->nval;
+      break; 
+      case XMLD_FLOAT:
+       ret=XMLDExpr_create();
+       ret->type = XMLD_FLOAT;
+       ret->fnval=left->fnval - right->fnval;
+      break;
+     }
+    }
+    else {
+     if (left->type == XMLD_FLOAT && right->type == XMLD_INTEGER) {
+      ret=XMLDExpr_create();
+      ret->type=XMLD_FLOAT;
+      ret->fnval=left->fnval - right->nval;
+     }
+     else if (left->type == XML_INTEGER && right->type == XMLD_FLOAT) {
+      ret=XMLDExpr_create();
+      ret->type=XMLD_FLOAT;
+      ret->fnval=left->nval - right->fnval;
+     }
+    }
    break;
    case XMLD_OP_MULTIP:
+    if (left->type == XMLD_QVAL || right->type == XMLD_QVAL) {
+     return NULL;
+    }
+    else if (left->type == right->type) {
+     switch(left->type) {
+      case XMLD_INTEGER:
+       ret=XMLDExpr_create();
+       ret->type = XMLD_INTEGER;
+       ret->nval=left->nval * right->nval;
+      break; 
+      case XMLD_FLOAT:
+       ret=XMLDExpr_create();
+       ret->type = XMLD_FLOAT;
+       ret->fnval=left->fnval * right->fnval;
+      break;
+     }
+    }
+    else {
+     if (left->type == XMLD_FLOAT && right->type == XMLD_INTEGER) {
+      ret=XMLDExpr_create();
+      ret->type=XMLD_FLOAT;
+      ret->fnval=left->fnval * right->nval;
+     }
+     else if (left->type == XML_INTEGER && right->type == XMLD_FLOAT) {
+      ret=XMLDExpr_create();
+      ret->type=XMLD_FLOAT;
+      ret->fnval=left->nval * right->fnval;
+     }
+    }
    break;
    case XMLD_OP_DIV:
+    if (left->type == XMLD_QVAL || right->type == XMLD_QVAL) {
+     return NULL;
+    }
+    else if (left->type == right->type) {
+     switch(left->type) {
+      case XMLD_INTEGER:
+       ret=XMLDExpr_create();
+       ret->type = XMLD_FLOAT;
+       ret->fnval=(right->nval != 0) ? left->nval / right->nval : INT_MAX;
+      break; 
+      case XMLD_FLOAT:
+       ret=XMLDExpr_create();
+       ret->type = XMLD_FLOAT;
+       ret->fnval=(right->fnval != 0) ? left->fnval / right->fnval : INT_MAX;
+      break;
+     }
+    }
+    else {
+     if (left->type == XMLD_FLOAT && right->type == XMLD_INTEGER) {
+      ret=XMLDExpr_create();
+      ret->type=XMLD_FLOAT;
+      ret->fnval=(right->nval != 0) ? left->fnval / right->nval : INT_MAX;
+     }
+     else if (left->type == XML_INTEGER && right->type == XMLD_FLOAT) {
+      ret=XMLDExpr_create();
+      ret->type=XMLD_FLOAT;
+      ret->fnval=(right->fnval != 0) ? left->nval / right->fnval : INT_MAX;
+     }
+    }
    break;
    case XMLD_OP_EXPO;
+    if (left->type == XMLD_QVAL || right->type == XMLD_QVAL) {
+     return NULL;
+    }
+    else if (left->type == right->type) {
+     switch(left->type) {
+      case XMLD_INTEGER:
+       ret=XMLDExpr_create();
+       ret->type = XMLD_FLOAT;
+       ret->fnval=pow(left->nval, right->nval);
+      break; 
+      case XMLD_FLOAT:
+       ret=XMLDExpr_create();
+       ret->type = XMLD_FLOAT;
+       ret->fnval=pow(left->fnval, right->fnval);
+      break;
+     }
+    }
+    else {
+     if (left->type == XMLD_FLOAT && right->type == XMLD_INTEGER) {
+      ret=XMLDExpr_create();
+      ret->type=XMLD_FLOAT;
+      ret->fnval=pow(left->fnval, right->nval);
+     }
+     else if (left->type == XML_INTEGER && right->type == XMLD_FLOAT) {
+      ret=XMLDExpr_create();
+      ret->type=XMLD_FLOAT;
+      ret->fnval=pow(left->nval, right->fnval);
+     }
+    }
    break;
    case XMLD_OP_UNEG:
-   break;
-   case XMLD_OP_AND:
+    switch (right->type) {
+     case XMLD_QVAL:
+      return NULL;
+     break;
+     case XMLD_INTEGER:
+      ret=XMLDExpr_create();
+      ret->type=XMLD_INTEGER;
+      ret->nval=-right->nval;
+     break;
+     case XMLD_FLOAT:
+      ret->XMLDExpr_create();
+      ret->type=XMLD_FLOAT;
+      ret->fnval=-right->fnval;
+     break;
+    } 
    break;
   }
   
@@ -401,7 +559,7 @@ char *engine_xmld_get_column_value(XMLDFile *file, char *col_name) {
   else {
    ret=(char *) malloc((strlen(atts)+1)*sizeof(char));
   }
-gat da7'a  strcpy(ret, atts);
+  strcpy(ret, atts);
   if (text != NULL) {
    ret[strlen(atts)]=col_sep;
    strcat(ret, text);
