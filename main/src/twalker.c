@@ -11,13 +11,13 @@
  * -------------------------------------------------------------- * 
  */
 
-#include "xmld_types.h"
+#include "xmld_types.h" /* FIXME: replace with new structures */
 
 short twalker_handle(struct XMLDWork *work) {
  short status;
- struct expr *curr_retr;
- struct cond *curr_cond;
- XMLDResponse_init(work->resp);
+ XMLDExpr *curr_retr;
+ XMLDCond *curr_cond;
+ work->resp=XMLDResponse_create();
  /* this if() may need to contain other values for type such as
   * SELECT + SORT */
  if (work->req->type==0) { /* a SELECT query */
@@ -42,5 +42,6 @@ short twalker_handle(struct XMLDWork *work) {
   XMLDResponse_fill_aggr(work->resp, (*(work->res->engine->eval_aggr_expr)) (work, XMLDResponse_curr_aggr(work->resp)));
   XMLDResponse_aggr_next(work->resp);
  }
+ (*(work->res->engine->cleanup)) (work);
  return 0;
 };
