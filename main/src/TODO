@@ -415,12 +415,14 @@ useful as something useful.
  * resptrans (call XMLDExpr_to_string on each column -- done).
  * Engine-XMLD (Implement the required functions)
    * format documents must have XMLDFile nested inside the primary
-     XMLDFile structure.
+     XMLDFile structure. (done)
    * Rewrite format_manip functions inside engine_xmld.c
    * Remove consideration of tag name-specific formatting
      for performance reasons.
+   * Add the new format functions to engine_list and XMLDEngine.
  * XMLDResponse_fill_col/XMLDCol_fill might need to fill the
  expr and not the string.
+ * wisely remove mime checking from prepare for performance.
 
 * If the above gets stabilized, remove unused functions
 in Engine-XMLD (done), XMLDResponse [...?].

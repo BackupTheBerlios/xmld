@@ -16,7 +16,9 @@
 
 void engine_xmld_init (void);
 XMLDStatus engine_xmld_prepare (XMLDWork *, XMLDFile *, int);
+XMLDStatus engine_xmld_load_format_file (XMLDFile *, char *, XMLDBool);
 void engine_xmld_cleanup (XMLDWork *, XMLDFile *);
+void engine_xmld_unload_format_file (XMLDFile *);
 void engine_xmld_destroy (void);
 
 int engine_xmld_walk (XMLDWork *, XMLDFile *);

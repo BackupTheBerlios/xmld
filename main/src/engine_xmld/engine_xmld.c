@@ -56,8 +56,7 @@ XMLDStatus engine_xmld_prepare(XMLDWork *work, XMLDFile *file, int level) {
  
  file->level=0;
  if (BIT_ISSET(level, XMLD_ACCESS_FORMAT)) {	 
-  file->store=(void *) engine_xmld_load_format_file(full_name, BIT_ISSET(level, XMLD_ACCESS_FORMAT_EX));
-  if (file->store == NULL) {
+  if (engine_xmld_load_format_file(file, full_name, BIT_ISSET(level, XMLD_ACCESS_FORMAT_EX)) == XMLD_FAILURE) {
    xmld_errno = XMLD_ENOFORMAT;
    return XMLD_FAILURE;
   }  
@@ -68,14 +67,45 @@ XMLDStatus engine_xmld_prepare(XMLDWork *work, XMLDFile *file, int level) {
  free(full_name);
  return XMLD_SUCCESS;
 }
+
+/* load_format_file function */
+XMLDStatus engine_xmld_load_format_file(XMLDFile *file, char *name, XMLDBool ex) {
+ full_file=(char *) realloc(full_file, (strlen(full_file)+8)*sizeof(char));
+ strcat(full_file, ".format");
+ FILE *fd;
+ 
+ if (ex == XMLD_FALSE) {
+  fd=fmanager_get_sh_fd(full_file);
+ }
+ else {
+  fd=fmanager_get_ex_fd(full_file);
+ }
+
+ if (fd != NULL) {
+  file->store = XMLDFile_create();
+  file->store->data = (void *) fd;
+  file->store->level = 0;
+  return XMLD_SUCCESS;
+ }
+ else {
+  return XMLD_FAILURE;
+ }
+} 
+
 /* cleanup function */
 void engine_xmld_cleanup(XMLDWork *work, XMLDFile *file) {
  if (file->store != NULL) {
-  fmanager_unlock_fd((FILE *) file->store);
-  fclose((FILE *) file->store);
+  engine_Xmld_unload_format_file(file);
  }
  fmanager_unlock_fd((FILE *) file->data);
  fclose((FILE *) file->data);
+}
+
+/* unload_format_file function */
+void engine_xmld_unload_format_file(XMLDFile *file) {
+ fmanager_unlock_fd((FILE *) file->store->data);
+ fclose((FILE *) file->store->data);
+ XMLDFile_free(file->store);
 }
 
 /* destroy function */
