@@ -17,7 +17,7 @@
 struct XMLDFile {
  char *name;  /* The name of the file       */
  void *data;  /* File's data representation */
- void *store; /* Additional storage field   */
+ XMLDFile *store; /* Additional storage field   */
  XMLDEngine *engine; /* The engine to be used for this file */
  int level; /* The current level in the file */
  fpos_t element_pos; /* The position of the beginning of the current element in the file */
