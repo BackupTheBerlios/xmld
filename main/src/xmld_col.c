@@ -19,13 +19,12 @@
 /*
  * : Creates a new column.
  * val (optional): an initial value to associate to the column.
- * cpy (optional): whether to copy val.
  * returns: the newly created column
  */
-XMLDCol *XMLDCol_create(char *val, short cpy) {
+XMLDCol *XMLDCol_create(char *val) {
  XMLDCol *col=(XMLDCol *) malloc(sizeof(XMLDCol));
  if (val!=NULL) {
-  XMLDCol_fill(col, val, cpy);
+  XMLDCol_fill(col, val);
  }
  return col;
 }
@@ -33,19 +32,15 @@ XMLDCol *XMLDCol_create(char *val, short cpy) {
 /*
  * : Frees an allocated column
  * col: the column to free.
- * free_str: whether to free the internal string.
  */
-void XMLDCol_free(XMLDCol *col, short free_str) {
- if (free_str) {
-  XMLDCol_free_content((void *) col);
- } 
+void XMLDCol_free(XMLDCol *col) {
+ XMLDCol_free_content((void *) col);
  free(col);
 }
 
 /*
  * : Frees the memory allocated by a column
  * col: the column to free
- * free_str: whether to free the string.
  */
 void XMLDCol_free_content(void *col) {
  free(((XMLDCol *)col)->val);
@@ -55,16 +50,10 @@ void XMLDCol_free_content(void *col) {
  * : Fills a column with a value.
  * col: the column to fill.
  * val: the value.
- * cpy: whether to copy val.
  */
-void XMLDCol_fill(XMLDCol *col, char *val, short cpy) {
- if (cpy) {
-  col->val=(char *) malloc(strlen(val)*sizeof(char));
-  strcpy(col->val, val);
- }
- else {
-  col->val=val;
- }
+void XMLDCol_fill(XMLDCol *col, char *val) {
+ col->val=(char *) malloc(strlen(val)*sizeof(char));
+ strcpy(col->val, val);
 }
 
 /*
@@ -83,10 +72,10 @@ XMLDList *XMLDCol_create_list() {
  * cpy (optional) : whether to copy val.
  * returns: a pointer to the added XMLDCol.
  */ 
-XMLDCol *XMLDCol_add_to_list(XMLDList *list, char *val, short cpy) {
+XMLDCol *XMLDCol_add_to_list(XMLDList *list, char *val) {
  XMLDCol *col=(XMLDCol *) XMLDList_add(list);
  if (val!=NULL) {
-  XMLDCol_fill(col, val, cpy);
+  XMLDCol_fill(col, val);
  }
  return col;
 }
