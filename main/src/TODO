@@ -89,21 +89,40 @@ Foundation:
   * somanager should search for the interface assigned to the
     port from which the user connects. (done)
 
-* Rewrite (or maybe remove) the generic communication protocol
-  -- each interface should contain handling of authentication
-  for itself in order to allow for non-authentication-based
-  protocols, such as HTTP.
-  * Maybe take the current protocol inside XMLDSQL ?
-  * Optional usage of the authentication API ?
+* Rewrite the generic communication protocol so each interface
+  has its own protocol.
+  * No longer is authman_handle needed in somanager. (done)
+  * somanager_user_connection --> XMLDInterface->user_connection.
+    (done).
+  * somanager_handle should send only the interface pointer
+    to XMLDInterface->user_connection. (done)
+  * remove XMLDConnection. (done)
+
+* Fix that somanager passes the interface name through conn.user
+  then search for its structure a second time. (done)
+
+* remove client, xmldsql, engine_xmld from the source tree. (done)
+
+* Generic Data Storage API -- to remove database server-specific
+  fields from different structures.
 
 * Support for re-parsing of the configuration on the fly.
   * Signal each of the child processes so it reparses the configuration for
     itself.
 
-* Real implementation of mfigure.
+* Erase usage of mutils. (done)
 
+* Put supplementary APIs in one place:
+  * Engine Association API, XMLDEngine structure and mfigure.
+  * On Disk Data Manipulation API. (dutils)
+  * String Manipulation API. (sutils)
+  * Authentication API. (authman)
+  * File Opening and Locking API. (fmanager)
+  
 * Real implementation of engine association functions.
   * maybe a clean up of the whole system ?
+
+* Real implementation of mfigure.
 
 * Error messages:
   * Try to provide routines of error reporting in engines
@@ -126,7 +145,7 @@ Foundation:
 
 * Usage of autoconf to decide on the modules to be compiled.
 
-* Separate make files for XMLDSQL, Engine-XMLD and ptasker.
+* Separate make files for EchoServer and ptasker.
 
 Issues:
 -------
