@@ -26,6 +26,7 @@
 XMLDRow *XMLDRow_create() {
  XMLDRow *row=(XMLDRow *) malloc(sizeof(XMLDRow));
  row->cols=XMLDColList_create();
+ row->level_act=XMLD_ROW_NOTHING;
  return row;
 }
 
@@ -85,5 +86,6 @@ XMLDRowList *XMLDRowList_create() {
 XMLDRow *XMLDRowList_add(XMLDRowList *list) {
  XMLDRow *row=(XMLDRow *) XMLDList_add(list);
  row->cols=XMLDColList_create();
+ row->level_act=XMLD_ROW_NOTHING;
  return row;
 }

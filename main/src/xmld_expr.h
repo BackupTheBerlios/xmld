@@ -1,7 +1,7 @@
 /*                                                                *
  * -------------------------------------------------------------- *
  * The OpenXMLD                                                   *
- * -------------------------------------------------------------- *
+i * -------------------------------------------------------------- *
  * This source file is subject to the GNU General Public licence, *
  * which can be obtained through the world-wide-web at:           *
  *                                                                *
@@ -22,6 +22,7 @@
 #define XMLD_QVAL 4       /* Quoted value type    */ 
 #define XMLD_WILDCARD 5   /* Wildcard type        */
 #define XMLD_FLOAT 6      /* Floating point type  */
+#define XMLD_LIST 7       /* Expression list type */
 
 /* Operation types */
 #define XMLD_OP_ADD 0    /* Addition                  */
@@ -35,6 +36,8 @@
 /* Wildcard types */
 #define XMLD_WILDCARD_ALL 0  /* All columns     */
 #define XMLD_WILDCARD_ATTS 1 /* Only attributes */
+
+typedef XMLDList XMLDExprList;
 
 struct XMLDExpr {
  int type; 
@@ -64,11 +67,12 @@ struct XMLDExpr {
  /*------------------*/
  float fnval; /* type 6: floating point number */
  /*------------------*/
+ XMLDExprList *exprs; /* type 7: expression list */
+ /*------------------*/
  char *alias;
 };
 
 typedef struct XMLDExpr XMLDExpr;
-typedef XMLDList XMLDExprList;
 
 XMLDExpr *XMLDExpr_create(void);
 void XMLDExpr_copy(XMLDExpr *, XMLDExpr *);

@@ -67,7 +67,7 @@ XMLDStatus twalker_handle(XMLDWork *work) {
     return XMLD_FAILURE;
    }
    
-   if (((*(work->res->engine->prepare)) (work, 0)) == XMLD_FAILURE) {
+   if (((*(work->res->engine->prepare)) (work, XMLD_ACCESS_NOTHING)) == XMLD_FAILURE) {
     return XMLD_FAILURE;
    }
 

@@ -147,7 +147,7 @@ query: SELECT expr_list FROM QVAL {
        | INSERT INTO QVAL VALUES '(' expr_list ')' {
                                                     ((XMLDWork *) work)->req->type=XMLD_SQL_INSERT;
 					            ((XMLDWork *) work)->req->file=$3;
-						    ((XMLDWork *) work)->req->vals=$6;
+					            ((XMLDWork *) work)->req->vals=$6;
 						    YYACCEPT;
                                                    }
        | INSERT INTO QVAL '(' expr_list ')' VALUES '(' expr_list ')' WHERE cond_list {
@@ -176,19 +176,14 @@ query: SELECT expr_list FROM QVAL {
                }
 ;
 
+				     
 cond_list: cond {
                  $$=XMLDCondList_create();
 		 XMLDCond *cond=XMLDCondList_add($$);
 		 XMLDCond_copy($1, cond);
 		 free($1);
                 }
-           | cond_list ':' cond {
-                                 $$=$1;
-		                 XMLDCond *cond=XMLDCondList_add($$);
-		                 XMLDCond_copy($3, cond);
-		                 free($3);
-	                        }
-	   | cond_list "," cond { /* for UPDATE support */
+	   | cond_list ":" cond {
                                  $$=$1;
 		                 XMLDCond *cond=XMLDCondList_add($$);
 		                 XMLDCond_copy($3, cond);
@@ -202,7 +197,7 @@ expr_list: expr {
 		 XMLDExpr_copy($1, expr);
 		 free($1);
                 }
-           | expr_list ',' expr {
+           | expr_list ':' expr {
                                  $$=$1;
 		                 XMLDExpr *expr=XMLDExprList_add($$);
 		                 XMLDExpr_copy($3, expr);
@@ -309,6 +304,26 @@ cond: '(' cond ')' {
              $$=XMLDCond_create();
 	     $$->type=XMLD_CONDITION_VOID;
             }
+      | cond ',' cond {
+                       XMLDCond *cond;
+		       if ($1->type != XMLD_CONDITION_LIST) {
+		        $$=XMLDCond_create();
+			$$->type = XMLD_CONDITION_LIST;
+			$$->conds = XMLDCondList_create();
+			cond=XMLDCondList_add($$->conds);
+			XMLDCond_copy($1, cond);
+			free($1);
+			cond=XMLDCondList_add($$->conds);
+			XMLDCond_copy($3, cond);
+			free($3);
+		       }
+		       else {
+		        $$=$1;
+			cond=XMLDCondList_add($$->conds);
+			XMLDCond_copy($3, cond);
+			free($3);
+		       }
+		      } 
 ;
 
 expr: '(' expr ')' {
@@ -417,6 +432,26 @@ expr: '(' expr ')' {
                       $$=$1;
 		      $$->alias=$3;		      
                      }
+      | expr ',' expr {
+                       XMLDExpr *expr;
+		       if ($1->type != XMLD_LIST) {
+		        $$=XMLDExpr_create();
+			$$->type = XMLD_LIST;
+			$$->exprs = XMLDExprList_create();
+			expr=XMLDExprList_add($$->exprs);
+			XMLDExpr_copy($1, expr);
+			free($1);
+			expr=XMLDExprList_add($$->exprs);
+			XMLDExpr_copy($3, expr);
+			free($3);
+		       }
+		       else {
+		        $$=$1;
+			expr=XMLDExprList_add($$->exprs);
+			XMLDExpr_copy($3, expr);
+			free($3);
+		       }
+                      }
 ;
 
 %%

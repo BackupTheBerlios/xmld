@@ -52,6 +52,10 @@ col-sep <character>
 col-sep-enc <string>
 row-sep <character>
 row-sep-enc <string>
+down-level <character>
+down-level-enc <string>
+up-level <character>
+up-level-enc <string>
 
 * col-sep: The character which the server is going to use for 
 separation of columns.
@@ -64,6 +68,20 @@ separation of rows.
 
 * row-sep-enc: The string to which an occurence of a row separator character
 is to be encoded if it was located inside a column value.
+
+* down-level: The character which the server is going to use to indiciate
+incrementing of response deepnes by one.
+
+* down-level-enc: The string to which an occurence of a response deepness
+incrementation indiciator is going to be encoded if it was located inside
+a column value.
+
+* up-level: The character which the server is going to use to indiciate
+decerementing of response deepnes by one.
+
+* up-level-enc: The string to which an occurence of a response deepness
+decrementation indiciator is going to be encoded if it was located inside
+a column value.
 
 Authentication:
 ---------------
@@ -107,8 +125,8 @@ After the authentication sequence the client is free to query the server:
 
 <query>
 
-The server responds with a record set for queries that pull information out
-of the server:
+The server responds with a record set (to be explained) for queries that pull 
+information out of the server:
 
 message-length <whatever>
 status 1
@@ -139,6 +157,58 @@ Note: Only upper-case DISCONNECT works.
 
 It's safe for the client to shutdown its connected socket after sending the disconnection
 message. The server also shutdowns its connected socket once this message is receieved.
+
+Record sets:
+------------
+Record sets are the way in which the server responds to queries that take data out of
+the server. In the OpenXMLD, a record set is a number of NUL-terminated characters whose 
+length (including the NUL) is the one mentioned in the record set's message header. 
+Record sets are to be processed sequentially, there are only four characters that have 
+special meanings--the rest is the data itself. These four special characters are formerly 
+explained in the "Session Initialization" section, they are:
+
+* row-sep
+* col-sep
+* down-level
+* up-level
+
+And their encodings (respectively):
+
+* row-sep-enc
+* col-sep-enc
+* down-level-enc
+* up-level-enc
+
+Example:
+
+row-sep is ;
+col-sep is % 
+down-level is ?
+up-level is ~
+
+According to these values, a record set like this one:
+
+?khalid%18%;~
+
+should mean the following (initial level is 0):
+
+? -- Make current level be 1
+khalid -- the first column value of the first row is "khalid"
+% -- end of first column value (and beginning of second one)
+18 -- the second column value of the first row is "18"
+% -- end of second column value (and beginning of third one)
+; -- end of first row value (and beginning of second one)
+~ -- Current level back to 0
+
+if "khalid" originally contained any of the four special 
+characters they are encoded to the corresponding *-enc
+strings, the client should check for occurences of those
+*-enc strings and convert them back to their original values
+after extracting column values from the record set.
+
+Note:
+NULL column values are indiciated by nothing between two subsequent col-sep
+characters (%% -- in the example above).
 </xmp></pre>
 </body>
 </html>

@@ -33,6 +33,7 @@ XMLDCond *XMLDCond_create() {
  cond->right=NULL;
  cond->cleft=NULL;
  cond->cright=NULL;
+ cond->conds=NULL;
  return cond;
 }
 
@@ -61,6 +62,9 @@ void XMLDCond_free_content(void *cond) {
   XMLDCond_free(((XMLDCond *) cond)->cleft);
   XMLDCond_free(((XMLDCond *) cond)->cright);
  }
+ else if (((XMLDCond *) cond)->type == XMLD_CONDITION_LIST) {
+  XMLDList_free(((XMLDCond *) cond)->conds);
+ }
 }
 
 /*
@@ -79,6 +83,9 @@ void XMLDCond_copy(XMLDCond *src, XMLDCond *dest) {
    dest->cleft=src->cleft;
    dest->cright=src->cright;
    dest->cop=src->cop;
+  break;
+  case XMLD_CONDITION_LIST
+   dest->conds=src->conds;
   break;
  }
 }
@@ -104,5 +111,6 @@ XMLDCond *XMLDCondList_add(XMLDCondList *list) {
  cond->right=NULL;
  cond->cleft=NULL;
  cond->cright=NULL;
+ cond->conds=NULL;
  return cond;
 }

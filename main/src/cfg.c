@@ -31,6 +31,10 @@ XMLDStatus cfg_init() {
  col_sep_enc=((char *) cfg_get("response.col_sep_enc"));
  row_sep=*((char *) cfg_get("response.row_sep"));
  row_sep_enc=((char *) cfg_get("response.row_sep_enc"));
+ down_level=*((char *) cfg_get("response.down_level"));
+ down_level_enc=((char *) cfg_get("response.down_level_enc"));
+ up_level=*((char *) cfg_get("response.up_level"));
+ up_level_enc=((char *) cfg_get("response.up_level_enc"));
  document_root=((char *) cfg_get("xmld.document_root"));
  return XMLD_SUCCESS;
 }

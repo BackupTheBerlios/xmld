@@ -54,22 +54,41 @@ char *resptrans_handle(XMLDWork *work) {
  XMLDCol *curr_col;
  
  /* mstrchr_replace vars */
- char repl_tok[2];
+ char repl_tok[4];
  repl_tok[0]=col_sep;
  repl_tok[1]=row_sep;
- char *repl_tok_enc[2];
+ repl_tok[2]=down_level;
+ repl_tok[3]=up_level;
+ char *repl_tok_enc[4];
  repl_tok_enc[0]=col_sep_enc;
  repl_tok_enc[1]=row_sep_enc;
+ repl_tok_enc[2]=down_level_enc;
+ repl_tok_enc[3]=up_level_enc;
  
  while (XMLDList_next(work->resp->rows)) {
   curr_row=(XMLDRow *) XMLDList_curr(work->resp->rows);
+  char attach='\0';
+  
+  if (curr_row->level_act == XMLD_ROW_DOWN) {
+   attach=down_level;
+  }
+  else if (curr_row->level_act == XMLD_ROW_UP) {
+   attach=up_level;
+  }
+  
+  if (attach != '\0') {
+   response=(char *) realloc(response, (++resp_len) * sizeof(char));
+   response[resp_len-2]=attach;
+   response[resp_len-1]='\0';
+  }
+  
   XMLDList_reset(curr_row->cols);
   while (XMLDList_next(curr_row->cols)) {
    curr_col=(XMLDCol *) XMLDList_curr(curr_row->cols);
    if (curr_col->val != NULL) {
-    char *old_val=curr_col->val;
-    curr_col->val=mstrchr_replace(curr_col->val, repl_tok, repl_tok_enc, 2);
-    free(old_val);
+    char *tmp=mstrchr_replace(curr_col->val, repl_tok, repl_tok_enc, 4);
+    free(curr_col->val);
+    curr_col->val=tmp;
    }
    resp_len+=((curr_col->val != NULL) ? strlen(curr_col->val) : 0)+1;
    response=(char *) realloc(response, resp_len*sizeof(char));

@@ -532,11 +532,15 @@ esponse_flush. and remove XMLDResponse_flush. (done)
 * Support for multi-level retrs and assignments in:
   
   * QUERY.html (done)
-  * xmld-sql.(y|lex) (lists of expr lists)
-  * twalker (level-sensitive retr, fill rows of type 1 and -1)
-  * XMLDResponse (XMLDRow has to be typed (0 = value, 1 = down, -1 = up .. or so))
-  * resptrans (translation of XMLDRow types accordingly)
-  * cfg (for down_level_sep and up_level_sep and encs)
+  * XMLDExpr (expression grouping -- done)
+  * XMLDCond (condition grouping -- done)
+  * xmld-sql.(y|lex) (expression and condition grouping -- done)
+  * XMLDRow (add level_act field -- done)
+  * twalker (level-sensitive retr, fill rows wrt level_act, expression grouping)
+  * XMLDResponse (XMLDRow has level_act)
+  * resptrans (translation of XMLDRow level_act -- done)
+  * cfg (for down_level and up_level and encs -- done)
+  * PROTO.html (for additions to init message) (done)
 
 * Support for the ~ cross-level operation operator:
 
@@ -545,7 +549,7 @@ esponse_flush. and remove XMLDResponse_flush. (done)
  * XMLDExpr and XMLDCond
  * twalker
  
-* Add "Notes on record sets" to PROTO.html.
+* Add "Notes on record sets" to PROTO.html. (done)
 
 * Implement read buffering in dutils.
 
@@ -581,7 +585,8 @@ and expression -> file association. [9] format
 manipulation functions may return NULL or 0 (issue
 XMLD_EMALFORMAT in that case. [11] itostr and ftostr.
 [12] tagname/attribute name conflicts. [13] XMLD*List 
-changes.
+changes. [14] Expression grouping. [15] condition
+grouping.
 
 * Define and implement the exec_assign engine
 function and the UPDATE and UPDATE with
@@ -596,8 +601,7 @@ ectory "functions" for them. (one aggregate and one scalar).
 
 Goal: PUMP the features in!
 
-* response must contain horizonital column names row
-at the top.
+* Response must contain a record set header (update PROTO).
 
 * Multiple query parsers support and on-the-fly query
 parser switching.
@@ -638,6 +642,7 @@ that are ignored! fix that please.
 
 * ptasker task queue maintenance.
 
+* values returned from cfg must be checked for being NULLs.
 *--------------- Start of The OpenXMLD 0.7.0 part:
 
 Goal: Confromance and high-usability.

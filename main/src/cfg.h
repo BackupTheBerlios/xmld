@@ -16,9 +16,13 @@
 
 char col_sep;
 char row_sep;
+char down_level;
+char up_level;
 char *document_root;
 char *row_sep_enc;
 char *col_sep_enc;
+char *down_level_enc;
+char *up_level_enc;
 
 XMLDStatus cfg_init(void);
 void *cfg_get(char *);

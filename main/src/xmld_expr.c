@@ -37,6 +37,7 @@ XMLDExpr *XMLDExpr_create() {
  expr->func=NULL;
  expr->arg_list=NULL;
  expr->qval=NULL;
+ expr->exprs=NULL;
  expr->alias=NULL;
  return expr;
 }
@@ -73,6 +74,9 @@ void XMLDExpr_free_content(void *expr) {
   case XMLD_QVAL:
    cfree(((XMLDExpr *)expr)->qval);
    break;
+  case XMLD_LIST:
+   XMLDList_free(((XMLDExpr *)expr)->exprs);
+  break;
  }
  cfree(((XMLDExpr *)expr)->alias);
 }
@@ -106,6 +110,10 @@ void XMLDExpr_copy(XMLDExpr *src, XMLDExpr *dest) {
   break;
   case XMLD_FLOAT:
    dest->fnval=src->fnval;
+  break;
+  case XMLD_LIST:
+   dest->exprs=src->exprs;
+  break;
  }
  dest->alias=src->alias;
 }
@@ -133,6 +141,7 @@ XMLDExpr *XMLDExprList_add(XMLDExprList *list) {
  expr->func=NULL;
  expr->arg_list=NULL;
  expr->qval=NULL;
+ expr->exprs=NULL;
  expr->alias=NULL;
  return expr;
 }

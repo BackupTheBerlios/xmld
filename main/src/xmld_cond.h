@@ -18,6 +18,7 @@
 #define XMLD_CONDITION 0      /* Normal condition: expr <cond> expr   */
 #define XMLD_CONDITION_GRP 1  /* Condition group: cond <LOGICAL> cond */
 #define XMLD_CONDITION_VOID 2 /* Void condition (always true)         */
+#define XMLD_CONDITION_LIST 3 /* Condition list                       */
 
 /* Conditional operation types */
 #define XMLD_COND_OP_EQUAL 0 /* Equality              */
@@ -34,6 +35,8 @@
 #define XMLD_COND_GRP_AND 0 /* AND */
 #define XMLD_COND_GRP_OR  1 /* OR  */
 
+typedef XMLDList XMLDCondList;
+
 /* represents a condition */
 struct XMLDCond {
  int type;
@@ -46,11 +49,12 @@ struct XMLDCond {
  struct XMLDCond *cright;
  int cop;
  /*----------*/
+ XMLDCondList *conds; /* type 3 */
+ /*----------*/
  XMLDBool negate; /* Whether it's a negative condition */	
 };
 
 typedef struct XMLDCond XMLDCond;
-typedef XMLDList XMLDCondList;
 
 XMLDCond *XMLDCond_create(void);
 void XMLDCond_copy(XMLDCond *, XMLDCond *);

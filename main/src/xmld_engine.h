@@ -15,6 +15,7 @@
 #define __XMLD_ENGINE_H
 
 /* Access level bits */
+#define XMLD_ACCESS_NOTHING 0    /* Nothing special                                */
 #define XMLD_ACCESS_FORMAT 1     /* Whether to open a format file                  */
 #define XMLD_ACCESS_EX 2         /* Whether to execlusively access the file        */
 #define XMLD_ACCESS_FORMAT_EX 4  /* Whether to execlusively access the format file */
