@@ -18,11 +18,20 @@
 struct XMLDRequest {
  char *file;
  short type; /* type of the query
-              * 0 = SELECT query
+              * 0 = SELECT
               * 1 = SELECT with WHERE
+	      * 2 = UPDATE
+	      * 3 = UPDATE with WHERE
+	      * 4 = DELETE (or DELETE *)
+	      * 5 = DELETE with WHERE
+	      * 6 = INSERT with column list
+	      * 7 = INSERT with column list with WHERE
+	      * 8 = INSERT with WHERE
+	      * 9 = INSERT
+	      * 10= USE
               */
- XMLDList *retr;  /* the list of expressions to be
-	           * retrieved */
+ XMLDList *retr;  /* list of action expressions (query type dependent) */
+ XMLDList *vals; /* A list of values for the above expressions  (query type dependent) */
  XMLDList *where; /* A condition for each level */
 };
 
