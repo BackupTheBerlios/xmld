@@ -32,11 +32,11 @@ YY_BUFFER_STATE yy_scan_string(const char *);
 void yy_switch_to_buffer(YY_BUFFER_STATE);
 void yy_delete_buffer(YY_BUFFER_STATE);
 
-void qp_handle(void *conn) {
+void qp_handle(void *work_ptr) {
 #ifdef MULTI_PROC_MTASKER
  int fd=passed_fd;
 #else
- int fd=((XMLDConnection *) conn)->fd;
+ int fd=((XMLDWork *) work_ptr)->conn.fd;
 #endif
  
  /* writing the init msg */

@@ -151,26 +151,33 @@ order to be able to resolve wildcards correctly. (done)
        check for the interface according to the port, and
        assign it to XMLDWork's interface field. (done)
      * xmld.conf should contain that as well. (done)
-     * Implement cfg_get_interface.
-     * qp.c should use the given void pointer differently.
+     * Implement cfg_get_interface. (done -- skeleton)
+     * qp.c should use the given void pointer differently. (done)
      * XMLDWork should contain a field containing the interface 
-       to use.
+       to use. (done)
    * Put XMLD-SQL parser into a separate directory.
    * resptrans, twalker [... ?] must be put inside the interface.
    * data type names in xmlddef should be put inside the interface.   
    * XMLDWork must contain a void* field like that of XMLDFile
      to contain per-request request/response information.
-   * Change the request handling model - shouldn't be called qp.c
+   * Change the connection handling model - shouldn't be called qp.c
      anymore and should play with the interfaces just after authe-
      ntication.
    * Interfaces can handle new connections and disconnections.
    * init should initialize/shutdown the interface list.
    * func_list is interface specific - remove it.
+   * XMLDRequest, XMLDResponse, XMLDFunc, XMLDExpr, XMLDAggrTable
+     are interface specific, should be removed from everywhere else
+     and be used inside the initial XMLD-SQL interface.
    * [...]
  
 * Erase redundancy in somanager.num_listeners.
+
 * Try to use generic naming in engine functions. (with specific
   engine correspondants ?)
+
+* cfg_get_engine should fall back to a default engine if the
+  required engine name was not found.
 
 * Response must contain a record set header (update PROTO).
 

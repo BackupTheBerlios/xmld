@@ -122,4 +122,11 @@ void cfg_set_mime_engine(char *mime, char *engine) {
 XMLDStatus cfg_shutdown() {
  return cfg_parser_clean();
 }
- 
+
+/*
+ * Gets the name of the interface associated to
+ * a particular server port.
+ */
+char *cfg_get_interface(int port) {
+ return "XMLDSQL";
+}
