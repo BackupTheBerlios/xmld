@@ -55,6 +55,9 @@ void *cfg_get(char *key) {
  else if (dir->type == 3) {
   return (void *) dir->value.string_array_value;
  }
+ else if (dir->type == 4) {
+  return (void *) &dir->value.char_value;
+ }
  else {
   return (void *) NULL;
  }
