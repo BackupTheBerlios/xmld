@@ -18,8 +18,9 @@
 struct XMLDCond {
  short type;
           /* 0 = Condition (expr <condition> expr)
-	         * 1 = Condition Group (cond <operation> cond)
-	         */
+	   * 1 = Condition Group (cond <operation> cond)
+	   * 2 = void condition.
+	   */
 
  /*---------*/
  XMLDExpr *left; /* type 0 */
