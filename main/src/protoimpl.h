@@ -14,7 +14,7 @@
 #ifndef __PROTOIMPL_H
 #define __PROTOIMPL_H
 
-#define HEADER_LENGTH 35
+#define HEADER_LENGTH 33
 #define HEADER_FIELDS 2
 #define HEADER_MESSAGE_LENGTH_ARG "message-length"
 #define HEADER_STATUS_ARG "status"
@@ -30,6 +30,12 @@
 #define UP_LEVEL_FIELD "up-level"
 #define UP_LEVEL_ENC_FIELD "up-level-enc"
 #define INIT_NUM_FIELDS 8
+#define USER_NAME_FIELD "user-name"
+#define PASS_FIELD "pass"
+#define ERROR_NUM_FIELD "ERR"
+#define ERROR_MSG_FIELD "MSG"
+#define ERROR_FIELDS 2
+#define ERROR_NUM_LENGTH 5
 
 char *protoimpl_compose_msg(char **, char **, int, int);
 int protoimpl_parse_msg(char *, char **, char **, int);
@@ -37,5 +43,6 @@ char *protoimpl_compose_header(int, int);
 XMLDStatus protoimpl_parse_header(char *, int *, int *);
 char *protoimpl_read_sequence(int, int *);
 XMLDStatus protoimpl_write_sequence(int, char *, int);
+XMLDStatus protoimpl_write_error_sequence(int, int, char *);
 
 #endif /* __PROTOIMPL_H */

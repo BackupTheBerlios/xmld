@@ -19,7 +19,7 @@ int xmld_socket_bind(int, int);
 int xmld_socket_listen(int);
 int xmld_socket_shutdown(int);
 int xmld_socket_accept(int);
-int xmld_socket_write(int, char *, int);
+int xmld_socket_write(int, char *);
 char *xmld_socket_read(int, int);
 
 #endif /* __XMLD_SOCKETS_H */

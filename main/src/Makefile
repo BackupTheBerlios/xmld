@@ -25,6 +25,7 @@ generate: xmld-sql.y xmld-sql.lex $(wildcard *.h)
 	${FLEX} -i -f xmld-sql.lex
 
 clean:
+	rm -f xmld
 	rm -f *.o
 	rm -f ptasker/*.o
 	rm -f engine_xmld/*.o

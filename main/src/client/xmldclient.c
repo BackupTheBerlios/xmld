@@ -16,6 +16,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <unistd.h>
+#include "../xmld_sockets.h"
 #include "../protoimpl.h"
 #include "xmldclient.h"
 
@@ -52,7 +53,6 @@ int main(int argc, char **argv) {
    xmldclient_print_err("Unable to connect to the given port");
    continue;
   }
-
   curr_msg=protoimpl_read_sequence(fd, NULL);
   status=XMLD_SUCCESS;
   status=xmldclient_process_info_msg(curr_msg, &info);
@@ -61,7 +61,6 @@ int main(int argc, char **argv) {
    xmldclient_print_err("An error has occured while processing initialization message");
    continue;
   }
-
   status=xmldclient_auth(fd);
   if (status == XMLD_FAILURE) {
    xmldclient_free_info(&info);
@@ -71,12 +70,16 @@ int main(int argc, char **argv) {
 
   while (1) {
    printf(PROMPT);
-   char curr=getchar();
+   char curr;
+   scanf("%c", &curr);
+   while (curr == '\n') {
+    scanf("%c", &curr);
+   } 
    while (curr != ';') {
     query=(char *) realloc(query, (curr_char + 2) * sizeof(char));
     query[curr_char++]=curr;
     query[curr_char]='\0';
-    curr=getchar();
+    scanf("%c", &curr);
    }
    status=protoimpl_write_sequence(fd, query, 1);
    if (status == XMLD_FAILURE) {
@@ -105,7 +108,49 @@ int main(int argc, char **argv) {
 }
 
 XMLDStatus xmldclient_auth(int fd) {
- return XMLD_TRUE;
+ char *args[1]={USER_NAME_FIELD};
+ char *vals[1];
+ XMLDStatus stat;
+ 
+ while (1) {
+  vals[0]=xmldclient_input_string("User name");
+  char *msg=protoimpl_compose_msg(args, vals, 1, 0);
+  free(vals[0]);
+  if (protoimpl_write_sequence(fd, msg, 1) == XMLD_FAILURE) {
+   free(msg);
+   return XMLD_FAILURE;
+  }
+  free(msg);
+  msg=xmld_socket_read(fd, HEADER_LENGTH);
+  protoimpl_parse_header(msg, NULL, &stat);
+  if (stat == XMLD_FAILURE) {
+   xmldclient_print_err("Invalid user name");
+   continue;
+  }
+  
+  int num_input=0;
+  while (num_input < 3) {
+   num_input++;
+   args[0]=PASS_FIELD;
+   vals[0]=xmldclient_input_string("Password");
+   msg=protoimpl_compose_msg(args, vals, 1, 0);
+   free(vals[0]);
+   if (protoimpl_write_sequence(fd, msg, 1) == XMLD_FAILURE) {
+    free(msg);
+    return XMLD_FAILURE;
+   }
+   free(msg);
+   msg=xmld_socket_read(fd, HEADER_LENGTH);
+   protoimpl_parse_header(msg, NULL, &stat);
+   free(msg);
+   if (stat == XMLD_FAILURE) {
+    xmldclient_print_err("Invalid password");
+    continue;
+   }
+   return XMLD_SUCCESS;
+  }
+ } 
+ return XMLD_SUCCESS;
 }
 
 XMLDStatus xmldclient_process_info_msg(char *msg, struct conn_info *info) {
@@ -122,7 +167,7 @@ XMLDStatus xmldclient_process_info_msg(char *msg, struct conn_info *info) {
     return XMLD_FAILURE;
    }
    else if (strcmp(token, COL_SEP_FIELD) == 0) {
-    fill_char=$(info->col_sep);
+    fill_char=&(info->col_sep);
     fill_str=NULL;
    }
    else if (strcmp(token, COL_SEP_ENC_FIELD) == 0) {
@@ -130,7 +175,7 @@ XMLDStatus xmldclient_process_info_msg(char *msg, struct conn_info *info) {
     fill_str=&(info->col_sep_enc);
    }
    else if (strcmp(token, ROW_SEP_FIELD) == 0) {
-    fill_char=$(info->row_sep);
+    fill_char=&(info->row_sep);
     fill_str=NULL;
    }
    else if (strcmp(token, ROW_SEP_ENC_FIELD) == 0) {
@@ -138,7 +183,7 @@ XMLDStatus xmldclient_process_info_msg(char *msg, struct conn_info *info) {
     fill_str=&(info->row_sep_enc);
    }
    else if (strcmp(token, DOWN_LEVEL_FIELD) == 0) {
-    fill_char=$(info->down_level);
+    fill_char=&(info->down_level);
     fill_str=NULL;
    }
    else if (strcmp(token, DOWN_LEVEL_ENC_FIELD) == 0) {
@@ -146,7 +191,7 @@ XMLDStatus xmldclient_process_info_msg(char *msg, struct conn_info *info) {
     fill_str=&(info->down_level_enc);
    }
    else if (strcmp(token, UP_LEVEL_FIELD) == 0) {
-    fill_char=$(info->up_level);
+    fill_char=&(info->up_level);
     fill_str=NULL;
    }
    else if (strcmp(token, UP_LEVEL_ENC_FIELD) == 0) {
@@ -175,7 +220,7 @@ XMLDStatus xmldclient_process_info_msg(char *msg, struct conn_info *info) {
      strcpy(*fill_str, token);
     }
     else if (fill_char != NULL) {
-     sscanf(token, "%c", *fill_char);
+     sscanf(token, "%c", fill_char);
     }
     else {
      free(token);
@@ -207,10 +252,9 @@ XMLDStatus xmldclient_process_info_msg(char *msg, struct conn_info *info) {
  } 
 }
 
-void xmldclient_get_port(int *port_ptr) {
+void xmldclient_get_port(short *port_ptr) {
  printf("Please enter a port to which The OpenXMLD listens: ");
  scanf("%hd", port_ptr);
- printf("\n");
 }
 
 void xmldclient_print_err(char *err) {
@@ -218,19 +262,19 @@ void xmldclient_print_err(char *err) {
 }
 
 void xmldclient_print_server_err_msg(char *msg) {
- char p[2];
+ char *p[2];
  p[0]=strchr(msg, ' ');
  p[0]++;
- p[1]=strchr(p[0], "\n");
- p[1]='\0';
- printf("ERROR %s: ", p[0]);
- p[1]='\n';
+ p[1]=strchr(p[0], '\n');
+ *p[1]='\0';
+ printf("ERROR %d: ", atoi(p[0]));
+ *p[1]='\n';
  p[0]=strchr(p[1], ' ');
  p[0]++;
  p[1]=strchr(p[0], '\n');
- p[1]='\0';
- printf("%s", p[0]);
- p[1]='\n';
+ *p[1]='\0';
+ printf("%s\n", p[0]);
+ *p[1]='\n';
 }
 
 void xmldclient_print_record_set(char *rs) {
@@ -241,4 +285,22 @@ void xmldclient_free_info(struct conn_info *info) {
  cfree(info->row_sep_enc);
  cfree(info->down_level_enc);
  cfree(info->up_level_enc);
+}
+
+char *xmldclient_input_string(char *msg) {
+ char curr;
+ char *input=NULL;
+ int input_curr=0;
+ printf("%s: ", msg);
+ scanf("%c", &curr);
+ while (curr == '\n') {
+  scanf("%c", &curr);
+ } 
+ while (curr != '\n') {
+  input=(char *) realloc(input, (input_curr + 2) * sizeof(char));
+  input[input_curr + 1]='\0';
+  input[input_curr++]=curr;
+  scanf("%c", &curr);
+ }
+ return input;
 }

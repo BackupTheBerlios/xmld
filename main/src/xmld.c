@@ -44,7 +44,7 @@ int main() {
   return 1;
  }
  
- printf("The OpenXMLD is up and running:\n\t* PID: %d\n", getpid());
+ printf("The OpenXMLD is up and running:\n\t* Main PID: %d\n", getpid());
  
  /* Error Messages */
  err_str[0]="The request file couldn't be opened.";

@@ -23,8 +23,6 @@
 #define AUTH_USER_DIR "dir"
 #define AUTH_FILE "auth.xml"
 #define AUTH_TAG "<user"
-#define AUTH_USER_HEADER_FIELD "user-name"
-#define AUTH_PASS_HEADER_FIELD "pass"
 
 XMLDStatus authman_handle(int , char **);
 XMLDStatus authman_auth_user(char *, char **ret);

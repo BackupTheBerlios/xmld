@@ -139,8 +139,17 @@ char *itostr(int num, int len) {
  if (len == 0) {
   len = INTEGER_LENGTH;
  }
- char *ret=(char *) malloc(len*sizeof(char));
+ 
+ char *ret=(char *) calloc(len, sizeof(char));
+ ret[len - 1]='\0';
  snprintf(ret, len, "%d", num);
+ char *p=ret;
+ while (p < ret + len) {
+  if (*p == '\0') {
+   *p=' ';
+  }
+  p++;
+ }
  return ret;
 }
 

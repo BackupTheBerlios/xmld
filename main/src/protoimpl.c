@@ -62,30 +62,27 @@ int protoimpl_parse_msg(char *msg, char **args, char **vals, int num) {
  char *ptr[2]; /* 0 -> ' ', 1 -> '\n' */
  ptr[1]=msg;
  int num_taken=0;
- 
+
  while (num_taken < num) {
-  ptr[0]=strchr(msg, ' ');
+  ptr[0]=strchr(ptr[1], ' ');
   if (ptr[0] == NULL) {
    break;
   }
-  *ptr[0]='\0';
-  args[num_taken]=(char *) malloc((strlen(ptr[1])+1) * sizeof(char));
-  strcpy(args[num_taken], ptr[1]);
-  *ptr[0]=' ';
+  args[num_taken]=(char *) malloc((ptr[0] - ptr[1] + 1) * sizeof(char));
+  args[num_taken][ptr[0] - ptr[1]]='\0';
+  strncpy(args[num_taken], ptr[1], ptr[0] - ptr[1]);
+  ptr[0]++;
   ptr[1]=strchr(ptr[0], '\n');
   if (ptr[1] == NULL) {
    free(args[num_taken]);
    break;
   }
-  ptr[0]++;
-  ptr[1]='\0';
-  vals[num_taken]=(char *) malloc((strlen(ptr[0])+1) * sizeof(char));
-  strcpy(vals[num_taken], ptr[0]);
-  *ptr[1]='\n';
+  vals[num_taken]=(char *) malloc((ptr[1] - ptr[0] + 1) * sizeof(char));
+  vals[num_taken][ptr[1] - ptr[0]]='\0';
+  strncpy(vals[num_taken], ptr[0], ptr[1] - ptr[0]);
   ptr[1]++;
   num_taken++;
  }
- 
  return num_taken;
 }
 
@@ -120,7 +117,7 @@ XMLDStatus protoimpl_parse_header(char *header, int *len, int *status) {
  int num_parsed;
  char *arg_carry[HEADER_FIELDS];
  char *val_carry[HEADER_FIELDS];
- num_parsed=protoimpl_parse_msg(header, arg_carry, val_carry, 2);
+ num_parsed=protoimpl_parse_msg(header, arg_carry, val_carry, HEADER_FIELDS);
  
  if (num_parsed < 2) {
   if (num_parsed == 1) {
@@ -168,7 +165,7 @@ char *protoimpl_read_sequence(int fd, int *status) {
   return NULL;
  }
  free(header);
- return xmld_socket_read(fd, msg_len);
+ return (msg_len > 0) ? xmld_socket_read(fd, msg_len) : NULL;
 }
 
 /*
@@ -179,17 +176,32 @@ char *protoimpl_read_sequence(int fd, int *status) {
 XMLDStatus protoimpl_write_sequence(int fd, char *msg, int stat) {
  int msg_len=(msg == NULL) ? 0 : strlen(msg)+1;
  char *curr_msg=protoimpl_compose_header(msg_len, stat);
- 
  if (curr_msg == NULL) {
   return XMLD_FAILURE;
  }
  
- xmld_socket_write(fd, curr_msg, HEADER_LENGTH);
+ xmld_socket_write(fd, curr_msg);
  
  if (msg != NULL) {
-  xmld_socket_write(fd, msg, msg_len);
+  xmld_socket_write(fd, msg);
  } 
  
  free(curr_msg);
  return XMLD_SUCCESS;
+}
+
+/*
+ * Writes an error message shaped as PROTO implies to the other side
+ * of the connection.
+ */
+XMLDStatus protoimpl_write_error_sequence(int fd, int err, char *msg) {
+ char *arg_carry[ERROR_FIELDS]={ERROR_NUM_FIELD, ERROR_MSG_FIELD};
+ char *val_carry[ERROR_FIELDS];
+ val_carry[0]=itostr(err, ERROR_NUM_LENGTH);
+ val_carry[1]=msg;
+ char *curr_msg=protoimpl_compose_msg(arg_carry, val_carry, ERROR_FIELDS, 0);
+ free(val_carry[0]);
+ XMLDStatus ret=protoimpl_write_sequence(fd, curr_msg, 0);
+ free(curr_msg);
+ return ret;
 }

@@ -29,7 +29,7 @@
 #define XMLD_TRUE 1
 
 #define BIT_ISSET(bitmask, bit) ((bitmask) & (bit))
-#define ERROR_RESPONSE xmld_socket_write(work->conn->fd, err_str[xmld_errno], strlen(err_str[xmld_errno])+1)
+#define ERROR_RESPONSE protoimpl_write_error_sequence(work->conn->fd, xmld_errno, err_str[xmld_errno])
 
 /* Data types */
 #define XMLD_TYPE_CHAR "CHAR"

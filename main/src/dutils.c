@@ -33,12 +33,14 @@ buf_t *buf_create() {
  * gets initialized by the user.
  */ 
 char getc_buf(FILE *fd, buf_t *buf) {
- if (buf->curr == '\0') {
-  if (fgets(buf->val, BUFFER_SIZE-1, fd) == NULL) {
+ if (*buf->curr == '\0') {
+  int bytes_read=fread(buf->val, sizeof(char), BUFFER_SIZE-1, fd);
+  if (bytes_read == 0) {
    return EOF;
   }
   else {
    buf->curr=buf->val;
+   buf->val[bytes_read]='\0';
   }
  }
  else {
@@ -57,7 +59,7 @@ char getc_buf(FILE *fd, buf_t *buf) {
  */ 
 void buf_dump(FILE *fd, buf_t *buf) {
  char *null_char=strchr(buf->val, '\0');
- fseek(fd, buf->curr - null_char, SEEK_CUR);
+ fseek(fd, buf->curr - null_char + 1, SEEK_CUR);
  free(buf);
 }
 

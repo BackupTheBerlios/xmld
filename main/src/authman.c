@@ -36,7 +36,6 @@
 XMLDStatus authman_handle(int fd, char **info) {
  /* Get the user name */
  char *curr_msg=protoimpl_read_sequence(fd, NULL);
- 
  if (strcmp(curr_msg, DISCONNECTION_MESSAGE) == 0) {
   free(curr_msg);
   return XMLD_FAILURE;
@@ -52,7 +51,7 @@ XMLDStatus authman_handle(int fd, char **info) {
   return XMLD_FAILURE;
  }
 
- if (strcmp(arg_carry[0], AUTH_USER_HEADER_FIELD) != 0) {
+ if (strcmp(arg_carry[0], USER_NAME_FIELD) != 0) {
   free(arg_carry[0]);
   free(val_carry[0]);
   return XMLD_FAILURE;
@@ -79,7 +78,6 @@ XMLDStatus authman_handle(int fd, char **info) {
  
  /* Start of password checking */
  curr_msg=protoimpl_read_sequence(fd, NULL);
- 
  if (strcmp(curr_msg, DISCONNECTION_MESSAGE) == 0) {
   free(curr_msg);
   free(info[0]);
@@ -98,7 +96,7 @@ XMLDStatus authman_handle(int fd, char **info) {
   return XMLD_FAILURE;
  }
 
- if (strcmp(arg_carry[0], AUTH_PASS_HEADER_FIELD) != 0) {
+ if (strcmp(arg_carry[0], PASS_FIELD) != 0) {
   free(info[0]);
   free(info[1]);
   free(arg_carry[0]);

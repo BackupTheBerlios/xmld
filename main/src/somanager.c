@@ -55,6 +55,7 @@ XMLDStatus somanager_init() {
    perror("xmld_socket_bind");
    return XMLD_FAILURE;
   }
+  printf("\t* Listening port %d: %d\n", t+1, ports[t]);
   s = mtasker_handle(somanager_handle, (void *) (fds+t), fds[t]);
   if (s == XMLD_FAILURE) {
    perror("mtasker_handle");
