@@ -47,6 +47,7 @@ void engine_xmld_destroy() {
 
 /* walk function */
 short engine_xmld_walk(XMLDWork *work) {
+ return 0;
 }
 
 /* eval_expr function */
