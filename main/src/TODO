@@ -133,8 +133,8 @@ order to be able to resolve wildcards correctly. (done)
   of a non-existent attribute. (done -- returning NULL) 
 
 * Correct required privilege specification.
- * twalker (Remove initial privilege checking)
- * XMLDFile (store the priv of each file inside it)
+ * twalker (Remove initial privilege checking) (done)
+ * XMLDFile (store the priv of each file inside it) (done)
  * twalker_simplify_expr (Check the privileges of a file 
  to which a column is associated on each operation)
 

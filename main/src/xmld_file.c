@@ -29,6 +29,7 @@ XMLDFile *XMLDFile_create(char *name) {
  file->store=NULL;
  file->engine=NULL;
  file->level=0;
+ file->priv=9;
  return file;
 }
 
@@ -103,6 +104,7 @@ XMLDFile *XMLDFileList_add(XMLDFileList *list, char *name) {
  file->store=NULL;
  file->engine=NULL;
  file->level=0;
+ file->priv=0;
  return file;
 }
 

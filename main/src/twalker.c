@@ -26,19 +26,11 @@ XMLDStatus twalker_handle(XMLDWork *work) {
    XMLDList_reset(work->files);
    XMLDFile *curr_file;
    char *full_file;
-   int priv;
    
    while (XMLDList_next(work->files)) {
     curr_file=(XMLDFile *) XMLDList_curr(work->files);
     full_file=XMLDFile_get_full_name(curr_file, work);
-    priv=authman_get_priv(work->conn->user, full_file);
-   
-    if (!BIT_ISSET(priv, XMLD_PRIV_READ)) {
-     free(full_file);
-     xmld_errno=XMLD_ENORPRIV;
-     return XMLD_FAILURE;
-    }
-   
+    curr_file->priv=authman_get_priv(work->conn->user, full_file);
     curr_file->engine=XMLDEngineList_search_by_name(engine_list, cfg_get_engine(full_file));
    
     if (curr_file->engine == NULL) {
@@ -144,14 +136,7 @@ XMLDStatus twalker_handle(XMLDWork *work) {
    while (XMLDList_next(work->files)) {
     curr_file=(XMLDFile *) XMLDList_curr(work->files);
     full_file=XMLDFile_get_full_name(curr_file, work);
-    priv=authman_get_priv(work->conn->user, full_file);
-   
-    if (!BIT_ISSET(priv, XMLD_PRIV_READ)) {
-     free(full_file);
-     xmld_errno=XMLD_ENORPRIV;
-     return XMLD_FAILURE;
-    }
-   
+    curr_file->priv=authman_get_priv(work->conn->user, full_file);
     curr_file->engine=XMLDEngineList_search_by_name(engine_list, cfg_get_engine(full_file));
    
     if (curr_file->engine == NULL) {
