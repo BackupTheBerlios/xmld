@@ -16,6 +16,7 @@
 #define YY_DECL int yylex(YYSTYPE *lvalp)
 %}
 %x STR
+%option noyywrap;
 %%
 
 " " return ' ';

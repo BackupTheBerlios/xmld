@@ -36,11 +36,11 @@ Foundation:
   * XMLDCfgSection (with support for subsections -- done).
   * XMLDDirective refinement. -> (XMLDCfgDirective -- done)
   * XMLDCfgValue (done).
-  * Write code for grammar rules.
-  * XMLDCfgValue_copy (copies only the string pointer in case
-    of strings).
-  * New cfg_parser.c API.
-  * Modify cfg.c accrodingly.
+  * Write code for grammar rules. (done)
+  * New cfg_parser.c must use cfg_parser.y. (done)
+  * Modify cfg_parser.y such that it takes a prepared parse
+    tree as input and fills it. (done)
+  * Modify cfg.c accrodingly. (consider revamping the API)
   * xmld.conf must not contain types of directives nor 
   somanager.num_listeners.
   * Support for interface parameters.

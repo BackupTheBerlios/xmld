@@ -28,7 +28,7 @@
 %pure_parser
 
 /* Types and tokens */
-%type <list> value_list directive_list
+%type <list> value_list
 %type <section> cfg_tree section
 %type <directive> directive
 %type <value> value
@@ -37,29 +37,55 @@
 
 %%
 
-cfg_tree: directive_list
-	| section
-	| cfg_tree '\n' directive
-	| cfg_tree '\n' section
+configuration: cfg_tree
+	     {
+	      ((XMLDCfgSection *) cfg_tree) = $1;
+	      YYACCEPT;
+	     }
 ;
 
-section: '<' IDENTIFIER '>' '\n' directive_list '\n' '<' '/' IDENTIFIER '>'
+cfg_tree: directive
+	  {
+	   $$=XMLDCfgSection_create();
+           $$->directives = XMLDCfgDirectiveList_create();
+           XMLDCfgDirective *directive = XMLDCfgDirectiveList_add($$->directives);
+	   directive->name = $1->name;
+	   directive->values = $1->values;
+	   free($1);
+	  }
+	| section
+	  {
+	   $$=XMLDCfgSection_create();
+	   $$->sections = XMLDCfgSectionList_create();
+	   XMLDCfgSection *section = XMLDCfgSectionList_add($$->sections);
+	   section->name = $1->name;
+	   section->directives = $1->directives;
+	   free($1);
+	  }
+	| cfg_tree '\n' directive
+	  {
+	   $$=$1;
+           XMLDCfgDirective *directive = XMLDCfgDirectiveList_add($$->directives);
+	   directive->name = $3->name;
+	   directive->values = $3->values;
+	   free($3);
+	  }
+	| cfg_tree '\n' section 
+	  {
+	   $$=$1;
+	   XMLDCfgSection *section = XMLDCfgSectionList_add($$->sections);
+	   section->name = $3->name;
+	   section->directives = $3->directives;
+	   free($3);
+	  }
+;
+
+section: '<' IDENTIFIER '>' '\n' cfg_tree '\n' '<' '/' IDENTIFIER '>'
          {
 	  $$=XMLDCfgSection_create();
 	  $$->name = $2;
 	  $$->directives = $5;
 	 }
-;
-
-directive_list: directive
-	       {
-	        $$=XMLDCfgDirectiveList_create();
-		XMLDCfgDirective *directive = XMLDCfgDirectiveList_add($$);
-		directive->name = $1->name;
-		directive->values = $1->values;
-		free($1);
-	       }
-	      | directive_list '\n' directive
 ;
 
 directive: IDENTIFIER ' ' value_list
