@@ -24,16 +24,11 @@
  * Note: dir is copied, and not referenced.
  * returns: the newly created connection structure.
  */
-XMLDConnection *XMLDConnection_create(int fd, char *curr_dir) {
+XMLDConnection *XMLDConnection_create(int fd, char *curr_dir, char *user) {
  XMLDConnection *conn=(XMLDConnection *) malloc(sizeof(XMLDConnection));
  conn->fd=fd;
- if (curr_dir != NULL) {
-  conn->curr_dir=(char *) malloc((strlen(curr_dir)+1)*sizeof(char));
-  strcpy(conn->curr_dir, curr_dir);
- }
- else {
-  conn->curr_dir=NULL;
- }
+ conn->curr_dir=curr_dir;
+ conn->user=user;
  return conn;
 }
 
@@ -53,7 +48,6 @@ void XMLDConnection_free(XMLDConnection *conn) {
  * conn: the connection structure to free.
  */
 void XMLDConnection_free_content(void *conn) {
- cfree(((XMLDConnection *) conn)->curr_dir); 
 }
 
 /*
@@ -70,15 +64,10 @@ XMLDList *XMLDConnection_create_list() {
  * fd, curr_dir: see XMLDConnection_create
  * returns: a pointer to the newly added element.
  */
-XMLDConnection *XMLDConnection_add_to_list(XMLDList *list, int fd, char *curr_dir) {
+XMLDConnection *XMLDConnection_add_to_list(XMLDList *list, int fd, char *curr_dir, char *user) {
  XMLDConnection *conn=(XMLDConnection *) XMLDList_add(list);
  conn->fd=fd;
- if (curr_dir != NULL) {
-  conn->curr_dir=(char *) malloc((strlen(curr_dir)+1)*sizeof(char));
-  strcpy(conn->curr_dir, curr_dir);
- }
- else {
-  conn->curr_dir=NULL;
- }
+ conn->curr_dir=curr_dir;
+ conn->user=user;
  return conn;
 }

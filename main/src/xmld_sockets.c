@@ -38,20 +38,25 @@ int xmld_socket_shutdown(int sockfd) {
 int xmld_socket_accept(int sockfd) {
  return accept(sockfd, NULL, NULL);
 }
-int xmld_socket_write(int sockfd, char *str) {
-  return write(sockfd, (void *) str, strlen(str)+1);
-}
-char *xmld_socket_read(int sockfd) {
- char *ret=(char *) malloc(400*sizeof(char));
- /*int curr=0;
- 
- while (1) {*/
-  read(sockfd, (void *) ret, 400);
- /* if (ret[curr] == '\0') {
-   break;
+
+/*
+ * Writes a message with maximum length 'len'
+ * to sockfd.
+ */ 
+int xmld_socket_write(int sockfd, char *str, int len) {
+  int slen=strlen(str);
+  if (slen < len) {
+   len = slen;
   }
-  ret=(char *) realloc(ret, (curr + 2)*sizeof(char));
-  curr++;
- }*/
+  return write(sockfd, (void *) str, len);
+}
+
+/*
+ * Reads a message with maximum length 'len' from
+ * sockfd.
+ */ 
+char *xmld_socket_read(int sockfd, int len) {
+ char *ret=(char *) malloc(len*sizeof(char));
+ read(sockfd, (void *) ret, len);
  return ret; 
 }

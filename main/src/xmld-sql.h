@@ -26,7 +26,6 @@
 #define XMLD_SQL_INSERT_WHERE 8     /* INSERT with WHERE                  */
 #define XMLD_SQL_INSERT 9           /* INSERT                             */
 #define XMLD_SQL_USE 10             /* USE                                */
-#define XMLD_SQL_DISCONNECT 11      /* DISCONNECT                         */
 
 #endif /* __XMLD_SQL_H */
 

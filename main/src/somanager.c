@@ -101,7 +101,6 @@ void somanager_handle(void *sockfd) {
   
   XMLDConnection conn;
   conn.fd=s;
-  conn.curr_dir="/";
   mtasker_handle(qp_handle, (void *) &conn, s);
  } 
 }

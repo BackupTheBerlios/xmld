@@ -25,31 +25,10 @@ Connection Establishment:
 Obviously a client can establish a connection with an OpenXMLD daemon by connecting
 to one of its listener sockets (specified in the xmld.conf file).
 
-Session Initialization:
------------------------
-Once the server and the client are successfully connected together The OpenXMLD sends 
-a NULL-terminated message with a maximum length of 40 characters, whose format is as 
-follows:
-
-The OpenXMLD/<version number>
-header-length <numeric value>
-
-Note: In this protocol lines end in '\n'.
-
-* <version number>: The server software version number sent for if the client wants
-to send version-sensitive messages.
-
-* header-length: The maximum length of the header of each upcoming message. (that's
-a server configuration thing).
-
-To receive this message, the client must wait for its arrival once the connection
-is established and store the given values for later usage.
-
 Header Format:
 --------------
-All the messages sent thereafter have a <header> message sent before them whose
-maximum length is that specified by the server's initialization message's "header
--length" field. And it has the following format (and it's NULL-terminated):
+All the messages sent/received have a <header> message sent before them whose
+maximum length is 30 characters  And it has the following format:
 
 message-length <numeric value>
 status <boolean>
@@ -59,10 +38,13 @@ status <boolean>
 * status: 0 or 1, failure and success respectively. (always 1 for client-sent
 messages)
 
-Additional Information:
+Note: All messages are NUL-terminated, and all length values mentioned in 
+this protocol include the NUL character.
+
+Session Initialization:
 -----------------------
-After receiving the initialization message the client must wait for another 
-message that has the following form:
+After establishing the connection the client must wait for a message that 
+has the following form:
 
 <header>
 
@@ -85,7 +67,7 @@ is to be encoded if it was located inside a column value.
 
 Authentication:
 ---------------
-After reciving the informational message the client must begin the 
+After reciving the initialization message the client must begin the 
 authentication sequence by sending the following message:
 
 
@@ -153,7 +135,7 @@ To disconnect from the server, the client sends this message:
 
 DISCONNECT
 
-Note: lower-case disconnect works too.
+Note: Only upper-case DISCONNECT works.
 
 It's safe for the client to shutdown its connected socket after sending the disconnection
 message. The server also shutdowns its connected socket once this message is receieved.

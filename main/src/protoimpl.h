@@ -14,13 +14,9 @@
 #ifndef __PROTOIMPL_H
 #define __PROTOIMPL_H
 
-XMLDStatus protoimpl_parse_header(char *, char **);
-char *protoimpl_create_header(char **, int);
-int protoimpl_parse_err_msg(char *, char **);
-char *protoimpl_create_err_msg(int, char *);
-char *protoimpl_parse_user_msg(char *);
-char *protoimpl_create_user_msg(char *);
-char *protoimpl_parse_pass_msg(char *);
-char *protoimpl_create_pass_msg(char *);
+char *protoimpl_compose_msg(char **, char **, int, int);
+int protoimpl_parse_msg(char *, const char **, const char **, int);
+char *protoimpl_read_sequence(int, XMLDStatus *);
+XMLDStatus protoimpl_write_sequence(int, char *, XMLDStatus);
 
 #endif /* __PROTOIMPL_H */

@@ -101,10 +101,6 @@ query: SELECT expr_list FROM QVAL {
 				   ((XMLDWork *) work)->req->retr=$2;
 				   YYACCEPT;
                                   }
-       | DISCONNECT {
-                     ((XMLDWork *) work)->req->type=XMLD_SQL_DISCONNECT;
-		     YYACCEPT;
-                    }
        | SELECT expr_list FROM QVAL WHERE cond_list {
 			     	                     ((XMLDWork *) work)->req->type=XMLD_SQL_SELECT_WHERE;
 				                     ((XMLDWork *) work)->req->file=$4;

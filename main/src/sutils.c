@@ -135,9 +135,12 @@ XMLDBool str_between(char *str, char *min, char *max) {
  * Turns a given integer to its string representation.
  * i.e atoi inverse.
  */
-char *itostr(int num) {
- char *ret=(char *) malloc(NUMERIC_LENGTH*sizeof(char));
- snprintf(ret, NUMERIC_LENGTH, "%d", num);
+char *itostr(int num, int len) {
+ if (len == 0) {
+  len = NUMERIC_LENGTH;
+ }
+ char *ret=(char *) malloc(len*sizeof(char));
+ snprintf(ret, len, "%d", num);
  return ret;
 }
 
@@ -145,9 +148,12 @@ char *itostr(int num) {
  * Turns a given float to its string representation
  * i.e atof inverse.
  */
-char *ftostr(float num) {
- char *ret=(char *) malloc(FLOAT_LENGTH*sizeof(char));
- snprintf(ret, FLOAT_LENGTH, "%f", num);
+char *ftostr(float num, int len) {
+ if (len == 0) {
+  len = FLOAT_LENGTH;
+ }
+ char *ret=(char *) malloc(len*sizeof(char));
+ snprintf(ret, len, "%f", num);
  return ret;
 }
 

@@ -19,6 +19,22 @@
 #include "engine_xmld/element_op.h"
 
 /*
+ * Handles an authentication sequence which
+ * contains a check for existence of the user name
+ * and correctness of the provided password and
+ * retrieval of the base directory of the user.
+ * It also involves handling DISCONNECT requests.
+ * Upon successful return, info[0] is the user's name
+ * and info[1] is his base_dir. The function works
+ * on the given fd, and returns a success/failure
+ * indiciator.
+ * Note: info is a preallocated size 2 array of 
+ * strings.
+ */
+XMLDStatus authman_handle(int fd, const char **info) {
+}
+
+/*
  * Returns whether user is existent. and fills
  * ret[0] with his password and ret[1] with his
  * start directory only if ret is not NULL.

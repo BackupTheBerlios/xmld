@@ -14,10 +14,15 @@
 #ifndef __XMLDDEF_H
 #define __XMLDDEF_H
 
+/* Version defines */
+#define XMLD_VERSION_MAJOR "0"
+#define XMLD_VERSION_MINOR "5"
+#define XMLD_VERSION_REVIEW "0"
+#define XMLD_VERSION "0.5.0"
+
 /* XMLDStatus values */
 #define XMLD_SUCCESS 1
 #define XMLD_FAILURE 0
-#define XMLD_SPECIAL -1
 
 /* XMLDBool values */
 #define XMLD_FALSE 0

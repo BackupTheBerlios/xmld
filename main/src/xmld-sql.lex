@@ -49,7 +49,6 @@ struct XMLDEngine;
 %%
 
 "select" return SELECT;
-"disconnect" return DISCONNECT;
 "from" return FROM;
 "where" return WHERE;
 "update" return UPDATE;

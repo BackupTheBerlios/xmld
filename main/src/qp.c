@@ -41,6 +41,8 @@ struct XMLDEngine;
 #include "xmld_engine.h"
 #include "qp.h"
 #include "twalker.h"
+#include "protoimpl.h"
+#include "authman.h"
 
 #ifdef USE_PTASKER
  #include <sys/types.h>
@@ -56,19 +58,23 @@ void yy_switch_to_buffer(YY_BUFFER_STATE);
 void yy_delete_buffer(YY_BUFFER_STATE);
 
 void qp_handle(void *conn) {
- while (1) {
-  XMLDWork *work=XMLDWork_create();
+ XMLDStatus status;
 #ifdef MULTI_PROC_MTASKER
-  work->conn=XMLDConnection_create(passed_fd, ((XMLDConnection *) conn)->curr_dir);
-#else 
-  work->conn=XMLDConnection_create(((XMLDConnection *) conn)->fd, ((XMLDConnection *) conn)->curr_dir);
-#endif /* MULTI_PROC_MTASKER */
+ int fd=passed_fd;
+#else
+ int fd=((XMLDConnection *) conn)->fd;
+#endif
+ 
+ XMLDWork *work=XMLDWork_create();
+ work->conn=XMLDConnection_create(fd, base_dir, user_name);
+ 
+ while (1) {
   work->req=XMLDRequest_create();
   
   char *query=xmld_socket_read(work->conn->fd);
   YY_BUFFER_STATE buf=yy_scan_string(query);
   printf("%s\n", query);
-  XMLDStatus status=yyparse((void *) work);
+  status=yyparse((void *) work);
   yy_delete_buffer(buf);
   if (status == 1) {
    ERROR_RESPONSE;
@@ -78,18 +84,15 @@ void qp_handle(void *conn) {
   
   free(query);
   status = twalker_handle(work);
-  if (status == XMLD_SPECIAL) {
-   xmld_socket_write(work->conn->fd, "Disconnected");
-   xmld_socket_shutdown(work->conn->fd);
-   XMLDWork_free(work);
-   break;
-  }
-  else if (status == XMLD_FAILURE) {
+  if (status == XMLD_FAILURE) {
    ERROR_RESPONSE;
    XMLDWork_free(work);
    continue;
   }
-
-  XMLDWork_free(work);
- } 
+  XMLDResponse_free(work->resp);
+  XMLDRequest_free(work->req);
+  XMLDResource_free(work->res);
+ }
+ xmld_socket_shutdown(work->conn->fd);
+ XMLDWork_free(work);
 }

@@ -43,13 +43,22 @@ struct XMLDEngine;
 #include "twalker.h"
 #include "xmld-sql.h"
 #include "resptrans.h"
-
+#include "authman.h"
+ 
 XMLDStatus twalker_handle(XMLDWork *work) {
  switch(work->req->type) {
   case XMLD_SQL_SELECT:
    work->res=XMLDResource_create();
   
    char *full_file=XMLDWork_get_full_file(work);
+   int priv=authman_get_priv(work->conn->user, full_file);
+   
+   if (!BIT_ISSET(priv, XMLD_PRIV_READ)) {
+    free(full_file);
+    xmld_errno=XMLD_ENORPRIV;
+    return XMLD_FAILURE;
+   }
+   
    work->res->engine=XMLDEngine_search_list_by_name(engine_list, cfg_get_engine(full_file));
    free(full_file);
    
@@ -94,6 +103,14 @@ XMLDStatus twalker_handle(XMLDWork *work) {
    work->res=XMLDResource_create();
   
    full_file=XMLDWork_get_full_file(work);
+   int priv=authman_get_priv(work->conn->user, full_file);
+   
+   if (!BIT_ISSET(priv, XMLD_PRIV_READ)) {
+    free(full_file);
+    xmld_errno=XMLD_ENORPRIV;
+    return XMLD_FAILURE;
+   }
+   
    work->res->engine=XMLDEngine_search_list_by_name(engine_list, cfg_get_engine(full_file));
    free(full_file);
    
@@ -218,9 +235,6 @@ XMLDStatus twalker_handle(XMLDWork *work) {
   case XMLD_SQL_USE:
    xmld_errno=XMLD_ENOTIMPL;
    return XMLD_FAILURE;
-  break;
-  case XMLD_SQL_DISCONNECT: /* DISCONNECT */
-   return XMLD_SPECIAL;
   break;
  }
  return XMLD_SUCCESS;

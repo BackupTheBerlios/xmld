@@ -18,6 +18,7 @@
 struct XMLDConnection {
  int fd;
  char *curr_dir; /* the current directory of the connection */
+ char *user;
 };
 
 typedef struct XMLDConnection XMLDConnection;
