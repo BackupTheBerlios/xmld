@@ -23,7 +23,10 @@
  */
 short cfg_init() {
  cfg_tree=NULL;
- return cfg_parser_parse();
+ short ret=cfg_parser_parse();
+ col_sep=*((char *) cfg_get("response.col_sep"));
+ row_sep=*((char *) cfg_get("response.row_sep"));
+ return ret;
 }
 
 /*
