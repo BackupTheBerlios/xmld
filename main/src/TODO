@@ -664,12 +664,9 @@ existent in SQL. Add LENGTH and CONCAT instead. (done)
 * remove BETWEEN and NOT BETWEEN from conditions, those are special
 statements that must not be mixed with normal conditions. (done)
 
-* upload QUERY and PROTO to the site, to make sure that all
-editions are put online. (done)
-
 * A make script (done)
 
-* A capability-demonstrating client in src/client.
+* A capability-demonstrating client in src/client. (done)
 
 * compile (done)
 
@@ -691,50 +688,73 @@ server on receiving it.
 
 * fix buffering bugs. (done)
 
-* fix 
-
 * a make script for the client (done).
 
+* record set parsing and showing in xmldclient.
+
+* fix 
+
 * modify INSTALL.
+
+* upload QUERY and PROTO to the site, to make sure that all
+editions are put online.
+
 --------------- Start of The OpenXMLD 0.6.0 part:
 
-Goal: Clean it up more and PUMP a lot of features in!
+Goal: We want it as clean as something clean and as 
+useful as something useful.
 
-* limit the engine API to column retrieval/updating and 
-transfer condition and expression evaluation to twalker.
+--- Foundation:
 
-* @ and * must not be recognized within the engine.
+* the engine must not know about *, @, [text], [tagnames].
 
-* retrieval of text and tagnames is a completely different
-thing.
+* one walk over the document and the expression for column and 
+wildcard resolution and one more walk over the expression
+for evaluation.
 
-* one walk for column and wildcard resolution and one more
-for evaluation at twalker.
-
-* implement a sequential column selection API in the engine.
+* implement a sequential column selection API in the engine in
+order to be able to resolve wildcards correctly.
 
 * expression tree walking must happen at twalker.
 
- * twalker_resolve_expr: turns columns and wildcards into expressions.
- * twalker_resolve_cond: turns conditions into simple conditions.
- * twalker_eval_expr: gets a string value out of the expression.
- * twalker_eval_cond: 1 or 0 for the condition.
-
-* expression evaluation in twalker must consult the expression itself
-to know which engine to use.
-
-* wildcards must be turned into multiple expressions within
-twalker.
+* Rewrite the engine API according to twalker and update
+Engine-XMLD accordingly.
 
 * Response must contain a record set header (update PROTO).
 
-* Check if it's possible to use a list of XMLDExpr * and
-XMLDCond* in xmld-sql.y in order to avoid copies.
+* ptasker task queue needs maintenance.
+
+--- Features:
 
 * Aggregate function calls support.
 
+* Create a hash table implementation for places where
+search speed is important.
+
+* Full per-file user privilege system. (auth_get_priv)
+
+--- Cleanups:
+
+* values returned from cfg must be checked for being NULLs.
+
+* protect the auth.xml document. (priv it to root only, and make it 
+system unreadable).
+
+* Handle quotes inside strings in xmld-sql.lex
+
+* we are using snprintf!
+
+* handle special character decoding in the client.
+
+*--------------- Start of the OpenXMLD 0.7.0 part:
+
+Goal: Features with slight fixing.
+
 * Multiple query parsers support and on-the-fly query
 parser switching.
+
+* Check if it's possible to use a list of XMLDExpr * and
+XMLDCond* in xmld-sql.y in order to avoid copies.
 
 * Implement CREATE TABLE/FILE (with all the hard
 meanings such a word should carry -- requires
@@ -753,49 +773,6 @@ and implement them in Engine-XMLD.
 * Implement alphabetical comparsion in str_between.
 (check the GNU C Library documentation for "Searching
 and Sorting")
-
-* SQL functions must be able to report errors.
-
-* Continue implementation of SQL functions in func_list.
-
-* Create a hash table implementation for places where
-search speed is important (XMLDHashTable), and provide
-APIs in XMLDEngine, XMLDFunc and XMLDFile (..?)  in that 
-form:
-
-XMLDEngineHashtable_create(...)
-
-* Full per-file user privilege system.
-
-* When multiple files are in a query, the query parser
-can't distinguish between the privileges needed for each
-and treats all with the highest available privilege.
-Fix that by providing per-file privilege requestions and
-specifications.
-
-* create a configure script:
- * --use-ptasker
- 
-* ptasker task queue maintenance.
-
-* values returned from cfg must be checked for being NULLs.
-
-* protect the auth.xml document. (priv it to root only, and make it 
-system unreadable).
-
-* Handle quotes inside strings in xmld-sql.lex
-
-* we are using snprintf!
-
-* discard_cur_att_name should report if it wasn't an att.
-
-* simplify_expr NULL return values must indiciate errors
-and xmld_errno must be set appropriately.
-
-* handle special character decoding in the client.
-*--------------- Start of the OpenXMLD 0.7.0 part:
-
-Goal: not set yet
 
 *--------------- Start of The OpenXMLD 0.8.0 part:
 
