@@ -24,10 +24,11 @@ typedef struct XMLDResource XMLDResource;
 
 XMLDResource *XMLDResource_create(XMLDEngine *, void *);
 void XMLDResource_free(XMLDResource *);
+void XMLDResource_free_content(void *);
 
 /* List functions */
 
 XMLDList *XMLDResource_create_list(void);
-void XMLDResource_add_to_list(XMLDList *, XMLDEngine *, void *);
+XMLDResource *XMLDResource_add_to_list(XMLDList *, XMLDEngine *, void *);
 
 #endif /* HAVE_XMLD_RESOURCE_H */
