@@ -6,9 +6,13 @@
   * XMLDContext: to represent a thread/process for the
     mtasker. (with usage of XMLDList instead of proc
     table). (cancelled, because it won't be used
-    of the mtasker itself)
+    out of the mtasker itself)
+
+* Remove XMLDPart and revert the initializer to the old
+way -- XMLDPart won't be used out of the initializer.
 
 * Use XMLDList (of XMLDConnection) in sosel.
+
 * Create a hash table implementation for places where
 search speed is important (XMLDHashTable), and provide
 APIs in XMLDEngine and XMLDFunc (...?) in that form:
@@ -16,3 +20,11 @@ APIs in XMLDEngine and XMLDFunc (...?) in that form:
 XMLDEngine_create_hashtable(...)
 XMLDEngine_add_to_hashtable(...)
 XMLDEngine_search_hashtable(...)
+
+* Rewrite the query parser (xmld-sql.y) to [1] fit the 
+new query specification and [2] to respect the object-
+oriented foundation.
+
+* Add a name field to XMLDEngine. This should normally
+involve creation of a function that searches a list
+of XMLDEngine's by name.
