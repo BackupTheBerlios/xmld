@@ -25,10 +25,6 @@
 int *fds;
 int *ports;
 int num_sock;
-int status;
-xmld_status_t stat;
-int i;
-int j;
 
 /*
  * FIXME: find a safe way of getting ports from cfg
@@ -38,7 +34,10 @@ xmld_status_t somanager_init() {
  fds=(int*) malloc(num_sock*sizeof(int));
  ports=(int*) malloc(num_sock*sizeof(int));
  int port=6060;
- 
+ int i;
+ int status;
+ xmld_status_t stat;
+
  for (i=0;i<num_sock;i++) {
   fds[i]=xmld_socket_create();
   ports[i]=port+i;
@@ -67,6 +66,8 @@ xmld_status_t somanager_init() {
 }
 
 xmld_status_t somanager_shutdown() {
+ int i;
+ int status;
  for (i=0;i<num_sock;i++) {
   if (fds[i]!=-1) {
    status=xmld_socket_shutdown(fds[i]);
@@ -81,6 +82,7 @@ xmld_status_t somanager_shutdown() {
 }
 
 void somanager_handle(void *sockfd) {
+ int status;
  while (1) {
   status=xmld_socket_accept((int)sockfd);
   if (status==-1) {
