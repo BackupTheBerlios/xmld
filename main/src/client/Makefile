@@ -1,5 +1,5 @@
 OBJECTS = xmldclient.o protoimpl.o xmld_sockets.o sutils.o
-CC = /usr/local/bin/gcc
+CC = gcc
 CFLAGS = -Wall
 VPATH = ../
 

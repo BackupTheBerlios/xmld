@@ -297,7 +297,7 @@ XMLDStatus twalker_handle(XMLDWork *work) {
    }
    
    /* Handling of level changes not followed by row retrieval */
-   XMLDRow *last_row=XMLDResponse_curr_row(work->resp);
+   last_row=XMLDResponse_curr_row(work->resp);
    if (last_row != NULL) {
     last_row->num_up += num_up;
     last_row->num_down += num_down;

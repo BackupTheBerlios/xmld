@@ -77,6 +77,7 @@ void XMLDExpr_free_content(void *expr) {
  */
 void XMLDExpr_copy(XMLDExpr *src, XMLDExpr *dest) {
  dest->type=src->type;
+ dest->cross_level=src->cross_level;
  switch (src->type) {
   case XMLD_INTEGER:
    dest->nval=src->nval;

@@ -725,8 +725,13 @@ into a second row. (done)
 * Fix the column -> file association bug. (done)
 
 * Cross level operation operator has no effect.
+(done -- XMLDExpr_copy didn't copy the cross_level
+field).
 
-* modify INSTALL.
+* Add the "handling level changes not followed
+by row retrieval" thing again. (done)
+
+* modify INSTALL. (done)
 
 * upload QUERY and PROTO to the site, to make sure that all
 editions are put online.
