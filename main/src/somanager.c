@@ -15,7 +15,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "xmld_sockets.h"
-#include "xmld_types.h"
+#include "xmld_connection.h"
 #include "cfg.h"
 #include "mtasker.h"
 #include "somanager.h"
