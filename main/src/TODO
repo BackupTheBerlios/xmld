@@ -42,11 +42,11 @@ Foundation:
     tree as input and fills it. (done)
   * Each part should manipulate cfg data structures directly.
     * Modify all parts.
-    * modify initialization of document_root.
+    * modify initialization of document_root. (done)
   * Engine association functions should be put in engine list. (done)
   * cfg_parser.(c|h) -> cfg.(c|h) (done)
-  * Global configuratin variables should remain initialized
-    by cfg_init.
+  * Global configuration variables should remain initialized
+    by cfg_init. (done -- only document_root)
   * Erase cfg.c and cfg.h. (done)
   * xmld.conf must not contain types of directives nor 
   somanager.num_listeners. (ok)
@@ -63,6 +63,13 @@ Foundation:
 
 * Real implementation of engine association functions.
   * maybe a clean up of the whole system ?
+
+* Error messages:
+  * Try to provide routines of error reporting in engines
+    and interfaces.
+  * Error messages subsystem (gettext ?) such that modules
+    (engines/interfaces/whatever) only have to call a core
+    function and put their own error messages file somewhere ?
 
 * Usage of autoconf to decide the modules to be compiled.
 

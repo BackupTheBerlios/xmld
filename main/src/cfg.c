@@ -44,7 +44,11 @@ XMLDStatus cfg_init() {
   return XMLD_FAILURE;
  }
  else {
-  document_root=((char *) cfg_get("xmld.document_root"));
+  XMLDCfgDirective *tmp = XMLDCfgDirectiveList_search_by_name(cfg_tree->directives, "DocumentRoot");
+  if (tmp == NULL) {
+   return XMLD_FAILURE;
+  }
+  document_root = ((char *) ((XMLDCfgValue *) XMLDList_first(tmp->values))->value);
   return XMLD_SUCCESS;
  }
 }
