@@ -106,14 +106,15 @@ Foundation:
 * Generic Data Storage API -- to remove database server-specific
   fields from different structures.
    * XMLDAssoc -- Thread-safe associative array implementation:
-     * Numeric and String index support.
-     * No internal iterators.
+     * Numeric and String index support. (ok)
+     * No internal iterators. (ok)
      * Automatic reusage of already allocated memory segments.
-     * Automatic length calculation.
-   * xmld_assoc.h
-   * xmld_assoc.c
+     * Automatic length calculation. (ok)
+   * xmld_assoc.h (done)
+   * xmld_assoc.c (done)
 
 * Replace XMLDList with XMLDAssoc in all the code.
+  * Think about a change of the whole system.
 
 * For all generic structures, use a signle XMLDAssoc field
   instead of the multiple void* fields.
@@ -133,6 +134,8 @@ Foundation:
   * String Manipulation API. (sutils)
   * Authentication API. (authman)
   * File Opening and Locking API. (fmanager)
+  * Support for dependencies ?
+    * authman needs a storage engine!
   
 * Real implementation of engine association functions.
   * maybe a clean up of the whole system ?
