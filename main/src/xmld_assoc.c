@@ -21,6 +21,7 @@ XMLDAssoc *XMLDAssoc_create(void) {
  assoc->values = NULL;
  assoc->keys = NULL;
  assoc->length = 0;
+ assoc->array_length = 0;
  return assoc;
 }
 
@@ -29,8 +30,16 @@ XMLDAssoc *XMLDAssoc_create(void) {
  * key and value are to be allocated and freed externally.
  */
 void XMLDAssoc_add(XMLDAssoc *assoc, char *key, void *data) {
- assoc->values = (void **) realloc(assoc->values, ++(assoc->length) * sizeof(void *));
- assoc->keys = (char **) realloc(assoc->keys, assoc->length * sizeof(char *));
+ if (assoc->array_length > assoc->length) {
+  assoc->values[assoc->length] = data;
+  assoc->keys[assoc->length] = key;
+  assoc->length++;
+ }
+ else {
+  assoc->values = (void **) realloc(assoc->values, ++(assoc->length) * sizeof(void *));
+  assoc->keys = (char **) realloc(assoc->keys, assoc->length * sizeof(char *));
+  assoc->array_length++;
+ }
  assoc->values[assoc->length-1] = data;
  assoc->keys[assoc->length-1] = key;
 }
@@ -70,14 +79,9 @@ void XMLDAssoc_remove_index(XMLDAssoc *assoc, int index) {
    memmove(assoc->values + index, assoc->values + assoc->length, assoc->length - index);
    memmove(assoc->keys + index, assoc->keys + assoc->length, assoc->length - assoc->index);
   }
-  if (assoc->length > 0) {
-   assoc->values = (void **) realloc(assoc->values, assoc->length * sizeof(void *));
-   assoc->keys = (char **) realloc(assoc->keys, assoc->length * sizeof(char *));
-  }
-  else {
-   free(assoc->values);
-   free(assoc->keys);
-   assoc->values = assoc->keys = NULL;
+  if (assoc->array_length - assoc->length > XMLD_ASSOC_MAX_FREE) {
+   assoc->values = (void **) realloc(assoc->values, --assoc->array_length * sizeof(void *));
+   assoc->keys = (char **) realloc(assoc->keys, assoc->array_length * sizeof(char *));
   }
  }
 }
@@ -122,7 +126,7 @@ void *XMLDAssoc_get_key_by_index(XMLDAssoc *assoc, int index) {
  * and not its elements.
  */
 void XMLDAssoc_free(XMLDAssoc *assoc) {
- if (assoc->length > 0) {
+ if (assoc->array_length > 0) {
   free(assoc->values);
   free(assoc->keys);
  }

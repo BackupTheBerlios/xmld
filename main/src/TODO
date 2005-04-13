@@ -108,7 +108,7 @@ Foundation:
    * XMLDAssoc -- Thread-safe associative array implementation:
      * Numeric and String index support. (ok)
      * No internal iterators. (ok)
-     * Automatic reusage of already allocated memory segments.
+     * Automatic reusage of already allocated memory segments. (done)
      * Automatic length calculation. (ok)
    * xmld_assoc.h (done)
    * xmld_assoc.c (done)

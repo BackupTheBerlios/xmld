@@ -14,10 +14,13 @@
 #ifndef __XMLD_ASSOC_H
 #define __XMLD_ASSOC_H
 
+#define XMLD_ASSOC_MAX_FREE 10
+
 struct XMLDAssoc {
  void **values;
  char **keys;
  int length;
+ int array_length;
 };
 
 typedef struct XMLDAssoc XMLDAssoc;
