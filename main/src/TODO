@@ -116,6 +116,10 @@ Foundation:
 * Replace XMLDList with XMLDAssoc in all the code.
   * Think about a change of the whole system.
 
+* Internal XMLDAssoc HashTable. (done)
+
+* sutils hash function. (done)
+
 * For all generic structures, use a signle XMLDAssoc field
   instead of the multiple void* fields.
    * XMLDWork

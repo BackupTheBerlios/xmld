@@ -18,7 +18,7 @@
 
 struct XMLDAssoc {
  void **values;
- char **keys;
+ long *keys;
  int length;
  int array_length;
 };
@@ -32,7 +32,8 @@ void *XMLDAssoc_get(XMLDAssoc *, char *);
 void XMLDAssoc_remove_index(XMLDAssoc *, int);
 int XMLDAssoc_get_index(XMLDAssoc *, char *);
 void *XMLDAssoc_get_by_index(XMLDAssoc *, int);
-char *XMLDAssoc_get_key_by_index(XMLDAssoc *, int);
+void XMLDAssoc_update_key(XMLDAssoc *, char *, char *);
+void XMLDAssoc_update_key_by_index(XMLDAssoc *, int, char *);
 void XMLDAssoc_free(XMLDAssoc *);
 
 #endif /* __XMLD_ASSOC_H */

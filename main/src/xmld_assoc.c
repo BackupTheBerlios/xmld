@@ -11,7 +11,7 @@
  * -------------------------------------------------------------- * 
  */
 #include <string.h>
-#include "xmld_assoc.h"
+#include "includes.h"
 
 /*
  * Creates a new associative table structure.
@@ -32,16 +32,16 @@ XMLDAssoc *XMLDAssoc_create(void) {
 void XMLDAssoc_add(XMLDAssoc *assoc, char *key, void *data) {
  if (assoc->array_length > assoc->length) {
   assoc->values[assoc->length] = data;
-  assoc->keys[assoc->length] = key;
+  assoc->keys[assoc->length] = hash(key);
   assoc->length++;
  }
  else {
   assoc->values = (void **) realloc(assoc->values, ++(assoc->length) * sizeof(void *));
-  assoc->keys = (char **) realloc(assoc->keys, assoc->length * sizeof(char *));
+  assoc->keys = (long *) realloc(assoc->keys, assoc->length * sizeof(long));
   assoc->array_length++;
+  assoc->values[assoc->length-1] = data;
+  assoc->keys[assoc->length-1] = hash(key);
  }
- assoc->values[assoc->length-1] = data;
- assoc->keys[assoc->length-1] = key;
 }
 
 /*
@@ -50,8 +50,9 @@ void XMLDAssoc_add(XMLDAssoc *assoc, char *key, void *data) {
  */
 int XMLDAssoc_get_index(XMLDAssoc *assoc, char *key) {
  int i = -1;
+ int hash_key = hash(key);
  for (i = 0; i < assoc->length; i++) {
-  if (strcmp(assoc->keys[i], key) == 0) {
+  if (assoc->keys[i] == hash_key) {
    break;
   }
  }
@@ -81,7 +82,7 @@ void XMLDAssoc_remove_index(XMLDAssoc *assoc, int index) {
   }
   if (assoc->array_length - assoc->length > XMLD_ASSOC_MAX_FREE) {
    assoc->values = (void **) realloc(assoc->values, --assoc->array_length * sizeof(void *));
-   assoc->keys = (char **) realloc(assoc->keys, assoc->array_length * sizeof(char *));
+   assoc->keys = (long *) realloc(assoc->keys, assoc->array_length * sizeof(long));
   }
  }
 }
@@ -91,8 +92,9 @@ void XMLDAssoc_remove_index(XMLDAssoc *assoc, int index) {
  */
 void *XMLDAssoc_get(XMLDAssoc *assoc, char *key) {
  int i;
+ int hash_key = hash(key);
  for (i = 0; i < assoc->length; i++) {
-  if (strcmp(assoc->keys[i], key) == 0) {
+  if (assoc->keys[i] == hash_key) {
    return assoc->values[i];
   }
  }
@@ -111,14 +113,22 @@ void *XMLDAssoc_get_by_index(XMLDAssoc *assoc, int index) {
 }
 
 /*
- * Returns the key associated to the given index -- NULL if the index
- * is out of bounds.
+ * Updates the hashed key of an element in the associative table.
  */
-void *XMLDAssoc_get_key_by_index(XMLDAssoc *assoc, int index) {
- if (index > assoc->length-1 || index < 0) {
-  return NULL;
+void XMLDAssoc_update_key(XMLDAssoc *assoc, char *key, char *new_key) {
+ int index = XMLDAssoc_get_index(assoc, key);
+ assoc->keys[index] = hash(new_key);
+}
+
+/*
+ * Updates the hashed key of an element in the associative table
+ * given its index.
+ */
+void XMLDAssoc_update_key_by_index(XMLDAssoc *assoc, int index, char *new_key) {
+ if (index < 0 || index	>= assoc->length) {
+  return;
  }
- return assoc->keys[index];
+ assoc->keys[index] = hash(new_key);
 }
 
 /*

@@ -25,6 +25,7 @@ char *itostr(int, int);
 char *ftostr(float, int);
 char *ltrim(char *);
 char *mstrchr_replace(char *, char*, char **, int);
+long hash(char *);
 
 #endif /* __SUTILS_H */
 

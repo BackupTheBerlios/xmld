@@ -204,3 +204,13 @@ char *mstrchr_replace(char *haystack, char *neddle, char **repl, int num) {
  }
  return tmp; 
 }
+
+long hash(char *str) {
+ char *ptr = str;
+ long ret = 0;
+ while (*ptr != '\0') {
+  ret += (int) *ptr;
+  ptr++;
+ }
+ return ret;
+}
