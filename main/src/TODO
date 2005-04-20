@@ -113,13 +113,20 @@ Foundation:
    * xmld_assoc.h (done)
    * xmld_assoc.c (done)
 
-* Replace XMLDList with XMLDAssoc in all the code.
-  * Think about a change of the whole system.
-
 * Internal XMLDAssoc HashTable. (done)
 
 * sutils hash function. (done)
 
+* Replace XMLDList with XMLDAssoc in all the code.
+  * Remove list functions.
+  * cfg.
+  * engine_list
+  * interface_list
+  * authman.
+  * somanager.
+  * XMLDCfg*
+  * Remove xmld_list.c and .h.
+  
 * For all generic structures, use a signle XMLDAssoc field
   instead of the multiple void* fields.
    * XMLDWork
@@ -140,6 +147,7 @@ Foundation:
   * File Opening and Locking API. (fmanager)
   * Support for dependencies ?
     * authman needs a storage engine!
+  * configure script and make file for each ?
   
 * Real implementation of engine association functions.
   * maybe a clean up of the whole system ?
@@ -147,22 +155,17 @@ Foundation:
 * Real implementation of mfigure.
 
 * Error messages:
-  * Try to provide routines of error reporting in engines
+  * Provide routines of error reporting in engines
     and interfaces.
-  * Error numbers relate only to the module in which the
-    error occured.
-  * Error messages subsystem (gettext ?) such that modules
-    (engines/interfaces/whatever) only have to call a core
-    function and put their own error messages file somewhere ?
+  * Error messages subsystem -- gettext().
+  * Engines report errors to interfaces and interfaces report them 
+    to the system as "Engine error: <engine message>"
+  * Interfaces report errors through their own protocols to the 
+    client and decide whether to terminate the user connection.
+  * Remove error arrays and defines from xmld.c and init.h.
 
-* col_sep, row_sep ... etc are response translator (interface)
-  specific, must be wholly removed from protoimpl and somanager.
-  Each interface will have a predefined set of rules the client
-  knows about.
-   * Erase defines in protoimpl (done).
-   * No init message in XMLDSQL. (done)
-   * Remove them from the protocol document. (done)
-  
+* Remove protoimpl and its documentation. (done)
+
 * Implement an EchoServer interface for demonstration.
 
 * Usage of autoconf to decide on the modules to be compiled.
@@ -176,7 +179,7 @@ Foundation:
 Issues:
 -------
 
-* authman must encode/decode user passwords.
+* authman must encode/decode user authentication tokens.
 
 * rename XMLDFile.element_pos to XMLDFile.node_pos (done).
 
@@ -191,9 +194,6 @@ Goal: Strength.
 
 * Support for loading of a module on demand.
 
-* Port-based protocol selection and protocol
-  abstraction (?).
-  
 * cleaner, more portable sockets API.
 
 * Thread-safe core.
@@ -204,3 +204,5 @@ Goal: Strength.
 * Re-implement fmanager using a flock-independent way once MULTI_THREAD_MTASKER is on.
 
 * Implement a path translation API that modifies the path according to the OS.
+
+* Portable way to pass sockets between processes.
