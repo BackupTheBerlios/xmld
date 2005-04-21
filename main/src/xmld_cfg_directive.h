@@ -21,17 +21,10 @@ struct XMLDCfgDirective {
 };
 
 typedef struct XMLDCfgDirective XMLDCfgDirective;
-typedef XMLDList XMLDCfgDirectiveList;
 
 XMLDCfgDirective *XMLDCfgDirective_create(void);
 XMLDCfgValue *XMLDCfgDirective_get_value(XMLDCfgDirective *, char *, int);
 void XMLDCfgDirective_free_content(void *);
 void XMLDCfgDirective_free(XMLDCfgDirective *);
-
-/* List functions */
-
-XMLDCfgDirectiveList *XMLDCfgDirectiveList_create(void);
-XMLDCfgDirective *XMLDCfgDirectiveList_add(XMLDCfgDirectiveList *);
-XMLDCfgDirective *XMLDCfgDirectiveList_search_by_name(XMLDCfgDirectiveList *, char *);
 
 #endif /* __XMLD_CFG_DIRECTIVE_H */

@@ -32,7 +32,6 @@ struct XMLDInterface {
 #ifndef XMLDINTERFACE_TYPE_DEFINED
 #define XMLDINTERFACE_TYPE_DEFINED
  typedef struct XMLDInterface XMLDInterface;
- typedef struct XMLDList XMLDInterfaceList;
 #endif /* XMLDINTERFACE_TYPE_DEFINED */
 
 XMLDInterface *XMLDInterface_create(char *);
@@ -40,10 +39,4 @@ void XMLDInterface_copy(XMLDInterface *, XMLDInterface *);
 void XMLDInterface_free(XMLDInterface *);
 void XMLDInterface_free_content(void *);
 
-/* List functions */
-
-XMLDInterfaceList *XMLDInterfaceList_create(void);
-XMLDInterface *XMLDInterfaceList_add(XMLDInterfaceList *, char *);
-XMLDInterface *XMLDInterfaceList_search_by_name(XMLDInterfaceList *, char *);
-XMLDInterface *XMLDInterfaceList_search_by_port(XMLDInterfaceList *, int);
 #endif /* __XMLD_INTERFACE_H */

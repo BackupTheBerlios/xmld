@@ -43,27 +43,3 @@ void XMLDWork_free(XMLDWork *work) {
 void XMLDWork_free_content(void *work) {
  XMLDList_free(((XMLDWork *) work)->files);
 }
-
-/*
- * : Creates a list of work structures.
- * returns: the newly created list.
- */
-XMLDWorkList *XMLDWorkList_create() {
- XMLDWorkList *list=XMLDList_create(sizeof(XMLDWork), XMLDWork_free_content);
- return list;
-}
-
-/*
- * : Adds an element to a created list of work structures.
- * list: the list to which the new element is to be added.
- * req, resp, conn, res: see XMLDWork_create
- * returns: a pointer to the newly added element.
- */
-XMLDWork *XMLDWorkList_add(XMLDWorkList *list) {
- XMLDWork *work=(XMLDWork *) XMLDList_add(list);
- work->files=NULL;
- work->interface=NULL;
- work->req=NULL;
- work->resp=NULL;
- return work;
-}

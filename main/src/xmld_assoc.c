@@ -132,6 +132,21 @@ void XMLDAssoc_update_key_by_index(XMLDAssoc *assoc, int index, char *new_key) {
 }
 
 /*
+ * Walks through the elements of the table and calls the given
+ * callback function on each element, and provides it with the additonal
+ * void * argument. It stops if the callback returns XMLD_ASSOC_WALK_END
+ * and continues walking otherwise.
+ */
+void XMLDAssoc_walk(XMLDAssoc *assoc, int (*callback) (void *, void *), void *data) {
+ int i;
+ for (i = 0; i < assoc->length; i++) {
+  if (callback(assoc->data[i], data) == XMLD_ASSOC_WALK_END) {
+   break;
+  }  
+ }
+}
+
+/*
  * Frees the memory used by the associative table structure itself
  * and not its elements.
  */

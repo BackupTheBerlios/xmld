@@ -25,15 +25,9 @@ struct XMLDCfgValue {
 };
 
 typedef struct XMLDCfgValue XMLDCfgValue;
-typedef XMLDList XMLDCfgValueList;
 
 XMLDCfgValue *XMLDCfgValue_create(void);
 void XMLDCfgValue_free_content(void *);
 void XMLDCfgValue_free(XMLDCfgValue *);
-
-/* List functions */
-
-XMLDCfgValueList *XMLDCfgValueList_create(void);
-XMLDCfgValue *XMLDCfgValueList_add(XMLDCfgValueList *);
 
 #endif /* __XMLD_CFG_VALUE_H */

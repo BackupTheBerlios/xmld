@@ -21,14 +21,6 @@ Foundation:
 * Addition of data source modification functions to the engine API. (done)
   * Capability bit. (done)
 
-* Data source creation functions.
-  * A new access level bit ?
-  * Ability to use the engine on an empty XMLDFile.
-  * Capability bit.
-
-* Data source alteration (reshaping) functions.
-  * Capability bit.
-
 * cfg_parser must be rewritten using bison and flex for
   cleanliness reasons.
   * Write cfg_parser.lex (done).
@@ -117,15 +109,20 @@ Foundation:
 
 * sutils hash function. (done)
 
+* XMLDAssoc_walk (done)
+  * For external code to search using any field
+    different from the key ?
+
 * Replace XMLDList with XMLDAssoc in all the code.
-  * Remove list functions.
+  * Remove list functions. (done)
+  * Remove free content -- use free instead.
   * cfg.
   * engine_list
   * interface_list
   * authman.
   * somanager.
   * XMLDCfg*
-  * Remove xmld_list.c and .h.
+  * Remove xmld_list.c and .h. (done)
   
 * For all generic structures, use a signle XMLDAssoc field
   instead of the multiple void* fields.
@@ -138,6 +135,14 @@ Foundation:
     itself.
 
 * Erase usage of mutils. (done)
+
+* Data source creation functions.
+  * A new access level bit ?
+  * Ability to use the engine on an empty XMLDFile.
+  * Capability bit.
+
+* Data source alteration (reshaping) functions.
+  * Capability bit.
 
 * Put supplementary APIs in one place:
   * Engine Association API, XMLDEngine structure and mfigure.

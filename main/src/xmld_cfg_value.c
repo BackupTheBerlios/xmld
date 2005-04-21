@@ -51,25 +51,3 @@ void XMLDCfgValue_free_content(void *value) {
   }
  }
 }
-
-/*
- * : Creates a list of configuration value
- * structures.
- * returns: the newly created list.
- */
-XMLDCfgValueList *XMLDCfgValueList_create() {
- return XMLDList_create(sizeof(XMLDCfgValue), XMLDCfgValue_free_content);
-}
-
-/*
- * : Adds a new element to a list of configuration
- * directive structures.
- * list: the list to which the new element is to be added.
- * returns: a pointer to the newly added element.
- */
-XMLDCfgValue *XMLDCfgValueList_add(XMLDCfgValueList *list) {
- XMLDCfgValue *value = (XMLDCfgValue *) XMLDList_add(list);
- value->type = 0;
- value->value = (void *) 0;
- return value;
-}

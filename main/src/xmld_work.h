@@ -22,16 +22,10 @@ struct XMLDWork {
 };
 
 typedef struct XMLDWork XMLDWork;
-typedef XMLDList XMLDWorkList;
 
 XMLDWork *XMLDWork_create(void);
 char *XMLDWork_get_full_file(XMLDWork *);
 void XMLDWork_free(XMLDWork *);
 void XMLDWork_free_content(void *);
-
-/* List functions */
-
-XMLDWorkList *XMLDWorkList_create(void);
-XMLDWork *XMLDWorkList_add(XMLDWorkList *);
 
 #endif /* __XMLD_WORK_H */

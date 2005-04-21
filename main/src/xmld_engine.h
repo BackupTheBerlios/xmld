@@ -68,16 +68,9 @@ struct XMLDEngine {
 #define XMLDENGINE_TYPE_DEFINED
  typedef struct XMLDEngine XMLDEngine;
 #endif /* XMLDENGINE_TYPE_DEFINED */
-typedef XMLDList XMLDEngineList;
 
 XMLDEngine *XMLDEngine_create(char *);
 void XMLDEngine_free(XMLDEngine *);
 void XMLDEngine_free_content(void *);
-
-/* List functions */
-
-XMLDEngineList *XMLDEngineList_create(void);
-XMLDEngine *XMLDEngineList_add(XMLDEngineList *, char *);
-XMLDEngine *XMLDEngineList_search_by_name(XMLDEngineList *, char *);
 
 #endif /* __XMLD_ENGINE_H */

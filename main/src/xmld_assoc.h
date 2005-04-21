@@ -15,6 +15,8 @@
 #define __XMLD_ASSOC_H
 
 #define XMLD_ASSOC_MAX_FREE 10
+#define XMLD_ASSOC_WALK_END 0
+#define XMLD_ASSOC_WALK_CONT 1
 
 struct XMLDAssoc {
  void **values;
@@ -34,6 +36,7 @@ int XMLDAssoc_get_index(XMLDAssoc *, char *);
 void *XMLDAssoc_get_by_index(XMLDAssoc *, int);
 void XMLDAssoc_update_key(XMLDAssoc *, char *, char *);
 void XMLDAssoc_update_key_by_index(XMLDAssoc *, int, char *);
+void XMLDAssoc_walk(XMLDAssoc *, int (*callback) (void *, void *), void *);
 void XMLDAssoc_free(XMLDAssoc *);
 
 #endif /* __XMLD_ASSOC_H */
