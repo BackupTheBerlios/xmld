@@ -115,7 +115,7 @@ Foundation:
 
 * Replace XMLDList with XMLDAssoc in all the code.
   * Remove list functions. (done)
-  * Remove free content -- use free instead.
+  * Remove free content.
   * cfg.
   * engine_list
   * interface_list
@@ -150,6 +150,7 @@ Foundation:
   * String Manipulation API. (sutils)
   * Authentication API. (authman)
   * File Opening and Locking API. (fmanager)
+  * Localized Messages System. (gettext)
   * Support for dependencies ?
     * authman needs a storage engine!
   * configure script and make file for each ?
@@ -159,6 +160,8 @@ Foundation:
 
 * Real implementation of mfigure.
 
+* Implementation of localized messages subsystem.
+
 * Error messages:
   * Provide routines of error reporting in engines
     and interfaces.
@@ -167,7 +170,7 @@ Foundation:
     to the system as "Engine error: <engine message>"
   * Interfaces report errors through their own protocols to the 
     client and decide whether to terminate the user connection.
-  * Remove error arrays and defines from xmld.c and init.h.
+  * Remove error arrays and defines from xmld.c, init.h and xmlddef.h. (done)
 
 * Remove protoimpl and its documentation. (done)
 

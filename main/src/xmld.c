@@ -27,12 +27,8 @@
 #include "init.h"
 #include "engine_list.h"
 #include "interface_list.h"
-#define NUM_PARTS 5
  
-struct xmld_part parts[NUM_PARTS];
-
 int main() {
- int t;
  int s;
  
  struct sigaction action;
@@ -44,55 +40,17 @@ int main() {
   return 1;
  }
  
- printf("OpenXMLD is up and running:\n\t* Main PID: %d\n", getpid());
- 
- /* Error Messages */
- err_str[0]="The request file couldn't be opened.";
- err_str[1]="The given engine does not exist.";
- err_str[2]="Invalid file type.";
- err_str[3]="Invalid use of an aggregate expression.";
- err_str[4]="An error has occured while parsing the given query.";
- err_str[5]="The given query is not yet implemented.";
- err_str[6]="Couldn't open a description file for the request file.";
- err_str[7]="Mal-formed description file for the request file.";
- err_str[8]="Read privileges not available for the request file";
- err_str[9]="Write privileges not available for the request file";
- err_str[10]="Invalid usage of the addition operator with string operand(s).";
- err_str[11]="Invalid usage of the binary substraction operator with string operand(s).";
- err_str[12]="Invalid usage of the multiplication operator with string operand(s).";
- err_str[13]="invalid usage of the division operator with string operand(s).";
- err_str[14]="Not allowed division by zero value.";
- err_str[15]="Invalid usage of the exponential operator with string operand(s).";
- err_str[16]="Invalid usage of the unary substraction operator with a string operand.";
- err_str[17]="Invalid comparsion between string and numberic value.";
- err_str[18]="Invalid usage of LIKE with numberic values.";
+ printf("OpenDaemon is up and running:\n\t* Main PID: %d\n", getpid());
 
- init_create_part(&parts[0], cfg_init, cfg_shutdown);
- init_create_part(&parts[1], engine_list_init, engine_list_shutdown);
- init_create_part(&parts[2], interface_list_init, interface_list_shutdown);
- init_create_part(&parts[3], mtasker_init, mtasker_shutdown);
- init_create_part(&parts[4], somanager_init, somanager_shutdown);
+ cfg_init();
+ engine_list_init()
+ interface_list_init()
+ mtasker_init()
+ somanager_init()
  
- for (t = 0; t < NUM_PARTS; t++) {
-  s = (*(parts[t].init_func))();
-  if (s == XMLD_FAILURE) {
-   perror("Initializer");
-   init_shutdown_parts(0);
-   break;
-  }
-  else {
-   parts[t].ok=XMLD_TRUE;
-  }
- }
  while (1) {
  }
  return 0;
-}
-
-void init_create_part(struct xmld_part *part, XMLDStatus (*init_func) (void), XMLDStatus (*shutdown_func) (void)) {
- part->init_func=init_func;
- part->shutdown_func=shutdown_func;
- part->ok=XMLD_FAILURE;
 }
 
 void init_shutdown_parts(int signum) {
