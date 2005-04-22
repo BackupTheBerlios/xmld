@@ -24,7 +24,6 @@ typedef struct XMLDCfgDirective XMLDCfgDirective;
 
 XMLDCfgDirective *XMLDCfgDirective_create(void);
 XMLDCfgValue *XMLDCfgDirective_get_value(XMLDCfgDirective *, char *, int);
-void XMLDCfgDirective_free_content(void *);
 void XMLDCfgDirective_free(XMLDCfgDirective *);
 
 #endif /* __XMLD_CFG_DIRECTIVE_H */

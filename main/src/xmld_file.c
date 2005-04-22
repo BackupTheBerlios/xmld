@@ -38,16 +38,9 @@ XMLDFile *XMLDFile_create(char *name) {
  */
 void XMLDFile_free(XMLDFile *file) {
  if (file != NULL) {
-  XMLDFile_free_content((void *) file);
+  if (file->name != NULL) {
+   free(file->name);
+  }
   free(file);
- }
-}
-
-/*
- * Frees the memory internally allocated by a file structure.
- */
-void XMLDFile_free_content(void *file) {
- if (((XMLDFile *) file)->name != NULL) {
-  free(((XMLDFile *) file)->name);
  }
 }

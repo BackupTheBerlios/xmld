@@ -37,6 +37,5 @@ struct XMLDInterface {
 XMLDInterface *XMLDInterface_create(char *);
 void XMLDInterface_copy(XMLDInterface *, XMLDInterface *);
 void XMLDInterface_free(XMLDInterface *);
-void XMLDInterface_free_content(void *);
 
 #endif /* __XMLD_INTERFACE_H */

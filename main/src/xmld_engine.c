@@ -30,14 +30,6 @@ XMLDEngine *XMLDEngine_create(char *name) {
  */
 void XMLDEngine_free(XMLDEngine *engine) {
  if (engine != NULL) {
-  XMLDEngine_free_content((void*) engine);
   free(engine);
  } 
-}
-
-/*
- * : Frees the memory internally allocated by an engine structure.
- * engine: the engine whose memory is to be freed.
- */
-void XMLDEngine_free_content(void *engine) { 
 }

@@ -27,7 +27,6 @@ struct XMLDCfgValue {
 typedef struct XMLDCfgValue XMLDCfgValue;
 
 XMLDCfgValue *XMLDCfgValue_create(void);
-void XMLDCfgValue_free_content(void *);
 void XMLDCfgValue_free(XMLDCfgValue *);
 
 #endif /* __XMLD_CFG_VALUE_H */

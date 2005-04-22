@@ -49,21 +49,10 @@ XMLDCfgValue *XMLDCfgDirective_get_value(XMLDCfgDirective *directive, int index)
  */
 void XMLDCfgDirective_free(XMLDCfgDirective *directive) {
  if (directive != NULL) {
-  XMLDCfgDirective_free_content((void *) directive);
+  if (directive->name != NULL) {
+   free(directive->name);
+  }
+  XMLDList_free(directive->values);
   free(directive);
  } 
 };
-
-/*
- * : Frees the memory internally allocated
- * by a configuration directive structure.
- * directive: the configuration directive structure
- * whose internal memory is to be freed.
- */
-void XMLDCfgDirective_free_content(void *directive) {
- XMLDCfgDirective *dir = (XMLDCfgDirective *) directive;
- if (dir->name != NULL) {
-  free(dir->name);
- } 
- XMLDList_free(dir->values);
-}

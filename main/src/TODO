@@ -112,16 +112,19 @@ Foundation:
 * XMLDAssoc_walk (done)
   * For external code to search using any field
     different from the key ?
+  * Implement external callback function walking.
 
 * Replace XMLDList with XMLDAssoc in all the code.
   * Remove list functions. (done)
-  * Remove free content.
+  * Remove free content. (done)
   * cfg.
   * engine_list
   * interface_list
   * authman.
   * somanager.
   * XMLDCfg*
+  * XMLDWork
+  * XMLDFile
   * Remove xmld_list.c and .h. (done)
   
 * For all generic structures, use a signle XMLDAssoc field

@@ -26,6 +26,5 @@ typedef struct XMLDWork XMLDWork;
 XMLDWork *XMLDWork_create(void);
 char *XMLDWork_get_full_file(XMLDWork *);
 void XMLDWork_free(XMLDWork *);
-void XMLDWork_free_content(void *);
 
 #endif /* __XMLD_WORK_H */

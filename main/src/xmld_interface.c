@@ -46,14 +46,6 @@ void XMLDInterface_copy(XMLDInterface *src, XMLDInterface *dest) {
  */
 void XMLDInterface_free(XMLDInterface *interface) {
  if (interface != NULL) {
-  XMLDInterface_free_content((void *) interface);
   free(interface);
  }  
-}
-
-/*
- * : Frees the memory internally allocated by an interface structure.
- * req: the structure whose internally memory is to be freed.
- */
-void XMLDInterface_free_content(void *interface) {
 }

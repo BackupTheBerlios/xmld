@@ -75,22 +75,11 @@ XMLDCfgDirective *XMLDCfgSection_get_directive(XMLDCfgSection *section, char *na
  */
 void XMLDCfgSection_free(XMLDCfgSection *section) {
  if (section != NULL) {
-  XMLDCfgSection_free_content((void *) section);
+  XMLDList_free(section->directives);
+  XMLDList_free(section->sections);
+  if (section->name != NULL) {
+   free(section->name);
+  }
   free(section);
  } 
-};
-
-/*
- * : Frees the memory internally allocated
- * by a configuration section structure.
- * section: the configuration section structure
- * whose internal memory is to be freed.
- */
-void XMLDCfgSection_free_content(void *section) {
- XMLDCfgSection *section = (XMLDCfgSection *) section;
- XMLDList_free(section->directives);
- XMLDList_free(section->sections);
- if (section->name != NULL) {
-  free(section->name);
- }
 }

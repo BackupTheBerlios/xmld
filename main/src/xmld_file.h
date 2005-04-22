@@ -32,6 +32,5 @@ struct XMLDFile {
 
 XMLDFile *XMLDFile_create(char *);
 void XMLDFile_free(XMLDFile *);
-void XMLDFile_free_content(void *);
 
 #endif /* __XMLD_FILE_H */

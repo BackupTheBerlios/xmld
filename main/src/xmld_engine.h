@@ -71,6 +71,5 @@ struct XMLDEngine {
 
 XMLDEngine *XMLDEngine_create(char *);
 void XMLDEngine_free(XMLDEngine *);
-void XMLDEngine_free_content(void *);
 
 #endif /* __XMLD_ENGINE_H */

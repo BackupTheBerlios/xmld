@@ -31,15 +31,7 @@ XMLDWork *XMLDWork_create() {
  */
 void XMLDWork_free(XMLDWork *work) {
  if (work != NULL) {
-  XMLDWork_free_content((void *) work);
+  XMLDList_free(work->files);
   free(work);
  } 
-}
-
-/*
- * : Frees the memory internally allocated by a work structure.
- * work: the work structure whose memory is to be freed.
- */
-void XMLDWork_free_content(void *work) {
- XMLDList_free(((XMLDWork *) work)->files);
 }
