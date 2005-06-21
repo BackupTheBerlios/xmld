@@ -32,7 +32,6 @@
 #define ENGINE_CAP_NODE_MODIFY 8
 
 struct XMLDEngine {
- char *name;
  int engine_cap;
  void (*init) (void);
  XMLDBool (*is_valid_mime) (char *);

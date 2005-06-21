@@ -109,20 +109,20 @@ Foundation:
 
 * sutils hash function. (done)
 
-* XMLDAssoc_walk (done)
-  * For external code to search using any field
-    different from the key ?
-  * Implement external callback function walking.
+* XMLDAssocWalker structure
+ * Ability to move to a previous / next index. (done)
+ * Ability to get the current index's value. (done)
 
 * Replace XMLDList with XMLDAssoc in all the code.
   * Remove list functions. (done)
   * Remove free content. (done)
-  * cfg.
-  * engine_list
-  * interface_list
+  * XMLDCfgDirective. (done)
+  * XMLDCfgSection. (done)
+  * cfg_parser.y (done)
+  * engine_list (done)
+  * interface_list (done)
   * authman.
   * somanager.
-  * XMLDCfg*
   * XMLDWork
   * XMLDFile
   * Remove xmld_list.c and .h. (done)

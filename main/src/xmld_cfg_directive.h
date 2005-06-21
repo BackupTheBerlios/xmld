@@ -16,8 +16,8 @@
 
 /* Represents a configuration directive */
 struct XMLDCfgDirective {
+ XMLDAssoc *values;
  char *name;
- XMLDCfgValueList *values;
 };
 
 typedef struct XMLDCfgDirective XMLDCfgDirective;

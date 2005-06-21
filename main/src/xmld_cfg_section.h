@@ -15,9 +15,9 @@
 #define __XMLD_CFG_SECTION_H
 
 struct XMLDCfgSection {
+ XMLDAssoc *directives;
+ XMLDAssoc *sections;
  char *name;
- XMLDCfgDirectiveList *directives;
- XMLDCfgSectionList *sections;
 };
 
 #ifndef XMLD_CFG_SECTION_TYPE_DEFINED

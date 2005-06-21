@@ -10,18 +10,26 @@
  * Authors: Khalid Al-Kary (khalid_kary@hotmail.com)              *
  * -------------------------------------------------------------- * 
  */
- 
-#ifndef __ENGINE_LIST_H
-#define __ENGINE_LIST_H
 
-XMLDAssoc *engine_list;
-XMLDAssocWalker *engine_list_walker;
+#ifndef __XMLD_ASSOC_WALKER_H
+#define __XMLD_ASSOC_WALKER_H
 
-XMLDStatus engine_list_init();
-char *engine_list_get_engine(char *);
-void engine_list_set_engine(char *, char *);
-char *engine_list_get_mime_engine(char *);
-void engine_list_set_mime_engine(char *, char *);
-XMLDStatus engine_list_shutdown();
+#define XMLD_ASSOC_WALKER_END 0
+#define XMLD_ASSOC_WALKER_CONT 1
 
-#endif /* __ENGINE_LIST_H */
+struct XMLDAssocWalker {
+ XMLDAssoc *subject;
+ int curr_index; 
+};
+
+typedef struct XMLDAssocWalker XMLDAssocWalker;
+
+XMLDAssocWalker *XMLDAssocWalker_create(XMLDAssoc *);
+int XMLDAssocWalker_next(XMLDAssocWalker *);
+int XMLDAssocWalker_prev(XMLDAssocWalker *);
+int XMLDAssocWalker_reset(XMLDAssocWalker *);
+int XMLDAssocWalker_get_current_index(XMLDAssocWalker *);
+void *XMLDAssocWalker_get_current_data(XMLDAssocWalker *);
+void XMLDAssocWalker_free(XMLDAssocWalker *);
+
+#endif /* XMLD_ASSOC_WALKER_H */

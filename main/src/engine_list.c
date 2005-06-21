@@ -19,10 +19,10 @@
 #endif /* USE_ENGINE_XMLD */
  
 XMLDStatus engine_list_init() {
- engine_list=XMLDEngineList_create();
+ engine_list=XMLDAssoc_create();
  XMLDEngine *curr_engine;
 #ifdef USE_ENGINE_XMLD
- curr_engine=XMLDEngineList_add(engine_list, "Engine-XMLD");
+ curr_engine=XMLDEngine_create();
  curr_engine->is_valid_mime=engine_xmld_is_valid_mime;
  curr_engine->init=engine_xmld_init;
  curr_engine->prepare=engine_xmld_prepare;
@@ -42,21 +42,23 @@ XMLDStatus engine_list_init() {
  curr_engine->get_curr_attribute_length=engine_xmld_get_curr_attribute_length;
  curr_engine->get_curr_attribute_name=engine_xmld_get_curr_attribute_name;
  curr_engine->get_curr_attribute_value=engine_xmld_get_curr_attribute_value;
+ XMLDAssoc_add(engine_list, "Engine-XMLD", curr_engine);
 #endif /* USE_ENGINE_XMLD */
- XMLDList_reset(engine_list);
- while (XMLDList_next(engine_list)) {
-  (*(((XMLDEngine *) XMLDList_curr(engine_list))->init)) ();
+ engine_list_walker = XMLDAssocWalker_create(engine_list);
+ while (XMLDAssocWalker_next(engine_list_walker)) {
+  (*(((XMLDEngine *) XMLDAssocWalker_get_current_data(engine_list_walker))->init)) ();
  }
- 
  return XMLD_SUCCESS;
 }
 
 XMLDStatus engine_list_shutdown() {
- XMLDList_reset(engine_list);
- while (XMLDList_next(engine_list)) {
-  (*(((XMLDEngine *) XMLDList_curr(engine_list))->destroy)) ();
+ XMLDAssocWalker_reset(engine_list_walker);
+ while (XMLDAssocWalker_next(engine_list_walker)) {
+  (*(((XMLDEngine *) XMLDAssocWalker_get_current_data(engine_list_walker))->destroy)) ();
+  XMLDEngine_free((XMLDEngine *) XMLDAssocWalker_get_current_data(engine_list_walker));
  }
- XMLDList_free(engine_list);
+ XMLDAssocWalker_free(engine_list_walker);
+ XMLDAssoc_free(engine_list);
  return XMLD_SUCCESS;
 }
 

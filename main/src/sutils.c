@@ -206,6 +206,9 @@ char *mstrchr_replace(char *haystack, char *neddle, char **repl, int num) {
 }
 
 long hash(char *str) {
+ if (str == NULL) {
+  return 0;
+ }
  char *ptr = str;
  long ret = 0;
  while (*ptr != '\0') {

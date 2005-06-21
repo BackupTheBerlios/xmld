@@ -12,7 +12,6 @@
  */
 
 #include "includes.h"
-#include "xmld_list.h"
 #include "xmld_cfg_value.h"
 #include "xmld_cfg_directive.h"
 
@@ -22,8 +21,8 @@
  */
 XMLDCfgDirective *XMLDCfgDirective_create() {
  XMLDCfgDirective *directive = (XMLDCfgDirective *) malloc(sizeof(XMLDCfgDirective));
- directive->name = NULL;
  directive->values = NULL;
+ directive->name = NULL;
  return directive;
 }
 
@@ -32,15 +31,8 @@ XMLDCfgDirective *XMLDCfgDirective_create() {
  * if index was 0, it returns the main value.
  * Otherwise, index is the number of the parameter to return.
  */ 
-XMLDCfgValue *XMLDCfgDirective_get_value(XMLDCfgDirective *directive, int index) {
- int num = 0;
- while (XMLDList_next(directive->values)) {
-  if (num == index) {
-   return (XMLDCfgValue *) XMLDList_curr(directive->values);
-  }
-  num++;
- }
- return NULL;
+XMLDCfgValue *XMLDCfgDirective_get_value(XMLDCfgDirective *directive, int index) { 
+ return XMLDAssoc_get_by_index(directive, index);
 }
 
 /*
@@ -49,10 +41,15 @@ XMLDCfgValue *XMLDCfgDirective_get_value(XMLDCfgDirective *directive, int index)
  */
 void XMLDCfgDirective_free(XMLDCfgDirective *directive) {
  if (directive != NULL) {
-  if (directive->name != NULL) {
-   free(directive->name);
+  XMLDAssocWalker walker;
+  walker.subject = directive->values;
+  walker.curr_index = -1;
+  while (XMLDAssocWalker_next(&walker)) {
+   if (XMLDAssocWalker_get_current_data(&walker) != NULL) {
+    XMLDCfgValue_free((XMLDCfgValue *) XMLDAssocWalker_get_current_data(&walker));
+   }
   }
-  XMLDList_free(directive->values);
+  XMLDAssoc_free(directive->values);
   free(directive);
  } 
 };

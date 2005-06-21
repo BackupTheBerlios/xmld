@@ -16,7 +16,6 @@
 
 /* Represents a user interface */
 struct XMLDInterface {
- char *name; /* Interface name */
  int port;
  void (*init) (XMLDInterface *, XMLDCfgDirective *);
  void (*destroy) (void);

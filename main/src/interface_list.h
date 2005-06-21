@@ -14,7 +14,8 @@
 #ifndef __INTERFACE_LIST_H
 #define __INTERFACE_LIST_H
 
-XMLDInterfaceList *interface_list;
+XMLDAssoc *interface_list;
+XMLDAssocWalker *interface_list_walker;
 
 XMLDStatus interface_list_init();
 XMLDStatus interface_list_shutdown();

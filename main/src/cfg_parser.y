@@ -21,7 +21,7 @@
  XMLDCfgValue *value;
  XMLDCfgDirective *directive;
  XMLDCfgSection *section;
- XMLDList *list;
+ XMLDAssoc *list;
 }
 
 /* Thread-safe */
@@ -47,36 +47,28 @@ configuration: cfg_tree
 cfg_tree: directive
 	  {
 	   $$=XMLDCfgSection_create();
-           $$->directives = XMLDCfgDirectiveList_create();
-           XMLDCfgDirective *directive = XMLDCfgDirectiveList_add($$->directives);
-	   directive->name = $1->name;
-	   directive->values = $1->values;
-	   free($1);
+           $$->directives = XMLDAssoc_create();
+	   XMLDAssoc_add($$->directives, $1->name, $1);
+	   free($1->name);
 	  }
 	| section
 	  {
 	   $$=XMLDCfgSection_create();
-	   $$->sections = XMLDCfgSectionList_create();
-	   XMLDCfgSection *section = XMLDCfgSectionList_add($$->sections);
-	   section->name = $1->name;
-	   section->directives = $1->directives;
-	   free($1);
+	   $$->sections = XMLDAssoc_create();
+	   XMLDAssoc_add($$->sections, $1->name, $1);
+	   free($1->name);
 	  }
 	| cfg_tree '\n' directive
 	  {
 	   $$=$1;
-           XMLDCfgDirective *directive = XMLDCfgDirectiveList_add($$->directives);
-	   directive->name = $3->name;
-	   directive->values = $3->values;
-	   free($3);
+	   XMLDAssoc_add($$->directives, $3->name, $3);
+	   free($3->name);
 	  }
 	| cfg_tree '\n' section 
 	  {
 	   $$=$1;
-	   XMLDCfgSection *section = XMLDCfgSectionList_add($$->sections);
-	   section->name = $3->name;
-	   section->directives = $3->directives;
-	   free($3);
+	   XMLDAssoc_add($$->sections, $3->name, $3)
+	   free($3->name);
 	  }
 ;
 
@@ -98,19 +90,13 @@ directive: IDENTIFIER ' ' value_list
 
 value_list: value
 	         {
-		  $$=XMLDCfgValueList_create();
-		  XMLDCfgValue *tmp = XMLDCfgValueList_add($$);
-		  tmp->type = $1->type;
-		  tmp->value = $1->value;
-		  free($1);
-	         }
+		  $$=XMLDAssoc_create();
+	          XMLDAssoc_add($$, NULL, $1);
+		 }
 	  | value_list ' ' value
 	         {
 		  $$=$1;
-		  XMLDValueCfg *tmp = XMLDCfgValueList_add($$);
-		  tmp->type = $3->type;
-		  tmp->value = $3->value;
-		  free($3);
+		  XMLDAssoc_add($$, NULL, $3);
 	         }
 ;
 	  

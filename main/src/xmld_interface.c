@@ -17,9 +17,8 @@
  * : Creates a new interface structure.
  * returns: the newly created interface structure.
  */
-XMLDInterface *XMLDInterface_create(char *name) {
+XMLDInterface *XMLDInterface_create() {
  XMLDInterface *interface=(XMLDInterface *) malloc(sizeof(XMLDInterface));
- interface->name = name;
  return interface;
 }
 
@@ -27,7 +26,6 @@ XMLDInterface *XMLDInterface_create(char *name) {
  * : Copies the src interface to the dest interface.
  */
 void XMLDInterface_copy(XMLDInterface *src, XMLDInterface *dest) {
- dest->name = src->name;
  dest->port = src->port;
  dest->init = src->init;
  dest->destroy = src->destroy;

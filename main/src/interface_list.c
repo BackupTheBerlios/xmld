@@ -19,10 +19,10 @@
 #endif /* USE_XMLDSQL */
  
 XMLDStatus interface_list_init() {
- XMLDInterfaceList *tmp_list=XMLDInterfaceList_create();
+ XMLDAssoc *tmp_list=XMLDAssoc_create();
  XMLDInterface *curr_interface;
 #ifdef USE_XMLDSQL
- curr_interface=XMLDInterfaceList_add(tmp_list, "XMLDSQL");
+ curr_interface=XMLDInterface_create();
  curr_interface->init=xmldsql_init;
  curr_interface->destroy=xmldsql_destroy;
  curr_interface->prepare_conn=xmldsql_prepare_conn;
@@ -32,9 +32,10 @@ XMLDStatus interface_list_init() {
  curr_interface->parse=xmldsql_parse;
  curr_interface->walk=xmldsql_walk;
  curr_interface->get_response=xmldsql_get_response;
+ XMLDAssoc_add(tmp_list, "XMLDSQL", curr_interface);
 #endif /* USE_XMLDSQL */
  
- interface_list = XMLDInterfaceList_create(); 
+ interface_list = XMLDAssoc_create(); 
  XMLDCfgSection *ports_section = XMLDCfgSection_get_section(cfg_tree, "Ports", 1);
  if (ports_section == NULL) {
   return XMLD_FAILURE;
@@ -53,24 +54,25 @@ XMLDStatus interface_list_init() {
   if (interface_value->type != XMLD_CFG_STRING) {
    continue;
   }
-  curr_interface = XMLDInterfaceList_search_by_name(tmp_list, (char *) interface_name->value);
+  curr_interface = XMLDAssoc_get(tmp_list, (char *) interface_name->value);
   if (curr_interface == NULL) {
    continue;
   }
-  add_interface = XMLDInterfaceList_add(interface_list, NULL);
-  XMLDInterface_copy(curr_interface, add_interface);
-  (*add_interface->init) (add_interface, port_directive);
-  add_interface->port = (int) port_value->value;
+  XMLDAssoc_add(interface_list, (char *) interface_name->value, curr_interface);
+  (*curr_interface->init) (curr_interface, port_directive);
+  curr_interface->port = (int) port_value->value;
   num++;
  } 
+ XMLDAssoc_free(tmp_list);
  return XMLD_SUCCESS;
 }
 
 XMLDStatus interface_list_shutdown() {
- XMLDList_reset(interface_list);
- while (XMLDList_next(interface_list)) {
-  (*(((XMLDInterface *) XMLDList_curr(interface_list))->destroy)) ();
+ interface_list_walker = XMLDAssocWalker_create(interface_list);
+ while (XMLDAssocWalker_next(interface_list_walker)) {
+  (*(((XMLDInterface *) XMLDAssocWalker_get_current_data(interface_list_walker))->destroy)) ();
+  XMLDInterface_free((XMLDInterface *) XMLDAssocWalker_get_current_data(interface_list_walker));
  }
- XMLDList_free(interface_list);
+ XMLDAssoc_free(interface_list);
  return XMLD_SUCCESS;
 }

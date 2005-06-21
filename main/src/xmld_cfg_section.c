@@ -21,9 +21,9 @@
  */
 XMLDCfgSection *XMLDCfgSection_create() {
  XMLDCfgSection *section = (XMLDCfgSection *) malloc(sizeof(XMLDCfgSection));
- section->name=NULL;
  section->directives = NULL;
  section->sections = NULL;
+ section->name = NULL;
  return section;
 }
 
@@ -35,18 +35,7 @@ XMLDCfgSection *XMLDCfgSection_create() {
  * decide which one to return.
  */
 XMLDCfgSection *XMLDCfgSection_get_section(XMLDCfgSection *section, char *name, int index) {
- int num = 0;
- XMLDList_reset(section->sections);
- while (XMLDList_next(section->sections)) {
-  if (strcmp(((XMLDCfgSection *) XMLDList_curr(section->sections))->name, name) == 0) {
-   num++;
-   if (num == index) {
-    return (XMLDCfgSection *) XMLDList_curr(section->sections);
-    break;
-   }
-  }
- }
- return NULL;
+ return XMLDAssoc_get_key_index(section->sections, name, index);
 }
 
 /*
@@ -56,17 +45,7 @@ XMLDCfgSection *XMLDCfgSection_get_section(XMLDCfgSection *section, char *name, 
  * decide which one to return.
  */
 XMLDCfgDirective *XMLDCfgSection_get_directive(XMLDCfgSection *section, char *name, int index) {
- int num = 0;
- XMLDList_reset(section->directives);
- while (XMLDList_next(section->directives)) {
-  if (strcmp(((XMLDCfgDirective *) XMLDList_curr(section->directives))->name, name) == 0) {
-   num++;
-   if (num == index) {
-    return (XMLDCfgDirective *) XMLDList_curr(section->directives);
-   }
-  }
- }
- return NULL;
+ return XMLDAssoc_get_key_index(section->directives, name, index);
 }
 
 /*
@@ -75,11 +54,23 @@ XMLDCfgDirective *XMLDCfgSection_get_directive(XMLDCfgSection *section, char *na
  */
 void XMLDCfgSection_free(XMLDCfgSection *section) {
  if (section != NULL) {
-  XMLDList_free(section->directives);
-  XMLDList_free(section->sections);
-  if (section->name != NULL) {
-   free(section->name);
+  XMLDAssocWalker walker;
+  walker.subject = section->directives;
+  walker.curr_index = -1;
+  while (XMLDAssocWalker_next(&walker)) {
+   if (XMLDAssocWalker_get_current_data(&walker) != NULL) {
+    XMLDCfgDirective_free((XMLDCfgDirective *) XMLDAssocWalker_get_current_data(&walker));
+   }
   }
+  XMLDAssoc_free(section->directives);
+  walker.subject = section->sections;
+  walker.curr_index = -1;
+  while (XMLDAssocWalker_next(&walker)) {
+   if (XMLDAssocWalker_get_current_data(&walker) != NULL) {
+    XMLDCfgSection_free((XMLDCfgSection *) XMLDAssocWalker_get_current_data(&walker));
+   }
+  }
+  XMLDAssoc_free(section->sections);
   free(section);
  } 
 }

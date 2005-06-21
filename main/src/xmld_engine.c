@@ -18,9 +18,8 @@
  * name: the name of the new engine. (not copied)
  * returns: the newly created engine.
  */
-XMLDEngine *XMLDEngine_create(char *name) {
+XMLDEngine *XMLDEngine_create() {
  XMLDEngine *engine=(XMLDEngine *) malloc(sizeof(XMLDEngine));
- engine->name = name;
  return engine;
 }
 

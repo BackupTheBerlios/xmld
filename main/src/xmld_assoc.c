@@ -26,6 +26,13 @@ XMLDAssoc *XMLDAssoc_create(void) {
 }
 
 /*
+ * Gets the number of elements currently in the table.
+ */
+int XMLDAssoc_get_length(XMLDAssoc *assoc) {
+ return assoc->length;
+}
+
+/*
  * Adds an element to the given associative table.
  * key and value are to be allocated and freed externally.
  */
@@ -102,6 +109,24 @@ void *XMLDAssoc_get(XMLDAssoc *assoc, char *key) {
 }
 
 /*
+ * Returns the data associated to the given key -- NULL if not found.
+ */
+void *XMLDAssoc_get_key_index(XMLDAssoc *assoc, char *key, int index) {
+ int i;
+ int num = 0;
+ int hash_key = hash(key);
+ for (i = 0; i < assoc->length; i++) {
+  if (assoc->keys[i] == hash_key) {
+   if (num == index) {
+    return assoc->values[i];
+   }
+   num++;
+  }
+ }
+ return NULL;
+}
+
+/*
  * Returns the data associated to the given index -- NULL if the index
  * is out of bounds.
  */
@@ -129,21 +154,6 @@ void XMLDAssoc_update_key_by_index(XMLDAssoc *assoc, int index, char *new_key) {
   return;
  }
  assoc->keys[index] = hash(new_key);
-}
-
-/*
- * Walks through the elements of the table and calls the given
- * callback function on each element, and provides it with the additonal
- * void * argument. It stops if the callback returns XMLD_ASSOC_WALK_END
- * and continues walking otherwise.
- */
-void XMLDAssoc_walk(XMLDAssoc *assoc, int (*callback) (void *, void *), void *data) {
- int i;
- for (i = 0; i < assoc->length; i++) {
-  if (callback(assoc->data[i], data) == XMLD_ASSOC_WALK_END) {
-   break;
-  }  
- }
 }
 
 /*
