@@ -19,5 +19,6 @@ XMLDAssocWalker *interface_list_walker;
 
 XMLDStatus interface_list_init();
 XMLDStatus interface_list_shutdown();
+XMLDInterface *interface_list_search_by_port(int);
 
 #endif /* __INTREFACE_LIST_H */

@@ -121,8 +121,8 @@ Foundation:
   * cfg_parser.y (done)
   * engine_list (done)
   * interface_list (done)
-  * authman.
-  * somanager.
+  * authman. (done)
+  * somanager. (done)
   * XMLDWork
   * XMLDFile
   * Remove xmld_list.c and .h. (done)

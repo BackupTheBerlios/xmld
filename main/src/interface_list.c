@@ -76,3 +76,14 @@ XMLDStatus interface_list_shutdown() {
  XMLDAssoc_free(interface_list);
  return XMLD_SUCCESS;
 }
+
+XMLDInterface *interface_list_search_by_port(int port) {
+ XMLDAssocWalker walker;
+ walker.subject = interface_list;
+ walker.curr_index = -1;
+ while (XMLDAssocWalker_next(&walker)) {
+  if (((XMLDInterface *) XMLDAssocWalker_get_current_data(&walker))->port == port) {
+   return (XMLDInterface *) XMLDAssocWalker_get_current_data(&walker);
+  }
+ }
+}

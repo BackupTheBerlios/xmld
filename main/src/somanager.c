@@ -109,8 +109,7 @@ void somanager_handle(void *sockindex) {
    perror("xmld_socket_accept");
    continue;
   }
-  
-  XMLDInterface *interface = XMLDInterfaceList_search_by_port(interface_list, ports[*((int *) sockindex)]);
+  XMLDInterface *interface = interface_list_search_by_port(ports[*((int *) sockindex)]);
   mtasker_handle(interface->user_connection, (void *) interface, s);
  } 
 }

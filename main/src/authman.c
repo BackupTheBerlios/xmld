@@ -37,7 +37,7 @@ XMLDStatus authman_auth_user(char *user, char **ret) {
   }
  }
  
- auth->engine = XMLDEngineList_search_by_name(engine_list, cfg_get_engine(full_file));
+ auth->engine = XMLDAssoc_get(engine_list, cfg_get_engine(full_file));
  (*(auth->engine->prepare)) (full_file, auth, XMLD_ACCESS_NOTHING);
  
  int walk = (*(auth->engine->walk)) (auth);
@@ -71,7 +71,7 @@ int authman_get_priv(char *user, char *file) {
  strcat(full_file, ".xml");
  
  XMLDFile *priv = XMLDFile_create(NULL);
- priv->engine = XMLDEngineList_search_by_name(engine_list, cfg_get_engine(full_file));
+ priv->engine = XMLDAssoct_get(engine_list, cfg_get_engine(full_file));
  (*(priv->engine->prepare)) (full_file, priv, XMLD_ACCESS_FORMAT);
  int walk = (*(priv->engine->walk)) (priv);
  int level = 0;
