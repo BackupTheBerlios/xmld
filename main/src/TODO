@@ -123,16 +123,16 @@ Foundation:
   * interface_list (done)
   * authman. (done)
   * somanager. (done)
-  * XMLDWork
-  * XMLDFile
+  * XMLDWork (done)
+  * XMLDFile (done)
   * Remove xmld_list.c and .h. (done)
   
 * For all generic structures, use a signle XMLDAssoc field
   instead of the multiple void* fields.
-   * XMLDWork
-   * XMLDFile
-   * XMLDInterface ?
-   
+   * XMLDWork (done)
+   * XMLDFile (done)
+   * XMLDInterface (done)
+
 * Support for re-parsing of the configuration on the fly.
   * Signal each of the child processes so it reparses the configuration for
     itself.
@@ -156,6 +156,7 @@ Foundation:
   * Localized Messages System. (gettext)
   * Support for dependencies ?
     * authman needs a storage engine!
+    * modules.conf file ?
   * configure script and make file for each ?
   
 * Real implementation of engine association functions.

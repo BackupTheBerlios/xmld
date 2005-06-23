@@ -15,14 +15,8 @@
 #define __XMLD_FILE_H
 
 struct XMLDFile {
- char *name;
- char *path;
- void *data;
- XMLDFile *store; /* Additional storage field   */
- XMLDEngine *engine;
- int level;
- int priv;
- fpos_t node_pos;
+ void *file;
+ XMLDAssoc *data;
 };
 
 #ifndef XMLDFILE_TYPE_DEFINED

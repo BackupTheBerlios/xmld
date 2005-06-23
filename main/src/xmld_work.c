@@ -20,8 +20,7 @@ XMLDWork *XMLDWork_create() {
  XMLDWork *work=(XMLDWork *) malloc(sizeof(XMLDWork));
  work->files=NULL;
  work->interface=NULL;
- work->req=NULL;
- work->resp=NULL;
+ work->data=NULL;
  return work;
 }
 
@@ -31,7 +30,13 @@ XMLDWork *XMLDWork_create() {
  */
 void XMLDWork_free(XMLDWork *work) {
  if (work != NULL) {
-  XMLDList_free(work->files);
+  XMLDAssocWalker walker;
+  walker.subject = work->files;
+  walker.curr_index = -1;
+  while (XMLDAssocWalker_next(&walker)) {
+   XMLDFile_free((XMLDFile *) XMLDAssocWalker_get_current_data(&walker));
+  }
+  XMLDAssoc_free(work->files);
   free(work);
  } 
 }

@@ -19,13 +19,8 @@ struct XMLDInterface {
  int port;
  void (*init) (XMLDInterface *, XMLDCfgDirective *);
  void (*destroy) (void);
- XMLDStatus (*prepare_conn) (XMLDWork *);
- void (*cleanup_conn) (XMLDWork *);
- XMLDStatus (*prepare) (XMLDWork *);
- void (*cleanup) (XMLDWork *);
- XMLDStatus (*parse) (XMLDWork *, char *);
- XMLDStatus (*walk) (XMLDWork *);
- char *(*get_response) (XMLDWork *);
+ void (*user_connection) (void *);
+ XMLDAssoc *data;
 };
 
 #ifndef XMLDINTERFACE_TYPE_DEFINED

@@ -19,17 +19,10 @@
  * name: The name of the file.
  * returns: The newly created file structure.
  */
-XMLDFile *XMLDFile_create(char *name) {
+XMLDFile *XMLDFile_create(void) {
  XMLDFile *file=(XMLDFile *) malloc(sizeof(XMLDFile));
- if (name != NULL) {
-  file->name=(char *) malloc((strlen(name)+1)*sizeof(char));
-  strcpy(file->name, name);
- }
+ file->file=NULL;
  file->data=NULL;
- file->store=NULL;
- file->engine=NULL;
- file->level=0;
- file->priv=9;
  return file;
 }
 
@@ -38,9 +31,7 @@ XMLDFile *XMLDFile_create(char *name) {
  */
 void XMLDFile_free(XMLDFile *file) {
  if (file != NULL) {
-  if (file->name != NULL) {
-   free(file->name);
-  }
+  XMLDAssoc_free(file->data);
   free(file);
  }
 }

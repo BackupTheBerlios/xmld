@@ -16,9 +16,8 @@
 
 struct XMLDWork {
  XMLDInterface *interface;
- XMLDFileList *files;
- void *req;
- void *resp;
+ XMLDAssoc *files;
+ XMLDAssoc *data;
 };
 
 typedef struct XMLDWork XMLDWork;
