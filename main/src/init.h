@@ -15,6 +15,7 @@
 #define __INIT_H
 
 void init_shutdown_parts(int);
+void update_config(int);
 
 #endif /* __INIT_H */
 

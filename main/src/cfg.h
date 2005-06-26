@@ -19,6 +19,7 @@ XMLDCfgSection *cfg_tree;
 char *document_root;
 
 XMLDStatus cfg_init(void);
+void cfg_update(void);
 XMLDStatus cfg_shutdown(void);
 
 #endif /* __CFG_H */

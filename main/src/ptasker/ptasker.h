@@ -14,12 +14,6 @@
 #ifndef __PTASKER_H
 #define __PTASKER_H
 
-struct task {
- void (*func) (void*);
- void *data;
- int fd;
-};
-
 struct proc {
  void (*func) (void*);
  void *data;
@@ -36,11 +30,6 @@ struct proc_table {
  struct proc *children;
 };
 
-struct task_table {
- struct task *tasks;
- int num_tasks;
-};
-
 int passed_fd; /*
 		* The fd last passed using passfd.c
 		*/
@@ -51,5 +40,6 @@ XMLDStatus mtasker_handle(void (*) (void*), void *, int);
 struct proc *mtasker_spawn();
 void mtasker_kill(int);
 void mtasker_handle_idle(int);
+void mtasker_signal_children(int);
 
 #endif /* __PTASKER_H */

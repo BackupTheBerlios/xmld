@@ -134,10 +134,24 @@ Foundation:
    * XMLDInterface (done)
 
 * Support for re-parsing of the configuration on the fly.
-  * Signal each of the child processes so it reparses the configuration for
-    itself.
+  * mtasker support function for signaling.
+    * mtasker_signal_children. (done)
+    * main process handles SIGUSR2 as a configuration update signal
+      and calls mtasker_signal_children with SIGUSR2. (done)
+  * Child processes should run a cfg function on receiving of signal. (done)
+  * cfg_update. (done)
+  * somanager, interface_list should be restarted to update the
+    listening sockets and the interfaces. (done)
 
+* Erase task table in ptasker, the main process should loop
+  until it finds a free child to use. (done)
+  
 * Erase usage of mutils. (done)
+
+* Real implementation of engine association functions.
+  * maybe a clean up of the whole system ?
+
+* Real implementation of mfigure.
 
 * Data source creation functions.
   * A new access level bit ?
@@ -159,11 +173,6 @@ Foundation:
     * modules.conf file ?
   * configure script and make file for each ?
   
-* Real implementation of engine association functions.
-  * maybe a clean up of the whole system ?
-
-* Real implementation of mfigure.
-
 * Implementation of localized messages subsystem.
 
 * Error messages:

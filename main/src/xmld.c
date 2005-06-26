@@ -39,6 +39,15 @@ int main() {
   perror("sigaction");
   return 1;
  }
+
+ struct sigaction cfg_action;
+ action.sa_handler=update_config;
+ s=sigaction(SIGUSR2, &action, NULL);
+
+ if (s == -1) {
+  perror("sigaction");
+  return 1;
+ }
  
  printf("OpenDaemon is up and running:\n\t* Main PID: %d\n", getpid());
 
@@ -90,4 +99,12 @@ void init_shutdown_parts(int signum) {
  engine_list_shutdown();
  cfg_shutdown();
  exit(0);
+}
+
+void update_config(int signum) {
+ mtasker_signal_children(SIGUSR2);
+ interface_list_shutdown();
+ somanager_shutdown();
+ somanager_init();
+ interface_list_init();
 }

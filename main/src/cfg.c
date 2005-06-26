@@ -63,3 +63,8 @@ XMLDStatus cfg_shutdown() {
  return XMLD_SUCCESS;
 }
 
+void cfg_update() {
+ cfg_shutdown();
+ cfg_init();
+}
+

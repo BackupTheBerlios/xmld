@@ -130,6 +130,7 @@ XMLDStatus mtasker_init() {
   else if (curr_pid == 0) {
    table->children[i].pid=getpid();
    signal(SIGCHLD, SIG_IGN);
+   signal(SIGUSR2, cfg_update);
    
    while (1) {
     if (table->children[i].func != NULL) {
@@ -172,6 +173,8 @@ XMLDStatus mtasker_shutdown() {
 XMLDStatus mtasker_handle(void (*func) (void *), void *data, int fd) {
  int i;
  struct proc *use_proc;
+ while (table->num == table->num_busy && table->num >= max_proc) {
+ }
  if (table->num > table->num_busy) {
   for (i = 0; i < max_proc; i++) {
    if (table->children[i].busy == XMLD_FALSE && table->children[i].pid != 0) {
@@ -181,17 +184,7 @@ XMLDStatus mtasker_handle(void (*func) (void *), void *data, int fd) {
   }
  }
  else if (table->num == table->num_busy) {
-  if (table->num < max_proc) {
-   use_proc=mtasker_spawn();
-  }
-  else {
-   ttable.num_tasks++;
-   ttable.tasks=realloc(ttable.tasks, ttable.num_tasks*sizeof(struct task));
-   ttable.tasks[ttable.num_tasks-1].func=func;
-   ttable.tasks[ttable.num_tasks-1].data=data;
-   ttable.tasks[ttable.num_tasks-1].fd=fd;
-   return XMLD_SUCCESS;
-  }
+  use_proc=mtasker_spawn();
  }
 
  if (use_proc != 0) {
@@ -240,6 +233,7 @@ struct proc *mtasker_spawn() {
     else if (curr_pid == 0) {
      table->children[i].pid=getpid();
      signal(SIGCHLD, SIG_IGN);
+     signal(SIGUSR2, cfg_update);
      
      while (1) {
       if (table->children[i].func != NULL) {
@@ -284,23 +278,14 @@ void mtasker_kill(int num_proc) {
 }
 
 void mtasker_handle_idle(int signum) {
- int j;
- XMLDStatus status;
- if (ttable.num_tasks > 0) {
-  status = mtasker_handle(ttable.tasks[0].func, ttable.tasks[0].data, ttable.tasks[0].fd);
-  if (status != XMLD_SUCCESS) {
-   return;
-  }
-  for (j = 0; j < ttable.num_tasks-1; j++) {
-   ttable.tasks[j]=ttable.tasks[j+1];
-  }
-  ttable.tasks[ttable.num_tasks-1].func=NULL;
-  ttable.tasks[ttable.num_tasks-1].data=NULL;
-  ttable.tasks[ttable.num_tasks-1].fd=-1;
-  ttable.num_tasks--;
-  ttable.tasks=realloc(ttable.tasks, ttable.num_tasks*sizeof(struct task));
- }
  if (table->num - table->num_busy > max_idle_proc) {
   mtasker_kill((table->num - table->num_busy) - max_idle_proc);
+ }
+}
+
+void mtasker_signal_children(int signum) {
+ int i;
+ for (i = 0; i < num; i++) {
+  kill(table->children[i].pid, signum);
  }
 }
