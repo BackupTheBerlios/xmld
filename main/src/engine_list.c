@@ -74,37 +74,11 @@ XMLDStatus engine_list_shutdown() {
  * should be used to determine the engine).
  */
 
-/* ATTENTION: cfg_get_engine, whensever written
- * must free the string returned from mfigure_get
- * _mime explicitly if it uses it
- * ATTENTION again: it must check for mime compaitability
+/* ATTENTION: it must check for mime compaitability
  * using is_valid_mime and try to reuse mfigure_get_mime
  * if it was used. If checking fails return NULL.
  */
 char *engine_list_get_engine(char *file) { 
  return "Engine-XMLD";
-}
-
-/*
- * : Associates a particular file name to
- * a particular engine.
- * file: the file to be associated.
- * engine: the engine to be linked to the file.
- */ 
-void engine_list_set_engine(char *file, char *engine) { 
-}
-
-/*
- * : Gets the default engine for the given _mime_
- * returns: the name of the mentioned engine.
- */
-char *engine_list_get_mime_engine(char *mime) { 
- return (char *) NULL;
-}
-
-/*
- * : Sets the default engine for a given _mime_.
- */
-void engine_list_set_mime_engine(char *mime, char *engine) {
 }
 

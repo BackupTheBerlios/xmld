@@ -149,7 +149,15 @@ Foundation:
 * Erase usage of mutils. (done)
 
 * Real implementation of engine association functions.
-  * maybe a clean up of the whole system ?
+  * Why not decide using file name extentions ? (ok)
+  * Erase old configuration directives and files. (done) 
+  * Configuration should contain the ability to specify
+    an engine for a particular extention. (done)
+    * Engines section (done)
+    * FileType directive (done)
+  * Configuration function for getting the engine
+    for a particular file type.
+    * engine_list_get_engine
 
 * Real implementation of mfigure.
 
