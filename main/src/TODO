@@ -160,24 +160,21 @@ Foundation:
     * engine_list_get_engine (done)
 
 * Data source creation functions.
-  * A new access level bit ?
-  * Ability to use the engine on an empty XMLDFile.
-  * Capability bit.
+  * Ability to use the engine on an empty XMLDFile. (done)
+  * Capability bit. (done)
 
 * Data source alteration (reshaping) functions.
-  * Capability bit.
+  * Capability bit. (done)
+ 
+* Data source removal functions. (done)
+  * Caoability bit. (done)
 
 * Put supplementary APIs in one place:
-  * Engine Association API, XMLDEngine structure and mfigure.
-  * On Disk Data Manipulation API. (dutils)
-  * String Manipulation API. (sutils)
-  * Authentication API. (authman)
-  * File Opening and Locking API. (fmanager)
+  * On Disk Data Manipulation API. (dutils) (done)
+  * String Manipulation API. (sutils) (done)
+  * Authentication API. (authman) (done)
+  * File Opening and Locking API. (fmanager) (done)
   * Localized Messages System. (gettext)
-  * Support for dependencies ?
-    * authman needs a storage engine!
-    * modules.conf file ?
-  * configure script and make file for each ?
   
 * Implementation of localized messages subsystem.
 
