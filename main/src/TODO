@@ -156,10 +156,8 @@ Foundation:
     * Engines section (done)
     * FileType directive (done)
   * Configuration function for getting the engine
-    for a particular file type.
-    * engine_list_get_engine
-
-* Real implementation of mfigure.
+    for a particular file type. (done)
+    * engine_list_get_engine (done)
 
 * Data source creation functions.
   * A new access level bit ?

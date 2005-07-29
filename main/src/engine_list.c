@@ -64,21 +64,27 @@ XMLDStatus engine_list_shutdown() {
 
 /*
  * : Gets the engine which is to be used
- * in processing a given file.
- * file: the name of the file for which
+ * in processing a given file extension.
+ * file: the extension of the file for which
  * an engine name is to be returned.
- * returns: if the file had an engine name
+ * returns: if the extentsion had an engine name
  * associated to it in configurations
  * the name of that engine is returned, and
- * if not, NULL is returned (MIME checking
- * should be used to determine the engine).
- */
-
-/* ATTENTION: it must check for mime compaitability
- * using is_valid_mime and try to reuse mfigure_get_mime
- * if it was used. If checking fails return NULL.
+ * if not, the default engine is returned.
  */
 char *engine_list_get_engine(char *file) { 
- return "Engine-XMLD";
+ XMLDCfgSection *engines = XMLDCfgSection_get_section(cfg_tree, "Engines", 0);
+ XMLDCfgDirective *type;
+ XMLDCfgValue *type_value;
+ int index = 0;
+ while ((type = XMLDCfgSection_get_directive(engines, "FileType", index)) != NULL) {
+  type_value = XMLDCfgDirective_get_value(type, 0);
+  if (strcmp(((char *) type_value->value), file) == 0) {
+   type_value = XMLDCfgDirective_get_value(type, 1);
+   return (char *) type_value->value;
+  }
+  index++;
+ }
+ return XMLD_DEFAULT_ENGINE;
 }
 

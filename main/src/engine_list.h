@@ -14,6 +14,8 @@
 #ifndef __ENGINE_LIST_H
 #define __ENGINE_LIST_H
 
+#define XMLD_DEFAULT_ENGINE "Engine-XMLD"
+
 XMLDAssoc *engine_list;
 XMLDAssocWalker *engine_list_walker;
 
