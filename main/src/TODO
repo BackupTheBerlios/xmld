@@ -174,25 +174,24 @@ Foundation:
   * String Manipulation API. (sutils) (done)
   * Authentication API. (authman) (done)
   * File Opening and Locking API. (fmanager) (done)
-  * Localized Messages System. (gettext)
+  * Localized Messages System. (gettext) (delayed)
   
-* Implementation of localized messages subsystem.
+* Implementation of localized messages system. (delayed)
 
 * Error messages:
-  * Provide routines of error reporting in engines
-    and interfaces.
-  * Error messages subsystem -- gettext().
-  * Engines report errors to interfaces and interfaces report them 
-    to the system as "Engine error: <engine message>"
-  * Interfaces report errors through their own protocols to the 
-    client and decide whether to terminate the user connection.
+  * Engine functions: (done)
+    * getters: Return NULL or -1 in case of error. 
+    * setters: Return XMLD_FALSE in case of error.
+    * operationals: Return XMLD_FAILURE in case of error.
+  * Error message retrieval engine function. (done)
   * Remove error arrays and defines from xmld.c, init.h and xmlddef.h. (done)
+  * How should interfaces handle wrong parameter count / type in xmld.conf ?
+    * init should return a XMLDStatus indiciating success / failure. (done)
+    * Interface function for getting an error message. (done)
 
 * Remove protoimpl and its documentation. (done)
 
 * Implement an EchoServer interface for demonstration.
-
-* Usage of autoconf to decide on the modules to be compiled.
 
 * Separate make files for EchoServer and ptasker.
 
@@ -203,21 +202,25 @@ Foundation:
 Issues:
 -------
 
-* authman must encode/decode user authentication tokens.
-
 * rename XMLDFile.element_pos to XMLDFile.node_pos (done).
-
-* Configuration of the user and the group under which
-  OpenXMLD is to run.
 
 *--------------- Start of OpenXMLD 0.8.0 part:
 
 Goal: Strength.
 
 * Portable loadable modules support.
+  * Support for dependencies.
 
 * Support for loading of a module on demand.
 
+* I18n and l10n.
+
+* Usage of autoconf to decide on the modules to be compiled.
+
+* Implement a generic communication protocol that other interface writers can use:
+  * With an authentication-based version.
+  * A non-authentication-based version.
+  
 * cleaner, more portable sockets API.
 
 * Thread-safe core.
@@ -230,3 +233,11 @@ Goal: Strength.
 * Implement a path translation API that modifies the path according to the OS.
 
 * Portable way to pass sockets between processes.
+
+Issues:
+-------
+
+* Configuration of the user and the group under which
+  OpenXMLD is to run.
+
+* authman must encode/decode the user authentication tokens.

@@ -161,9 +161,11 @@ void XMLDAssoc_update_key_by_index(XMLDAssoc *assoc, int index, char *new_key) {
  * and not its elements.
  */
 void XMLDAssoc_free(XMLDAssoc *assoc) {
- if (assoc->array_length > 0) {
-  free(assoc->values);
-  free(assoc->keys);
+ if (assoc != NULL) {
+  if (assoc->array_length > 0) {
+   free(assoc->values);
+   free(assoc->keys);
+  }
+  free(assoc);
  }
- free(assoc);
 }

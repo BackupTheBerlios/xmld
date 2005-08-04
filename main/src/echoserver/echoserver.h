@@ -11,27 +11,12 @@
  * -------------------------------------------------------------- * 
  */
 
-#ifndef __XMLD_INTERFACE_H
-#define __XMLD_INTERFACE_H
+#ifndef __ECHO_SERVER_H
+#define __ECHO_SERVER_H
 
-/* Represents a user interface */
-struct XMLDInterface {
- int port;
- char *error;
- XMLDStatus (*init) (XMLDInterface *, XMLDCfgDirective *);
- void (*destroy) (XMLDInterface *);
- void (*user_connection) (void *);
- char *(*get_error_message) (XMLDInterface *);
- XMLDAssoc *data;
-};
+XMLDStatus echoserver_init(XMLDInterface *, XMLDCfgDirective *);
+void echoserver_destroy(XMLDInterface *);
+void echoserver_user_connection(void *);
+char *echoserver_get_error_message(XMLDInterface *);
 
-#ifndef XMLDINTERFACE_TYPE_DEFINED
-#define XMLDINTERFACE_TYPE_DEFINED
- typedef struct XMLDInterface XMLDInterface;
-#endif /* XMLDINTERFACE_TYPE_DEFINED */
-
-XMLDInterface *XMLDInterface_create(char *);
-void XMLDInterface_copy(XMLDInterface *, XMLDInterface *);
-void XMLDInterface_free(XMLDInterface *);
-
-#endif /* __XMLD_INTERFACE_H */
+#endif /* __ECHO_SERVER_H */

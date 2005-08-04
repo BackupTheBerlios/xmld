@@ -33,17 +33,19 @@
 #define ENGINE_CAP_NODE_CREATE 10
 #define ENGINE_CAP_NODE_ALTER 12
 #define ENGINE_CAP_NODE_REMOVE 14
+#define ENGINE_CAP_ERROR_REPORTING 16
 
 struct XMLDEngine {
  
  /* Basic functions */
 
  int engine_cap;
- void (*init) (void);
+ char *error;
+ XMLDStatus (*init) (void);
  XMLDBool (*is_valid_mime) (char *);
  XMLDStatus (*prepare) (XMLDFile *, int); 
- void (*cleanup) (XMLDFile *);
- void (*destroy) (void);
+ XMLDStatus (*cleanup) (XMLDFile *);
+ XMLDStatus (*destroy) (void);
  int (*walk) (XMLDFile *);
 
  /* Data source reading API */
@@ -58,7 +60,7 @@ struct XMLDEngine {
 
  /* Iterative labeled node value selection API */
  
- void (*reset_node) (XMLDFile *);
+ XMLDBool (*reset_node) (XMLDFile *);
  XMLDBool (*next_label) (XMLDFile *);
  char *(*get_current_label) (XMLDFile *);
  char *(*get_current_labeled_value_type) (XMLDFile *);
@@ -98,6 +100,10 @@ struct XMLDEngine {
  XMLDBool (*remove_node) (XMLDFile *);
  XMLDBool (*remove_labeled_node_value) (XMLDFile *, char *);
  XMLDBool (*remove_absolute_node_value) (XMLDFile *);
+
+ /* Error reporting API */
+
+ char *(*get_error_message) (void);
 };
 
 #ifndef XMLDENGINE_TYPE_DEFINED

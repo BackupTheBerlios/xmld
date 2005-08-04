@@ -11,27 +11,32 @@
  * -------------------------------------------------------------- * 
  */
 
-#ifndef __XMLD_INTERFACE_H
-#define __XMLD_INTERFACE_H
+#include "../includes.h";
+#include "echoserver.h";
 
-/* Represents a user interface */
-struct XMLDInterface {
- int port;
- char *error;
- XMLDStatus (*init) (XMLDInterface *, XMLDCfgDirective *);
- void (*destroy) (XMLDInterface *);
- void (*user_connection) (void *);
- char *(*get_error_message) (XMLDInterface *);
- XMLDAssoc *data;
-};
+/*
+ * Initializes the EchoServer interface.
+ */
+XMLDStatus echoserver_init(XMLDInterface *interface, XMLDCfgDirective *directive) {
+ return XMLD_SUCCESS;
+}
 
-#ifndef XMLDINTERFACE_TYPE_DEFINED
-#define XMLDINTERFACE_TYPE_DEFINED
- typedef struct XMLDInterface XMLDInterface;
-#endif /* XMLDINTERFACE_TYPE_DEFINED */
+/*
+ * Destroys the EchoServer interface.
+ */
+void echoserver_destroy(XMLDInterface *interface) {
+}
 
-XMLDInterface *XMLDInterface_create(char *);
-void XMLDInterface_copy(XMLDInterface *, XMLDInterface *);
-void XMLDInterface_free(XMLDInterface *);
+/*
+ * Handles a user's connection.
+ */
+void echoserver_user_connection(void *interface) {
+}
 
-#endif /* __XMLD_INTERFACE_H */
+/*
+ * Gets the current interface's error message.
+ */
+char *echoserver_get_error_message(XMLDInterface *interface) {
+ return interface->error;
+}
+

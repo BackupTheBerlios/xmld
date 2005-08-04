@@ -14,26 +14,21 @@
 #include "includes.h"
 #include "interface_list.h"
 
-#ifdef USE_XMLDSQL
-#include "xmldsql/xmldsql.h"
-#endif /* USE_XMLDSQL */
+#ifdef USE_ECHOSERVER
+#include "echoserver/echoserver.h"
+#endif /* USE_ECHOSERVER */
  
 XMLDStatus interface_list_init() {
  XMLDAssoc *tmp_list=XMLDAssoc_create();
  XMLDInterface *curr_interface;
-#ifdef USE_XMLDSQL
+#ifdef USE_ECHOSERVER
  curr_interface=XMLDInterface_create();
- curr_interface->init=xmldsql_init;
- curr_interface->destroy=xmldsql_destroy;
- curr_interface->prepare_conn=xmldsql_prepare_conn;
- curr_interface->cleanup_conn=xmldsql_cleanup_conn;
- curr_interface->prepare=xmldsql_prepare;
- curr_interface->destroy=xmldsql_destroy;
- curr_interface->parse=xmldsql_parse;
- curr_interface->walk=xmldsql_walk;
- curr_interface->get_response=xmldsql_get_response;
- XMLDAssoc_add(tmp_list, "XMLDSQL", curr_interface);
-#endif /* USE_XMLDSQL */
+ curr_interface->init=echoserver_init;
+ curr_interface->destroy=echoserver_destroy;
+ curr_interface->user_connection=echoserver_user_connection;
+ curr_interface->get_error_message=echoserver_get_error_message;
+ XMLDAssoc_add(tmp_list, "EchoServer", curr_interface);
+#endif /* USE_ECHOSERVER */
  
  interface_list = XMLDAssoc_create(); 
  XMLDCfgSection *ports_section = XMLDCfgSection_get_section(cfg_tree, "Ports", 1);
@@ -43,7 +38,7 @@ XMLDStatus interface_list_init() {
  XMLDCfgDirective *port_directive;
  XMLDCfgValue *port_value;
  XMLDCfgValue *interface_name;
- XMLDInterface *add_interface;
+ XMLDStatus stat;
  num = 1;
  while ((port_directive = XMLDCfgSection_get_directive(ports_section, "Port", num)) != NULL) {
   port_value = XMLDCfgDirective_get_value(port_directive, 0);
@@ -59,8 +54,15 @@ XMLDStatus interface_list_init() {
    continue;
   }
   XMLDAssoc_add(interface_list, (char *) interface_name->value, curr_interface);
-  (*curr_interface->init) (curr_interface, port_directive);
-  curr_interface->port = (int) port_value->value;
+  stat = (*curr_interface->init) (curr_interface, port_directive);
+  if (stat == XMLD_FAILURE) {
+   perror("Error initializing %s: %s", (char *) interface_name->value, (*curr_interface->get_error_message) (curr_interface));
+   XMLDAssoc_remove_index(interface_list, (char *) interface_name->value);
+   XMLDInterface_free(curr_interface);
+  }
+  else {
+   curr_interface->port = (int) port_value->value;
+  }
   num++;
  } 
  XMLDAssoc_free(tmp_list);
