@@ -1,4 +1,4 @@
-*--------------- Start of OpenXMLD 0.7.0 part:
+*--------------- Start of OpenDaemon 0.7.0 part:
 
 Goal: Cleanliness.
 
@@ -191,20 +191,34 @@ Foundation:
 
 * Remove protoimpl and its documentation. (done)
 
-* Implement an EchoServer interface for demonstration.
+* Implement an EchoServer interface for demonstration. (done)
 
-* Separate make files for EchoServer and ptasker.
+* Separate make files for EchoServer and ptasker. (delayed)
 
 * Rename to OpenDaemon.
 
 * Remove old documents from the docs page.
 
+* Drop the XMLD part of all the structure names in the code.
+  * It's no longer a XML-only server.
+  * xmld.c -> opendaemon.c
+
+* Write interface names in the start up port list.
+
+* Test run:
+  * Modify make file.
+  * Modify includes.
+  * Compile.
+  * Fix compilation blocking bugs.
+  * Run.
+  * Fix bugs.
+  
 Issues:
 -------
 
 * rename XMLDFile.element_pos to XMLDFile.node_pos (done).
 
-*--------------- Start of OpenXMLD 0.8.0 part:
+*--------------- Start of OpenDaemon 0.8.0 part:
 
 Goal: Strength.
 
@@ -212,6 +226,8 @@ Goal: Strength.
   * Support for dependencies.
 
 * Support for loading of a module on demand.
+
+* XMLDProcessor interface.
 
 * I18n and l10n.
 

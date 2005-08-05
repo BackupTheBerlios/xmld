@@ -14,6 +14,8 @@
 #ifndef __ECHO_SERVER_H
 #define __ECHO_SERVER_H
 
+#define ECHOSERVER_MAX_MSG_LEN 100
+
 XMLDStatus echoserver_init(XMLDInterface *, XMLDCfgDirective *);
 void echoserver_destroy(XMLDInterface *);
 void echoserver_user_connection(void *);
