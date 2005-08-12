@@ -11,32 +11,25 @@
  * -------------------------------------------------------------- * 
  */
 
-#include "includes.h"
-#include "xmld_list.h"
-#include "xmld_cfg_value.h"
+#ifndef __ASSOC_WALKER_H
+#define __ASSOC_WALKER_H
 
-/*
- * : Creates a new configuration value structure.
- * returns: the newly created value.
- */
-XMLDCfgValue *XMLDCfgValue_create() {
- XMLDCfgValue *value = (XMLDCfgValue *) malloc(sizeof(XMLDCfgValue));
- value->type = 0;
- value->value = (void &) 0;
- return value;
-}
+#define ASSOC_WALKER_END 0
+#define ASSOC_WALKER_CONT 1
 
-/*
- * : Frees a configuration value structure.
- * directive: the value structure to free.
- */
-void XMLDCfgValue_free(XMLDCfgValue *value) {
- if (value != NULL) {
-  if (value->type == XMLD_CFG_STRING) {
-   if (value->value != NULL) {
-    free(value->value);
-   }
-  }
-  free(value);
- } 
-}
+struct AssocWalker {
+ Assoc *subject;
+ int curr_index; 
+};
+
+typedef struct AssocWalker AssocWalker;
+
+AssocWalker *AssocWalker_create(Assoc *);
+int AssocWalker_next(AssocWalker *);
+int AssocWalker_prev(AssocWalker *);
+int AssocWalker_reset(AssocWalker *);
+int AssocWalker_get_current_index(AssocWalker *);
+void *AssocWalker_get_current_data(AssocWalker *);
+void AssocWalker_free(AssocWalker *);
+
+#endif /* ASSOC_WALKER_H */

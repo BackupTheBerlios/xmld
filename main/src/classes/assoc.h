@@ -11,31 +11,31 @@
  * -------------------------------------------------------------- * 
  */
 
-#ifndef __XMLD_ASSOC_H
-#define __XMLD_ASSOC_H
+#ifndef __ASSOC_H
+#define __ASSOC_H
 
-#define XMLD_ASSOC_MAX_FREE 10
+#define ASSOC_MAX_FREE 10
 
-struct XMLDAssoc {
+struct Assoc {
  void **values;
  long *keys;
  int length;
  int array_length;
 };
 
-typedef struct XMLDAssoc XMLDAssoc;
+typedef struct Assoc Assoc;
 
-XMLDAssoc *XMLDAssoc_create(void);
-void XMLDAssoc_add(XMLDAssoc *, char *, void *);
-void XMLDAssoc_remove(XMLDAssoc *, char *);
-void *XMLDAssoc_get(XMLDAssoc *, char *);
-void *XMLDAssoc_get_key_index(XMLDAssoc *, char *, int);
-int XMLDAssoc_get_length(XMLDAssoc *);
-void XMLDAssoc_remove_index(XMLDAssoc *, int);
-int XMLDAssoc_get_index(XMLDAssoc *, char *);
-void *XMLDAssoc_get_by_index(XMLDAssoc *, int);
-void XMLDAssoc_update_key(XMLDAssoc *, char *, char *);
-void XMLDAssoc_update_key_by_index(XMLDAssoc *, int, char *);
-void XMLDAssoc_free(XMLDAssoc *);
+Assoc *Assoc_create(void);
+void Assoc_add(Assoc *, char *, void *);
+void Assoc_remove(Assoc *, char *);
+void *Assoc_get(Assoc *, char *);
+void *Assoc_get_key_index(Assoc *, char *, int);
+int Assoc_get_length(Assoc *);
+void Assoc_remove_index(Assoc *, int);
+int Assoc_get_index(Assoc *, char *);
+void *Assoc_get_by_index(Assoc *, int);
+void Assoc_update_key(Assoc *, char *, char *);
+void Assoc_update_key_by_index(Assoc *, int, char *);
+void Assoc_free(Assoc *);
 
-#endif /* __XMLD_ASSOC_H */
+#endif /* __ASSOC_H */

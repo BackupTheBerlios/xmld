@@ -19,8 +19,8 @@
  * name: The name of the file.
  * returns: The newly created file structure.
  */
-XMLDFile *XMLDFile_create(void) {
- XMLDFile *file=(XMLDFile *) malloc(sizeof(XMLDFile));
+File *File_create(void) {
+ File *file=(File *) malloc(sizeof(File));
  file->file=NULL;
  file->data=NULL;
  return file;
@@ -29,9 +29,9 @@ XMLDFile *XMLDFile_create(void) {
 /*
  * Frees a file structure.
  */
-void XMLDFile_free(XMLDFile *file) {
+void File_free(File *file) {
  if (file != NULL) {
-  XMLDAssoc_free(file->data);
+  Assoc_free(file->data);
   free(file);
  }
 }

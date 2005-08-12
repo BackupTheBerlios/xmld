@@ -199,9 +199,23 @@ Foundation:
 
 * Remove old documents from the docs page.
 
-* Drop the XMLD part of all the structure names in the code.
+* Drop the XMLD part off all the structure names in the code.
   * It's no longer a XML-only server.
-  * xmld.c -> opendaemon.c
+    * XMLDAssoc (done)
+    * XMLDAssocWalker (done)
+    * XMLDCfgDirective (done)
+    * XMLDCfgSection (done)
+    * XMLDCfgValue (done)
+    * XMLDEngine (done)
+    * XMLDFile (done)
+    * xmlddef (done)
+  * xmld.c -> opendaemon.c (done)
+  * xmld.conf -> opendaemon.conf (done)
+
+* Remove XMLDWork ? (done)
+  * Readd if needed
+
+* Take structures to classes directory ? (done)
 
 * Write interface names in the start up port list.
 
@@ -227,7 +241,10 @@ Goal: Strength.
 
 * Support for loading of a module on demand.
 
-* XMLDProcessor interface.
+* Processor interface.
+
+* Communicator interface ?
+  * To fit chat applications and such ?
 
 * I18n and l10n.
 

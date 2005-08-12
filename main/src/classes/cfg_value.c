@@ -10,33 +10,32 @@
  * Authors: Khalid Al-Kary (khalid_kary@hotmail.com)              *
  * -------------------------------------------------------------- * 
  */
+
 #include "includes.h"
+#include "cfg_value.h"
 
 /*
- * : Creates a new work structure.
- * returns: the newly created work structure.
+ * : Creates a new configuration value structure.
+ * returns: the newly created value.
  */
-XMLDWork *XMLDWork_create() {
- XMLDWork *work=(XMLDWork *) malloc(sizeof(XMLDWork));
- work->files=NULL;
- work->interface=NULL;
- work->data=NULL;
- return work;
+CfgValue *CfgValue_create() {
+ CfgValue *value = (CfgValue *) malloc(sizeof(CfgValue));
+ value->type = 0;
+ value->value = (void &) 0;
+ return value;
 }
 
 /*
- * : Frees an allocated work structure.
- * work: the work structure to free.
+ * : Frees a configuration value structure.
+ * directive: the value structure to free.
  */
-void XMLDWork_free(XMLDWork *work) {
- if (work != NULL) {
-  XMLDAssocWalker walker;
-  walker.subject = work->files;
-  walker.curr_index = -1;
-  while (XMLDAssocWalker_next(&walker)) {
-   XMLDFile_free((XMLDFile *) XMLDAssocWalker_get_current_data(&walker));
+void CfgValue_free(CfgValue *value) {
+ if (value != NULL) {
+  if (value->type == CFG_STRING) {
+   if (value->value != NULL) {
+    free(value->value);
+   }
   }
-  XMLDAssoc_free(work->files);
-  free(work);
+  free(value);
  } 
 }

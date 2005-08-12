@@ -14,33 +14,21 @@
 #include "includes.h"
 
 /*
- * : Creates a new interface structure.
- * returns: the newly created interface structure.
+ * : Creates a new engine structure.
+ * name: the name of the new engine. (not copied)
+ * returns: the newly created engine.
  */
-XMLDInterface *XMLDInterface_create() {
- XMLDInterface *interface=(XMLDInterface *) malloc(sizeof(XMLDInterface));
- interface->data = NULL;
- return interface;
+Engine *Engine_create() {
+ Engine *engine=(Engine *) malloc(sizeof(Engine));
+ return engine;
 }
 
 /*
- * : Copies the src interface to the dest interface.
+ * : Frees a created engine structure.
+ * engine: the engine to free.
  */
-void XMLDInterface_copy(XMLDInterface *src, XMLDInterface *dest) {
- dest->port = src->port;
- dest->init = src->init;
- dest->destroy = src->destroy;
- dest->user_connection = src->user_connection;
- dest->data = src->data;
-}
-
-/*
- * : Frees a created interface structure.
- * req: the interface structure to be freed.
- */
-void XMLDInterface_free(XMLDInterface *interface) {
- if (interface != NULL)  {
-  XMLDAssoc_free(interface->data);
-  free(interface);
- }  
+void Engine_free(Engine *engine) {
+ if (engine != NULL) {
+  free(engine);
+ } 
 }

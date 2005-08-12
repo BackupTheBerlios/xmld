@@ -11,24 +11,27 @@
  * -------------------------------------------------------------- * 
  */
 
-#include "includes.h"
+#ifndef __INTERFACE_H
+#define __INTERFACE_H
 
-/*
- * : Creates a new engine structure.
- * name: the name of the new engine. (not copied)
- * returns: the newly created engine.
- */
-XMLDEngine *XMLDEngine_create() {
- XMLDEngine *engine=(XMLDEngine *) malloc(sizeof(XMLDEngine));
- return engine;
-}
+/* Represents a user interface */
+struct Interface {
+ int port;
+ char *error;
+ Status (*init) (Interface *, CfgDirective *);
+ void (*destroy) (Interface *);
+ void (*user_connection) (void *);
+ char *(*get_error_message) (Interface *);
+ Assoc *data;
+};
 
-/*
- * : Frees a created engine structure.
- * engine: the engine to free.
- */
-void XMLDEngine_free(XMLDEngine *engine) {
- if (engine != NULL) {
-  free(engine);
- } 
-}
+#ifndef INTERFACE_TYPE_DEFINED
+#define INTERFACE_TYPE_DEFINED
+ typedef struct Interface Interface;
+#endif /* INTERFACE_TYPE_DEFINED */
+
+Interface *Interface_create(char *);
+void Interface_copy(Interface *, Interface *);
+void Interface_free(Interface *);
+
+#endif /* __INTERFACE_H */

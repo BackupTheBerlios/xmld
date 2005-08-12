@@ -11,19 +11,19 @@
  * -------------------------------------------------------------- * 
  */
 
-#ifndef __XMLD_WORK_H
-#define __XMLD_WORK_H
+#ifndef __CFG_DIRECTIVE_H
+#define __CFG_DIRECTIVE_H
 
-struct XMLDWork {
- XMLDInterface *interface;
- XMLDAssoc *files;
- XMLDAssoc *data;
+/* Represents a configuration directive */
+struct CfgDirective {
+ Assoc *values;
+ char *name;
 };
 
-typedef struct XMLDWork XMLDWork;
+typedef struct CfgDirective CfgDirective;
 
-XMLDWork *XMLDWork_create(void);
-char *XMLDWork_get_full_file(XMLDWork *);
-void XMLDWork_free(XMLDWork *);
+CfgDirective *CfgDirective_create(void);
+CfgValue *CfgDirective_get_value(CfgDirective *, char *, int);
+void CfgDirective_free(CfgDirective *);
 
-#endif /* __XMLD_WORK_H */
+#endif /* __CFG_DIRECTIVE_H */

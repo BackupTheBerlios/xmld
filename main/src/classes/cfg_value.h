@@ -11,19 +11,22 @@
  * -------------------------------------------------------------- * 
  */
 
-#ifndef __XMLD_CFG_DIRECTIVE_H
-#define __XMLD_CFG_DIRECTIVE_H
+#ifndef __CFG_VALUE_H
+#define __CFG_VALUE_H
+
+/* Directive types */
+#define CFG_INTEGER 0    /* Integer */
+#define CFG_STRING  1    /* String  */
 
 /* Represents a configuration directive */
-struct XMLDCfgDirective {
- XMLDAssoc *values;
- char *name;
+struct CfgValue {
+ int type;
+ void *value;
 };
 
-typedef struct XMLDCfgDirective XMLDCfgDirective;
+typedef struct CfgValue CfgValue;
 
-XMLDCfgDirective *XMLDCfgDirective_create(void);
-XMLDCfgValue *XMLDCfgDirective_get_value(XMLDCfgDirective *, char *, int);
-void XMLDCfgDirective_free(XMLDCfgDirective *);
+CfgValue *CfgValue_create(void);
+void CfgValue_free(CfgValue *);
 
-#endif /* __XMLD_CFG_DIRECTIVE_H */
+#endif /* __CFG_VALUE_H */

@@ -16,8 +16,8 @@
 /*
  * Creates a new associative table structure.
  */ 
-XMLDAssoc *XMLDAssoc_create(void) {
- XMLDAssoc *assoc = (XMLDAssoc *) malloc(sizeof(XMLDAssoc));
+Assoc *Assoc_create(void) {
+ Assoc *assoc = (Assoc *) malloc(sizeof(Assoc));
  assoc->values = NULL;
  assoc->keys = NULL;
  assoc->length = 0;
@@ -28,7 +28,7 @@ XMLDAssoc *XMLDAssoc_create(void) {
 /*
  * Gets the number of elements currently in the table.
  */
-int XMLDAssoc_get_length(XMLDAssoc *assoc) {
+int Assoc_get_length(Assoc *assoc) {
  return assoc->length;
 }
 
@@ -36,7 +36,7 @@ int XMLDAssoc_get_length(XMLDAssoc *assoc) {
  * Adds an element to the given associative table.
  * key and value are to be allocated and freed externally.
  */
-void XMLDAssoc_add(XMLDAssoc *assoc, char *key, void *data) {
+void Assoc_add(Assoc *assoc, char *key, void *data) {
  if (assoc->array_length > assoc->length) {
   assoc->values[assoc->length] = data;
   assoc->keys[assoc->length] = hash(key);
@@ -55,7 +55,7 @@ void XMLDAssoc_add(XMLDAssoc *assoc, char *key, void *data) {
  * Gets the index of the element with that has the given key.
  * -1 = not found
  */
-int XMLDAssoc_get_index(XMLDAssoc *assoc, char *key) {
+int Assoc_get_index(Assoc *assoc, char *key) {
  int i = -1;
  int hash_key = hash(key);
  for (i = 0; i < assoc->length; i++) {
@@ -70,15 +70,15 @@ int XMLDAssoc_get_index(XMLDAssoc *assoc, char *key) {
  * Removes an element that has the given key from the given 
  * associative table.
  */
-void XMLDAssoc_remove(XMLDAssoc *assoc, char *key) {
- XMLDAssoc_remove_index(assoc, XMLDAssoc_get_index(assoc, key));  
+void Assoc_remove(Assoc *assoc, char *key) {
+ Assoc_remove_index(assoc, Assoc_get_index(assoc, key));  
 }
 
 /*
  * Removes the element that has the given index from the associative
  * table.
  */
-void XMLDAssoc_remove_index(XMLDAssoc *assoc, int index) {
+void Assoc_remove_index(Assoc *assoc, int index) {
  if (index != -1) {
   assoc->values[index] = NULL;
   assoc->keys[index] = NULL;
@@ -87,7 +87,7 @@ void XMLDAssoc_remove_index(XMLDAssoc *assoc, int index) {
    memmove(assoc->values + index, assoc->values + assoc->length, assoc->length - index);
    memmove(assoc->keys + index, assoc->keys + assoc->length, assoc->length - assoc->index);
   }
-  if (assoc->array_length - assoc->length > XMLD_ASSOC_MAX_FREE) {
+  if (assoc->array_length - assoc->length > ASSOC_MAX_FREE) {
    assoc->values = (void **) realloc(assoc->values, --assoc->array_length * sizeof(void *));
    assoc->keys = (long *) realloc(assoc->keys, assoc->array_length * sizeof(long));
   }
@@ -97,7 +97,7 @@ void XMLDAssoc_remove_index(XMLDAssoc *assoc, int index) {
 /*
  * Returns the data associated to the given key -- NULL if not found.
  */
-void *XMLDAssoc_get(XMLDAssoc *assoc, char *key) {
+void *Assoc_get(Assoc *assoc, char *key) {
  int i;
  int hash_key = hash(key);
  for (i = 0; i < assoc->length; i++) {
@@ -111,7 +111,7 @@ void *XMLDAssoc_get(XMLDAssoc *assoc, char *key) {
 /*
  * Returns the data associated to the given key -- NULL if not found.
  */
-void *XMLDAssoc_get_key_index(XMLDAssoc *assoc, char *key, int index) {
+void *Assoc_get_key_index(Assoc *assoc, char *key, int index) {
  int i;
  int num = 0;
  int hash_key = hash(key);
@@ -130,7 +130,7 @@ void *XMLDAssoc_get_key_index(XMLDAssoc *assoc, char *key, int index) {
  * Returns the data associated to the given index -- NULL if the index
  * is out of bounds.
  */
-void *XMLDAssoc_get_by_index(XMLDAssoc *assoc, int index) {
+void *Assoc_get_by_index(Assoc *assoc, int index) {
  if (index > assoc->length-1 || index < 0) {
   return NULL;
  }
@@ -140,8 +140,8 @@ void *XMLDAssoc_get_by_index(XMLDAssoc *assoc, int index) {
 /*
  * Updates the hashed key of an element in the associative table.
  */
-void XMLDAssoc_update_key(XMLDAssoc *assoc, char *key, char *new_key) {
- int index = XMLDAssoc_get_index(assoc, key);
+void Assoc_update_key(Assoc *assoc, char *key, char *new_key) {
+ int index = Assoc_get_index(assoc, key);
  assoc->keys[index] = hash(new_key);
 }
 
@@ -149,7 +149,7 @@ void XMLDAssoc_update_key(XMLDAssoc *assoc, char *key, char *new_key) {
  * Updates the hashed key of an element in the associative table
  * given its index.
  */
-void XMLDAssoc_update_key_by_index(XMLDAssoc *assoc, int index, char *new_key) {
+void Assoc_update_key_by_index(Assoc *assoc, int index, char *new_key) {
  if (index < 0 || index	>= assoc->length) {
   return;
  }
@@ -160,7 +160,7 @@ void XMLDAssoc_update_key_by_index(XMLDAssoc *assoc, int index, char *new_key) {
  * Frees the memory used by the associative table structure itself
  * and not its elements.
  */
-void XMLDAssoc_free(XMLDAssoc *assoc) {
+void Assoc_free(Assoc *assoc) {
  if (assoc != NULL) {
   if (assoc->array_length > 0) {
    free(assoc->values);

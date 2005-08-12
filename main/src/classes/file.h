@@ -11,20 +11,20 @@
  * -------------------------------------------------------------- * 
  */
 
-#ifndef __XMLD_FILE_H
-#define __XMLD_FILE_H
+#ifndef __FILE_H
+#define __FILE_H
 
-struct XMLDFile {
+struct File {
  void *file;
  XMLDAssoc *data;
 };
 
-#ifndef XMLDFILE_TYPE_DEFINED
-#define XMLDFILE_TYPE_DEFINED
- typedef struct XMLDFile XMLDFile;
-#endif /* XMLDFILE_TYPE_DEFINED */
+#ifndef FILE_TYPE_DEFINED
+#define FILE_TYPE_DEFINED
+ typedef struct File File;
+#endif /* FILE_TYPE_DEFINED */
 
-XMLDFile *XMLDFile_create(char *);
-void XMLDFile_free(XMLDFile *);
+File *File_create(char *);
+void File_free(File *);
 
-#endif /* __XMLD_FILE_H */
+#endif /* __FILE_H */

@@ -11,26 +11,23 @@
  * -------------------------------------------------------------- * 
  */
 
-#ifndef __XMLDDEF_H
-#define __XMLDDEF_H
+#ifndef __CFG_SECTION_H
+#define __CFG_SECTION_H
 
-/* Version defines */
-#define XMLD_VERSION_MAJOR "0"
-#define XMLD_VERSION_MINOR "7"
-#define XMLD_VERSION_REVIEW "0"
-#define XMLD_VERSION "0.7.0"
+struct CfgSection {
+ Assoc *directives;
+ Assoc *sections;
+ char *name;
+};
 
-/* XMLDStatus values */
-#define XMLD_SUCCESS 1
-#define XMLD_FAILURE 0
+#ifndef CFG_SECTION_TYPE_DEFINED
+#define CFG_SECTION_TYPE_DEFINED
+ typedef struct XMLDCfgSection XMLDCfgSection;
+#endif /* CFG_SECTION_TYPE_DEFINED */
 
-/* XMLDBool values */
-#define XMLD_FALSE 0
-#define XMLD_TRUE 1
+CfgSection *CfgSection_create(void);
+CfgSection *CfgSection_get_section(CfgSection *, char *, int);
+CfgDirective *CfgSection_get_directive(CfgSection *, char *, int);
+void CfgSection_free(CfgSection *);
 
-#define BIT_ISSET(bitmask, bit) ((bitmask) & (bit))
-
-typedef int XMLDBool;
-typedef int XMLDStatus;
-
-#endif /* __XMLDDEF_H */
+#endif /* __CFG_SECTION_H */

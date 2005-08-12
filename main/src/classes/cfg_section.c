@@ -12,15 +12,15 @@
  */
 
 #include "includes.h"
-#include "xmld_cfg_directive.h"
-#include "xmld_cfg_section.h"
+#include "cfg_directive.h"
+#include "cfg_section.h"
 
 /*
  * : Creates a new configuration section structure.
  * returns: the newly created section.
  */
-XMLDCfgSection *XMLDCfgSection_create() {
- XMLDCfgSection *section = (XMLDCfgSection *) malloc(sizeof(XMLDCfgSection));
+CfgSection *CfgSection_create() {
+ CfgSection *section = (CfgSection *) malloc(sizeof(CfgSection));
  section->directives = NULL;
  section->sections = NULL;
  section->name = NULL;
@@ -34,8 +34,8 @@ XMLDCfgSection *XMLDCfgSection_create() {
  * with that name exist, the given index is to
  * decide which one to return.
  */
-XMLDCfgSection *XMLDCfgSection_get_section(XMLDCfgSection *section, char *name, int index) {
- return XMLDAssoc_get_key_index(section->sections, name, index);
+CfgSection *CfgSection_get_section(CfgSection *section, char *name, int index) {
+ return Assoc_get_key_index(section->sections, name, index);
 }
 
 /*
@@ -44,33 +44,33 @@ XMLDCfgSection *XMLDCfgSection_get_section(XMLDCfgSection *section, char *name, 
  * with that name exist, the given index is to
  * decide which one to return.
  */
-XMLDCfgDirective *XMLDCfgSection_get_directive(XMLDCfgSection *section, char *name, int index) {
- return XMLDAssoc_get_key_index(section->directives, name, index);
+CfgDirective *CfgSection_get_directive(CfgSection *section, char *name, int index) {
+ return Assoc_get_key_index(section->directives, name, index);
 }
 
 /*
  * : Frees a configuration section structure.
  * section: the section structure to free.
  */
-void XMLDCfgSection_free(XMLDCfgSection *section) {
+void CfgSection_free(CfgSection *section) {
  if (section != NULL) {
-  XMLDAssocWalker walker;
+  AssocWalker walker;
   walker.subject = section->directives;
   walker.curr_index = -1;
-  while (XMLDAssocWalker_next(&walker)) {
-   if (XMLDAssocWalker_get_current_data(&walker) != NULL) {
-    XMLDCfgDirective_free((XMLDCfgDirective *) XMLDAssocWalker_get_current_data(&walker));
+  while (AssocWalker_next(&walker)) {
+   if (AssocWalker_get_current_data(&walker) != NULL) {
+    CfgDirective_free((CfgDirective *) AssocWalker_get_current_data(&walker));
    }
   }
-  XMLDAssoc_free(section->directives);
+  Assoc_free(section->directives);
   walker.subject = section->sections;
   walker.curr_index = -1;
-  while (XMLDAssocWalker_next(&walker)) {
-   if (XMLDAssocWalker_get_current_data(&walker) != NULL) {
-    XMLDCfgSection_free((XMLDCfgSection *) XMLDAssocWalker_get_current_data(&walker));
+  while (AssocWalker_next(&walker)) {
+   if (AssocWalker_get_current_data(&walker) != NULL) {
+    CfgSection_free((CfgSection *) AssocWalker_get_current_data(&walker));
    }
   }
-  XMLDAssoc_free(section->sections);
+  Assoc_free(section->sections);
   free(section);
  } 
 }

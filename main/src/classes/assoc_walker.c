@@ -17,8 +17,8 @@
  * Creates a new associative table walker structure for the
  * given associative table parameter.
  */
-XMLDAssocWalker *XMLDAssocWalker_create(XMLDAssoc *subject) {
- XMLDAssocWalker *walker = (XMLDAssocWalker *) malloc(sizeof(XMLDAssocWalker));
+AssocWalker *AssocWalker_create(XMLDAssoc *subject) {
+ AssocWalker *walker = (AssocWalker *) malloc(sizeof(AssocWalker));
  walker->subject = subject;
  walker->curr_index = -1;
 }
@@ -26,26 +26,26 @@ XMLDAssocWalker *XMLDAssocWalker_create(XMLDAssoc *subject) {
 /*
  * Walks to the next element in the associative table.
  */
-int XMLDAssocWalker_next(XMLDAssocWalker *walker) {
+int AssocWalker_next(AssocWalker *walker) {
  if (walker->curr_index >= walker->subject->length) {
-  return XMLD_ASSOC_WALKER_END;
+  return ASSOC_WALKER_END;
  }
  else {
   walker->curr_index++;
-  return XMLD_ASSOC_WALKER_CONT;
+  return ASSOC_WALKER_CONT;
  }
 }
 
 /*
  * Walks to the previous element in the associative table.
  */
-int XMLDAssocWalker_prev(XMLDAssocWalker *walker) {
+int AssocWalker_prev(AssocWalker *walker) {
  if (walker->curr_index <= 0) {
-  return XMLD_ASSOC_WALKER_END;
+  return ASSOC_WALKER_END;
  }
  else {
   walker->curr_index--;
-  return XMLD_ASSOC_WALKER_CONT;
+  return ASSOC_WALKER_CONT;
  }
 }
 
@@ -53,14 +53,14 @@ int XMLDAssocWalker_prev(XMLDAssocWalker *walker) {
 /*
  * Resets the associative table walker.
  */
-void XMLDAssocWalker_reset(XMLDAssocWalker *walker) {
+void AssocWalker_reset(AssocWalker *walker) {
  walker->curr_index = -1;
 }
 
 /*
  * Gets the current index of the walker.
  */
-int XMLDAssocWalker_get_current_index(XMLDAssocWalker *walker) {
+int AssocWalker_get_current_index(AssocWalker *walker) {
  return walker->curr_index;
 }
 
@@ -68,7 +68,7 @@ int XMLDAssocWalker_get_current_index(XMLDAssocWalker *walker) {
  * Gets the value stored at the current walker index in the
  * associative table.
  */
-void *XMLDAssocWalker_get_current_data(XMLDAssocWalker *walker) {
+void *AssocWalker_get_current_data(AssocWalker *walker) {
  if (walker->curr_index  >= 0) {
   return walker->subject->data + walker->curr_index;
  }
@@ -80,6 +80,6 @@ void *XMLDAssocWalker_get_current_data(XMLDAssocWalker *walker) {
 /*
  * Frees the memory used by a walker structure.
  */
-void XMLDAssocWalker_free(XMLDAssocWalker *walker) {
+void AssocWalker_free(AssocWalker *walker) {
  free(walker);
 }
