@@ -28,7 +28,7 @@ void yy_delete_buffer(YY_BUFFER_STATE);
 XMLDStatus cfg_init() {
  cfg_tree=NULL;
  errno=0;
- FILE *conf=fopen("xmld.conf", "r");
+ FILE *conf=fopen("opendaemon.conf", "r");
 
  if (errno != 0) {
   return XMLD_FAILURE;
