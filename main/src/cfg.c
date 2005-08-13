@@ -25,32 +25,32 @@ void yy_delete_buffer(YY_BUFFER_STATE);
  * : Initiates the configuration manager.
  * returns: whether successful.
  */
-XMLDStatus cfg_init() {
+Status cfg_init() {
  cfg_tree=NULL;
  errno=0;
  FILE *conf=fopen("opendaemon.conf", "r");
 
  if (errno != 0) {
-  return XMLD_FAILURE;
+  return FAILURE;
  }
 
  YY_BUFFER_STATE buf = yy_create_buffer(conf, YY_BUF_SIZE);
- XMLDStatus status = yyparse(cfg_tree);
+ Status status = yyparse(cfg_tree);
  yy_delete_buffer(buf);
  if (status == -1) {
-  return XMLD_FAILURE;
+  return FAILURE;
  }
  else {
-  XMLDCfgDirective *docroot_directive = XMLDCfgSection_get_directive(cfg_tree, "DocumentRoot", 1);
+  CfgDirective *docroot_directive = CfgSection_get_directive(cfg_tree, "DocumentRoot", 1);
   if (docroot_directive == NULL) {
-   return XMLD_FAILURE;
+   return FAILURE;
   }
-  XMLDCfgValue *docroot_value = XMLDCfgDirective_get_value(docroot_directive);
-  if (docroot_value->type != XMLD_CFG_STRING) {
-   return XMLD_FAILURE;
+  CfgValue *docroot_value = CfgDirective_get_value(docroot_directive);
+  if (docroot_value->type != CFG_STRING) {
+   return FAILURE;
   }
   document_root = (char *) docroot_value->value;
-  return XMLD_SUCCESS;
+  return SUCCESS;
  }
 }
 
@@ -58,9 +58,9 @@ XMLDStatus cfg_init() {
  * Finalizes and cleans up the parse tree of the conf.
  * returns: whether successful.
  */
-XMLDStatus cfg_shutdown() {
- XMLDCfgSection_free(cfg_tree);
- return XMLD_SUCCESS;
+Status cfg_shutdown() {
+ CfgSection_free(cfg_tree);
+ return SUCCESS;
 }
 
 void cfg_update() {

@@ -14,12 +14,12 @@
 #ifndef __CFG_H
 #define __CFG_H
 
-XMLDCfgSection *cfg_tree;
+CfgSection *cfg_tree;
 
 char *document_root;
 
-XMLDStatus cfg_init(void);
+Status cfg_init(void);
 void cfg_update(void);
-XMLDStatus cfg_shutdown(void);
+Status cfg_shutdown(void);
 
 #endif /* __CFG_H */

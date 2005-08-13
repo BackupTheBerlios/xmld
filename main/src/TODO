@@ -211,6 +211,11 @@ Foundation:
     * xmlddef (done)
   * xmld.c -> opendaemon.c (done)
   * xmld.conf -> opendaemon.conf (done)
+  * modules' code ?
+    * cfg
+    * cfg_parser
+    * echoserver
+    * engine_list
 
 * Remove XMLDWork ? (done)
   * Readd if needed
