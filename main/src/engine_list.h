@@ -14,13 +14,13 @@
 #ifndef __ENGINE_LIST_H
 #define __ENGINE_LIST_H
 
-#define XMLD_DEFAULT_ENGINE "Engine-XMLD"
+#define DEFAULT_ENGINE "Engine-XMLD"
 
-XMLDAssoc *engine_list;
-XMLDAssocWalker *engine_list_walker;
+Assoc *engine_list;
+AssocWalker *engine_list_walker;
 
-XMLDStatus engine_list_init();
+Status engine_list_init();
 char *engine_list_get_engine(char *);
-XMLDStatus engine_list_shutdown();
+Status engine_list_shutdown();
 
 #endif /* __ENGINE_LIST_H */

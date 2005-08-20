@@ -51,25 +51,25 @@ int main() {
  
  printf("OpenDaemon is up and running:\n\t* Main PID: %d\n", getpid());
 
- if (cfg_init() == XMLD_FAILURE) {
+ if (cfg_init() == FAILURE) {
   perror("cfg_init");
   return 1;
  }
  
- if (engine_list_init() == XMLD_FAILURE) {
+ if (engine_list_init() == FAILURE) {
   cfg_shutdown();
   perror("engine_list_init");
   return 1;
  }
  
- if (interface_list_init() == XMLD_FAILURE) {
+ if (interface_list_init() == FAILURE) {
   cfg_shutdown();
   engine_list_shutdown();
   perror("interface_list_init");
   return 1;
  }
  
- if (mtasker_init() == XMLD_FAILURE) {
+ if (mtasker_init() == FAILURE) {
   cfg_shutdown();
   engine_list_shutdown();
   interface_list_shutdown();
@@ -77,7 +77,7 @@ int main() {
   return 1;
  }
  
- if (somanager_init() == XMLD_FAILURE) {
+ if (somanager_init() == FAILURE) {
   cfg_shutdown();
   engine_list_shutdown();
   interface_list_shutdown();

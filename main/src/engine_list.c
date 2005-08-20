@@ -14,52 +14,25 @@
 #include "includes.h"
 #include "engine_list.h"
 
-#ifdef USE_ENGINE_XMLD
-#include "engine_xmld/engine_xmld.h"
-#endif /* USE_ENGINE_XMLD */
- 
-XMLDStatus engine_list_init() {
- engine_list=XMLDAssoc_create();
- XMLDEngine *curr_engine;
-#ifdef USE_ENGINE_XMLD
- curr_engine=XMLDEngine_create();
- curr_engine->is_valid_mime=engine_xmld_is_valid_mime;
- curr_engine->init=engine_xmld_init;
- curr_engine->prepare=engine_xmld_prepare;
- curr_engine->cleanup=engine_xmld_cleanup;
- curr_engine->walk=engine_xmld_walk;
- curr_engine->destroy=engine_xmld_destroy;
- curr_engine->get_attribute_type=engine_xmld_get_attribute_type;
- curr_engine->get_attribute_length=engine_xmld_get_attribute_length;
- curr_engine->get_attribute=engine_xmld_get_attribute;
- curr_engine->get_text_type=engine_xmld_get_text_type;
- curr_engine->get_text_length=engine_xmld_get_text_length;
- curr_engine->get_text=engine_xmld_get_text;
- curr_engine->get_tagname=engine_xmld_get_tagname;
- curr_engine->reset_element=engine_xmld_reset_element;
- curr_engine->next_attribute=engine_xmld_next_attribute;
- curr_engine->get_curr_attribute_type=engine_xmld_get_curr_attribute_type;
- curr_engine->get_curr_attribute_length=engine_xmld_get_curr_attribute_length;
- curr_engine->get_curr_attribute_name=engine_xmld_get_curr_attribute_name;
- curr_engine->get_curr_attribute_value=engine_xmld_get_curr_attribute_value;
- XMLDAssoc_add(engine_list, "Engine-XMLD", curr_engine);
-#endif /* USE_ENGINE_XMLD */
- engine_list_walker = XMLDAssocWalker_create(engine_list);
- while (XMLDAssocWalker_next(engine_list_walker)) {
-  (*(((XMLDEngine *) XMLDAssocWalker_get_current_data(engine_list_walker))->init)) ();
+Status engine_list_init() {
+ engine_list=Assoc_create();
+ Engine *curr_engine;
+ engine_list_walker = AssocWalker_create(engine_list);
+ while (AssocWalker_next(engine_list_walker)) {
+  (*(((Engine *) AssocWalker_get_current_data(engine_list_walker))->init)) ();
  }
- return XMLD_SUCCESS;
+ return SUCCESS;
 }
 
-XMLDStatus engine_list_shutdown() {
- XMLDAssocWalker_reset(engine_list_walker);
- while (XMLDAssocWalker_next(engine_list_walker)) {
-  (*(((XMLDEngine *) XMLDAssocWalker_get_current_data(engine_list_walker))->destroy)) ();
-  XMLDEngine_free((XMLDEngine *) XMLDAssocWalker_get_current_data(engine_list_walker));
+Status engine_list_shutdown() {
+ AssocWalker_reset(engine_list_walker);
+ while (AssocWalker_next(engine_list_walker)) {
+  (*(((Engine *) AssocWalker_get_current_data(engine_list_walker))->destroy)) ();
+  Engine_free((Engine *) AssocWalker_get_current_data(engine_list_walker));
  }
- XMLDAssocWalker_free(engine_list_walker);
- XMLDAssoc_free(engine_list);
- return XMLD_SUCCESS;
+ AssocWalker_free(engine_list_walker);
+ Assoc_free(engine_list);
+ return SUCCESS;
 }
 
 /*
@@ -73,18 +46,18 @@ XMLDStatus engine_list_shutdown() {
  * if not, the default engine is returned.
  */
 char *engine_list_get_engine(char *file) { 
- XMLDCfgSection *engines = XMLDCfgSection_get_section(cfg_tree, "Engines", 0);
- XMLDCfgDirective *type;
- XMLDCfgValue *type_value;
+ CfgSection *engines = CfgSection_get_section(cfg_tree, "Engines", 0);
+ CfgDirective *type;
+ CfgValue *type_value;
  int index = 0;
- while ((type = XMLDCfgSection_get_directive(engines, "FileType", index)) != NULL) {
-  type_value = XMLDCfgDirective_get_value(type, 0);
+ while ((type = CfgSection_get_directive(engines, "FileType", index)) != NULL) {
+  type_value = CfgDirective_get_value(type, 0);
   if (strcmp(((char *) type_value->value), file) == 0) {
-   type_value = XMLDCfgDirective_get_value(type, 1);
+   type_value = CfgDirective_get_value(type, 1);
    return (char *) type_value->value;
   }
   index++;
  }
- return XMLD_DEFAULT_ENGINE;
+ return DEFAULT_ENGINE;
 }
 

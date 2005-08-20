@@ -14,11 +14,11 @@
 #ifndef __INTERFACE_LIST_H
 #define __INTERFACE_LIST_H
 
-XMLDAssoc *interface_list;
-XMLDAssocWalker *interface_list_walker;
+Assoc *interface_list;
+AssocWalker *interface_list_walker;
 
-XMLDStatus interface_list_init();
-XMLDStatus interface_list_shutdown();
-XMLDInterface *interface_list_search_by_port(int);
+Status interface_list_init();
+Status interface_list_shutdown();
+Interface *interface_list_search_by_port(int);
 
 #endif /* __INTREFACE_LIST_H */

@@ -14,8 +14,8 @@
 #ifndef __SOMANAGER_H
 #define __SOMANAGER_H
 
-XMLDStatus somanager_init();
-XMLDStatus somanager_shutdown();
+Status somanager_init();
+Status somanager_shutdown();
 void somanager_handle(void*);
 void somanager_user_connection(void*);
 

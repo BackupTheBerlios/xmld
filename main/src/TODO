@@ -211,18 +211,21 @@ Foundation:
     * xmlddef (done)
   * xmld.c -> opendaemon.c (done)
   * xmld.conf -> opendaemon.conf (done)
-  * modules' code ?
+  * modules' code ? (done)
     * cfg
     * cfg_parser
     * echoserver
     * engine_list
+    * interface_list
+    * opendaemon.c
+    * somanager
 
 * Remove XMLDWork ? (done)
   * Readd if needed
 
 * Take structures to classes directory ? (done)
 
-* Write interface names in the start up port list.
+* Write interface names in the start up port list. (done)
 
 * Test run:
   * Modify make file.

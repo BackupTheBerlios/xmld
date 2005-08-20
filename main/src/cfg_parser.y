@@ -18,10 +18,10 @@
 %union {
  int integer;
  char *string;
- XMLDCfgValue *value;
- XMLDCfgDirective *directive;
- XMLDCfgSection *section;
- XMLDAssoc *list;
+ CfgValue *value;
+ CfgDirective *directive;
+ CfgSection *section;
+ Assoc *list;
 }
 
 /* Thread-safe */
@@ -39,42 +39,42 @@
 
 configuration: cfg_tree
 	     {
-	      ((XMLDCfgSection *) cfg_tree) = $1;
+	      ((CfgSection *) cfg_tree) = $1;
 	      YYACCEPT;
 	     }
 ;
 
 cfg_tree: directive
 	  {
-	   $$=XMLDCfgSection_create();
-           $$->directives = XMLDAssoc_create();
-	   XMLDAssoc_add($$->directives, $1->name, $1);
+	   $$=CfgSection_create();
+           $$->directives = Assoc_create();
+	   Assoc_add($$->directives, $1->name, $1);
 	   free($1->name);
 	  }
 	| section
 	  {
-	   $$=XMLDCfgSection_create();
-	   $$->sections = XMLDAssoc_create();
-	   XMLDAssoc_add($$->sections, $1->name, $1);
+	   $$=CfgSection_create();
+	   $$->sections = Assoc_create();
+	   Assoc_add($$->sections, $1->name, $1);
 	   free($1->name);
 	  }
 	| cfg_tree '\n' directive
 	  {
 	   $$=$1;
-	   XMLDAssoc_add($$->directives, $3->name, $3);
+	   Assoc_add($$->directives, $3->name, $3);
 	   free($3->name);
 	  }
 	| cfg_tree '\n' section 
 	  {
 	   $$=$1;
-	   XMLDAssoc_add($$->sections, $3->name, $3)
+	   Assoc_add($$->sections, $3->name, $3)
 	   free($3->name);
 	  }
 ;
 
 section: '<' IDENTIFIER '>' '\n' cfg_tree '\n' '<' '/' IDENTIFIER '>'
          {
-	  $$=XMLDCfgSection_create();
+	  $$=CfgSection_create();
 	  $$->name = $2;
 	  $$->directives = $5;
 	 }
@@ -82,7 +82,7 @@ section: '<' IDENTIFIER '>' '\n' cfg_tree '\n' '<' '/' IDENTIFIER '>'
 
 directive: IDENTIFIER ' ' value_list
 	   {
-	    $$=XMLDCfgDirective_create();
+	    $$=CfgDirective_create();
 	    $$->name = $1;
 	    $$->values = $3;
 	   }
@@ -90,26 +90,26 @@ directive: IDENTIFIER ' ' value_list
 
 value_list: value
 	         {
-		  $$=XMLDAssoc_create();
-	          XMLDAssoc_add($$, NULL, $1);
+		  $$=Assoc_create();
+	          Assoc_add($$, NULL, $1);
 		 }
 	  | value_list ' ' value
 	         {
 		  $$=$1;
-		  XMLDAssoc_add($$, NULL, $3);
+		  Assoc_add($$, NULL, $3);
 	         }
 ;
 	  
 value: STRING 
               {
-               $$=XMLDCfgValue_create();
-	       $$->type = XMLD_CFG_STRING;
+               $$=CfgValue_create();
+	       $$->type = CFG_STRING;
 	       $$->value = (void *) $1;
               }
      | INTEGER
               {
-               $$=XMLDCfgValue_create();
-	       $$->type = XMLD_CFG_INTEGER;
+               $$=CfgValue_create();
+	       $$->type = CFG_INTEGER;
 	       $$->value = (void *) $1;
 	      }
 ;

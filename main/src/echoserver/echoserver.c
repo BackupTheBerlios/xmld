@@ -17,14 +17,14 @@
 /*
  * Initializes the EchoServer interface.
  */
-XMLDStatus echoserver_init(XMLDInterface *interface, XMLDCfgDirective *directive) {
- return XMLD_SUCCESS;
+Status echoserver_init(Interface *interface, CfgDirective *directive) {
+ return SUCCESS;
 }
 
 /*
  * Destroys the EchoServer interface.
  */
-void echoserver_destroy(XMLDInterface *interface) {
+void echoserver_destroy(Interface *interface) {
 }
 
 /*
@@ -33,18 +33,18 @@ void echoserver_destroy(XMLDInterface *interface) {
 void echoserver_user_connection(void *interface) {
  char *msg;
  do {
-  msg = xmld_socket_read(passed_fd, ECHOSERVER_MAX_MSG_LEN);
-  xmld_socket_write(passed_fd, msg);
+  msg = socket_read(passed_fd, ECHOSERVER_MAX_MSG_LEN);
+  socket_write(passed_fd, msg);
   free(msg);
  } while (strcmp(msg, "quit") == 1);
- xmld_socket_write(passed_fd, "Good Bye!");
- xmld_socket_shutdown(passed_fd);
+ socket_write(passed_fd, "Good Bye!");
+ socket_shutdown(passed_fd);
 }
 
 /*
  * Gets the current interface's error message.
  */
-char *echoserver_get_error_message(XMLDInterface *interface) {
+char *echoserver_get_error_message(Interface *interface) {
  return interface->error;
 }
 

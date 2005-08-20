@@ -15,7 +15,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include "xmld_sockets.h"
+#include "sockets.h"
 
 #ifdef USE_PTASKER
  #include <sys/types.h>
@@ -30,16 +30,16 @@ int *fds;
 int *ports;
 int num_sock;
 
-XMLDStatus somanager_init() {
- XMLDCfgSection *ports_section = XMLDCfgSection_get_section(cfg_tree, "Ports", 1);
+Status somanager_init() {
+ CfgSection *ports_section = CfgSection_get_section(cfg_tree, "Ports", 1);
  if (ports_section == NULL) {
-  return XMLD_FAILURE;
+  return FAILURE;
  }
- XMLDCfgDirective *port_directive;
+ CfgDirective *port_directive;
  num_sock = 0;
- while ((port_directive = XMLDCfgSection_get_directive(ports_section, "Port", num_sock+1)) != NULL) {
-  XMLDCfgValue *port_value = XMLDCfgDirective_get_value(port_directive, 0);
-  if (port_value->type != XMLD_CFG_INTEGER) {
+ while ((port_directive = CfgSection_get_directive(ports_section, "Port", num_sock+1)) != NULL) {
+  CfgValue *port_value = CfgDirective_get_value(port_directive, 0);
+  if (port_value->type != CFG_INTEGER) {
    continue;
   }
   ports = (int *) realloc(ports, (num_sock+1)*sizeof(int));
@@ -48,68 +48,69 @@ XMLDStatus somanager_init() {
  }
  
  if (num_sock == 0) {
-  return XMLD_FAILURE;
+  return FAILURE;
  }
  fds=(int*) malloc(num_sock*sizeof(int));
  int t;
  int s;
 
  for (t = 0; t < num_sock; t++) {
-  fds[t]=xmld_socket_create();
+  fds[t]=socket_create();
   
   if (fds[t] == -1) {
-   perror("xmld_socket_create");
-   return XMLD_FAILURE;
+   perror("socket_create");
+   return FAILURE;
   }
-  s = xmld_socket_bind(fds[t], ports[t]);
+  s = socket_bind(fds[t], ports[t]);
   if (s == -1) {
-   perror("xmld_socket_bind");
-   return XMLD_FAILURE;
+   perror("socket_bind");
+   return FAILURE;
   }
-  printf("\t* Listening port %d: %d\n", t+1, ports[t]);
+  Interface *interface = interface_list_search_by_port(ports[t]);
+  printf("\t* %s is on port %d.\n", interface->name, ports[t]);
   s = mtasker_handle(somanager_handle, (void *) &t, fds[t]);
-  if (s == XMLD_FAILURE) {
+  if (s == FAILURE) {
    perror("mtasker_handle");
-   return XMLD_FAILURE;
+   return FAILURE;
   }
  }
- return XMLD_SUCCESS;
+ return SUCCESS;
 }
 
-XMLDStatus somanager_shutdown() {
+Status somanager_shutdown() {
  int i;
  for (i = 0; i < num_sock; i++) {
-  xmld_socket_shutdown(fds[i]);
+  socket_shutdown(fds[i]);
  }
  free(fds);
- return XMLD_SUCCESS;
+ return SUCCESS;
 }
 
 void somanager_handle(void *sockindex) {
  int s;
 #ifdef MULTI_PROC_MTASKER
- s = xmld_socket_listen(passed_fd);
+ s = socket_listen(passed_fd);
 #else
- s = xmld_socket_listen(fds[*((int *) sockindex)]);
+ s = socket_listen(fds[*((int *) sockindex)]);
 #endif /* MULTI_PROC_MTASKER */
  
  if (s == -1) {
-  perror("xmld_socket_listen");
+  perror("socket_listen");
   return;
  }
 
  while (1) {
 #ifdef MULTI_PROC_MTASKER
-  s = xmld_socket_accept(passed_fd);
+  s = socket_accept(passed_fd);
 #else
-  s = xmld_socket_accept(fds[*((int *) sockindex)]);
+  s = socket_accept(fds[*((int *) sockindex)]);
 #endif /* MULTI_PROC_MTASKER */
 
   if (s == -1) {
-   perror("xmld_socket_accept");
+   perror("socket_accept");
    continue;
   }
-  XMLDInterface *interface = interface_list_search_by_port(ports[*((int *) sockindex)]);
+  Interface *interface = interface_list_search_by_port(ports[*((int *) sockindex)]);
   mtasker_handle(interface->user_connection, (void *) interface, s);
  } 
 }

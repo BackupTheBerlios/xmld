@@ -16,9 +16,9 @@
 
 #define ECHOSERVER_MAX_MSG_LEN 100
 
-XMLDStatus echoserver_init(XMLDInterface *, XMLDCfgDirective *);
-void echoserver_destroy(XMLDInterface *);
+Status echoserver_init(Interface *, CfgDirective *);
+void echoserver_destroy(Interface *);
 void echoserver_user_connection(void *);
-char *echoserver_get_error_message(XMLDInterface *);
+char *echoserver_get_error_message(Interface *);
 
 #endif /* __ECHO_SERVER_H */
