@@ -11,8 +11,16 @@
  * -------------------------------------------------------------- * 
  */
 
-#include "../includes.h";
-#include "echoserver.h";
+#include "../includes.h"
+
+#ifdef USE_PTASKER
+ #include <sys/types.h>
+ #include "../ptasker/ptasker.h"
+ #define MULTI_PROC_MTASKER
+ #undef MULTI_THREAD_MTASKER 
+#endif /* USE_PTASKER */
+
+#include "echoserver.h"
 
 /*
  * Initializes the EchoServer interface.

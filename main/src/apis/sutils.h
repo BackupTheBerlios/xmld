@@ -19,8 +19,8 @@
 
 char **str_split(char *, char);
 char *str_prepend(char *, char *);
-XMLDBool str_like(char *, char *);
-XMLDBool str_between(char *, char *, char *);
+Bool str_like(char *, char *);
+Bool str_between(char *, char *, char *);
 char *itostr(int, int);
 char *ftostr(float, int);
 char *ltrim(char *);

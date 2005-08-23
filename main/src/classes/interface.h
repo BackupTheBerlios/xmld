@@ -30,7 +30,7 @@ struct Interface {
  typedef struct Interface Interface;
 #endif /* INTERFACE_TYPE_DEFINED */
 
-Interface *Interface_create(char *);
+Interface *Interface_create(void);
 void Interface_copy(Interface *, Interface *);
 void Interface_free(Interface *);
 

@@ -17,8 +17,8 @@
 struct proc {
  void (*func) (void*);
  void *data;
- XMLDBool busy;
- XMLDBool die;
+ Bool busy;
+ Bool die;
  int fd;
  int sp[2];
  pid_t pid;
@@ -34,9 +34,9 @@ int passed_fd; /*
 		* The fd last passed using passfd.c
 		*/
 
-XMLDStatus mtasker_init(void);
-XMLDStatus mtasker_shutdown(void);
-XMLDStatus mtasker_handle(void (*) (void*), void *, int);
+Status mtasker_init(void);
+Status mtasker_shutdown(void);
+Status mtasker_handle(void (*) (void*), void *, int);
 struct proc *mtasker_spawn();
 void mtasker_kill(int);
 void mtasker_handle_idle(int);

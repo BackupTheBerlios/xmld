@@ -1,35 +1,34 @@
-OBJECTS = authman.o cfg.o cfg_parser.o dutils.o engine_list.o interface_list.o fmanager.o func_list.o mfigure.o \
-	  passfd.o protoimpl.o resptrans.o sutils.o xmld_interface.o somanager.o twalker.o xmld_aggr_table.o \
-	  xmld.o xmld_col.o xmld_connection.o xmld_directive.o xmld_engine.o xmld_expr.o \
-	  xmld_file.o xmld_func.o xmld_list.o xmld_request.o xmld_response.o xmld_row.o xmld_sockets.o \
-	  xmld_work.o ptasker.o engine_xmld.o lex.yy.o xmldsql.o xmldsql.tab.o
+OBJECTS = cfg.o engine_list.o interface_list.o passfd.o sutils.o interface.o somanager.o \
+	  opendaemon.o cfg_directive.o cfg_section.o cfg_value.o engine.o file.o sockets.o \
+	  ptasker.o assoc.o assoc_walker.o lex.yy.o echoserver.o cfg_parser.tab.o
 BISON = bison
 FLEX = flex
-CFLAGS = -Wall -DUSE_ENGINE_XMLD -DUSE_PTASKER -DUSE_XMLDSQL
+CFLAGS = -Wall -DUSE_ECHOSERVER -DUSE_PTASKER
 CC = gcc
-VPATH = ptasker:engine_xmld:xmldsql
+VPATH = ptasker:echoserver:classes:apis
 
 all: generate ${OBJECTS}
-	${CC} $(wordlist 2, $(words $^), $^) -lfl -lm -o xmld
+	${CC} $(wordlist 2, $(words $^), $^) -lfl -lm -o opendaemon
 
 %.o: $(wildcard *.h)
 
 lex.yy.o: lex.yy.c $(wildcard *.h)
 	${CC} ${CFLAGS} -c -o lex.yy.o lex.yy.c
 	
-xmldsql.tab.o: xmldsql.tab.c $(wildcard *.h)
-	${CC} ${CFLAGS} -c -o xmldsql.tab.o xmldsql.tab.c
+xmldsql.tab.o: cfg_parser.tab.c $(wildcard *.h)
+	${CC} ${CFLAGS} -c -o cfg_parser.tab.o cfg_parser.tab.c
 	
-generate: xmld_sql.y xmldsql.lex $(wildcard *.h)
-	${BISON} -d xmldsql/xmld_sql.y -o xmldsql.tab.c
-	${FLEX} -i -f xmldsql/xmldsql.lex
+generate: cfg_parser.y cfg_parser.lex $(wildcard *.h)
+	${BISON} -d cfg_parser.y -o cfg_parser.tab.c
+	${FLEX} -i -f -d cfg_parser.lex
 	
 clean:
-	rm -f xmld
+	rm -f opendaemon
 	rm -f *.o
 	rm -f ptasker/*.o
-	rm -f engine_xmld/*.o
-	rm -f xmldsql/*.o
-	rm -f xmldsql.tab.h xmldsql.tab.c
+	rm -f echoserver/*.o
+	rm -f classes/*.o
+	rm -f cfg_parser.tab.h cfg_parser.tab.c
 	rm -f lex.yy.c
 	rm -f core
+	rm -f core.*

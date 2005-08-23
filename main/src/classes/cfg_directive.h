@@ -23,7 +23,7 @@ struct CfgDirective {
 typedef struct CfgDirective CfgDirective;
 
 CfgDirective *CfgDirective_create(void);
-CfgValue *CfgDirective_get_value(CfgDirective *, char *, int);
+CfgValue *CfgDirective_get_value(CfgDirective *, int);
 void CfgDirective_free(CfgDirective *);
 
 #endif /* __CFG_DIRECTIVE_H */

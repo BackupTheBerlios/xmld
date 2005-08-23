@@ -12,19 +12,19 @@
  * -------------------------------------------------------------- * 
  */
 
+#include "includes.h"
 #include "cfg_parser.tab.h"
 #define YY_DECL int yylex(YYSTYPE *lvalp)
 %}
 %x STR
-%option noyywrap;
 %%
 
-" " return ' ';
-^#.{0,}\n
-< return '<';
-> return '>';
-/ return '/';
-"\n" return '\n';
+#(.*)\n   ;
+" " ;
+"<" return '<';
+">" return '>';
+"/" return '/';
+"\n" ;
 "\""  BEGIN STR;
 <STR>[^"]* {
 	    lvalp->string=(char *) malloc(strlen(yytext)*sizeof(char));

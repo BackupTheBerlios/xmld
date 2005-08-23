@@ -11,8 +11,7 @@
  * -------------------------------------------------------------- * 
  */
 
-#include "includes.h"
-#include "cfg_value.h"
+#include "../includes.h"
 
 /*
  * : Creates a new configuration value structure.
@@ -21,7 +20,7 @@
 CfgValue *CfgValue_create() {
  CfgValue *value = (CfgValue *) malloc(sizeof(CfgValue));
  value->type = 0;
- value->value = (void &) 0;
+ value->value = NULL;
  return value;
 }
 

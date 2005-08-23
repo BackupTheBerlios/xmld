@@ -29,54 +29,51 @@
  */
 struct proc_table *table;
 struct proc *curr_proc;
-struct task_table ttable;
 pid_t curr_pid;
 int init_proc;
 int max_proc;
 int max_idle_proc;
 
-XMLDStatus mtasker_init() {
+Status mtasker_init() {
  int i;
  struct sigaction action;
  action.sa_handler=mtasker_handle_idle;
  
  i=sigaction(SIGUSR1, &action, NULL);
  if (i == -1) {
-  return XMLD_FAILURE;
+  return FAILURE;
  }
  
  signal(SIGCHLD, SIG_IGN);
- ttable.num_tasks=0;
- ttable.tasks=0;
- XMLDCfgSection *ptasker_section = XMLDCfgSection_get_section(cfg_tree, "PTasker", 1);
+ CfgSection *ptasker_section = CfgSection_get_section(cfg_tree, "PTasker", 1);
  if (ptasker_section == NULL) {
-  return XMLD_FAILURE;
+  return FAILURE;
  }
- XMLDCfgDirective *curr_directive = XMLDCfgSection_get_directive(ptasker_section, "InitProc", 1);
+ CfgDirective *curr_directive = CfgSection_get_directive(ptasker_section, "InitProc", 1);
  if (curr_directive == NULL) {
-  return XMLD_FAILURE;
+  return FAILURE;
  }
- XMLDCfgValue *curr_value = XMLDCfgDirective_get_value(curr_directive, 0);
- if (curr_value == NULL || curr_value->type != XMLD_CFG_INTEGER) {
-  return XMLD_FAILURE;
+ CfgValue *curr_value = CfgDirective_get_value(curr_directive, 0);
+ if (curr_value == NULL || curr_value->type != CFG_INTEGER) {
+  return FAILURE;
  }
  init_proc = (int) curr_value->value;
- XMLDCfgDirective *curr_directive = XMLDCfgSection_get_directive(ptasker_section, "MaxProc", 1);
+ curr_directive = CfgSection_get_directive(ptasker_section, "MaxProc", 1);
  if (curr_directive == NULL) {
-  return XMLD_FAILURE;
+  return FAILURE;
  }
- XMLDCfgValue *curr_value = XMLDCfgDirective_get_value(curr_directive, 0);
- if (curr_value == NULL || curr_value->type != XMLD_CFG_INTEGER) {
-  return XMLD_FAILURE;
+ curr_value = CfgDirective_get_value(curr_directive, 0);
+ if (curr_value == NULL || curr_value->type != CFG_INTEGER) {
+  return FAILURE;
  }
  max_proc= (int) curr_value->value;
- XMLDCfgDirective *curr_directive = XMLDCfgSection_get_directive(ptasker_section, "MaxIdleProc", 1);
+ curr_directive = CfgSection_get_directive(ptasker_section, "MaxIdleProc", 1);
  if (curr_directive == NULL) {
-  return XMLD_FAILURE;
+  return FAILURE;
  }
- XMLDCfgValue *curr_value = XMLDCfgDirective_get_value(curr_directive, 0);
- if (curr_value == NULL || curr_value->type != XMLD_CFG_INTEGER) {
-  return XMLD_FAILURE;
+ curr_value = CfgDirective_get_value(curr_directive, 0);
+ if (curr_value == NULL || curr_value->type != CFG_INTEGER) {
+  return FAILURE;
  }
  max_idle_proc= (int) curr_value->value;
 
@@ -91,14 +88,14 @@ XMLDStatus mtasker_init() {
  int childrenid=shmget(childrenkey, max_proc*sizeof(struct proc), IPC_CREAT);
  
  if (tableid == -1) {
-  return XMLD_FAILURE;
+  return FAILURE;
  }
  
  table=(struct proc_table *)shmat(tableid, 0, 0);
  shmctl(tableid, IPC_RMID, 0);
  
  if (childrenid == -1) {
-  return XMLD_FAILURE;
+  return FAILURE;
  }
  
  table->num=0;
@@ -111,13 +108,13 @@ XMLDStatus mtasker_init() {
   table->children[i].fd=-1;
   table->children[i].func=NULL;
   table->children[i].data=NULL;
-  table->children[i].busy=XMLD_FALSE;
-  table->children[i].die=XMLD_FALSE;
+  table->children[i].busy=FALSE;
+  table->children[i].die=FALSE;
       
   if(socketpair(PF_UNIX, SOCK_STREAM, 0, table->children[i].sp) != 0) {
    table->children[i].pid=0;
    perror("mtasker_spawn");
-   return XMLD_FAILURE; 
+   return FAILURE; 
   }
   curr_pid=fork();
 
@@ -125,7 +122,7 @@ XMLDStatus mtasker_init() {
    table->children[i].pid=0;
    perror("mtasker_init");
    mtasker_shutdown();
-   return XMLD_FAILURE;
+   return FAILURE;
   }
   else if (curr_pid == 0) {
    table->children[i].pid=getpid();
@@ -138,26 +135,26 @@ XMLDStatus mtasker_init() {
       passed_fd=recvfd(table->children[i].sp[1]);
      }
      (*(table->children[i].func))(table->children[i].data);
-     table->children[i].busy=XMLD_FALSE;
+     table->children[i].busy=FALSE;
      table->children[i].func=NULL;
      table->children[i].data=NULL;
      table->children[i].fd=-1;
      table->num_busy--;
      kill(getppid(), SIGUSR1);
     } 
-    if (table->children[i].die == XMLD_TRUE) {
+    if (table->children[i].die == TRUE) {
      table->children[i].pid=0;
      table->num--;
-     table->children[i].die=XMLD_FALSE;
+     table->children[i].die=FALSE;
      break;
     }
    }
    exit(0);
   }
  }
- return XMLD_SUCCESS;
+ return SUCCESS;
 }
-XMLDStatus mtasker_shutdown() {
+Status mtasker_shutdown() {
  int i;
  for (i = 0; i < max_proc; i++) {
   shutdown(table->children[i].sp[0], 2);
@@ -165,19 +162,18 @@ XMLDStatus mtasker_shutdown() {
   if (table->children[i].pid != 0) {
    kill(table->children[i].pid, SIGTERM);
   } 
-  table->children[i].die = XMLD_TRUE;
+  table->children[i].die = TRUE;
  }
- free(ttable.tasks);
- return XMLD_SUCCESS;
+ return SUCCESS;
 }
-XMLDStatus mtasker_handle(void (*func) (void *), void *data, int fd) {
+Status mtasker_handle(void (*func) (void *), void *data, int fd) {
  int i;
  struct proc *use_proc;
  while (table->num == table->num_busy && table->num >= max_proc) {
  }
  if (table->num > table->num_busy) {
   for (i = 0; i < max_proc; i++) {
-   if (table->children[i].busy == XMLD_FALSE && table->children[i].pid != 0) {
+   if (table->children[i].busy == FALSE && table->children[i].pid != 0) {
     use_proc=&table->children[i];
     break;
    }
@@ -193,12 +189,12 @@ XMLDStatus mtasker_handle(void (*func) (void *), void *data, int fd) {
   if (fd != -1 && sendfd(use_proc->sp[0], fd)) {
    use_proc->fd=fd;
   } 
-  use_proc->busy = XMLD_TRUE;
+  use_proc->busy = TRUE;
   table->num_busy++;
-  return XMLD_SUCCESS;
+  return SUCCESS;
  }
  else {
-  return XMLD_FAILURE;
+  return FAILURE;
  }
 }
 
@@ -215,8 +211,8 @@ struct proc *mtasker_spawn() {
     table->children[i].fd=-1;
     table->children[i].func=NULL;
     table->children[i].data=NULL;
-    table->children[i].busy=XMLD_FALSE;
-    table->children[i].die=XMLD_FALSE;
+    table->children[i].busy=FALSE;
+    table->children[i].die=FALSE;
     
     if(socketpair(PF_UNIX, SOCK_STREAM, 0, table->children[i].sp) != 0) {
      table->children[i].pid=0;
@@ -241,16 +237,16 @@ struct proc *mtasker_spawn() {
         passed_fd=recvfd(table->children[i].sp[1]);
        }
        (*(table->children[i].func))(table->children[i].data);
-       table->children[i].busy=XMLD_FALSE;
+       table->children[i].busy=FALSE;
        table->children[i].func=NULL;
        table->children[i].data=NULL;
        table->children[i].fd=-1;
        table->num_busy--;
        kill(getppid(), SIGUSR1);
       } 
-      if (table->children[i].die == XMLD_TRUE) {
+      if (table->children[i].die == TRUE) {
        table->children[i].pid=0;
-       table->children[i].die=XMLD_FALSE;
+       table->children[i].die=FALSE;
        table->num--;
        break;
       }
@@ -268,8 +264,8 @@ void mtasker_kill(int num_proc) {
  int i;
  int killed_proc=0;
  for (i = 0; i < max_proc; i++) {
-  if (table->children[i].busy != XMLD_TRUE && table->children[i].pid != 0) {
-   table->children[i].die = XMLD_TRUE;
+  if (table->children[i].busy != TRUE && table->children[i].pid != 0) {
+   table->children[i].die = TRUE;
    if (++killed_proc >= num_proc) {
     break;
    }
@@ -285,7 +281,7 @@ void mtasker_handle_idle(int signum) {
 
 void mtasker_signal_children(int signum) {
  int i;
- for (i = 0; i < num; i++) {
+ for (i = 0; i < table->num; i++) {
   kill(table->children[i].pid, signum);
  }
 }

@@ -12,7 +12,9 @@
  * -------------------------------------------------------------- * 
  */
 
-#define YYPARSE_PARAM cfg_tree
+#include "includes.h"
+
+#define YYPARSE_PARAM cfg_tree_ptr
 %}
 
 %union {
@@ -39,7 +41,7 @@
 
 configuration: cfg_tree
 	     {
-	      ((CfgSection *) cfg_tree) = $1;
+	      *((CfgSection **) cfg_tree_ptr) = $1;
 	      YYACCEPT;
 	     }
 ;
@@ -58,33 +60,38 @@ cfg_tree: directive
 	   Assoc_add($$->sections, $1->name, $1);
 	   free($1->name);
 	  }
-	| cfg_tree '\n' directive
+	| cfg_tree directive
 	  {
 	   $$=$1;
-	   Assoc_add($$->directives, $3->name, $3);
-	   free($3->name);
+	   if ($$->directives == NULL) {
+	    $$->directives = Assoc_create();
+	   }
+	   Assoc_add($$->directives, $2->name, $2);
+	   free($2->name);
 	  }
-	| cfg_tree '\n' section 
+	| cfg_tree section 
 	  {
 	   $$=$1;
-	   Assoc_add($$->sections, $3->name, $3)
-	   free($3->name);
+	   if ($$->sections == NULL) {
+	    $$->sections = Assoc_create();
+	   }
+	   Assoc_add($$->sections, $2->name, $2);
+	   free($2->name);
 	  }
 ;
 
-section: '<' IDENTIFIER '>' '\n' cfg_tree '\n' '<' '/' IDENTIFIER '>'
+section: '<' IDENTIFIER '>' cfg_tree '<' '/' IDENTIFIER '>'
          {
-	  $$=CfgSection_create();
+	  $$=$4;
 	  $$->name = $2;
-	  $$->directives = $5;
 	 }
 ;
 
-directive: IDENTIFIER ' ' value_list
+directive: IDENTIFIER value_list
 	   {
 	    $$=CfgDirective_create();
 	    $$->name = $1;
-	    $$->values = $3;
+	    $$->values = $2;
 	   }
 ;
 
@@ -93,10 +100,10 @@ value_list: value
 		  $$=Assoc_create();
 	          Assoc_add($$, NULL, $1);
 		 }
-	  | value_list ' ' value
+	  | value_list value
 	         {
 		  $$=$1;
-		  Assoc_add($$, NULL, $3);
+		  Assoc_add($$, NULL, $2);
 	         }
 ;
 	  

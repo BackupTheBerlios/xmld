@@ -27,7 +27,7 @@ typedef struct AssocWalker AssocWalker;
 AssocWalker *AssocWalker_create(Assoc *);
 int AssocWalker_next(AssocWalker *);
 int AssocWalker_prev(AssocWalker *);
-int AssocWalker_reset(AssocWalker *);
+void AssocWalker_reset(AssocWalker *);
 int AssocWalker_get_current_index(AssocWalker *);
 void *AssocWalker_get_current_data(AssocWalker *);
 void AssocWalker_free(AssocWalker *);

@@ -11,9 +11,7 @@
  * -------------------------------------------------------------- * 
  */
 
-#include "includes.h"
-#include "cfg_value.h"
-#include "cfg_directive.h"
+#include "../includes.h"
 
 /*
  * : Creates a new configuration directive structure.
@@ -32,7 +30,7 @@ CfgDirective *CfgDirective_create() {
  * Otherwise, index is the number of the parameter to return.
  */ 
 CfgValue *CfgDirective_get_value(CfgDirective *directive, int index) { 
- return Assoc_get_by_index(directive, index);
+ return Assoc_get_by_index(directive->values, index);
 }
 
 /*

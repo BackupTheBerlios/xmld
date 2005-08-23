@@ -11,9 +11,7 @@
  * -------------------------------------------------------------- * 
  */
 
-#include "includes.h"
-#include "cfg_directive.h"
-#include "cfg_section.h"
+#include "../includes.h"
 
 /*
  * : Creates a new configuration section structure.

@@ -41,8 +41,8 @@ int main() {
  }
 
  struct sigaction cfg_action;
- action.sa_handler=update_config;
- s=sigaction(SIGUSR2, &action, NULL);
+ cfg_action.sa_handler=update_config;
+ s=sigaction(SIGUSR2, &cfg_action, NULL);
 
  if (s == -1) {
   perror("sigaction");

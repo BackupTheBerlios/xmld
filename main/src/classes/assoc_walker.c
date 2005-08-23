@@ -11,16 +11,17 @@
  * -------------------------------------------------------------- * 
  */
 
-#include "includes.h";
+#include "../includes.h"
 
 /*
  * Creates a new associative table walker structure for the
  * given associative table parameter.
  */
-AssocWalker *AssocWalker_create(XMLDAssoc *subject) {
+AssocWalker *AssocWalker_create(Assoc *subject) {
  AssocWalker *walker = (AssocWalker *) malloc(sizeof(AssocWalker));
  walker->subject = subject;
  walker->curr_index = -1;
+ return walker;
 }
 
 /*
@@ -70,7 +71,7 @@ int AssocWalker_get_current_index(AssocWalker *walker) {
  */
 void *AssocWalker_get_current_data(AssocWalker *walker) {
  if (walker->curr_index  >= 0) {
-  return walker->subject->data + walker->curr_index;
+  return walker->subject->values + walker->curr_index;
  }
  else {
   return NULL;

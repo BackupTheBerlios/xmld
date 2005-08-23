@@ -111,7 +111,7 @@ struct Engine {
  typedef struct Engine Engine;
 #endif /* ENGINE_TYPE_DEFINED */
 
-Engine *Engine_create(char *);
+Engine *Engine_create(void);
 void Engine_free(Engine *);
 
 #endif /* __ENGINE_H */

@@ -14,33 +14,27 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "xmlddef.h"
-#include "mutils.h"
-#include "sutils.h"
-#include "dutils.h"
+#include "def.h"
+#include "sockets.h"
+#include "apis/sutils.h"
+#include "classes/assoc.h"
+#include "classes/assoc_walker.h"
+#include "classes/cfg_value.h"
+#include "classes/cfg_directive.h"
+#include "classes/cfg_section.h"
 #include "cfg.h"
-#include "xmld_list.h"
-#include "xmld_connection.h"
-struct XMLDFile;
-#ifndef XMLDFILE_TYPE_DEFINED
-#define XMLDFILE_TYPE_DEFINED
- typedef struct XMLDFile XMLDFile;
- typedef XMLDList XMLDFileList;
-#endif /* XMLDFILE_TYPE_DEFINED */
-struct XMLDInterface;
-#ifndef XMLDINTERFACE_TYPE_DEFINED
-#define XMLDINTERFACE_TYPE_DEFINED
- typedef struct XMLDInterface XMLDInterface;
- typedef XMLDList XMLDInterfaceList;
-#endif /* XMLDINTERFACE_TYPE_DEFINED */
-#include "xmld_work.h"
-#include "xmld_interface.h"
-#include "xmld_engine.h"
-#include "xmld_file.h"
+struct File;
+#ifndef FILE_TYPE_DEFINED
+#define FILE_TYPE_DEFINED
+ typedef struct File File;
+#endif /* FILE_TYPE_DEFINED */
+struct Interface;
+#ifndef INTERFACE_TYPE_DEFINED
+#define INTERFACE_TYPE_DEFINED
+ typedef struct Interface Interface;
+#endif /* INTERFACE_TYPE_DEFINED */
+#include "classes/interface.h"
+#include "classes/engine.h"
+#include "classes/file.h"
 #include "engine_list.h"
 #include "interface_list.h"
-#include "protoimpl.h"
-#include "authman.h"
-#include "xmld_cfg_value.h"
-#include "xmld_cfg_directive.h"
-#include "xmld_cfg_section.h"

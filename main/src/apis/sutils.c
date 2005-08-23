@@ -14,7 +14,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "xmlddef.h"
+#include "../def.h"
 #include "sutils.h"
 
 /*
@@ -73,7 +73,7 @@ char *str_prepend(char *dest, char *pre) {
 }
 
 /* checks whether str is LIKE patern (SQL) */
-XMLDBool str_like(char *str, char *patern) {
+Bool str_like(char *str, char *patern) {
  if (strchr(patern, '%') == NULL) {
   return !strcmp(str, patern);
  }
@@ -85,17 +85,17 @@ XMLDBool str_like(char *str, char *patern) {
  while (1) {
   if (*pat_ptr != '%') {
    if (*str_ptr != *pat_ptr) {
-    return XMLD_FALSE;
+    return FALSE;
    }
   }
   else {
    if (*(pat_ptr + 1) == '\0') {
-    return XMLD_TRUE;
+    return TRUE;
    }
    else {
     str_ptr=strchr(str_ptr+1, *(pat_ptr+1));
     if (str_ptr == NULL) {
-     return XMLD_FALSE;
+     return FALSE;
     }
     else {
      while (1) {
@@ -115,16 +115,16 @@ XMLDBool str_like(char *str, char *patern) {
   str_ptr++;
   
   if (*pat_ptr == '\0' && *str_ptr == '\0') {
-   return XMLD_TRUE;
+   return TRUE;
   }
   else if ((*pat_ptr == '\0' || *str_ptr == '\0') && *pat_ptr != *str_ptr) {
-   return XMLD_FALSE;
+   return FALSE;
   }
  } 
 }
 
 /* Checks for whether the value of str is between min and max */
-XMLDBool str_between(char *str, char *min, char *max) {
+Bool str_between(char *str, char *min, char *max) {
  int val=atol(str);
  return (val >= atol(min) && val <= atol(max));
 }

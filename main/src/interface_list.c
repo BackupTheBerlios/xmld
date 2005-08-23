@@ -39,14 +39,14 @@ Status interface_list_init() {
  CfgValue *port_value;
  CfgValue *interface_name;
  Status stat;
- num = 1;
+ int num = 1;
  while ((port_directive = CfgSection_get_directive(ports_section, "Port", num)) != NULL) {
   port_value = CfgDirective_get_value(port_directive, 0);
   if (port_value->type != CFG_INTEGER) {
    continue;
   }
   interface_name = CfgDirective_get_value(port_directive, 1);
-  if (interface_value->type != CFG_STRING) {
+  if (interface_name->type != CFG_STRING) {
    continue;
   }
   curr_interface = Assoc_get(tmp_list, (char *) interface_name->value);
@@ -56,12 +56,13 @@ Status interface_list_init() {
   Assoc_add(interface_list, (char *) interface_name->value, curr_interface);
   stat = (*curr_interface->init) (curr_interface, port_directive);
   if (stat == FAILURE) {
-   perror("Error initializing %s: %s", (char *) interface_name->value, (*curr_interface->get_error_message) (curr_interface));
-   Assoc_remove_index(interface_list, (char *) interface_name->value);
+   printf("Error initializing %s: %s", (char *) interface_name->value, (*curr_interface->get_error_message) (curr_interface));
+   Assoc_remove(interface_list, (char *) interface_name->value);
    Interface_free(curr_interface);
   }
   else {
    curr_interface->port = (int) port_value->value;
+   printf("\t* %s is on port %d: \n", (char *) interface_name->value, curr_interface->port);
   }
   num++;
  } 
@@ -72,8 +73,8 @@ Status interface_list_init() {
 Status interface_list_shutdown() {
  interface_list_walker = AssocWalker_create(interface_list);
  while (AssocWalker_next(interface_list_walker)) {
-  (*(((Interface *) AssocWalker_get_current_data(interface_list_walker))->destroy)) ();
-  Interface_free((XMLDInterface *) AssocWalker_get_current_data(interface_list_walker));
+  (*(((Interface *) AssocWalker_get_current_data(interface_list_walker))->destroy)) ((Interface *) AssocWalker_get_current_data(interface_list_walker));
+  Interface_free((Interface *) AssocWalker_get_current_data(interface_list_walker));
  }
  Assoc_free(interface_list);
  return SUCCESS;
@@ -88,4 +89,5 @@ Interface *interface_list_search_by_port(int port) {
    return (Interface *) AssocWalker_get_current_data(&walker);
   }
  }
+ return NULL;
 }

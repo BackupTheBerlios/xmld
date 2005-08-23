@@ -10,8 +10,7 @@
  * Authors: Khalid Al-Kary (khalid_kary@hotmail.com)              *
  * -------------------------------------------------------------- * 
  */
-#include <string.h>
-#include "includes.h"
+#include "../includes.h"
 
 /*
  * Creates a new associative table structure.
@@ -81,11 +80,11 @@ void Assoc_remove(Assoc *assoc, char *key) {
 void Assoc_remove_index(Assoc *assoc, int index) {
  if (index != -1) {
   assoc->values[index] = NULL;
-  assoc->keys[index] = NULL;
+  assoc->keys[index] = 0;
   assoc->length--;
   if (assoc->length - index > 0) {
    memmove(assoc->values + index, assoc->values + assoc->length, assoc->length - index);
-   memmove(assoc->keys + index, assoc->keys + assoc->length, assoc->length - assoc->index);
+   memmove(assoc->keys + index, assoc->keys + assoc->length, assoc->length - index);
   }
   if (assoc->array_length - assoc->length > ASSOC_MAX_FREE) {
    assoc->values = (void **) realloc(assoc->values, --assoc->array_length * sizeof(void *));

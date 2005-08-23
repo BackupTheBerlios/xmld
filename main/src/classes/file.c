@@ -11,8 +11,7 @@
  * -------------------------------------------------------------- * 
  */
 
-#include "includes.h"
-#include "cfg.h"
+#include "../includes.h"
 
 /*
  * Creates a new file structure.

@@ -22,7 +22,7 @@ struct CfgSection {
 
 #ifndef CFG_SECTION_TYPE_DEFINED
 #define CFG_SECTION_TYPE_DEFINED
- typedef struct XMLDCfgSection XMLDCfgSection;
+ typedef struct CfgSection CfgSection;
 #endif /* CFG_SECTION_TYPE_DEFINED */
 
 CfgSection *CfgSection_create(void);

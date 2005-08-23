@@ -195,10 +195,6 @@ Foundation:
 
 * Separate make files for EchoServer and ptasker. (delayed)
 
-* Rename to OpenDaemon.
-
-* Remove old documents from the docs page.
-
 * Drop the XMLD part off all the structure names in the code.
   * It's no longer a XML-only server.
     * XMLDAssoc (done)
@@ -235,6 +231,12 @@ Foundation:
   * Run. (done)
   * Fix bugs.
   
+* Rename to OpenDaemon.
+
+* Remove old documents from the docs page.
+
+* Update the INSTALL document.
+
 Issues:
 -------
 

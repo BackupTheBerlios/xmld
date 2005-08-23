@@ -66,8 +66,6 @@ Status somanager_init() {
    perror("socket_bind");
    return FAILURE;
   }
-  Interface *interface = interface_list_search_by_port(ports[t]);
-  printf("\t* %s is on port %d.\n", interface->name, ports[t]);
   s = mtasker_handle(somanager_handle, (void *) &t, fds[t]);
   if (s == FAILURE) {
    perror("mtasker_handle");

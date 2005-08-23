@@ -16,7 +16,7 @@
 
 struct File {
  void *file;
- XMLDAssoc *data;
+ Assoc *data;
 };
 
 #ifndef FILE_TYPE_DEFINED
@@ -24,7 +24,7 @@ struct File {
  typedef struct File File;
 #endif /* FILE_TYPE_DEFINED */
 
-File *File_create(char *);
+File *File_create(void);
 void File_free(File *);
 
 #endif /* __FILE_H */
