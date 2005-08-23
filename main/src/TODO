@@ -228,11 +228,11 @@ Foundation:
 * Write interface names in the start up port list. (done)
 
 * Test run:
-  * Modify make file.
-  * Modify includes.
-  * Compile.
-  * Fix compilation blocking bugs.
-  * Run.
+  * Modify make file. (done)
+  * Modify includes. (done)
+  * Compile. (done)
+  * Fix compilation blocking bugs. (done)
+  * Run. (done)
   * Fix bugs.
   
 Issues:
