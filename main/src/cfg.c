@@ -47,7 +47,7 @@ Status cfg_init() {
   return FAILURE;
  }
  else {
-  CfgDirective *docroot_directive = CfgSection_get_directive(cfg_tree, "DocumentRoot", 1);
+  CfgDirective *docroot_directive = CfgSection_get_directive(cfg_tree, "DocumentRoot", 0);
   if (docroot_directive == NULL) {
    return FAILURE;
   }

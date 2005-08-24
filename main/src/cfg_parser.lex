@@ -27,13 +27,13 @@
 "\n" ;
 "\""  BEGIN STR;
 <STR>[^"]* {
-	    lvalp->string=(char *) malloc(strlen(yytext)*sizeof(char));
+	    lvalp->string=(char *) malloc((yyleng+1) * sizeof(char));	    
             strcpy(lvalp->string, yytext);
             return STRING;
            }
 <STR>\" BEGIN INITIAL;
 [A-Z]([A-Z0-9_]*) {
-		lvalp->string = (char *) malloc(strlen(yytext) * sizeof(char));
+		lvalp->string = (char *) malloc((yyleng+1) * sizeof(char));
 		strcpy(lvalp->string, yytext);
 		return IDENTIFIER;
                }
