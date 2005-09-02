@@ -28,7 +28,7 @@ AssocWalker *AssocWalker_create(Assoc *subject) {
  * Walks to the next element in the associative table.
  */
 int AssocWalker_next(AssocWalker *walker) {
- if (walker->curr_index >= walker->subject->length) {
+ if (walker->curr_index >= walker->subject->length-1) {
   return ASSOC_WALKER_END;
  }
  else {
@@ -71,7 +71,7 @@ int AssocWalker_get_current_index(AssocWalker *walker) {
  */
 void *AssocWalker_get_current_data(AssocWalker *walker) {
  if (walker->curr_index  >= 0) {
-  return walker->subject->values + walker->curr_index;
+  return *(walker->subject->values + walker->curr_index);
  }
  else {
   return NULL;

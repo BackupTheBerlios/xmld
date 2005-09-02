@@ -45,11 +45,11 @@ Status mtasker_init() {
  }
  
  signal(SIGCHLD, SIG_IGN);
- CfgSection *ptasker_section = CfgSection_get_section(cfg_tree, "PTasker", 1);
+ CfgSection *ptasker_section = CfgSection_get_section(cfg_tree, "PTasker", 0);
  if (ptasker_section == NULL) {
   return FAILURE;
  }
- CfgDirective *curr_directive = CfgSection_get_directive(ptasker_section, "InitProc", 1);
+ CfgDirective *curr_directive = CfgSection_get_directive(ptasker_section, "InitProc", 0);
  if (curr_directive == NULL) {
   return FAILURE;
  }
@@ -58,7 +58,7 @@ Status mtasker_init() {
   return FAILURE;
  }
  init_proc = (int) curr_value->value;
- curr_directive = CfgSection_get_directive(ptasker_section, "MaxProc", 1);
+ curr_directive = CfgSection_get_directive(ptasker_section, "MaxProc", 0);
  if (curr_directive == NULL) {
   return FAILURE;
  }
@@ -67,7 +67,7 @@ Status mtasker_init() {
   return FAILURE;
  }
  max_proc= (int) curr_value->value;
- curr_directive = CfgSection_get_directive(ptasker_section, "MaxIdleProc", 1);
+ curr_directive = CfgSection_get_directive(ptasker_section, "MaxIdleProc", 0);
  if (curr_directive == NULL) {
   return FAILURE;
  }

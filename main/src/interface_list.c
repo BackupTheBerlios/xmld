@@ -31,15 +31,18 @@ Status interface_list_init() {
 #endif /* USE_ECHOSERVER */
  
  interface_list = Assoc_create(); 
- CfgSection *ports_section = CfgSection_get_section(cfg_tree, "Ports", 1);
+ CfgSection *ports_section = CfgSection_get_section(cfg_tree, "Ports", 0);
+ 
  if (ports_section == NULL) {
   return FAILURE;
- } 
+ }
+ 
  CfgDirective *port_directive;
  CfgValue *port_value;
  CfgValue *interface_name;
+ CfgValue *new_interface_name;
  Status stat;
- int num = 1;
+ int num = 0;
  while ((port_directive = CfgSection_get_directive(ports_section, "Port", num)) != NULL) {
   port_value = CfgDirective_get_value(port_directive, 0);
   if (port_value->type != CFG_INTEGER) {
@@ -49,33 +52,47 @@ Status interface_list_init() {
   if (interface_name->type != CFG_STRING) {
    continue;
   }
+  new_interface_name = CfgDirective_get_value(port_directive, 2);
+  if (new_interface_name->type != CFG_STRING) {
+   continue;
+  }
   curr_interface = Assoc_get(tmp_list, (char *) interface_name->value);
   if (curr_interface == NULL) {
    continue;
   }
-  Assoc_add(interface_list, (char *) interface_name->value, curr_interface);
-  stat = (*curr_interface->init) (curr_interface, port_directive);
+
+  Interface *new_interface = Interface_create();
+  Interface_copy(curr_interface, new_interface);
+  
+  Assoc_add(interface_list, (char *) new_interface_name->value, new_interface);
+  stat = (*new_interface->init) (new_interface, port_directive);
   if (stat == FAILURE) {
-   printf("Error initializing %s: %s", (char *) interface_name->value, (*curr_interface->get_error_message) (curr_interface));
-   Assoc_remove(interface_list, (char *) interface_name->value);
-   Interface_free(curr_interface);
+   printf("Error initializing %s: %s", (char *) new_interface_name->value, (*new_interface->get_error_message) (new_interface));
+   Assoc_remove(interface_list, (char *) new_interface_name->value);
+   Interface_free(new_interface);
   }
   else {
-   curr_interface->port = (int) port_value->value;
-   printf("\t* %s is on port %d: \n", (char *) interface_name->value, curr_interface->port);
+   new_interface->port = (int) port_value->value;
+   printf("\t* %s is on port %d as %s\n", (char *) interface_name->value, new_interface->port, (char *) new_interface_name->value);
   }
   num++;
- } 
+ }
+ AssocWalker *walker = AssocWalker_create(tmp_list);
+ while (AssocWalker_next(walker)) {
+  Interface_free((Interface *) AssocWalker_get_current_data(walker));
+ }
+ AssocWalker_free(walker);
  Assoc_free(tmp_list);
  return SUCCESS;
 }
 
 Status interface_list_shutdown() {
- interface_list_walker = AssocWalker_create(interface_list);
- while (AssocWalker_next(interface_list_walker)) {
-  (*(((Interface *) AssocWalker_get_current_data(interface_list_walker))->destroy)) ((Interface *) AssocWalker_get_current_data(interface_list_walker));
-  Interface_free((Interface *) AssocWalker_get_current_data(interface_list_walker));
+ AssocWalker *walker = AssocWalker_create(interface_list);
+ while (AssocWalker_next(walker)) {
+  (*(((Interface *) AssocWalker_get_current_data(walker))->destroy)) ((Interface *) AssocWalker_get_current_data(walker));
+  Interface_free((Interface *) AssocWalker_get_current_data(walker));
  }
+ AssocWalker_free(walker);
  Assoc_free(interface_list);
  return SUCCESS;
 }

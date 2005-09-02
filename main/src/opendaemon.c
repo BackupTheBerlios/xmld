@@ -76,7 +76,6 @@ int main() {
   perror("mtasker_init");
   return 1;
  }
- 
  if (somanager_init() == FAILURE) {
   cfg_shutdown();
   engine_list_shutdown();

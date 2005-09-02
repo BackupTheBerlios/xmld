@@ -20,7 +20,7 @@ xmldsql.tab.o: cfg_parser.tab.c $(wildcard *.h)
 	
 generate: cfg_parser.y cfg_parser.lex $(wildcard *.h)
 	${BISON} -d cfg_parser.y -o cfg_parser.tab.c
-	${FLEX} -i -f -d cfg_parser.lex
+	${FLEX} -f cfg_parser.lex
 	
 clean:
 	rm -f opendaemon

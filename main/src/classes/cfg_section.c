@@ -65,7 +65,7 @@ void CfgSection_free(CfgSection *section) {
   walker.curr_index = -1;
   while (AssocWalker_next(&walker)) {
    if (AssocWalker_get_current_data(&walker) != NULL) {
-    CfgSection_free((CfgSection *) AssocWalker_get_current_data(&walker));
+    CfgDirective_free((CfgDirective *) AssocWalker_get_current_data(&walker));
    }
   }
   Assoc_free(section->sections);

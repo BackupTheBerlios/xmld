@@ -31,13 +31,13 @@ int *ports;
 int num_sock;
 
 Status somanager_init() {
- CfgSection *ports_section = CfgSection_get_section(cfg_tree, "Ports", 1);
+ CfgSection *ports_section = CfgSection_get_section(cfg_tree, "Ports", 0);
  if (ports_section == NULL) {
   return FAILURE;
  }
  CfgDirective *port_directive;
  num_sock = 0;
- while ((port_directive = CfgSection_get_directive(ports_section, "Port", num_sock+1)) != NULL) {
+ while ((port_directive = CfgSection_get_directive(ports_section, "Port", num_sock)) != NULL) {
   CfgValue *port_value = CfgDirective_get_value(port_directive, 0);
   if (port_value->type != CFG_INTEGER) {
    continue;
