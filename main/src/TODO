@@ -193,8 +193,6 @@ Foundation:
 
 * Implement an EchoServer interface for demonstration. (done)
 
-* Separate make files for EchoServer and ptasker. (delayed)
-
 * Drop the XMLD part off all the structure names in the code.
   * It's no longer a XML-only server.
     * XMLDAssoc (done)
@@ -231,56 +229,88 @@ Foundation:
   * Run. (done)
   * Fix bugs.
   
+* replace somanager with connman:
+  * Use the interface list. (done)
+  * The listener socket is created after the listener 
+    process forking so we don't have to double passfd. (done)
+  * somanager_handle -> connman_listener. (done)
+  * erase somanager_init_listeners. (done)
+  * erase somanager_shutdown. (done)
+  * Modify opendaemon.c (done)
+  
 * Rename to OpenDaemon.
 
 * Remove old documents from the docs page.
 
 * Update the INSTALL document.
 
-Issues:
--------
-
-* rename XMLDFile.element_pos to XMLDFile.node_pos (done).
-
 *--------------- Start of OpenDaemon 0.8.0 part:
 
 Goal: Strength.
+
+* A multiplexing connman with compilation macros.
+  * Fix the conflict in cfg_update.
+
+* init.h ?
+
+* Thread-safe core.
+  * Assoc semaphore/mutex usage.
+
+* Implement ttasker -- a multi-threaded multi tasker.
+
+* Per-interface preference of multi tasking module.
+  * Compile ttasker and ptasker implicitly.
+  * USE_PTASKER or USE_MTASKER checks on every
+    mtasker_* call.
+  * An interface's request process/thread
+    is forked with respect to the interface's
+    preference, below the interface's listener
+    parent process/thread.
+
+* Processor API.
+
+* Communicator API ?
+  * To fit chat applications and such ?
+  * Require an interface multi tasking
+    preference that uses ttasker.
+  * provide an API the provides for
+    message passing among separate client
+    connections.
+
+* I18n and l10n.
 
 * Portable loadable modules support.
   * Support for dependencies.
 
 * Support for loading of a module on demand.
 
-* Processor interface.
-
-* Communicator interface ?
-  * To fit chat applications and such ?
-
-* I18n and l10n.
-
 * Usage of autoconf to decide on the modules to be compiled.
 
-* Implement a generic communication protocol that other interface writers can use:
-  * With an authentication-based version.
-  * A non-authentication-based version.
+* somanager should free the ports array in each of the child processes.
+
+* Implement a generic communication protocol that other interface 
+  writers can use:
+  * An authentication-based version. (authproto)
+  * A non-authentication-based version. (proto)
   
 * cleaner, more portable sockets API.
+  * support for connect().
 
-* Thread-safe core.
-  * XMLDAssoc semaphore/mutex usage.
-
-* Implement a multi-threaded multi-tasker (Macro: USE_TTASKER).
-
-* Re-implement fmanager using a flock-independent way once MULTI_THREAD_MTASKER is on.
-
-* Implement a path translation API that modifies the path according to the OS.
-
+* Portable Filesystem API.
+  * file locking.
+  * path translation.
+  
 * Portable way to pass sockets between processes.
 
 Issues:
 -------
 
 * Configuration of the user and the group under which
-  OpenXMLD is to run.
+  OpenDaemon is to run.
 
-* authman must encode/decode the user authentication tokens.
+* authman must encode the user authentication tokens.
+
+*----------------------- Next Release:
+
+* Per-interface, per-file, per-directory,
+  per-what else ? engine association technique.

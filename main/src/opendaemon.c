@@ -23,8 +23,8 @@
 #include <unistd.h>
 #include <signal.h>
 #include "cfg.h"
-#include "somanager.h"
 #include "init.h"
+#include "connman.h"
 #include "engine_list.h"
 #include "interface_list.h"
  
@@ -68,20 +68,20 @@ int main() {
   perror("interface_list_init");
   return 1;
  }
- 
  if (mtasker_init() == FAILURE) {
   cfg_shutdown();
   engine_list_shutdown();
   interface_list_shutdown();
+  somanager_shutdown();
   perror("mtasker_init");
   return 1;
  }
- if (somanager_init() == FAILURE) {
+ if (connman_init() == FAILURE) {
   cfg_shutdown();
   engine_list_shutdown();
   interface_list_shutdown();
   mtasker_shutdown();
-  perror("somanager_init");
+  perror("connman_init");
   return 1;
  }
  
@@ -93,7 +93,6 @@ int main() {
 
 void init_shutdown_parts(int signum) {
  mtasker_shutdown();
- somanager_shutdown();
  interface_list_shutdown();
  engine_list_shutdown();
  cfg_shutdown();
@@ -102,8 +101,6 @@ void init_shutdown_parts(int signum) {
 
 void update_config(int signum) {
  mtasker_signal_children(SIGUSR2);
- interface_list_shutdown();
- somanager_shutdown();
- somanager_init();
- interface_list_init();
+ cfg_update(0);
+ connman_init();
 }

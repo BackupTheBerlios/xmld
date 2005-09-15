@@ -11,12 +11,10 @@
  * -------------------------------------------------------------- * 
  */
  
-#ifndef __SOMANAGER_H
-#define __SOMANAGER_H
+#ifndef __CONNMAN_H
+#define __CONNMAN_H
 
-Status somanager_init();
-Status somanager_shutdown();
-void somanager_handle(void*);
-void somanager_user_connection(void*);
+Status connman_init(void);
+void connman_listener(void*);
 
-#endif /* __SOMANAGER_H */
+#endif /* __CONNMAN_H */
