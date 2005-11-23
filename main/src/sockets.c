@@ -18,6 +18,7 @@
 #include <netinet/in.h>
 #include <unistd.h>
 #include "sockets.h"
+#include <errno.h>
 
 int socket_create() {
  return socket(PF_INET, SOCK_STREAM, 0);
@@ -52,7 +53,9 @@ int socket_write(int sockfd, char *str) {
  * sockfd.
  */ 
 char *socket_read(int sockfd, int len) {
- char *ret=(char *) malloc(len * sizeof(char));
+ char *ret=(char *) malloc((len + 1) * sizeof(char));
+ errno = 0;
  recv(sockfd, (void *) ret, len * sizeof(char), 0);
+ ret[len] = '\0';
  return ret; 
 }

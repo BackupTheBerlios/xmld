@@ -33,7 +33,7 @@ Status connman_init(void) {
  walker.curr_index = -1;
 
  while (AssocWalker_next(&walker)) {
-  s = mtasker_handle(connman_listener, AssocWalker_get_current_data(&walker), 0);
+  s = mtasker_handle(connman_listener, AssocWalker_get_current_data(&walker), -1);
   if (s == FAILURE) {
    perror("mtasker_handle");
    return FAILURE;
@@ -70,6 +70,7 @@ void connman_listener(void *sockindex) {
    perror("socket_accept");
    continue;
   }
-  mtasker_handle(((Interface *) sockindex)->user_connection, sockindex, s);
+  passed_fd = status;
+  (*(((Interface*) sockindex)->user_connection)) (sockindex);
  } 
 }

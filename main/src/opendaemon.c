@@ -72,7 +72,6 @@ int main() {
   cfg_shutdown();
   engine_list_shutdown();
   interface_list_shutdown();
-  somanager_shutdown();
   perror("mtasker_init");
   return 1;
  }

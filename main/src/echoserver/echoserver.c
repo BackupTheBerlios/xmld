@@ -42,6 +42,7 @@ void echoserver_user_connection(void *interface) {
  char *msg;
  do {
   msg = socket_read(passed_fd, ECHOSERVER_MAX_MSG_LEN);
+  printf("%s", msg);
   socket_write(passed_fd, msg);
   free(msg);
  } while (strcmp(msg, "quit") == 1);

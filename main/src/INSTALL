@@ -1,14 +1,13 @@
-# The OpenXMLD 0.5.0 INSTALL document
--------------------------------------
+# OpenDaemon 0.7.0 installation instructions
+--------------------------------------------
 
-Note: The OpenXMLD is not guaranteed to compile except
-on the development platform which has the following
-charasteristics:
+Note: OpenDaemon was not compiled except on the development platform 
+which has the following charasteristics:
 
 Linux 2.4.8-26mdk
-glibc 2.2.4
-gcc 3.3
-GNU bison 1.28
+glibc 2.3.1
+gcc 3.2.2
+GNU bison 1.35
 flex 2.5.4 
 
 # Server Compilation:
@@ -23,110 +22,58 @@ $ make
 
 In main/src/client of the distribution:
 
-$ make
-
-Report any compilation problems please (read
-the feedback section at the bottom).
+$ gcc echoserver_client.c ../sockets.c -o echoserver_client
 
 # Running and testing:
 ----------------------
 
 In main/src of the distribution:
 
-$ ./xmld
+$ ./opendaemon
 
 A message like this one should be generated:
 
-The OpenXMLD is up and running:
+OpenDaemon is up and running:
 	* Main PID: ????
-	* Listening port 1: ?
-	* Listening port 2: ?
-	[...]
+	* EchoServer is on port 8080 as EchoServerTry
 	
-These ports are listed in the xmld.conf file in
-the "Socket manager controls".
+Note: The listening port is configured through the opendaemon.conf file--
+just in case this needs to be changed.
 
 In main/src/client, run the client:
 
-$ ./xmldclient
+$ ./echoserver_client
 
-If the client asks for a port write one of those
-which are listed when running the server.
+Expected Output:
 
-The client will ask for a user name and a password,
-currently the only added user is: khalid with 
-password: pass
+Hello World!
 
-You could have run the client that way:
 
-./xmldclient <port> <username>
-
-or:
-
-./xmldclient <port>
-
-typically (with default 0.5.0 xmld.conf):
-
-./xmldclient 6666 khalid
-
-# The Document Root:
---------------------
-
-As of the default 0.5.0 xmld.conf, the document root of
-the server is main/src/document_root. It contains
-two small example files:
-
-file.xml
-file2.xml
-
-along with their format documents:
-
-file.xml.format
-file2.xml.format
-
-You can query both, or add your own, or just change the
-document root in xmld.conf to anything else. Note that
-if you are going to execute SELECT queries against any
-file, you don't need a format document, but if you
-are going to execute a SELECT with WHERE query
-you do need a format document which will be created 
-automatically in the future by the CREATE TABLE/FILE 
-command.
-
-# Querying The Server
----------------------
-
-Read the QUERY.html document to understand the XMLD-SQL query
-language. After authentication, the client would show you a
-prompt:
-
-xmld>
-
-Write a query and end it with ";" and see what happens. Note
-that only SELECT and SELECT with WHERE queries are supported
-(along with their bugs).
-
-# Query Examples:
+# What Happened ?
 -----------------
 
-With the default document root:
+OpenDaemon is now a generic server platform, EchoServer is an echo 
+interface code plugged into OpenDaemon's code which you have compiled
+and ran, EchoServerTry is an instance of of the EchoServer interface code,
+The one that answered your "Hello World!" with a "Hello World!".
 
-select !:name from "file.xml"
-select !:~name from "file.xml"
-select !:name from "file.xml" where !:name="khalid"
-select !:"file.xml".name, "file2.xml".name from "file.xml", "file2.xml"
+EchoServer is intended for system sanity testing purposes, the system
+is designed to hold inside it interfaces of more interest :-)
+
+Creating a generic server platform was a development decision,
+so when XMLD-SQL and Engine-XMLD are plugged back into the whole thing 
+they are plugged on stable grounds.
 
 # Feedback:
 -----------
 
-This is an alpha quality release. It would segfault and it would behave
-incorrectly--there's a big number of known bugs. The 0.6.0 release
-will contain a lot of core changes, the reason for which extensive
-bug fixing is no use right now, however feel free to send questions
-, suggestions or whatever to:
+This release should be a bit of stable, and I don't think there's
+going to be major core changes within next releases (the current code is very 
+generic) so if you notice segfaults or erratic behaviour in this simple test 
+case, or in any one you make yourself, please report this behaviour:
 
 xmld-dev@lists.berlios.de
 
-Author: Khalid Al-Kary (khalid_kary at hotmail dot com)
+Author: Khalid Al-Kary (khalid302-gmail-dot-com)
 
 -- EOF --

@@ -1,4 +1,4 @@
-OBJECTS = cfg.o engine_list.o interface_list.o passfd.o sutils.o interface.o somanager.o \
+OBJECTS = cfg.o engine_list.o interface_list.o passfd.o sutils.o interface.o connman.o \
 	  opendaemon.o cfg_directive.o cfg_section.o cfg_value.o engine.o file.o sockets.o \
 	  ptasker.o assoc.o assoc_walker.o lex.yy.o echoserver.o cfg_parser.tab.o
 BISON = bison

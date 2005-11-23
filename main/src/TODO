@@ -2,9 +2,6 @@
 
 Goal: Cleanliness.
 
-Foundation:
------------
-
 * The engine interface must be generic, with support for:
   * Multi-levelled data sets. (done)
   * Node labelling (tagnames in XML). (done)  
@@ -127,7 +124,7 @@ Foundation:
   * XMLDFile (done)
   * Remove xmld_list.c and .h. (done)
   
-* For all generic structures, use a signle XMLDAssoc field
+* For all generic structures, use a single XMLDAssoc field
   instead of the multiple void* fields.
    * XMLDWork (done)
    * XMLDFile (done)
@@ -167,17 +164,14 @@ Foundation:
   * Capability bit. (done)
  
 * Data source removal functions. (done)
-  * Caoability bit. (done)
+  * Capability bit. (done)
 
 * Put supplementary APIs in one place:
   * On Disk Data Manipulation API. (dutils) (done)
   * String Manipulation API. (sutils) (done)
   * Authentication API. (authman) (done)
   * File Opening and Locking API. (fmanager) (done)
-  * Localized Messages System. (gettext) (delayed)
   
-* Implementation of localized messages system. (delayed)
-
 * Error messages:
   * Engine functions: (done)
     * getters: Return NULL or -1 in case of error. 
@@ -237,80 +231,91 @@ Foundation:
   * erase somanager_init_listeners. (done)
   * erase somanager_shutdown. (done)
   * Modify opendaemon.c (done)
-  
+
+* Fix the bad file descriptor bug on passing of fd. (done)
+  * Workaround: let client requests be handled in the listener process
+    for now.
+
 * Rename to OpenDaemon.
 
 * Remove old documents from the docs page.
 
 * Update the INSTALL document.
 
-*--------------- Start of OpenDaemon 0.8.0 part:
+*--------------- OpenDaemon 0.8.0:
 
-Goal: Strength.
-
-* A multiplexing connman with compilation macros.
-  * Fix the conflict in cfg_update.
-
-* init.h ?
+Goal: Target Approach.
 
 * Thread-safe core.
   * Assoc semaphore/mutex usage.
 
-* Implement ttasker -- a multi-threaded multi tasker.
+* Erase support for socket passing across processes.
 
-* Per-interface preference of multi tasking module.
-  * Compile ttasker and ptasker implicitly.
-  * USE_PTASKER or USE_MTASKER checks on every
-    mtasker_* call.
-  * An interface's request process/thread
-    is forked with respect to the interface's
-    preference, below the interface's listener
-    parent process/thread.
-
+* Parser API.
+  * Translates a query into a common format
+    that tells a generic tree walker what to
+    do ?
+  * Includes per-operation data source specification.
+  * Includes per-operation tool spcifications (Processor, Communicator ...)
+  * or a Parser + Tree walker approach ?
+  
 * Processor API.
 
 * Communicator API ?
-  * To fit chat applications and such ?
-  * Require an interface multi tasking
-    preference that uses ttasker.
   * provide an API the provides for
     message passing among separate client
     connections.
 
-* I18n and l10n.
+* Threads API. (ttasker)
+  * Support for thread pools.
+  * Put it inside the apis directory.
 
-* Portable loadable modules support.
-  * Support for dependencies.
+* ptasker and ttasker exist side-by-side.
 
-* Support for loading of a module on demand.
+* Interface process model.
+  * To allow an interface to manage its connections / 
+    listener sockets.
+  * Also allows usage of the communicator API.
+  * Support for interface process restarting.
+  * Configuration reparsing happens only in the main process,
+    since already launched interfaces will not be restarted.
 
-* Usage of autoconf to decide on the modules to be compiled.
+* Portable Filesystem API.
+  * file locking.
+  * path translation.
+  
+* Allow the configuration API to create more than one parse tree
+  of more than one configuration file so an interface can create 
+  its own configuration file.
 
-* somanager should free the ports array in each of the child processes.
-
-* Implement a generic communication protocol that other interface 
-  writers can use:
+* Generic Communication Protocol:
   * An authentication-based version. (authproto)
   * A non-authentication-based version. (proto)
   
 * cleaner, more portable sockets API.
   * support for connect().
 
-* Portable Filesystem API.
-  * file locking.
-  * path translation.
-  
-* Portable way to pass sockets between processes.
+* Fix the conflict in cfg_update.
+
+* init.h ?
 
 Issues:
 -------
 
-* Configuration of the user and the group under which
-  OpenDaemon is to run.
-
 * authman must encode the user authentication tokens.
 
-*----------------------- Next Release:
+*--------------- OpenDaemon 0.9.0:
 
-* Per-interface, per-file, per-directory,
-  per-what else ? engine association technique.
+Goal: Back to you XML.
+
+* Rewrite the engine / processor association API.
+
+* Define OpenDaemon's Engine-XMLD as a software that parses a 
+  generic data format as defined in the Engine API regardless of
+  whether this data is stored as XML.
+  
+* Rewrite XMLD-SQL parser and interface within the new model.
+
+* Rewrite Enging-XMLD.
+  * XML doesn't have to be the native storage format.
+  * You can use multiple files to store the data tree.

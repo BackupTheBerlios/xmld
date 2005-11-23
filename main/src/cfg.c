@@ -13,6 +13,7 @@
 
 #include <errno.h>
 #include "includes.h"
+#include "connman.h"
 
 int yyparse(void *);
 int yywrap(void);
@@ -72,5 +73,10 @@ Status cfg_shutdown() {
 void cfg_update(int signum) {
  cfg_shutdown();
  cfg_init();
+ interface_list_shutdown();
+ interface_list_init();
+ engine_list_shutdown();
+ engine_list_init();
+ connman_init();
 }
 
