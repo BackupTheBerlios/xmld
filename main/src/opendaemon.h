@@ -1,4 +1,3 @@
-%{
 /*                                                                *
  * -------------------------------------------------------------- *
  * OpenDaemon                                                     *
@@ -11,40 +10,14 @@
  * Authors: Khalid Al-Kary (khalid_kary@hotmail.com)              *
  * -------------------------------------------------------------- * 
  */
+ 
+#ifndef __INIT_H
+#define __INIT_H
 
-#include "includes.h"
-#include "cfg_parser.tab.h"
-#define YY_DECL int yylex(YYSTYPE *lvalp)
-%}
-%x STR
-%%
+proc_pool *main_proc_pool;
 
-#(.*)\n   ;
-" " ;
-"<" return '<';
-">" return '>';
-"/" return '/';
-"\n" ;
-"\""  BEGIN STR;
-<STR>[^"]* {
-	    lvalp->string=(char *) malloc((yyleng+1) * sizeof(char));	    
-            strcpy(lvalp->string, yytext);
-            return STRING;
-           }
-<STR>\" BEGIN INITIAL;
-[A-Za-z]([A-Za-z0-9_]*) {
-		lvalp->string = (char *) malloc((yyleng+1) * sizeof(char));
-		strcpy(lvalp->string, yytext);
-		return IDENTIFIER;
-               }
-[0-9]+ {
-        lvalp->integer=atoi(yytext);
-	return INTEGER;
-       }
-. {}
+void shutdown(int);
+void update_config(int);
 
-%%
+#endif /* __INIT_H */
 
-int yywrap() {
- return 1;
-}

@@ -1,6 +1,6 @@
 /*                                                                *
  * -------------------------------------------------------------- *
- * OpenDaemon                                                     *
+ * The OpenXMLD                                                   *
  * -------------------------------------------------------------- *
  * This source file is subject to the GNU General Public licence, *
  * which can be obtained through the world-wide-web at:           *
@@ -11,26 +11,10 @@
  * -------------------------------------------------------------- * 
  */
 
-#ifndef __DEF_H
-#define __DEF_H
+#ifndef __INTERFACEMAN_H
+#define __INTERFACEMAN_H
 
-/* Version defines */
-#define OPENDAEMON_VERSION_MAJOR "0"
-#define OPENDAEMON_VERSION_MINOR "7"
-#define OPENDAEMON_VERSION_REVIEW "0"
-#define OPENDAEMON_VERSION "0.7.0"
+Status interfaceman_init(void);
+void _launch(void *);
 
-/* Status values */
-#define SUCCESS 1
-#define FAILURE 0
-
-/* Bool values */
-#define FALSE 0
-#define TRUE 1
-
-#define BIT_ISSET(bitmask, bit) ((bitmask) & (bit))
-
-typedef int Bool;
-typedef int Status;
-
-#endif /* __DEF_H */
+#endif /* __INTERFACEMAN_H */

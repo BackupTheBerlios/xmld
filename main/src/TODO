@@ -1,321 +1,105 @@
-*--------------- Start of OpenDaemon 0.7.0 part:
+** OpenDaemon 0.8.0:
 
-Goal: Cleanliness.
+Goal: API enrichment.
 
-* The engine interface must be generic, with support for:
-  * Multi-levelled data sets. (done)
-  * Node labelling (tagnames in XML). (done)  
+* Erase support for socket passing across processes. (done)
 
-* Engine capability level specification bitmask. (done)
-
-* Engine access level macros should be generic and simpler. (done)
-
-* Better passage of file names from the tree walker to the engine.
-  * XMLDFile can contain an additional field that carries the full
-    actual file path from the document root ?  (done)
-  * No longer should XMLDFile_get_full_file be needed. (done)
-
-* Addition of data source modification functions to the engine API. (done)
-  * Capability bit. (done)
-
-* cfg_parser must be rewritten using bison and flex for
-  cleanliness reasons.
-  * Write cfg_parser.lex (done).
-  * Write cfg_parser.y. (done -- grammer only)
-  * XMLDCfgSection (with support for subsections -- done).
-  * XMLDDirective refinement. -> (XMLDCfgDirective -- done)
-  * XMLDCfgValue (done).
-  * Write code for grammar rules. (done)
-  * New cfg_parser.c must use cfg_parser.y. (done)
-  * Modify cfg_parser.y such that it takes a prepared parse
-    tree as input and fills it. (done)
-  * Each part should manipulate cfg data structures directly.
-    * Reimplement cfg_get that supports a section name and
-      a parent section structure arguments (NULL in case of
-      cfg_tree). (done -- returns XMLDCfgValueList)
-    * Devise an API in cfg that eases retrival of directives
-      it just is really hard to do right now.
-       * XMLDCfgSection_get_section: (done)
-         * The index of the section.
-       * XMLDCfgSection_get_directive: (done)
-	 * The index of the directive.
-       * XMLDCfgDirective should provide a value retrieval function --
-         XMLDCfgDirective_get_value, that receives an argument: (done)
-	 * The index of the parameter to retrieve (0 for the main value).
-    * Modify all parts.
-      * ptasker (done)
-      * somanager (done)
-    * modify initialization of document_root. (done)
-    * XMLDList_first and XMLDList_last should return NULL in case of
-      receiving NULL as an argument. (done)
-    * Write a new sample xmld.conf. (done)
-  * Engine association functions should be put in engine list. (done)
-  * cfg_parser.(c|h) -> cfg.(c|h) (done)
-  * Global configuration variables should remain initialized
-    by cfg_init. (done -- only document_root)
-  * Erase cfg.c and cfg.h. (done)
-  * xmld.conf must not contain types of directives nor 
-  somanager.num_listeners. (ok)
-  * Support for directive parameters. (ok)
-  * # Support for comments in cfg_parser.lex (done)
-  * expected bug in cfg.c: The first directive of a set of directives
-    that have the same name is the only one we can retrieve. (fixed)
-
-* Configuration search functions must return NULL in case the
-  index was not correct, and not the last found element! (done)
-
-* Real implementation of interface specification according
-  to the configuration file with support for interface parameters.
-  * interface_list creates a list according to defines at first.
-    (done)
-  * XMLDInterface_copy (done)
-  * XMLDInteface.init should receive parameters. (done)
-  * interface_list_init uses cfg in creation of a second list
-    by copying interfaces from the first list and assigns each one 
-    to its port and sends it the parameters. (done)
-  * XMLDInterface.port (done)
-  * XMLDInterface_search_by_port (done)
-  * somanager should search for the interface assigned to the
-    port from which the user connects. (done)
-
-* Rewrite the generic communication protocol so each interface
-  has its own protocol.
-  * No longer is authman_handle needed in somanager. (done)
-  * somanager_user_connection --> XMLDInterface->user_connection.
-    (done).
-  * somanager_handle should send only the interface pointer
-    to XMLDInterface->user_connection. (done)
-  * remove XMLDConnection. (done)
-
-* Fix that somanager passes the interface name through conn.user
-  then search for its structure a second time. (done)
-
-* remove client, xmldsql, engine_xmld from the source tree. (done)
-
-* Generic Data Storage API -- to remove database server-specific
-  fields from different structures.
-   * XMLDAssoc -- Thread-safe associative array implementation:
-     * Numeric and String index support. (ok)
-     * No internal iterators. (ok)
-     * Automatic reusage of already allocated memory segments. (done)
-     * Automatic length calculation. (ok)
-   * xmld_assoc.h (done)
-   * xmld_assoc.c (done)
-
-* Internal XMLDAssoc HashTable. (done)
-
-* sutils hash function. (done)
-
-* XMLDAssocWalker structure
- * Ability to move to a previous / next index. (done)
- * Ability to get the current index's value. (done)
-
-* Replace XMLDList with XMLDAssoc in all the code.
-  * Remove list functions. (done)
-  * Remove free content. (done)
-  * XMLDCfgDirective. (done)
-  * XMLDCfgSection. (done)
-  * cfg_parser.y (done)
-  * engine_list (done)
-  * interface_list (done)
-  * authman. (done)
-  * somanager. (done)
-  * XMLDWork (done)
-  * XMLDFile (done)
-  * Remove xmld_list.c and .h. (done)
-  
-* For all generic structures, use a single XMLDAssoc field
-  instead of the multiple void* fields.
-   * XMLDWork (done)
-   * XMLDFile (done)
-   * XMLDInterface (done)
-
-* Support for re-parsing of the configuration on the fly.
-  * mtasker support function for signaling.
-    * mtasker_signal_children. (done)
-    * main process handles SIGUSR2 as a configuration update signal
-      and calls mtasker_signal_children with SIGUSR2. (done)
-  * Child processes should run a cfg function on receiving of signal. (done)
-  * cfg_update. (done)
-  * somanager, interface_list should be restarted to update the
-    listening sockets and the interfaces. (done)
-
-* Erase task table in ptasker, the main process should loop
-  until it finds a free child to use. (done)
-  
-* Erase usage of mutils. (done)
-
-* Real implementation of engine association functions.
-  * Why not decide using file name extentions ? (ok)
-  * Erase old configuration directives and files. (done) 
-  * Configuration should contain the ability to specify
-    an engine for a particular extention. (done)
-    * Engines section (done)
-    * FileType directive (done)
-  * Configuration function for getting the engine
-    for a particular file type. (done)
-    * engine_list_get_engine (done)
-
-* Data source creation functions.
-  * Ability to use the engine on an empty XMLDFile. (done)
-  * Capability bit. (done)
-
-* Data source alteration (reshaping) functions.
-  * Capability bit. (done)
- 
-* Data source removal functions. (done)
-  * Capability bit. (done)
-
-* Put supplementary APIs in one place:
-  * On Disk Data Manipulation API. (dutils) (done)
-  * String Manipulation API. (sutils) (done)
-  * Authentication API. (authman) (done)
-  * File Opening and Locking API. (fmanager) (done)
-  
-* Error messages:
-  * Engine functions: (done)
-    * getters: Return NULL or -1 in case of error. 
-    * setters: Return XMLD_FALSE in case of error.
-    * operationals: Return XMLD_FAILURE in case of error.
-  * Error message retrieval engine function. (done)
-  * Remove error arrays and defines from xmld.c, init.h and xmlddef.h. (done)
-  * How should interfaces handle wrong parameter count / type in xmld.conf ?
-    * init should return a XMLDStatus indiciating success / failure. (done)
-    * Interface function for getting an error message. (done)
-
-* Remove protoimpl and its documentation. (done)
-
-* Implement an EchoServer interface for demonstration. (done)
-
-* Drop the XMLD part off all the structure names in the code.
-  * It's no longer a XML-only server.
-    * XMLDAssoc (done)
-    * XMLDAssocWalker (done)
-    * XMLDCfgDirective (done)
-    * XMLDCfgSection (done)
-    * XMLDCfgValue (done)
-    * XMLDEngine (done)
-    * XMLDFile (done)
-    * xmlddef (done)
-  * xmld.c -> opendaemon.c (done)
-  * xmld.conf -> opendaemon.conf (done)
-  * modules' code ? (done)
-    * cfg
-    * cfg_parser
-    * echoserver
-    * engine_list
-    * interface_list
-    * opendaemon.c
-    * somanager
-
-* Remove XMLDWork ? (done)
-  * Readd if needed
-
-* Take structures to classes directory ? (done)
-
-* Write interface names in the start up port list. (done)
-
-* Test run:
-  * Modify make file. (done)
-  * Modify includes. (done)
-  * Compile. (done)
-  * Fix compilation blocking bugs. (done)
-  * Run. (done)
-  * Fix bugs.
-  
-* replace somanager with connman:
-  * Use the interface list. (done)
-  * The listener socket is created after the listener 
-    process forking so we don't have to double passfd. (done)
-  * somanager_handle -> connman_listener. (done)
-  * erase somanager_init_listeners. (done)
-  * erase somanager_shutdown. (done)
-  * Modify opendaemon.c (done)
-
-* Fix the bad file descriptor bug on passing of fd. (done)
-  * Workaround: let client requests be handled in the listener process
-    for now.
-
-* Rename to OpenDaemon.
-
-* Remove old documents from the docs page.
-
-* Update the INSTALL document.
-
-*--------------- OpenDaemon 0.8.0:
-
-Goal: Target Approach.
-
-* Thread-safe core.
-  * Assoc semaphore/mutex usage.
-
-* Erase support for socket passing across processes.
+* Framework of dynamic module loading:
+  * modman_load_module(type, name) (done)
+    * Type: Engine, Processor, Parser ... etc
+    * Support for version compaitability checks. (done)
+    * Informative error messages in case if any error occurs during 
+      module loading.
+  * Configuration: (done)
+    * modman configuration section.
+  * modman_unload_module. (done)
 
 * Parser API.
-  * Translates a query into a common format
-    that tells a generic tree walker what to
-    do ?
-  * Includes per-operation data source specification.
-  * Includes per-operation tool spcifications (Processor, Communicator ...)
-  * or a Parser + Tree walker approach ?
+  * Put the tree walker inside the parser.
   
 * Processor API.
 
 * Communicator API ?
-  * provide an API the provides for
-    message passing among separate client
-    connections.
+  * provide an API that provides for selective and public data passing across 
+    separate client connections.
 
-* Threads API. (ttasker)
-  * Support for thread pools.
-  * Put it inside the apis directory.
+* Connector API?
+  * Connection management with respect to the multi-processing model.
 
-* ptasker and ttasker exist side-by-side.
+* Threads API. (done -- apis/ttasker)
+  * Support for thread pools. (done)
+  * Put it inside the apis directory. (ok)
 
-* Interface process model.
-  * To allow an interface to manage its connections / 
-    listener sockets.
-  * Also allows usage of the communicator API.
-  * Support for interface process restarting.
-  * Configuration reparsing happens only in the main process,
-    since already launched interfaces will not be restarted.
+* ptasker and ttasker exist side-by-side. (yes)
+  * rename mtasker_* to ptasker_*. (done)
+
+* Interface process model. (done)
+  * interfaceman instead of interface_list.
+    * interfaceman_init: (done)
+      * Launches each of the interfaces in a seperate child process. (done)
+      * Uses ptasker_handle with _launch (done)
+    * _launch:
+      * setuid to the configured user of the interface. (done)
+      * Tries to load the dynamic module of the interface inside the new process. (done)
+      * Run the _interface_init routine inside the new process. (done)
+      * Print out _interface_init_msg. (done)
+      * if _interface_init_status is SUCCESS: (done)
+        * Call _interface_main.	(done)
+      * user and conf may be NULL. (yes)
+  
+* Configuration reparsing happens only in the main process,
+  since already launched interfaces will not be restarted.
 
 * Portable Filesystem API.
   * file locking.
   * path translation.
   
-* Allow the configuration API to create more than one parse tree
-  of more than one configuration file so an interface can create 
-  its own configuration file.
-
+* Generalize configuration API. (done)
+  * cfg_create_tree (done)
+  * cfg_destroy_tree (done)
+ 
 * Generic Communication Protocol:
-  * An authentication-based version. (authproto)
-  * A non-authentication-based version. (proto)
-  
+  * An authenticating version. (authproto)
+  * A non-authenticating version. (proto)
+  * Or same code with parameters ?
+
+* Authentication rewrite:
+  * Configurable authentication domains -- so interfaces will not 
+    have to share the same authentication data.
+  * Configurable per-domain data storage backend.
+    * Ability to specify an internal engine with error 
+      messages if it was not loaded.
+    * Ability to use an external data source module. (e.g RDBMS)
+  * Authentication token encoding.
+
+* ptasker improvements:
+  * A thread pool-like API instead of creating a single pool for the whole
+    system.
+    * Modify ptasker.h (done).
+    * Modify ptasker.c to conform. (done)
+    * Modify opendaemon.c so it initializes a global process pool. (done)
+    * Implement ptasker_kill_me, should there be a _kill_me in ttasker ?
+    
+
+* Rename ptasker and ttasker to something more expressing -- wrt the pooling
+  mechanism.
+
 * cleaner, more portable sockets API.
   * support for connect().
 
-* Fix the conflict in cfg_update.
-
-* init.h ?
-
-Issues:
--------
-
-* authman must encode the user authentication tokens.
+* Try to create the shelletna website chatserver on top of OpenDaemon:
+  * Demonstrate the capabilities of the platform.
+  * Fix issues that appear on the way.
+  * Add the chatserver's source code as an example interface.
 
 *--------------- OpenDaemon 0.9.0:
 
-Goal: Back to you XML.
+Goal: Finalization of Platform.
 
-* Rewrite the engine / processor association API.
+* On server restart:
+  * Main process pool resizing.
+    * Add support for this in the thread and the process pool.
+  * Launching interfaces newly-added to the configuration.
+    * Add support for this in interfaceman.
 
-* Define OpenDaemon's Engine-XMLD as a software that parses a 
-  generic data format as defined in the Engine API regardless of
-  whether this data is stored as XML.
-  
-* Rewrite XMLD-SQL parser and interface within the new model.
-
-* Rewrite Enging-XMLD.
-  * XML doesn't have to be the native storage format.
-  * You can use multiple files to store the data tree.
+* Rewrite the file association API.

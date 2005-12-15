@@ -1,4 +1,3 @@
-%{
 /*                                                                *
  * -------------------------------------------------------------- *
  * OpenDaemon                                                     *
@@ -12,39 +11,22 @@
  * -------------------------------------------------------------- * 
  */
 
-#include "includes.h"
-#include "cfg_parser.tab.h"
-#define YY_DECL int yylex(YYSTYPE *lvalp)
-%}
-%x STR
-%%
+#ifndef __MODMAN_H
+#define __MODMAN_H
 
-#(.*)\n   ;
-" " ;
-"<" return '<';
-">" return '>';
-"/" return '/';
-"\n" ;
-"\""  BEGIN STR;
-<STR>[^"]* {
-	    lvalp->string=(char *) malloc((yyleng+1) * sizeof(char));	    
-            strcpy(lvalp->string, yytext);
-            return STRING;
-           }
-<STR>\" BEGIN INITIAL;
-[A-Za-z]([A-Za-z0-9_]*) {
-		lvalp->string = (char *) malloc((yyleng+1) * sizeof(char));
-		strcpy(lvalp->string, yytext);
-		return IDENTIFIER;
-               }
-[0-9]+ {
-        lvalp->integer=atoi(yytext);
-	return INTEGER;
-       }
-. {}
+char *interfaces_dir;
+char *engines_dir;
+char *processors_dir;
+char *parsers_dir;
 
-%%
+/* Type flags of modman_load_module */
+#define MODMAN_ENGINE_MODULE    0
+#define MODMAN_INTERFACE_MODULE 1
+#define MODMAN_PROCESSOR_MODULE 2
+#define MODMAN_PARSER_MODULE    3
 
-int yywrap() {
- return 1;
-}
+Status modman_init(void);
+Status modman_load_module(char *, int);
+Status modman_unload_module(void *);
+
+#endif /* __MODMAN_H */

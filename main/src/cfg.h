@@ -1,6 +1,6 @@
 /*                                                                *
  * -------------------------------------------------------------- *
- * The OpenXMLD                                                   *
+ * OpenDaemon                                                     *
  * -------------------------------------------------------------- *
  * This source file is subject to the GNU General Public licence, *
  * which can be obtained through the world-wide-web at:           *
@@ -16,11 +16,11 @@
 #define YY_BUF_SIZE 16384
 
 CfgSection *cfg_tree;
-
-char *document_root;
+char *server_root;
 
 Status cfg_init(void);
-void cfg_update(int);
 Status cfg_shutdown(void);
+CfgSection *cfg_create_tree(char *);
+Status cfg_destroy_tree(CfgSection *);
 
 #endif /* __CFG_H */

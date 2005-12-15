@@ -1,6 +1,6 @@
 /*                                                                *
  * -------------------------------------------------------------- *
- * The OpenXMLD                                                   *
+ * OpenDaemon                                                     *
  * -------------------------------------------------------------- *
  * This source file is subject to the GNU General Public licence, *
  * which can be obtained through the world-wide-web at:           *
@@ -31,33 +31,47 @@ YY_BUFFER_STATE yy_create_buffer(FILE*, int);
  * returns: whether successful.
  */
 Status cfg_init() {
- cfg_tree=NULL;
+ cfg_tree = cfg_create_tree("opendaemon.conf");
+ 
+ if (cfg_tree == NULL) {
+  return FAILURE;
+ }
+ else {
+  CfgDirective *serverroot_directive = CfgSection_get_directive(cfg_tree, "ServerRoot", 0);
+  if (serverroot_directive == NULL) {
+   return FAILURE;
+  }
+  CfgValue *serverroot_value = CfgDirective_get_value(serverroot_directive, 0);
+  if (serverroot_value->type != CFG_STRING) {
+   return FAILURE;
+  }
+  server_root = (char *) serverroot_value->value;
+  return SUCCESS;
+ }
+}
+
+/*
+ * Creates a configuration tree out of the given configuration file.
+ */
+CfgSection *cfg_create_tree(char *file) {
+ CfgSection *ret = NULL;
  errno=0;
- FILE *conf=fopen("opendaemon.conf", "r");
+ FILE *conf=fopen(file, "r");
 
  if (errno != 0) {
-  return FAILURE;
+  return NULL;
  }
 
  YY_BUFFER_STATE buf = yy_create_buffer(conf, YY_BUF_SIZE);
  yy_switch_to_buffer(buf);
- Status status = yyparse(&cfg_tree);
+ Status status = yyparse(&ret);
  yy_delete_buffer(buf);
- 
+
  if (status == -1) {
-  return FAILURE;
+  return NULL;
  }
  else {
-  CfgDirective *docroot_directive = CfgSection_get_directive(cfg_tree, "DocumentRoot", 0);
-  if (docroot_directive == NULL) {
-   return FAILURE;
-  }
-  CfgValue *docroot_value = CfgDirective_get_value(docroot_directive, 0);
-  if (docroot_value->type != CFG_STRING) {
-   return FAILURE;
-  }
-  document_root = (char *) docroot_value->value;
-  return SUCCESS;
+  return ret;
  }
 }
 
@@ -66,17 +80,15 @@ Status cfg_init() {
  * returns: whether successful.
  */
 Status cfg_shutdown() {
- CfgSection_free(cfg_tree);
+ cfg_destroy_tree(cfg_tree);
  return SUCCESS;
 }
 
-void cfg_update(int signum) {
- cfg_shutdown();
- cfg_init();
- interface_list_shutdown();
- interface_list_init();
- engine_list_shutdown();
- engine_list_init();
- connman_init();
+/*
+ * Finalizes and cleans up the given parse tree.
+ * returns: whether successful.
+ */
+Status cfg_destroy_tree(CfgSection *tree) {
+ CfgSection_free(tree);
+ return SUCCESS;
 }
-

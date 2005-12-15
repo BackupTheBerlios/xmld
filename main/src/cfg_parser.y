@@ -1,7 +1,7 @@
 %{
 /*                                                                *
  * -------------------------------------------------------------- *
- * The OpenXMLD                                                   *
+ * OpenDaemon                                                     *
  * -------------------------------------------------------------- *
  * This source file is subject to the GNU General Public licence, *
  * which can be obtained through the world-wide-web at:           *
