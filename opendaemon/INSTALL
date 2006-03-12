@@ -1,0 +1,79 @@
+# OpenDaemon 0.7.0 installation instructions
+--------------------------------------------
+
+Note: OpenDaemon was not compiled except on the development platform 
+which has the following charasteristics:
+
+Linux 2.4.8-26mdk
+glibc 2.3.1
+gcc 3.2.2
+GNU bison 1.35
+flex 2.5.4 
+
+# Server Compilation:
+---------------------
+
+In main/src of the distribution:
+
+$ make
+
+# Client Compilation:
+---------------------
+
+In main/src/client of the distribution:
+
+$ gcc echoserver_client.c ../sockets.c -o echoserver_client
+
+# Running and testing:
+----------------------
+
+In main/src of the distribution:
+
+$ ./opendaemon
+
+A message like this one should be generated:
+
+OpenDaemon is up and running:
+	* Main PID: ????
+	* EchoServer is on port 8080 as EchoServerTry
+	
+Note: The listening port is configured through the opendaemon.conf file--
+just in case this needs to be changed.
+
+In main/src/client, run the client:
+
+$ ./echoserver_client
+
+Expected Output:
+
+Hello World!
+
+
+# What Happened ?
+-----------------
+
+OpenDaemon is now a generic server platform, EchoServer is an echo 
+interface code plugged into OpenDaemon's code which you have compiled
+and ran, EchoServerTry is an instance of of the EchoServer interface code,
+The one that answered your "Hello World!" with a "Hello World!".
+
+EchoServer is intended for system sanity testing purposes, the system
+is designed to hold inside it interfaces of more interest :-)
+
+Creating a generic server platform was a development decision,
+so when XMLD-SQL and Engine-XMLD are plugged back into the whole thing 
+they are plugged on stable grounds.
+
+# Feedback:
+-----------
+
+This release should be a bit of stable, and I don't think there's
+going to be major core changes within next releases (the current code is very 
+generic) so if you notice segfaults or erratic behaviour in this simple test 
+case, or in any one you make yourself, please report this behaviour:
+
+xmld-dev@lists.berlios.de
+
+Author: Khalid Al-Kary (khalid302-gmail-dot-com)
+
+-- EOF --

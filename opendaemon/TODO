@@ -1,0 +1,162 @@
+** OpenDaemon 0.8.0:
+
+Goal: API enrichment.
+
+* Erase support for socket passing across processes. (done)
+
+* Framework of dynamic module loading:
+  * modman_load_module(type, name) (done)
+    * Type: Engine, Processor, Parser ... etc
+    * Support for version compaitability checks. (done)
+    * Informative error messages in case if any error occurs during
+      module loading. (Ok)
+  * Configuration: (done)
+    * modman configuration section.
+  * modman_unload_module. (done)
+
+* Engine API. (done)
+  * Update modman and modman configuration. (done)
+
+* Executor API. (done)
+  * Language parsing and execution.
+
+* Processor API. (done)
+  * Parametric data processing.
+
+* Communicator API. (done)
+  * Data passing across separate client connections.
+
+* Connector API. (done)
+  * Multiple connections management.
+
+* Auth API. (done)
+  * Abstract authentication / authrization.
+
+* Protocol API. (done)
+  * Abstract communication protocol.
+
+* Thread pools. (done -- apis/thread_pool.(c|h))
+
+* Interface process model. (done)
+  * interfaceman instead of interface_list.
+    * interfaceman_init: (done)
+      * Launches each of the interfaces in a seperate child process. (done)
+      * Uses ptasker_handle with _launch (done)
+    * _launch:
+      * setuid to the configured user of the interface. (done)
+      * Tries to load the dynamic module of the interface inside the new process. (done)
+      * Run the _interface_init routine inside the new process. (done)
+      * Print out _interface_init_msg. (done)
+      * if _interface_init_status is SUCCESS: (done)
+        * Call _interface_main.	(done)
+      * user and conf may be NULL. (yes)
+
+* Generalize configuration API. (done)
+  * cfg_create_tree (done)
+  * cfg_destroy_tree (done)
+ 
+* process_pool improvements:
+  * A thread pool-like API instead of creating a single pool for the whole
+    system.
+    * Modify process_pool.h (done).
+    * Modify process_pool.c to conform. (done)
+    * Modify opendaemon.c so it initializes a global process pool. (done)
+    * Implement process_pool_kill_me (done)
+
+* Rename ptasker and ttasker to something more expressing -- wrt pooling
+  mechanism. (process_pool and thread_pool)
+
+* Improve sockets API.
+  * support for connect(). (done)
+  * bind() should support passing of the address. (done)
+
+* Update modman with new module types.
+  * Configuration. (done)
+  * modman_load_module. (done)
+  * Create a directory for each module type. (done)
+  * modman should extract a pointer to an instance of
+    the module structure ? (done)
+
+* Module config. (done)
+
+* Module error reporting. (done)
+  * Support for error levels. (done)
+  * Error class. (done)
+
+* Separate run() from init() in the connector. (done)
+
+* Communicator uses queues which should slow down
+  the process. (resolved)
+  * Add support for handler functions.
+
+* MCET - Multiplexing Connector with Executor Threads.
+  * Initialize the thread pool. (done)
+  * set request and connection handlers in init. (done)
+  * addition and removal of a listener. (done)
+  * Conf: (done)
+    * Decide on number of runs before returning.
+    * Whether to run infinitely.
+    * Get timeout value.
+    * Init: cache those values.
+  * run.
+   * fd_set chaching. (done)
+  * add_client
+  * remove_client
+  * stop
+  * get_client_data
+  * set_client_data
+  * destroy
+  * user data freeing routine.
+  * set O_NONBLOCK for listeners. (done)
+
+* Connector API:
+  * Add API functions to manipulate client data association. (done)
+  * Add API function for UserData freeing upon destroy(). (done)
+  * Add API function stop(). (done)
+
+* Assoc:
+  * Add a flag to Assoc that tells whether to store integer keys. (done)
+  * Update API functions to conform to the integer_keys flag.
+    * Assoc_add
+    * Assoc_remove
+    * Assoc_get
+    * Assoc_get_key_index
+    * Assoc_get_index
+    * Assoc_set (Implement it first)
+    * Assoc_update_key
+    * Assoc_update_key_by_index    
+  * AssocWalker_get_current_key.
+  * Take assoc to apis instead of classes. (ok)
+
+* Update interfaceman to conform with modifications in
+  modman's API and behaviour.
+  
+* Support for modcap across all modules ?
+
+* DBAuth - Database Authentication / Autherization.
+
+* RTComm - Real-time Communicator.
+
+* Logger - Logging Engine.
+  * Support for log rotation.
+
+* Try to create the chatserver on top of OpenDaemon:
+  * Protocol.
+  * Executor.
+
+*--------------- OpenDaemon 0.9.0:
+
+Goal: Finalization of Platform.
+
+* On server restart:
+  * Main process pool resizing.
+    * Add support for this in the thread and the process pool.
+  * Launching interfaces newly-added to the configuration.
+    * Add support for this in interfaceman.
+
+* processor should have the ability to return chuncked data.
+  * Cursor support ?
+
+* Compile sockets as a dll so it can be replaced without recompiling.
+
+* Rewrite the file association API ?
