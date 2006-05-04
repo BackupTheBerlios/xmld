@@ -66,39 +66,25 @@ void _launch(void *params) {
  if (*(cfg_params + 2) != NULL) {
   struct passwd *user_id_struct = getpwnam((*(cfg_params + 2))->value);
   if (setuid(user_id_struct->pw_uid) != 0) {
-   printf("\t* Interface manager: Unable to set the user to %s for the process of an interface loading the code %s\n", (*(cfg_params+2))->value, (*(cfg_params + 1))->value);
+   printf("\t* Interface manager: Unable to set the user to %s for the process of an interface loading the code %s\n", (*(cfg_params + 2))->value, (*(cfg_params))->value);
    return;
   }
  }
 
- void *mod_handle = modman_load_module((*(cfg_params + 1))->value, MODMAN_INTERFACE_MODULE);
- if (mod_handle == NULL) {
-  printf("\t* Interface manager: Error loading interface module %s\n", (*(cfg_params + 1))->value);
+ Module *mod = modman_load_module((*cfg_params)->value, MODMAN_INTERFACE_MODULE);
+ if (mod == NULL) {
+  printf("\t* Interface manager: Error loading interface module %s\n", (*(cfg_params))->value);
   return;
  }
 
- Status (*_interface_init) (CfgValue **) = dlsym(mod_handle, "_interface_init");
+ Interface *if_inst = (Interface *) modman_get_module_instance(mod, (*(cfg_params + 1))->value);
  
- if (_interface_init == NULL) {
-  printf("\t* Interface manager: Could not find an initialization routine in the interface module %s\n", (*(cfg_params + 1))->value);
-  return;
- }
-
- char *_interface_init_msg = dlsym(mod_handle, "_interface_init_msg");
- if ((*(_interface_init)) (cfg_params) == FAILURE) {
-  printf("\t* Interface manager: Error initializing interface module %s: %s\n", (*(cfg_params + 1))->value, _interface_init_msg);
+ if ((*(if_inst->init)) () == FAILURE) {
+  printf("\t* Interface manager: Error initializing interface module %s: %s\n", (*(cfg_params))->value, if_inst->msg);
   return;
  }
  else {
-  printf("\t* %s: %s", (*(cfg_params + 1))->value, _interface_init_msg);
-  void (*_interface_main) (void) = dlsym(mod_handle, "_interface_main");
-  if (_interface_main == NULL) {
-   printf("\t* Interface manager: Could not find a main routine in the interface module %s\n", (*(cfg_params + 1))->value);
-   ptasker_kill_me(main_proc_pool);
-   return;
-  }
-  else {
-   (*(_interface_main)) ();
-  }
+  printf("\t* %s: %s", (*(cfg_params))->value, if_inst->msg);
+  (*(if_inst->main)) ();
  } 
 }

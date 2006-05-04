@@ -18,7 +18,8 @@ typedef void ProcessResult;
 
 struct Processor {
  CfgSection *cfg;
- 
+ int modcap;
+
  ProcessResult *(*process) (char *, Assoc *);
  
  void *(*get_output) (ProcessResult *);

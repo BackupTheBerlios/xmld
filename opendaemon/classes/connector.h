@@ -16,9 +16,13 @@
 
 typedef void UserData;
 
+/* Connector capability flags */
+#define CONNECTOR_NONBLOCK 0
+
 struct Connector {
  CfgSection *cfg;
  ConnectorData *data;
+ int modcap;
  
  Status (*init) (Connector *, void (*) (Connector *, int), void (*) (Connector *, int));
  Status (*set_connection_handler) (Connector *, void (*) (Connector *, int));

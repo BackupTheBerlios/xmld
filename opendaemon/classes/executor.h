@@ -20,7 +20,8 @@ typedef void ExecutorResult;
 
 struct Executor {
  CfgSection *cfg;
- 
+ int modcap;
+
  ExecutorResult *(*parse) (char *);
  ParseTree *(*get_parse_tree) (ExecutorResult *);
  

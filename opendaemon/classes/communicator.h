@@ -18,12 +18,17 @@
 #define MSG_LISTENER 0
 #define MSG_CHANNEL 1
 
+/* Communicator capability flags */
+#define COMMUNICATOR_MSG_HANDLER 0
+#define COMMUNICATOR_MSG_QUEUE 2
+
 typedef void CommunicatorData;
 typedef void Message;
 
 struct Communicator {
  CfgSection *cfg;
  CommunicatorData *data;
+ int modcap;
  
  void (*init) (Communicator *, void (*) (char *));
  Status (*create_channel) (Communicator *, char *);

@@ -18,7 +18,8 @@ typedef void ProtocolResult;
 
 struct Protocol {
  CfgSection *cfg;
- 
+ int modcap;
+
  ProtocolResult *(*init) (Assoc *);
  ProtocolResult *(*msg) (char *);
  ProtocolResult *(*terminate) (char *);

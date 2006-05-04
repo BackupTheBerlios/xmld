@@ -129,7 +129,8 @@ Goal: API enrichment.
   * Take assoc to apis instead of classes. (ok)
 
 * Update interfaceman to conform with modifications in
-  modman's API and behaviour.
+  modman's API and behaviour. (done)
+  * Added Interface.(c|h)
   
 * Support for modcap across all modules ?
 

@@ -42,7 +42,7 @@ struct Engine {
  /* Basic functions */
 
  CfgSection *cfg;
- int engine_cap;
+ int modcap;
  char *error;
  Status (*init) (void);
  Bool (*is_valid_mime) (char *);
