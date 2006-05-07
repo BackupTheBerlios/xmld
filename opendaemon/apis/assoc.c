@@ -49,10 +49,15 @@ int Assoc_get_length(Assoc *assoc) {
  * Adds an element to the given associative table.
  * key and value are to be allocated and freed externally.
  */
-void Assoc_add(Assoc *assoc, char *key, void *data) {
+void Assoc_add(Assoc *assoc, void *key, void *data) {
  if (assoc->array_length > assoc->length) {
   assoc->values[assoc->length] = data;
-  assoc->keys[assoc->length] = hash(key);
+  if (assoc->integer_keys == FALSE) {
+   assoc->keys[assoc->length] = hash((char *) key);
+  }
+  else {
+   assoc->keys[assoc->length] = (int) key;
+  }
   assoc->length++;
  }
  else {
@@ -60,7 +65,12 @@ void Assoc_add(Assoc *assoc, char *key, void *data) {
   assoc->keys = (long *) realloc(assoc->keys, assoc->length * sizeof(long));
   assoc->array_length++;
   assoc->values[assoc->length-1] = data;
-  assoc->keys[assoc->length-1] = hash(key);
+  if (assoc->integer_keys == FALSE) {
+   assoc->keys[assoc->length - 1] = hash((char *) key);
+  }
+  else {
+   assoc->keys[assoc->length - 1] = (int) key;
+  }
  }
 }
 
@@ -68,9 +78,15 @@ void Assoc_add(Assoc *assoc, char *key, void *data) {
  * Gets the index of the element that has the given key.
  * -1 = not found
  */
-int Assoc_get_index(Assoc *assoc, char *key) {
+int Assoc_get_index(Assoc *assoc, void *key) {
  int i = -1;
- int hash_key = hash(key);
+ int hash_key;
+ if (assoc->integer_keys == FALSE) {
+  hash_key = hash((char *) key);
+ }
+ else {
+  hash_key = hash((int) key);
+ }	 
  for (i = 0; i < assoc->length; i++) {
   if (assoc->keys[i] == hash_key) {
    break;
