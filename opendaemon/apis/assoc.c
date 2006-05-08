@@ -126,9 +126,15 @@ void Assoc_remove_index(Assoc *assoc, int index) {
 /*
  * Returns the data associated to the given key -- NULL if not found.
  */
-void *Assoc_get(Assoc *assoc, char *key) {
+void *Assoc_get(Assoc *assoc, void *key) {
  int i;
- int hash_key = hash(key);
+ int hash_key;
+ if (assoc->integer_keys == FALSE) {
+  hash_key = hash((char *) key);
+ }
+ else {
+  hash_key = (int) key;
+ }
  for (i = 0; i < assoc->length; i++) {
   if (assoc->keys[i] == hash_key) {
    return assoc->values[i];
@@ -143,7 +149,13 @@ void *Assoc_get(Assoc *assoc, char *key) {
 void *Assoc_get_key_index(Assoc *assoc, char *key, int index) {
  int i;
  int num = 0;
- int hash_key = hash(key);
+ int hash_key;
+ if (assoc->integer_keys == FALSE) {
+  hash_key = hash((char *) key);
+ }
+ else {
+  hash_key = (int) key;
+ }
  for (i = 0; i < assoc->length; i++) {
   if (assoc->keys[i] == hash_key) {
    if (num == index) {
