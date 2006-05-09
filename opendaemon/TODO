@@ -116,7 +116,7 @@ Goal: API enrichment.
 
 * Assoc:
   * Add a flag to Assoc that tells whether to store integer keys. (done)
-  * Update API functions to conform to the integer_keys flag.
+  * Update API functions to conform to the integer_keys flag. (done)
     * Assoc_add (done)
     * Assoc_remove (done)
     * Assoc_get (done)
@@ -125,7 +125,7 @@ Goal: API enrichment.
     * Assoc_set (done)
     * Assoc_update_key (done)
     * Assoc_update_key_by_index (done)
-  * AssocWalker_get_current_key.
+  * AssocWalker_get_current_key. (done)
   * Take assoc to apis instead of classes. (ok)
 
 * Update interfaceman to conform with modifications in
@@ -148,6 +148,8 @@ Goal: API enrichment.
 *--------------- OpenDaemon 0.9.0:
 
 Goal: Finalization of Platform.
+
+* Interface reloading while the system is running ?
 
 * On server restart:
   * Main process pool resizing.
