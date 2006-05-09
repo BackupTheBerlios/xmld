@@ -117,14 +117,14 @@ Goal: API enrichment.
 * Assoc:
   * Add a flag to Assoc that tells whether to store integer keys. (done)
   * Update API functions to conform to the integer_keys flag.
-    * Assoc_add
-    * Assoc_remove
-    * Assoc_get
-    * Assoc_get_key_index
-    * Assoc_get_index
-    * Assoc_set (Implement it first)
-    * Assoc_update_key
-    * Assoc_update_key_by_index    
+    * Assoc_add (done)
+    * Assoc_remove (done)
+    * Assoc_get (done)
+    * Assoc_get_key_index (done)
+    * Assoc_get_index (done)
+    * Assoc_set (done)
+    * Assoc_update_key (done)
+    * Assoc_update_key_by_index (done)
   * AssocWalker_get_current_key.
   * Take assoc to apis instead of classes. (ok)
 
@@ -132,7 +132,7 @@ Goal: API enrichment.
   modman's API and behaviour. (done)
   * Added Interface.(c|h)
   
-* Support for modcap across all modules ?
+* Support for modcap across all modules. (done)
 
 * DBAuth - Database Authentication / Autherization.
 

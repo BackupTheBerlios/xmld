@@ -43,7 +43,6 @@ int Assoc_get_index(Assoc *, void *);
 
 /* Setter */
 Status Assoc_set(Assoc *, void *, void *);
-
 int Assoc_get_length(Assoc *);
 
 /* Key update */

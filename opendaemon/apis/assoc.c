@@ -52,12 +52,7 @@ int Assoc_get_length(Assoc *assoc) {
 void Assoc_add(Assoc *assoc, void *key, void *data) {
  if (assoc->array_length > assoc->length) {
   assoc->values[assoc->length] = data;
-  if (assoc->integer_keys == FALSE) {
-   assoc->keys[assoc->length] = hash((char *) key);
-  }
-  else {
-   assoc->keys[assoc->length] = (int) key;
-  }
+  assoc->keys[assoc->length] = (assoc->integer_keys) ? (int) key : hash((char *) key);
   assoc->length++;
  }
  else {
@@ -65,12 +60,7 @@ void Assoc_add(Assoc *assoc, void *key, void *data) {
   assoc->keys = (long *) realloc(assoc->keys, assoc->length * sizeof(long));
   assoc->array_length++;
   assoc->values[assoc->length-1] = data;
-  if (assoc->integer_keys == FALSE) {
-   assoc->keys[assoc->length - 1] = hash((char *) key);
-  }
-  else {
-   assoc->keys[assoc->length - 1] = (int) key;
-  }
+  assoc->keys[assoc->length - 1] = (assoc->integer_keys) ? (int) key : hash((char *) key);
  }
 }
 
@@ -80,13 +70,7 @@ void Assoc_add(Assoc *assoc, void *key, void *data) {
  */
 int Assoc_get_index(Assoc *assoc, void *key) {
  int i = -1;
- int hash_key;
- if (assoc->integer_keys == FALSE) {
-  hash_key = hash((char *) key);
- }
- else {
-  hash_key = hash((int) key);
- }	 
+ int hash_key = (assoc->integer_keys) ? (int) key : hash((char *) key);
  for (i = 0; i < assoc->length; i++) {
   if (assoc->keys[i] == hash_key) {
    break;
@@ -99,7 +83,7 @@ int Assoc_get_index(Assoc *assoc, void *key) {
  * Removes an element that has the given key from the given 
  * associative table.
  */
-void Assoc_remove(Assoc *assoc, char *key) {
+void Assoc_remove(Assoc *assoc, void *key) {
  Assoc_remove_index(assoc, Assoc_get_index(assoc, key));  
 }
 
@@ -128,13 +112,7 @@ void Assoc_remove_index(Assoc *assoc, int index) {
  */
 void *Assoc_get(Assoc *assoc, void *key) {
  int i;
- int hash_key;
- if (assoc->integer_keys == FALSE) {
-  hash_key = hash((char *) key);
- }
- else {
-  hash_key = (int) key;
- }
+ int hash_key = (assoc->integer_keys) ? (int) key : hash((char *) key);
  for (i = 0; i < assoc->length; i++) {
   if (assoc->keys[i] == hash_key) {
    return assoc->values[i];
@@ -144,18 +122,27 @@ void *Assoc_get(Assoc *assoc, void *key) {
 }
 
 /*
+ * Sets the data associated to the given key to the given value
+ * -- If the key is not found FAILURE is returned.
+ */
+Status Assoc_set(Assoc *assoc, void *key, void *data) {
+ int index = Assoc_get_index(assoc, key);
+
+ if (index == -1) {
+  return FAILURE;
+ }
+
+ assoc->values[index] = data;
+ return SUCCESS;
+}
+
+/*
  * Returns the data associated to the given key -- NULL if not found.
  */
-void *Assoc_get_key_index(Assoc *assoc, char *key, int index) {
+void *Assoc_get_key_index(Assoc *assoc, void *key, int index) {
  int i;
  int num = 0;
- int hash_key;
- if (assoc->integer_keys == FALSE) {
-  hash_key = hash((char *) key);
- }
- else {
-  hash_key = (int) key;
- }
+ int hash_key = (assoc->integer_keys) ? (int) key : hash((char *) key);
  for (i = 0; i < assoc->length; i++) {
   if (assoc->keys[i] == hash_key) {
    if (num == index) {
@@ -181,9 +168,9 @@ void *Assoc_get_by_index(Assoc *assoc, int index) {
 /*
  * Updates the hashed key of an element in the associative table.
  */
-void Assoc_update_key(Assoc *assoc, char *key, char *new_key) {
+void Assoc_update_key(Assoc *assoc, void *key, void *new_key) {
  int index = Assoc_get_index(assoc, key);
- assoc->keys[index] = hash(new_key);
+ assoc->keys[index] = (assoc->integer_keys) ? (int) new_key : hash((char *) new_key);
 }
 
 /*
@@ -194,7 +181,7 @@ void Assoc_update_key_by_index(Assoc *assoc, int index, char *new_key) {
  if (index < 0 || index	>= assoc->length) {
   return;
  }
- assoc->keys[index] = hash(new_key);
+ assoc->keys[index] = (assoc->integer_keys) ? (int) new_key : hash((char *) new_key);
 }
 
 /*

@@ -66,6 +66,20 @@ int AssocWalker_get_current_index(AssocWalker *walker) {
 }
 
 /*
+ * Gets the current key of the walker.
+ * Only meaningful if integer_keys is set to true
+ * because otherwise the hashed string is returned.
+*/
+int AssocWalker_get_current_key(AssocWalker *walker) {
+ if (walker->curr_index >= 0) {	 
+  return *(walker->subject->keys + walker->curr_index);
+ }
+ else {
+  return -1;
+ }
+}
+
+/*
  * Gets the value stored at the current walker index in the
  * associative table.
  */
