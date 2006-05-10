@@ -83,15 +83,15 @@ int Assoc_get_index(Assoc *assoc, void *key) {
  * Removes an element that has the given key from the given 
  * associative table.
  */
-void Assoc_remove(Assoc *assoc, void *key) {
- Assoc_remove_index(assoc, Assoc_get_index(assoc, key));  
+Status Assoc_remove(Assoc *assoc, void *key) {
+ return Assoc_remove_index(assoc, Assoc_get_index(assoc, key));  
 }
 
 /*
  * Removes the element that has the given index from the associative
  * table.
  */
-void Assoc_remove_index(Assoc *assoc, int index) {
+Status Assoc_remove_index(Assoc *assoc, int index) {
  if (index != -1) {
   assoc->values[index] = NULL;
   assoc->keys[index] = 0;
@@ -104,6 +104,10 @@ void Assoc_remove_index(Assoc *assoc, int index) {
    assoc->values = (void **) realloc(assoc->values, --assoc->array_length * sizeof(void *));
    assoc->keys = (long *) realloc(assoc->keys, assoc->array_length * sizeof(long));
   }
+  return SUCCESS;
+ }
+ else {
+  return FAILURE;
  }
 }
 
