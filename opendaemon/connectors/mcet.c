@@ -37,6 +37,7 @@ Status mcet_init(Connector *mcet, UserData *(*conn_handler) (Connector *, int), 
  ((MCETData *) mcet->data)->conn_handler = conn_handler;
  ((MCETData *) mcet->data)->req_handler = req_handler;
  ((MCETData *) mcet->data)->socks = Assoc_create();
+ ((MCETData *) mcet->data)->socks->integer_keys = TRUE;
  ((MCETData *) mcet->data)->infinite_run = FALSE;
  ((MCETData *) mcet->data)->run_iterations = 2;
  ((MCETData *) mcet->data)->timeout_seconds = 0;
@@ -125,8 +126,8 @@ void mcet_set_request_handler(Connector *mcet, Response *(*req_handler) (Request
 
 Status mcet_add_listener(Connector *mcet, int fd) {
  fcntl(fd, F_SETFL, O_NONBLOCK|fcntl(fd, F_GETFL));
- if (Assoc_get_int(((MCETData *) mcet->data)->socks, fd) == NULL) {
-  Assoc_add_int(((MCETData *) mcet->data)->socks, fd, (void *) 1);
+ if (Assoc_get(((MCETData *) mcet->data)->socks, (void *) fd) == NULL) {
+  Assoc_add(((MCETData *) mcet->data)->socks, (void *) fd, (void *) 1);
   ((MCETData *) mcet->data)->intact_fd_set = FALSE;
   return SUCCESS;
  }
@@ -136,8 +137,7 @@ Status mcet_add_listener(Connector *mcet, int fd) {
 }
 
 Status mcet_remove_listener(Connector *mcet, int fd) {
- if (Assoc_get_int(((MCETData *) mcet->data)->socks, fd) == (void *) -1) {
-  Assoc_remove_int(((MCETData *) mcet->data)->socks, fd);
+ if (Assoc_remove(((MCETData *) mcet->data)->socks, (void *) fd) == SUCCESS);
   ((MCETData *) mcet->data)->intact_fd_set = FALSE;
   return SUCCESS;
  }
@@ -147,11 +147,24 @@ Status mcet_remove_listener(Connector *mcet, int fd) {
 }
 
 Status mcet_add_client(Connector *mcet, UserData *data, int fd) {
- ((MCETData *) mcet->data)->intact_fd_set = FALSE;
+ if (Assoc_get(((MCETData *) mcet->data)->socks, (void *) fd) == NULL) {
+  Assoc_add(((MCETData *) mcet->data)->socks, (void *) fd, data);
+  ((MCETData *) mcet->data)->intact_fd_set = FALSE;
+  return SUCCESS;
+ }
+ else {
+  return FAILURE;
+ }
 }
 
 Status mcet_remove_client(Connector *mcet, int fd) {
- ((MCETData *) mcet->data)->intact_fd_set = FALSE;
+ if (Assoc_remove(((MCETData *) mcet->data)->socks, (void *) fd) == SUCCESS);
+  ((MCETData *) mcet->data)->intact_fd_set = FALSE;
+  return SUCCESS;
+ }
+ else {
+  return FAILURE;
+ }
 }
 
 Status mcet_run(Connector *mcet) {
