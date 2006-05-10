@@ -99,9 +99,10 @@ Goal: API enrichment.
     * Get timeout value.
     * Init: cache those values.
   * run.
-   * fd_set chaching. (done)
-  * add_client
-  * remove_client
+   * fd_set caching. (done)
+  * Update for Assoc modifications. (done)
+  * add_client. (done)
+  * remove_client. (done)
   * stop
   * get_client_data
   * set_client_data
@@ -133,6 +134,8 @@ Goal: API enrichment.
   * Added Interface.(c|h)
   
 * Support for modcap across all modules. (done)
+
+* Reimplement echoserver.
 
 * DBAuth - Database Authentication / Autherization.
 
