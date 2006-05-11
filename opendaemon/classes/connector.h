@@ -32,7 +32,7 @@ struct Connector {
  Status (*remove_listener) (Connector *, int);
  Status (*add_client) (Connector *, UserData *, int);
  Status (*remove_client) (Connector *, int);
- Status (*set_client_data) (Connector *, UserData, int);
+ Status (*set_client_data) (Connector *, UserData *, int);
  UserData *(*get_client_data) (Connector *, int);
  Status (*run) (Connector *);
  Status (*stop) (Connector *);

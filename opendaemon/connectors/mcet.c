@@ -26,7 +26,10 @@ void *_get_module_instance(CfgTree *cfg) {
  mcet->remove_listener = mcet_remove_listener;
  mcet->add_client = mcet_add_client;
  mcet->remove_client = mcet_remove_client;
+ mcet->get_client_data = mcet_get_client_data;
+ mcet->set_client_data = mcet_set_client_data;
  mcet->run = mcet_run;
+ mcet->stop = mcet_stop;
  mcet->destroy = mcet_destroy;
  mcet->get_error_message = mcet_get_error_message;
  return mcet;
@@ -44,6 +47,7 @@ Status mcet_init(Connector *mcet, UserData *(*conn_handler) (Connector *, int), 
  ((MCETData *) mcet->data)->timeout_microseconds = 500000;
  FD_ZERO(&(((MCETData *) mcet->data)->tmp_set));
  ((MCETData *) mcet->data)->intact_fd_set = FALSE;
+ ((MCETData *) mcet->data)->stop = FALSE;
 
  CfgDirective *conf_directive;
  CfgValue *conf_value;
@@ -175,7 +179,7 @@ Status mcet_run(Connector *mcet) {
  walker.subject = ((MCETData *) mcet->data)->socks;
  walker.curr_index = -1;
  
- while (((MCETData *) mcet->data)->infinite_run == TRUE || iterations < ((MCETData *) mcet->data)->run_iterations) {
+ while (((MCETData *) mcet->data)->stop == FALSE && (((MCETData *) mcet->data)->infinite_run == TRUE || iterations < ((MCETData *) mcet->data)->run_iterations)) {
   tv.tv_sec = ((MCETData *) mcet->data)->timeout_seconds;
   tv.tv_usec = ((MCETData *) mcet->data)->timeout_microseconds;
   
@@ -218,6 +222,20 @@ Status mcet_run(Connector *mcet) {
   }
   iterations++;
  }
+ ((MCETData *) mcet->data)->stop == FALSE;
+ return SUCCESS;
+}
+
+Status mcet_stop(Connector *mcet) {
+ ((MCETdata *) mcet->data)->stop = TRUE;
+ return SUCCESS;
+}
+
+UserData *mcet_get_client_data(Connector *mcet, int fd) {
+ return Assoc_get(((MCETData *) mcet->data)->socks, (void *) fd);
+}
+Status mcet_set_client_data(Connector *mcet, UserData *data, int fd) {
+ return Assoc_set(((MCETData *) mcet->data)->socks, (void *) fd, data);
 }
 
 void _conn_handler(void *params) {

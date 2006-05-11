@@ -103,9 +103,9 @@ Goal: API enrichment.
   * Update for Assoc modifications. (done)
   * add_client. (done)
   * remove_client. (done)
-  * stop
-  * get_client_data
-  * set_client_data
+  * stop (done)
+  * get_client_data (done)
+  * set_client_data (done)
   * destroy
   * user data freeing routine.
   * set O_NONBLOCK for listeners. (done)

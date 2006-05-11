@@ -28,6 +28,7 @@ struct MCETData {
  void (*req_handler) (Connector *, int);
  Bool infinite_run;
  Bool intact_fd_set;
+ Bool stop;
  int run_iterations;
  int timeout_seconds;
  int timeout_microseconds;
@@ -43,6 +44,9 @@ Status mcet_remove_listener (Connector *, int);
 Status mcet_add_client (Connector *, UserData *, int);
 Status mcet_remove_client (Connector *, int);
 Status mcet_run (Connector *);
+Status mcet_stop(Connector *);
+Status mcet_set_client_data(Connector *, UserData *, int);
+UserData *mcet_get_client_data(Connector *, int);
 void mcet_destroy (Connector *);
 char *mcet_get_error_message(Connector *);
 
