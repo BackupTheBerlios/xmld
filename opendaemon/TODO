@@ -106,8 +106,9 @@ Goal: API enrichment.
   * stop (done)
   * get_client_data (done)
   * set_client_data (done)
-  * destroy
+  * destroy (done)
   * user data freeing routine.
+  * Error cases and messages.
   * set O_NONBLOCK for listeners. (done)
 
 * Connector API:

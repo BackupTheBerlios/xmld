@@ -247,3 +247,25 @@ void _req_handler(void *params) {
  arr = (void **) params;
  *(((MCETData *) mcet->data)->req_handler) ((Connector *) arr[0], (int) arr[1]);
 }
+
+void mcet_destroy(Connector *mcet) {
+ /* Just to make sure! */
+ mcet_stop(mcet);
+
+ /* Destroy the executor thread pool */
+ thread_pool_destroy(((MCETData *) mcet->data)->executor_pool);
+
+ /* Free UserData */
+ AssocWalker walker;
+ walker.subject = ((MCETData *) mcet->data)->socks;
+ walker.curr_index = -1;
+ 
+ while (AssocWalker_next(&walker) != ASSOC_WALKER_END) {
+  if (AssocWalker_get_current_data(&walker) != (void *) 1) {
+   mcet_user_data_free_func(AssocWalker_get_current_data(&walker));
+  }
+ }
+
+ /* Free the data structure */
+ free(mcet->data); 
+}
