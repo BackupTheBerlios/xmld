@@ -107,8 +107,14 @@ Goal: API enrichment.
   * get_client_data (done)
   * set_client_data (done)
   * destroy (done)
-  * user data freeing routine.
-  * Error cases and messages.
+  * set_user_data_free_func. (done)
+  * capability flag. (NOCAP)
+  * get_error.
+    * create an error stack, last in, first out.
+    * Issue warnings if any of the configuration directives
+      were not found.
+    * Check for "return FAILURE" and whether those need
+      error messages.
   * set O_NONBLOCK for listeners. (done)
 
 * Connector API:

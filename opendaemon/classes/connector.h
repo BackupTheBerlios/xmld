@@ -27,7 +27,7 @@ struct Connector {
  Status (*init) (Connector *, void (*) (Connector *, int), void (*) (Connector *, int));
  Status (*set_connection_handler) (Connector *, void (*) (Connector *, int));
  Status (*set_request_handler) (Connector *, void (*) (Connector *, int));
- Status (*set_user_data_free_func) (Connector *, void (*) (UserData *));
+ void (*set_user_data_free_func) (Connector *, void (*) (UserData *));
  Status (*add_listener) (Connector *, int);
  Status (*remove_listener) (Connector *, int);
  Status (*add_client) (Connector *, UserData *, int);

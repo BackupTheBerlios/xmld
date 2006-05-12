@@ -19,9 +19,11 @@
 void *_get_module_instance(CfgTree *cfg) {
  Connector *mcet = (Connector *) malloc(sizeof(Connector));
  mcet->cfg = cfg;
+ mcet->modcap = NOCAP;
  mcet->init = mcet_init;
  mcet->set_connection_handler = mcet_set_connection_handler;
  mcet->set_request_handler = mcet_set_request_handler;
+ mcet->set_user_data_free_func = mcet_set_user_data_free_func;
  mcet->add_listener = mcet_add_listener;
  mcet->remove_listener = mcet_remove_listener;
  mcet->add_client = mcet_add_client;
@@ -35,10 +37,11 @@ void *_get_module_instance(CfgTree *cfg) {
  return mcet;
 }
 
-Status mcet_init(Connector *mcet, UserData *(*conn_handler) (Connector *, int), Response *(*req_handler) (Connector *, int)) {
+Status mcet_init(Connector *mcet, UserData *(*conn_handler) (Connector *, int), Response *(*req_handler) (Connector *, int), void (*user_data_free_func) (UserData *)) {
  mcet->data = malloc(sizeof(MCETData));
  ((MCETData *) mcet->data)->conn_handler = conn_handler;
  ((MCETData *) mcet->data)->req_handler = req_handler;
+ ((MCETData *) mcet->data)->user_data_free_func = user_data_free_func;
  ((MCETData *) mcet->data)->socks = Assoc_create();
  ((MCETData *) mcet->data)->socks->integer_keys = TRUE;
  ((MCETData *) mcet->data)->infinite_run = FALSE;
@@ -126,6 +129,10 @@ void mcet_set_connection_handler(Connector *mcet, UserData *(*conn_handler) (voi
 
 void mcet_set_request_handler(Connector *mcet, Response *(*req_handler) (Request *, UserData *)) {
  ((MCETData *) mcet->data)->req_handler = req_handler;
+}
+
+void mcet_set_user_data_free_func(Connector *mcet, void (*func) (UserData *)) {
+ ((MCETData *) mcet->data)->user_data_free_func = func;
 }
 
 Status mcet_add_listener(Connector *mcet, int fd) {
@@ -262,7 +269,7 @@ void mcet_destroy(Connector *mcet) {
  
  while (AssocWalker_next(&walker) != ASSOC_WALKER_END) {
   if (AssocWalker_get_current_data(&walker) != (void *) 1) {
-   mcet_user_data_free_func(AssocWalker_get_current_data(&walker));
+   *(((MCETData *) mcet->data)->user_data_free_func) (AssocWalker_get_current_data(&walker));
   }
  }
 

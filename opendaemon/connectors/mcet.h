@@ -26,6 +26,7 @@ struct MCETData {
  int n;
  void (*conn_handler) (Connector *, int);
  void (*req_handler) (Connector *, int);
+ void (*user_data_free_func) (UserData *);
  Bool infinite_run;
  Bool intact_fd_set;
  Bool stop;
@@ -39,6 +40,7 @@ typedef struct MCETData MCETData;
 Status mcet_init(Connector *, UserData *(*) (void), Response *(*) (Request *, UserData *));
 Status mcet_set_connection_handler (Connector *, UserData *(*) (void));
 Status mcet_set_request_handler (Connector *, Response *(*) (Request *, UserData *));
+void mcet_set_user_data_free_func (Connector *, void (*) (UserData *));
 Status mcet_add_listener (Connector *, int);
 Status mcet_remove_listener (Connector *, int);
 Status mcet_add_client (Connector *, UserData *, int);

@@ -33,4 +33,7 @@
 typedef int Bool;
 typedef int Status;
 
+/* No capability flag for modcap */
+#define NOCAP -1
+
 #endif /* __DEF_H */
