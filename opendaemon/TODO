@@ -110,7 +110,7 @@ Goal: API enrichment.
   * set_user_data_free_func. (done)
   * capability flag. (NOCAP)
   * get_error.
-    * create an error stack, last in, first out.
+    * create an error stack, last in, first out. (done)
     * Issue warnings if any of the configuration directives
       were not found.
     * Check for "return FAILURE" and whether those need
@@ -142,34 +142,41 @@ Goal: API enrichment.
   
 * Support for modcap across all modules. (done)
 
-* Reimplement echoserver.
+* Reimplement echoserver to demonstrate the system.
+
+*--------------- OpenDaemon 0.9.0:
+
+Goal: The sky is the limit.
+
+* After start-up management:
+  * Drop an opendaemon.pid file upon start-up.
+  * Interface control binary. (odctl ?)
+  * Assign an ifid (interface pid) for each interface.
+  * Commands ?
+    * Interface reloading.
+    * Interface list updating:
+      * Reload interfaces with new ifid in the conf on the fly.
+      * Kill interfaces with ifid not found in the conf file.
+    * Module reloading ?
+      * Register which interface uses each loaded module.
+      * Add routines in interfaces to support (re)get(ting)_module_instance.
+      * Call those routines for each registerd interface.
+
+* Networking API:
+  * Make it a dynamically loaded module so it can be 
+    replaced without restart.
+  * Add it to modman, and make an interface type for it ?
+  * And yes, there can be multiple networking modules 
+    loaded at the same time.
 
 * DBAuth - Database Authentication / Autherization.
+
+* UNIXAuth - UNIX user authentication.
 
 * RTComm - Real-time Communicator.
 
 * Logger - Logging Engine.
-  * Support for log rotation.
-
-* Try to create the chatserver on top of OpenDaemon:
-  * Protocol.
-  * Executor.
-
-*--------------- OpenDaemon 0.9.0:
-
-Goal: Finalization of Platform.
-
-* Interface reloading while the system is running ?
-
-* On server restart:
-  * Main process pool resizing.
-    * Add support for this in the thread and the process pool.
-  * Launching interfaces newly-added to the configuration.
-    * Add support for this in interfaceman.
-
-* processor should have the ability to return chuncked data.
-  * Cursor support ?
-
-* Compile sockets as a dll so it can be replaced without recompiling.
-
-* Rewrite the file association API ?
+  * Configurable log rotation.
+  * Configurable suspended logging:
+    * So logging wouldn't slow down the operation being logged.
+  * template-able Logging formats.

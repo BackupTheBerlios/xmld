@@ -22,6 +22,7 @@ void *_get_module_instance(CfgTree *);
 struct MCETData {
  thread_pool *executor_pool;
  Assoc *socks;
+ Assoc *errors;
  fd_set tmp_set;
  int n;
  void (*conn_handler) (Connector *, int);
@@ -50,6 +51,6 @@ Status mcet_stop(Connector *);
 Status mcet_set_client_data(Connector *, UserData *, int);
 UserData *mcet_get_client_data(Connector *, int);
 void mcet_destroy (Connector *);
-char *mcet_get_error_message(Connector *);
+char *mcet_get_error(Connector *);
 
 #endif /* __MCET_H */

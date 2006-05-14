@@ -33,7 +33,7 @@ void *_get_module_instance(CfgTree *cfg) {
  mcet->run = mcet_run;
  mcet->stop = mcet_stop;
  mcet->destroy = mcet_destroy;
- mcet->get_error_message = mcet_get_error_message;
+ mcet->get_error = mcet_get_error;
  return mcet;
 }
 
@@ -275,4 +275,27 @@ void mcet_destroy(Connector *mcet) {
 
  /* Free the data structure */
  free(mcet->data); 
+}
+
+Error *mcet_get_error(Connector *mcet) {
+ int length = Assoc_get_length(((MCETData *) mcet->data)->errors);
+
+ if (length == 0) {
+  return NULL;
+ }
+
+ Error *ret = Assoc_get(((MCETData *) mcet->data)->errors, length);
+ _remove_error(mcet);
+ return ret;
+}
+
+void _add_error(Connector *mcet, char *msg, ErrorLevel level) {
+ Error *err = (Error *) malloc(sizeof(Error));
+ Error_set(err, msg, level);
+}
+
+void _remove_error(Connector *mcet) {
+ int length = Assoc_get_length(((MCETData *) mcet->data)->errors);
+ free(Assoc_get(((MCETData *) mcet->data)->errors, length));
+ Assoc_remove(((MCETData *) mcet->data)->errors, length);
 }
