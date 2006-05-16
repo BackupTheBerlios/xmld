@@ -44,6 +44,8 @@ Status mcet_init(Connector *mcet, UserData *(*conn_handler) (Connector *, int), 
  ((MCETData *) mcet->data)->user_data_free_func = user_data_free_func;
  ((MCETData *) mcet->data)->socks = Assoc_create();
  ((MCETData *) mcet->data)->socks->integer_keys = TRUE;
+ ((MCETData *) mcet->data)->errors = Assoc_create();
+ ((MCETData *) mcet->data)->errors->integer_keys = TRUE; 
  ((MCETData *) mcet->data)->infinite_run = FALSE;
  ((MCETData *) mcet->data)->run_iterations = 2;
  ((MCETData *) mcet->data)->timeout_seconds = 0;
@@ -66,12 +68,18 @@ Status mcet_init(Connector *mcet, UserData *(*conn_handler) (Connector *, int), 
    }
   }
  }
+ else {
+  _add_error(mcet, "InfiniteRun directive not provided, using default value.", ERROR_WARNING);
+ }
  
  if ((conf_directive = CfgSection_get_directive(mcet->cfg, "RunIterations", 0)) != NULL) {
   conf_value = CfgDirective_get_value(conf_directive, 0);
   if (conf_value->type == CFG_INTEGER) {
    ((MCETData *) mcet->data)->run_iterations = (int) conf_value->value;
   }
+ }
+ else {
+  _add_error(mcet, "RunIterations directive not provided, using default value.", ERROR_WARNING);
  }
  
  if ((conf_directive = CfgSection_get_directive(mcet->cfg, "TimeoutSeconds", 0)) != NULL) {
@@ -80,6 +88,9 @@ Status mcet_init(Connector *mcet, UserData *(*conn_handler) (Connector *, int), 
    ((MCETData *) mcet->data)->timeout_seconds = (int) conf_value->value;
   }
  }
+ else {
+  _add_error(mcet, "TimeoutSeconds directive not provided, using default value.", ERROR_WARNING);
+ }
  
  if ((conf_directive = CfgSection_get_directive(mcet->cfg, "TimeoutMicroseconds", 0)) != NULL) {
   conf_value = CfgDirective_get_value(conf_directive, 0);
@@ -87,38 +98,56 @@ Status mcet_init(Connector *mcet, UserData *(*conn_handler) (Connector *, int), 
    ((MCETData *) mcet->data)->timeout_microseconds = (int) conf_value->value;
   }
  }
+ else {
+  _add_error(mcet, "TimeoutMicroseconds directive not provided, using default value.", ERROR_WARNING);
+ }
  
  int init_threads = 5, max_threads = 20, max_idle_threads = 10;
  
  CfgSection *pool_section = CfgSection_get_section(mcet->cfg, "ThreadPool", 0);
  
- if ((conf_directive = CfgSection_get_directive(pool_section, "InitThreads", 0)) != NULL) {
-  conf_value = CfgDirective_get_value(conf_directive, 0);
-  if (conf_value->type == CFG_INTEGER) {
-   init_threads = (int) conf_value->value;
+ if (pool_section == NULL) {
+  _add_error(mcet, "ThreadPool configuration section not provided, using default values.", ERROR_WARNING);  
+ }
+ else {
+  if ((conf_directive = CfgSection_get_directive(pool_section, "InitThreads", 0)) != NULL) {
+   conf_value = CfgDirective_get_value(conf_directive, 0);
+   if (conf_value->type == CFG_INTEGER) {
+    init_threads = (int) conf_value->value;
+   }
+  }
+  else {
+   _add_error(mcet, "InitThreads directive not provided, using default value.", ERROR_WARNING);
+  }
+  
+  if ((conf_directive = CfgSection_get_directive(pool_section, "MaxThreads", 0)) != NULL) {
+   conf_value = CfgDirective_get_value(conf_directive, 0);
+   if (conf_value->type == CFG_INTEGER) {
+    max_threads = (int) conf_value->value;
+   }
+  }
+  else {
+   _add_error(mcet, "MaxThreads directive not provided, using default value.", ERROR_WARNING);
+  } 
+
+  if ((conf_directive = CfgSection_get_directive(pool_section, "MaxIdleThreads", 0)) != NULL) {
+   conf_value = CfgDirective_get_value(conf_directive, 0);
+   if (conf_value->type == CFG_INTEGER) {
+    max_idle_threads = (int) conf_value->value;
+   }
   }
  }
- 
- if ((conf_directive = CfgSection_get_directive(pool_section, "MaxThreads", 0)) != NULL) {
-  conf_value = CfgDirective_get_value(conf_directive, 0);
-  if (conf_value->type == CFG_INTEGER) {
-   max_threads = (int) conf_value->value;
-  }
- }
- 
- if ((conf_directive = CfgSection_get_directive(pool_section, "MaxIdleThreads", 0)) != NULL) {
-  conf_value = CfgDirective_get_value(conf_directive, 0);
-  if (conf_value->type == CFG_INTEGER) {
-   max_idle_threads = (int) conf_value->value;
-  }
- }
- 
+ else {
+  _add_error(mcet, "MaxIdleThreads directive not provided, using default value.", ERROR_WARNING);
+ } 
+
  ((MCETData *) mcet->data)->executor_pool = thread_pool_create(init_threads, max_threads, max_idle_threads);
  
  if (((MCETData *) mcet->data)->executor_pool != NULL) {
   return SUCCESS;
  }
  else {
+  _add_error(mcet, "A fatal error has occured while initializing the executor thread pool with the given parameters.", ERROR_FATAL);
   return FAILURE;
  }
 }
@@ -143,6 +172,7 @@ Status mcet_add_listener(Connector *mcet, int fd) {
   return SUCCESS;
  }
  else {
+  _add_error(mcet, "Listener already in list", ERROR_WARNING);
   return FAILURE;
  }
 }
@@ -153,6 +183,7 @@ Status mcet_remove_listener(Connector *mcet, int fd) {
   return SUCCESS;
  }
  else {
+  _add_error(mcet, "Listener not in list", ERROR_WARNING);
   return FAILURE;
  }
 }
@@ -164,6 +195,7 @@ Status mcet_add_client(Connector *mcet, UserData *data, int fd) {
   return SUCCESS;
  }
  else {
+  _add_error(mcet, "Client already in list", ERROR_WARNING);
   return FAILURE;
  }
 }
@@ -174,6 +206,7 @@ Status mcet_remove_client(Connector *mcet, int fd) {
   return SUCCESS;
  }
  else {
+  _add_error(mcet, "Client not in list", ERROR_WARNING);
   return FAILURE;
  }
 }
@@ -272,6 +305,14 @@ void mcet_destroy(Connector *mcet) {
    *(((MCETData *) mcet->data)->user_data_free_func) (AssocWalker_get_current_data(&walker));
   }
  }
+ 
+ /* Free Errors */
+ walker.subject = ((MCETData *) mcet->data)->errors;
+ walker.curr_index = -1;
+ 
+ while (AssocWalker_next(&walker) != ASSOC_WALKER_END) {
+  free(AssocWalker_get_current_data(&walker));
+ }
 
  /* Free the data structure */
  free(mcet->data); 
@@ -284,7 +325,7 @@ Error *mcet_get_error(Connector *mcet) {
   return NULL;
  }
 
- Error *ret = Assoc_get(((MCETData *) mcet->data)->errors, length);
+ Error *ret = Assoc_get(((MCETData *) mcet->data)->errors, (void *) length);
  _remove_error(mcet);
  return ret;
 }
@@ -292,10 +333,12 @@ Error *mcet_get_error(Connector *mcet) {
 void _add_error(Connector *mcet, char *msg, ErrorLevel level) {
  Error *err = (Error *) malloc(sizeof(Error));
  Error_set(err, msg, level);
+ int length = Assoc_get_length(((MCETData *) mcet->data)->errors);
+ Assoc_add(((MCETData *) mcet->data)->errors, (void *) length, err);
 }
 
 void _remove_error(Connector *mcet) {
  int length = Assoc_get_length(((MCETData *) mcet->data)->errors);
  free(Assoc_get(((MCETData *) mcet->data)->errors, length));
- Assoc_remove(((MCETData *) mcet->data)->errors, length);
+ Assoc_remove(((MCETData *) mcet->data)->errors, (void *) length);
 }

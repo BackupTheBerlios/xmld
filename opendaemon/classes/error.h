@@ -17,7 +17,6 @@
 typedef int ErrorLevel;
 
 /* Error levels */
-#define ERROR_NOTICE 1
 #define ERROR_WARNING 2
 #define ERROR_FATAL 3
 

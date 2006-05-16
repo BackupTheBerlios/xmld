@@ -112,9 +112,9 @@ Goal: API enrichment.
   * get_error.
     * create an error stack, last in, first out. (done)
     * Issue warnings if any of the configuration directives
-      were not found.
+      were not found. (done)
     * Check for "return FAILURE" and whether those need
-      error messages.
+      error messages. (done)
   * set O_NONBLOCK for listeners. (done)
 
 * Connector API:
