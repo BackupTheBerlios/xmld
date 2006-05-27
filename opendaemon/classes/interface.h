@@ -15,9 +15,10 @@
 #define __INTERFACE_H
 
 struct Interface {
- Status (*init) (void);
  char *msg;
- void main(void);
+ 
+ Status (*init) (Interface *);
+ void main(Interface *);
 };
 
 typedef struct Interface interface;

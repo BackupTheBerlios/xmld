@@ -79,12 +79,12 @@ void _launch(void *params) {
 
  Interface *if_inst = (Interface *) modman_get_module_instance(mod, (*(cfg_params + 1))->value);
  
- if ((*(if_inst->init)) () == FAILURE) {
+ if ((*(if_inst->init)) (if_inst) == FAILURE) {
   printf("\t* Interface manager: Error initializing interface module %s: %s\n", (*(cfg_params))->value, if_inst->msg);
   return;
  }
  else {
   printf("\t* %s: %s", (*(cfg_params))->value, if_inst->msg);
-  (*(if_inst->main)) ();
+  (*(if_inst->main)) (if_inst);
  } 
 }

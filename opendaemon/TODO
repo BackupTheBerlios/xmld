@@ -143,6 +143,17 @@ Goal: API enrichment.
 * Support for modcap across all modules. (done)
 
 * Reimplement echoserver to demonstrate the system.
+  * Modify the interface API:
+    * Interface structure pointer shall be passed to main and init
+      so they know where to set the error message. (done)
+  * Add echoserver to opendaemon.conf (done)
+  * Implement echoserver_main and init.
+    * Can we use MCET here ?
+  * If user is not given, does it run as opendaemon's user ?
+  * interface->destroy
+  * echoserver_connection, _request, _free_user.
+  * write echoserver_mcet.conf
+  * write echoserver.conf
 
 *--------------- OpenDaemon 0.9.0:
 

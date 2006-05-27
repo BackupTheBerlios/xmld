@@ -24,7 +24,7 @@ struct Connector {
  ConnectorData *data;
  int modcap;
  
- Status (*init) (Connector *, void (*) (Connector *, int), void (*) (Connector *, int));
+ Status (*init) (Connector *, void (*) (Connector *, int), void (*) (Connector *, int), void (*) (UserData *));
  Status (*set_connection_handler) (Connector *, void (*) (Connector *, int));
  Status (*set_request_handler) (Connector *, void (*) (Connector *, int));
  void (*set_user_data_free_func) (Connector *, void (*) (UserData *));
