@@ -29,4 +29,6 @@ struct Protocol {
  void (*destroy) (ProtocolResult *);
 }
 
+typedef struct Protocol Protocol;
+
 #endif /* __PROTOCOL_H */

@@ -16,7 +16,7 @@
 
 /* OpenDaemon symbols */
 char opendaemon_version[] = "0.8.0";
-void *_get_module_instance(CfgTree *);
+void *_get_module_instance(CfgSection *);
 
 /* Internal symbols */
 struct MCETData {

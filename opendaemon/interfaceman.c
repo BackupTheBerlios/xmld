@@ -85,6 +85,9 @@ void _launch(void *params) {
  }
  else {
   printf("\t* %s: %s", (*(cfg_params))->value, if_inst->msg);
-  (*(if_inst->main)) (if_inst);
- } 
+  (*(if_inst->main)) (if_inst); /* Let her do her job */
+  (*(if_inst->destroy)) (if_inst); /* Kill her! */
+ }
+
+ modman_destroy_module_instance(mod, (void *) if_inst);
 }

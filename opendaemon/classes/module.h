@@ -35,6 +35,7 @@ struct Module {
  char *file;
  char *name;
  void *(*get_instance_func) (CfgSection *);
+ void (*destroy_instance_func) (void *);
 };
 
 typedef struct Module Module;

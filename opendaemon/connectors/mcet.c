@@ -16,7 +16,7 @@
 #include <fcntl.h>
 #include "mcet.h"
 
-void *_get_module_instance(CfgTree *cfg) {
+void *_get_module_instance(CfgSection *cfg) {
  Connector *mcet = (Connector *) malloc(sizeof(Connector));
  mcet->cfg = cfg;
  mcet->modcap = NOCAP;

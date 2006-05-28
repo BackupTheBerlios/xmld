@@ -41,4 +41,6 @@ struct Connector {
  Error *(*get_error) (Connector *);
 }
 
+typedef struct Connector Connector;
+
 #endif /* __CONNECTOR_H */

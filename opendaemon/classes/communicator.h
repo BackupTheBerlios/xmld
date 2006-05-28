@@ -46,4 +46,6 @@ struct Communicator {
  Error *(*get_error) (Communicator *);
 }
 
+typedef struct Communicator Communicator;
+
 #endif /* __COMMUNICATOR_H */

@@ -15,15 +15,16 @@
 #define __INTERFACE_H
 
 struct Interface {
- char *msg;
+ CfgSection *cfg;
+ InterfaceData *data;
  
  Status (*init) (Interface *);
- void main(Interface *);
+ void (*main) (Interface *);
+ void (*destroy) (Interface *);
+
+ Error *(*get_error) (Interface *);
 };
 
 typedef struct Interface interface;
-
-Interface *Interface_create(void);
-void Interface_free(Interface *);
 
 #endif /* __INTERFACE_H */

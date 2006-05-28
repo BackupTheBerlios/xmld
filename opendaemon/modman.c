@@ -130,6 +130,15 @@ Module *modman_load_module(char *name, int type) {
      Module_free(mod);
      mod = NULL;
     }
+
+    mod->destroy_instance_func = dlsym(ret, "_destroy_module_instance");
+    if (mod->destroy_instance_func == NULL) {
+     printf("\t* Unable to load module \"%s\": Cannot find module termination routine.", mod->file);
+     free(mod->file);
+     dlclose(mod->handle);
+     Module_free(mod);
+     mod = NULL;
+    }
    }
   }
   else {
@@ -177,6 +186,10 @@ void *modman_get_module_instance(Module *mod, char *config_file) {
  ret = (*mod->get_instance_func) (mod_cfg); 
  
  return ret;
+}
+
+void modman_destroy_module_instance(Module *mod, void *instance) {
+ (*mod->destroy_instance_func) (instance);
 }
 
 Status modman_unload_module(Module *mod) {

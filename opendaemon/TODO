@@ -146,14 +146,24 @@ Goal: API enrichment.
   * Modify the interface API:
     * Interface structure pointer shall be passed to main and init
       so they know where to set the error message. (done)
+    * Add destroy(). (done)
+    * Add get_error(). (done)
   * Add echoserver to opendaemon.conf (done)
-  * Implement echoserver_main and init.
-    * Can we use MCET here ?
-  * If user is not given, does it run as opendaemon's user ?
-  * interface->destroy
-  * echoserver_connection, _request, _free_user.
+  * modman_destroy_module_instance (done)
+  * Create a EchoServerData structure to assign to data.
+  * Implementations:
+    * destroy
+    * init
+    * main
+    * get_error
+    * _connection
+    * _request
+    * _free_user
   * write echoserver_mcet.conf
   * write echoserver.conf
+  * shall MCET support max message length configuration.
+
+* Missing typedefs in end of classes.
 
 *--------------- OpenDaemon 0.9.0:
 
