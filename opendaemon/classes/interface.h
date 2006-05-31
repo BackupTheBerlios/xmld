@@ -14,6 +14,8 @@
 #ifndef __INTERFACE_H
 #define __INTERFACE_H
 
+typedef void InterfaceData;
+
 struct Interface {
  CfgSection *cfg;
  InterfaceData *data;

@@ -150,6 +150,8 @@ Goal: API enrichment.
     * Add get_error(). (done)
   * Add echoserver to opendaemon.conf (done)
   * modman_destroy_module_instance (done)
+    * if_inst->msg is no longer there, replace usage with 
+      get_error. (done)
   * Create a EchoServerData structure to assign to data.
   * Implementations:
     * destroy
@@ -159,20 +161,34 @@ Goal: API enrichment.
     * _connection
     * _request
     * _free_user
+  * Implement error stack functions.
   * write echoserver_mcet.conf
   * write echoserver.conf
-  * shall MCET support max message length configuration.
+  * shall MCET support max message length configuration.  
+
+* When is module conf freed ?
 
 * Missing typedefs in end of classes.
+
+* Basic system documentation.
 
 *--------------- OpenDaemon 0.9.0:
 
 Goal: The sky is the limit.
 
+* Supplementary ErrorStack API.
+  * Maybe just Stack and be it used for errors.
+
+* How are Module status flags used ?
+
+* Erase redundancy in usage of CfgValue ?
+
+* Write a configuration API documentation. 
+
 * After start-up management:
   * Drop an opendaemon.pid file upon start-up.
   * Interface control binary. (odctl ?)
-  * Assign an ifid (interface pid) for each interface.
+  * Assign an ifid (interface id) for each interface.
   * Commands ?
     * Interface reloading.
     * Interface list updating:
@@ -189,6 +205,9 @@ Goal: The sky is the limit.
   * Add it to modman, and make an interface type for it ?
   * And yes, there can be multiple networking modules 
     loaded at the same time.
+  * MCET shall use the new abstract model.
+
+* Interface and module implementation guides.
 
 * DBAuth - Database Authentication / Autherization.
 

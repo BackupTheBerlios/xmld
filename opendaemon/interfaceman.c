@@ -78,13 +78,16 @@ void _launch(void *params) {
  }
 
  Interface *if_inst = (Interface *) modman_get_module_instance(mod, (*(cfg_params + 1))->value);
- 
+ Error *msg;
+
  if ((*(if_inst->init)) (if_inst) == FAILURE) {
-  printf("\t* Interface manager: Error initializing interface module %s: %s\n", (*(cfg_params))->value, if_inst->msg);
+  msg = (*if_inst->get_error) (if_inst);
+  printf("\t* Interface manager: Error initializing interface module %s: %s\n", (*(cfg_params))->value, init_error->message);
   return;
  }
  else {
-  printf("\t* %s: %s", (*(cfg_params))->value, if_inst->msg);
+  msg = (*if_inst->get_error) (if_inst);
+  printf("\t* %s: %s", (*(cfg_params))->value, msg->message);
   (*(if_inst->main)) (if_inst); /* Let her do her job */
   (*(if_inst->destroy)) (if_inst); /* Kill her! */
  }
