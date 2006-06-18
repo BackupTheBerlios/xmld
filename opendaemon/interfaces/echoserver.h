@@ -21,6 +21,7 @@ void *_get_module_instance(CfgTree *);
 /* Internal Symbols */
 struct EchoServerData {
  int max_msg_length;
+ Connector *mcet;
 }
 
 Status echoserver_init(Interface *);

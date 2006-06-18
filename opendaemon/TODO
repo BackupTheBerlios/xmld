@@ -1,4 +1,4 @@
-** OpenDaemon 0.8.0:
+i** OpenDaemon 0.8.0:
 
 Goal: API enrichment.
 
@@ -153,18 +153,34 @@ Goal: API enrichment.
     * if_inst->msg is no longer there, replace usage with 
       get_error. (done)
   * Create a EchoServerData structure to assign to data.
+    (done)
   * Implementations:
-    * destroy
-    * init
-    * main
+    * _get_module_instance (done)
+    * destroy (done)
+    * init (done)
+    * main (done)
     * get_error
-    * _connection
-    * _request
-    * _free_user
+    * _connection (done)
+    * _request (done)
+    * _free_user (done)
   * Implement error stack functions.
   * write echoserver_mcet.conf
   * write echoserver.conf
-  * shall MCET support max message length configuration.  
+
+* Connector API modifications.
+  * Listener and client listing and counting functions.
+    * get_listener_count
+    * get_client_count
+    * get_listeners
+    * get_clients
+  * Implement those in MCET.
+
+* generic set_opt API for modules ?
+
+* Change the licence:
+  * Portions of the code must be usable by anybody.
+    * Header files and common APIs.
+  * Other portions will have to be GPL-ed.
 
 * When is module conf freed ?
 
@@ -176,8 +192,8 @@ Goal: API enrichment.
 
 Goal: The sky is the limit.
 
-* Supplementary ErrorStack API.
-  * Maybe just Stack and be it used for errors.
+* Error reporting shall handle warnings in
+  better way.
 
 * How are Module status flags used ?
 
