@@ -41,7 +41,7 @@ Status echoserver_init(Interface *es_if) {
  }
 
  Module *mcet_module = modman_load_module("mcet", MODULE_CONNECTOR_MODULE);
- ((EchoServerData *) es_if->data)->mcet = (Connector *) modman_get_module_instance(mcet_module, "echoserver_mcet.conf");
+ ((EchoServerData *) es_if->data)->mcet = (Connector *) modman_get_module_instance(mcet_module, "mcet.conf");
  if (((*mcet->init) (((EchoServerData *) es_if->data)->mcet, echoserver_connection, echoserver_request, echoserver_free_user)) == SUCCESS) {
   
   es_directive = CfgSection_get_directive(es_if->cfg, "Listeners", 0);

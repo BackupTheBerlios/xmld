@@ -164,18 +164,7 @@ Goal: API enrichment.
     * _request (done)
     * _free_user (done)
   * Implement error stack functions. (done)
-  * write echoserver_mcet.conf
-  * write echoserver.conf
-
-* Connector API modifications.
-  * Listener and client listing and counting functions.
-    * get_listener_count
-    * get_client_count
-    * get_listeners
-    * get_clients
-  * Implement those in MCET.
-
-* generic set_opt API for modules ?
+  * write echoserver.conf (done)
 
 * Change the licence:
   * Portions of the code must be usable by anybody.
@@ -197,11 +186,21 @@ Goal: The sky is the limit.
 
 * Error message shall be parametrized as in printf.
 
+* generic set_opt API for modules ?
+
 * How are Module status flags used ?
 
 * Erase redundancy in usage of CfgValue ?
 
 * Write a configuration API documentation. 
+
+* Connector API modifications.
+  * Listener and client listing and counting functions.
+    * get_listener_count
+    * get_client_count
+    * get_listeners
+    * get_clients
+  * Implement those in MCET.
 
 * After start-up management:
   * Drop an opendaemon.pid file upon start-up.
