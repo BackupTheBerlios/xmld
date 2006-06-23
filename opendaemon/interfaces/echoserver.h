@@ -21,12 +21,18 @@ void *_get_module_instance(CfgTree *);
 /* Internal Symbols */
 struct EchoServerData {
  int max_msg_length;
+ Assoc *errors;
  Connector *mcet;
 }
 
 Status echoserver_init(Interface *);
 void echoserver_main(Interface *);
 void echoserver_destroy(Interface *);
+void echoserver_connection(Connector *, int);
+void echoserver_request(Connector *, int);
+void echoserver_free_user(UserData *);
 Error *echoserver_get_error(Interface *);
+void _add_error(Interface *, char *, ErrorLevel);
+void _remove_error(Interface *);
 
 #endif /* __ECHOSERVER_H */

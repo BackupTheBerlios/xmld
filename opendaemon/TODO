@@ -159,11 +159,11 @@ Goal: API enrichment.
     * destroy (done)
     * init (done)
     * main (done)
-    * get_error
+    * get_error (done)
     * _connection (done)
     * _request (done)
     * _free_user (done)
-  * Implement error stack functions.
+  * Implement error stack functions. (done)
   * write echoserver_mcet.conf
   * write echoserver.conf
 
@@ -194,6 +194,8 @@ Goal: The sky is the limit.
 
 * Error reporting shall handle warnings in
   better way.
+
+* Error message shall be parametrized as in printf.
 
 * How are Module status flags used ?
 

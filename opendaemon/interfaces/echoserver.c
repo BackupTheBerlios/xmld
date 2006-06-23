@@ -49,11 +49,11 @@ Status echoserver_init(Interface *es_if) {
    int i = 0;
    while ((es_value = CfgDirective_get_value(es_directive, i)) != NULL) {
     if (es_value->type != CFG_INTEGER) {
-     /* Issue a warning */
+     _add_error(es_if, "Listener value type mismatch.", ERROR_WARNING);
     }
     else {
      if ((*(((EchoServerData *) es_if->data)->mcet->add_listener) (((EchoServerData *) es_if->data)->mcet, (int) es_value->value)) == FAILURE) {
-      /* Issue a warning */
+      _add_error(es_if, "Listener is already in list.", ERROR_WARNING);
      }
     }
     i++;
@@ -62,7 +62,7 @@ Status echoserver_init(Interface *es_if) {
 
  }
  else {
-  /* Issue a fatal error */
+  _add_error(es_if, "Error initializing MCET.", ERROR_FATAL);
   return FAILURE;
  }
 }
@@ -93,4 +93,29 @@ void echoserver_request(Connector *mcet, int fd) {
 }
 
 void echoserver_free_user(UserData *data) {
+}
+
+Error *echoserver_get_error(Interface *es_if) {
+ int length = Assoc_get_length(((EchoServerData *) es_if->data)->errors);
+
+ if (length == 0) {
+  return NULL;
+ }
+
+ Error *ret = Assoc_get(((EchoServerData *) es_if->data)->errors, (void *) length);
+ _remove_error(es_if);
+ return ret;
+}
+
+void _add_error(Interface *es_if, char *msg, ErrorLevel level) {
+ Error *err = (Error *) malloc(sizeof(Error));
+ Error_set(err, msg, level);
+ int length = Assoc_get_length(((EchoServerData *) es_if->data)->errors);
+ Assoc_add(((EchoServerData *) es_if->data)->errors, (void *) length, err);
+}
+
+void _remove_error(Interface *es_if) {
+ int length = Assoc_get_length(((MCETData *) mcet->data)->errors);
+ free(Assoc_get(((EchoServerData *) es_if->data)->errors, length));
+ Assoc_remove(((EchoServerData *) es_if->data)->errors, (void *) length);
 }
