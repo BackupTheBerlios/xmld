@@ -10,7 +10,8 @@
  * Authors: Khalid Al-Kary (khalid_kary@hotmail.com)              *
  * -------------------------------------------------------------- * 
  */
- 
+
+#include "../includes.h"
 #include "module.h"
 
 Module *Module_create(char *name, int type) {

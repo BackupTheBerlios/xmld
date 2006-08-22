@@ -33,7 +33,7 @@ CfgSection *CfgSection_create() {
  * decide which one to return.
  */
 CfgSection *CfgSection_get_section(CfgSection *section, char *name, int index) {
- return Assoc_get_key_index(section->sections, name, index);
+ return Assoc_get_key_index(section->sections, (void *) name, index);
 }
 
 /*

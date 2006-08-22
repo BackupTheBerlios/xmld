@@ -172,20 +172,26 @@ void *Assoc_get_by_index(Assoc *assoc, int index) {
 /*
  * Updates the hashed key of an element in the associative table.
  */
-void Assoc_update_key(Assoc *assoc, void *key, void *new_key) {
+Status Assoc_update_key(Assoc *assoc, void *key, void *new_key) {
  int index = Assoc_get_index(assoc, key);
- assoc->keys[index] = (assoc->integer_keys) ? (int) new_key : hash((char *) new_key);
+ if (index != -1) {
+  return Assoc_update_key_by_index(assoc, index, new_key);
+ }
+ else {
+  return FAILURE;
+ }
 }
 
 /*
  * Updates the hashed key of an element in the associative table
  * given its index.
  */
-void Assoc_update_key_by_index(Assoc *assoc, int index, char *new_key) {
+Status Assoc_update_key_by_index(Assoc *assoc, int index, void *new_key) {
  if (index < 0 || index	>= assoc->length) {
-  return;
+  return FAILURE;
  }
  assoc->keys[index] = (assoc->integer_keys) ? (int) new_key : hash((char *) new_key);
+ return SUCCESS;
 }
 
 /*

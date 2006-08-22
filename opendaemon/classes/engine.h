@@ -109,8 +109,6 @@ struct Engine {
  Error *(*get_error) (Source *);
 };
 
-#ifndef ENGINE_TYPE_DEFINED
-#define ENGINE_TYPE_DEFINED
- typedef struct Engine Engine;
-#endif /* ENGINE_TYPE_DEFINED */
+typedef struct Engine Engine;
+
 #endif /* __ENGINE_H */

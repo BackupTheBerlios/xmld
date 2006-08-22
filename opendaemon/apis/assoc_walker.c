@@ -72,7 +72,7 @@ int AssocWalker_get_current_index(AssocWalker *walker) {
 */
 int AssocWalker_get_current_key(AssocWalker *walker) {
  if (walker->curr_index >= 0) {	 
-  return *(walker->subject->keys + walker->curr_index);
+  return (int) *(walker->subject->keys + walker->curr_index);
  }
  else {
   return -1;

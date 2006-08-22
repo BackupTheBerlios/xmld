@@ -11,11 +11,11 @@
  * -------------------------------------------------------------- * 
  */
 
+#include "includes.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <dlfcn.h>
 #include "modman.h"
-#include "cfg.h"
 
 Status modman_init() {
  CfgSection *modules_section = CfgSection_get_section(cfg_tree, "Modules", 0);
@@ -28,7 +28,7 @@ Status modman_init() {
   return FAILURE;
  }
 
- module_type_value = CfgSection_get_value(module_type_directive, 0);
+ module_type_value = CfgDirective_get_value(module_type_directive, 0);
  if (module_type_value->type != CFG_STRING) {
   printf("\t* modman: Bad configuration value for the interface module directory.\n");
   return FAILURE;
@@ -113,7 +113,7 @@ Module *modman_load_module(char *name, int type) {
   mod->handle = dlopen(mod->file, RTLD_LAZY);
   if (mod->handle != NULL) {
    mod->status = MODULE_STATUS_LOADED;
-   char *version = (char *) dlsym(ret, "opendaemon_version");
+   char *version = (char *) dlsym(mod->handle, "opendaemon_version");
    if (strcmp(version, OPENDAEMON_VERSION) != 0) {
     printf("\t* Unable to load module \"%s\": Incompaitbile OpenDaemon version.", mod->file);
     free(mod->file);
@@ -122,18 +122,27 @@ Module *modman_load_module(char *name, int type) {
     mod = NULL;
    }
    else {
-    mod->get_instance_func = dlsym(ret, "_get_module_instance");
+    mod->get_instance_func = dlsym(mod->handle, "_get_module_instance");
     if (mod->get_instance_func == NULL) {
-     printf("\t* Unable to load module \"%s\": Cannot find module initialization routine.", mod->file);
+     printf("\t* Unable to load module \"%s\": Cannot find module inistansiation routine.", mod->file);
      free(mod->file);
      dlclose(mod->handle);
      Module_free(mod);
      mod = NULL;
     }
 
-    mod->destroy_instance_func = dlsym(ret, "_destroy_module_instance");
+    mod->destroy_instance_func = dlsym(mod->handle, "_destroy_module_instance");
     if (mod->destroy_instance_func == NULL) {
-     printf("\t* Unable to load module \"%s\": Cannot find module termination routine.", mod->file);
+     printf("\t* Unable to load module \"%s\": Cannot find module instance destroying routine.", mod->file);
+     free(mod->file);
+     dlclose(mod->handle);
+     Module_free(mod);
+     mod = NULL;
+    }
+    
+    mod->get_instance_conf_func = dlsym(mod->handle, "_get_instance_conf");
+    if (mod->get_instance_conf_func == NULL) {
+     printf("\t* Unable to load module \"%s\": Cannot find module instance configuration retriving routing.", mod->file);
      free(mod->file);
      dlclose(mod->handle);
      Module_free(mod);
@@ -189,6 +198,10 @@ void *modman_get_module_instance(Module *mod, char *config_file) {
 }
 
 void modman_destroy_module_instance(Module *mod, void *instance) {
+ CfgSection *instance_conf = (*mod->get_instance_conf_func) (instance);
+ if (instance_conf != NULL) {
+  cfg_destroy_tree(instance_conf);
+ }
  (*mod->destroy_instance_func) (instance);
 }
 
@@ -197,7 +210,7 @@ Status modman_unload_module(Module *mod) {
   if (mod->file != NULL) {
    free(mod->file);
   }
-  Module_free(mod)
+  Module_free(mod);
   return SUCCESS;
  }
  else {
@@ -214,9 +227,9 @@ char *_get_module_path(int type, int add_len) {
   strcat(ret, interfaces_dir);
  }
  else if (type == MODULE_ENGINE_MODULE) {
-  ret = (char *) malloc((strlen(server_root) + strlen(data_stores_dir) + add_len + 1) * sizeof(char));
+  ret = (char *) malloc((strlen(server_root) + strlen(engines_dir) + add_len + 1) * sizeof(char));
   strcpy(ret, server_root);
-  strcat(ret, data_stores_dir);
+  strcat(ret, engines_dir);
  }
  else if (type == MODULE_PROCESSOR_MODULE) {
   ret = (char *) malloc((strlen(server_root) + strlen(processors_dir) + add_len + 1) * sizeof(char));

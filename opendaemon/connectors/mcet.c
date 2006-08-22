@@ -10,10 +10,13 @@
  * Authors: Khalid Al-Kary (khalid_kary@hotmail.com)              *
  * -------------------------------------------------------------- * 
  */
-#include "../def.h"
-#include "../classes/connector.h"
 #include <unistd.h>
 #include <fcntl.h>
+#include <pthread.h>
+#include "../def.h"
+#include "../includes.h"
+#include "../classes/connector.h"
+#include "../apis/thread_pool.h"
 #include "mcet.h"
 
 void *_get_module_instance(CfgSection *cfg) {
@@ -37,7 +40,7 @@ void *_get_module_instance(CfgSection *cfg) {
  return mcet;
 }
 
-Status mcet_init(Connector *mcet, UserData *(*conn_handler) (Connector *, int), Response *(*req_handler) (Connector *, int), void (*user_data_free_func) (UserData *)) {
+Status mcet_init(Connector *mcet, void (*conn_handler) (Connector *, int), void (*req_handler) (Connector *, int), void (*user_data_free_func) (UserData *)) {
  mcet->data = malloc(sizeof(MCETData));
  ((MCETData *) mcet->data)->conn_handler = conn_handler;
  ((MCETData *) mcet->data)->req_handler = req_handler;
@@ -136,10 +139,10 @@ Status mcet_init(Connector *mcet, UserData *(*conn_handler) (Connector *, int), 
     max_idle_threads = (int) conf_value->value;
    }
   }
+  else {
+   _add_error(mcet, "MaxIdleThreads directive not provided, using default value.", ERROR_WARNING);
+  } 
  }
- else {
-  _add_error(mcet, "MaxIdleThreads directive not provided, using default value.", ERROR_WARNING);
- } 
 
  ((MCETData *) mcet->data)->executor_pool = thread_pool_create(init_threads, max_threads, max_idle_threads);
  
@@ -152,11 +155,11 @@ Status mcet_init(Connector *mcet, UserData *(*conn_handler) (Connector *, int), 
  }
 }
 
-void mcet_set_connection_handler(Connector *mcet, UserData *(*conn_handler) (void)) {
+Status mcet_set_connection_handler(Connector *mcet, void (*conn_handler) (Connector *, int)) {
  ((MCETData *) mcet->data)->conn_handler = conn_handler;
 }
 
-void mcet_set_request_handler(Connector *mcet, Response *(*req_handler) (Request *, UserData *)) {
+Status mcet_set_request_handler(Connector *mcet, void (*req_handler) (Connector *, int)) {
  ((MCETData *) mcet->data)->req_handler = req_handler;
 }
 
@@ -178,7 +181,7 @@ Status mcet_add_listener(Connector *mcet, int fd) {
 }
 
 Status mcet_remove_listener(Connector *mcet, int fd) {
- if (Assoc_remove(((MCETData *) mcet->data)->socks, (void *) fd) == SUCCESS);
+ if (Assoc_remove(((MCETData *) mcet->data)->socks, (void *) fd) == SUCCESS) {
   ((MCETData *) mcet->data)->intact_fd_set = FALSE;
   return SUCCESS;
  }
@@ -201,7 +204,7 @@ Status mcet_add_client(Connector *mcet, UserData *data, int fd) {
 }
 
 Status mcet_remove_client(Connector *mcet, int fd) {
- if (Assoc_remove(((MCETData *) mcet->data)->socks, (void *) fd) == SUCCESS);
+ if (Assoc_remove(((MCETData *) mcet->data)->socks, (void *) fd) == SUCCESS) {
   ((MCETData *) mcet->data)->intact_fd_set = FALSE;
   return SUCCESS;
  }
@@ -240,7 +243,7 @@ Status mcet_run(Connector *mcet) {
    memcpy(&sock_set, &(((MCETData *) mcet->data)->tmp_set), sizeof(fd_set));   
   }
 
-  num_sock = select(((MCETData *) mcet->data)->n, sock_set, NULL, NULL, &tv);
+  num_sock = select(((MCETData *) mcet->data)->n, &sock_set, NULL, NULL, &tv);
   
   void *arr[2];
   void *sock_data;
@@ -267,7 +270,7 @@ Status mcet_run(Connector *mcet) {
 }
 
 Status mcet_stop(Connector *mcet) {
- ((MCETdata *) mcet->data)->stop = TRUE;
+ ((MCETData *) mcet->data)->stop = TRUE;
  return SUCCESS;
 }
 
@@ -279,13 +282,15 @@ Status mcet_set_client_data(Connector *mcet, UserData *data, int fd) {
 }
 
 void _conn_handler(void *params) {
- arr = (void **) params;
- *(((MCETData *) mcet->data)->conn_handler) ((Connector *) arr[0], (int) arr[1]);
+ void **arr = (void **) params;
+ Connector *mcet = (Connector *) arr[0];
+ (*((MCETData *) mcet->data)->conn_handler) (mcet, (int) arr[1]);
 }
 
 void _req_handler(void *params) {
- arr = (void **) params;
- *(((MCETData *) mcet->data)->req_handler) ((Connector *) arr[0], (int) arr[1]);
+ void **arr = (void **) params;
+ Connector *mcet = (Connector *) arr[0];
+ (*((MCETData *) mcet->data)->req_handler) (mcet, (int) arr[1]);
 }
 
 void mcet_destroy(Connector *mcet) {
@@ -302,7 +307,7 @@ void mcet_destroy(Connector *mcet) {
  
  while (AssocWalker_next(&walker) != ASSOC_WALKER_END) {
   if (AssocWalker_get_current_data(&walker) != (void *) 1) {
-   *(((MCETData *) mcet->data)->user_data_free_func) (AssocWalker_get_current_data(&walker));
+   (*((MCETData *) mcet->data)->user_data_free_func) (AssocWalker_get_current_data(&walker));
   }
  }
  
@@ -339,6 +344,6 @@ void _add_error(Connector *mcet, char *msg, ErrorLevel level) {
 
 void _remove_error(Connector *mcet) {
  int length = Assoc_get_length(((MCETData *) mcet->data)->errors);
- free(Assoc_get(((MCETData *) mcet->data)->errors, length));
+ free(Assoc_get(((MCETData *) mcet->data)->errors, (void *) length));
  Assoc_remove(((MCETData *) mcet->data)->errors, (void *) length);
 }

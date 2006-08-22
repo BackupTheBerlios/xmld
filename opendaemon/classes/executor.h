@@ -33,4 +33,6 @@ struct Executor {
  Error *(*get_error) (ExecutorResult *);
 }
 
+typedef struct Executor Executor;
+
 #endif /* __EXECUTOR_H */

@@ -28,4 +28,6 @@ struct Processor {
  Error *(*get_error) (ProcessResult *);
 }
 
+typedef struct Processor Processor;
+
 #endif /* __PROCESSOR_H */

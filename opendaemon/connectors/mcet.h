@@ -38,9 +38,9 @@ struct MCETData {
 
 typedef struct MCETData MCETData;
  
-Status mcet_init(Connector *, UserData *(*) (void), Response *(*) (Request *, UserData *));
-Status mcet_set_connection_handler (Connector *, UserData *(*) (void));
-Status mcet_set_request_handler (Connector *, Response *(*) (Request *, UserData *));
+Status mcet_init(Connector *, void (*) (Connector *, int), void (*) (Connector *, int), void (*) (UserData *));
+Status mcet_set_connection_handler (Connector *, void (*) (Connector *, int));
+Status mcet_set_request_handler (Connector *, void (*) (Connector *, int));
 void mcet_set_user_data_free_func (Connector *, void (*) (UserData *));
 Status mcet_add_listener (Connector *, int);
 Status mcet_remove_listener (Connector *, int);
@@ -51,6 +51,13 @@ Status mcet_stop(Connector *);
 Status mcet_set_client_data(Connector *, UserData *, int);
 UserData *mcet_get_client_data(Connector *, int);
 void mcet_destroy (Connector *);
-char *mcet_get_error(Connector *);
+Error *mcet_get_error(Connector *);
+
+/* Internal declarations */
+void _req_handler(void *);
+void _conn_handler(void *);
+void _add_error(Connector *, char *, ErrorLevel);
+void _remove_error(Connector *);
+
 
 #endif /* __MCET_H */

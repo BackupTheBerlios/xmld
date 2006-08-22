@@ -1,6 +1,6 @@
 /*                                                                *
  * -------------------------------------------------------------- *
- * The OpenXMLD                                                   *
+ * OpenDaemon                                                     *
  * -------------------------------------------------------------- *
  * This source file is subject to the GNU General Public licence, *
  * which can be obtained through the world-wide-web at:           *
@@ -11,35 +11,34 @@
  * -------------------------------------------------------------- * 
  */
  
-#include <stdlib.h>
-#include <string.h>
 #include <sys/types.h>
 #include <sys/socket.h>
-#include <sys/netdb.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
 #include <unistd.h>
-#include "sockets.h"
+#include <netdb.h>
 #include <errno.h>
+#include "includes.h"
 
 int socket_create() {
  return socket(PF_INET, SOCK_STREAM, 0);
 }
 
-int socket_bind(int sockfd, char *addr, int port) {
- struct hostent *address_struct = gethostbyname(addr);
+int socket_bind(int sockfd, char *address, int port) {
+ struct hostent *address_struct = gethostbyname(address);
  struct sockaddr_in addr;
  addr.sin_family = AF_INET;
  addr.sin_port = htons(port);
- addr.sin_addr.s_addr = htonl(address_struct->h_addr_list[0]);
+ addr.sin_addr.s_addr = inet_addr(address_struct->h_addr_list[0]);
  return bind(sockfd, (struct sockaddr *) &addr, sizeof(addr)); 
 }
 
-int socket_connect(int sockfd, char *addr, int port) {
- struct hostent *address_struct = gethostbyname(addr);
+int socket_connect(int sockfd, char *address, int port) {
+ struct hostent *address_struct = gethostbyname(address);
  struct sockaddr_in addr;
  addr.sin_family = AF_INET;
  addr.sin_port = htons(port);
- addr.sin_addr.s_addr = htonl(address_struct->h_addr_list[0]);
+ addr.sin_addr.s_addr = inet_addr(address_struct->h_addr_list[0]);
  return connect(sockfd, (struct sockaddr *) &addr, sizeof(addr)); 
 }
 

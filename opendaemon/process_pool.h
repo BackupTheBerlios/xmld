@@ -31,6 +31,8 @@ struct proc_pool {
  int max_proc;
  int max_idle_proc;
  struct proc *children;
+ int childrenid;
+ int tableid;
 };
 
 typedef struct proc proc;
@@ -38,8 +40,8 @@ typedef struct proc_pool proc_pool;
 
 proc_pool *process_pool_create(int, int, int);
 Status process_pool_destroy(proc_pool *);
-Status process_pool_handle(proc_pool *, void (*) (void*), void *, int);
-proc *_pspawn(proc_pool *);
+Status process_pool_handle(proc_pool *, void (*) (void*), void *);
+proc *_pspawn(proc_pool *, int);
 void _pexecutor(proc *);
 void process_pool_kill_me(proc_pool *);
 

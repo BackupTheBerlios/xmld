@@ -13,7 +13,6 @@
 
 #include <errno.h>
 #include "includes.h"
-#include "connman.h"
 
 int yyparse(void *);
 int yywrap(void);

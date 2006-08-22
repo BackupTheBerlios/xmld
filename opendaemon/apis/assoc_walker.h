@@ -30,7 +30,7 @@ int AssocWalker_prev(AssocWalker *);
 void AssocWalker_reset(AssocWalker *);
 int AssocWalker_get_current_index(AssocWalker *);
 void *AssocWalker_get_current_data(AssocWalker *);
-void *AssocWalker_get_current_key(AssocWalker *);
+int AssocWalker_get_current_key(AssocWalker *);
 void AssocWalker_free(AssocWalker *);
 
 #endif /* ASSOC_WALKER_H */

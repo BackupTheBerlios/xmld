@@ -20,13 +20,13 @@ struct Interface {
  CfgSection *cfg;
  InterfaceData *data;
  
- Status (*init) (Interface *);
- void (*main) (Interface *);
- void (*destroy) (Interface *);
+ Status (*init) (struct Interface *);
+ void (*main) (struct Interface *);
+ void (*destroy) (struct Interface *);
 
- Error *(*get_error) (Interface *);
+ Error *(*get_error) (struct Interface *);
 };
 
-typedef struct Interface interface;
+typedef struct Interface Interface;
 
 #endif /* __INTERFACE_H */

@@ -1,4 +1,4 @@
-i** OpenDaemon 0.8.0:
+*** OpenDaemon 0.8.0:
 
 Goal: API enrichment.
 
@@ -171,28 +171,64 @@ Goal: API enrichment.
     * Header files and common APIs.
   * Other portions will have to be GPL-ed.
 
-* When is module conf freed ?
+* When is module conf freed ? (modman_destroy_module_instance)
 
-* Missing typedefs in end of classes.
+* Missing typedefs in end of classes. (done)
 
 * Basic system documentation.
+  * howodworks. (done)
+  * echoserver explanation.
+
+* process_pool
+  * tableid and childrenid have to be preserved in the shm. (done)
+  * ftok has to create a file for each process_pool_create. (done)
+
+* Compile and run
+  * Fix includes. (done)
+  * Modify Makefile. (done)
+  * Compile and run main code.
+    * segfault in process_pool upon startup. (done)
+    * segfault in process_pool_destroy. (done)
+  * Compile MCET. (done)
+  * Compile echoserver. (done)
+  * Run OpenDaemon with echoserver. (done)
+  * Fix Blocking bugs.
+    * Startup segfaults.
+
+* Make files for MCET and echoserver.
+
+* INSTALL document.
+
+* Remove the update_config system. (done)
 
 *--------------- OpenDaemon 0.9.0:
 
 Goal: The sky is the limit.
 
-* Error reporting shall handle warnings in
+* Shall connection and request handlers receive user specific
+  data, as in echoserver, where we couldn't use echoserver's
+  own conf of max_msg_length.
+
+* Use wait in process_pool instad of infinite while {}.
+
+* Error reporting improvment
+ * Error reporting shall handle warnings in
   better way.
+ * Error message shall be parametrized as in printf.
 
-* Error message shall be parametrized as in printf.
+* Componentize common APIs.
 
-* generic set_opt API for modules ?
+* module dir improvment
+  * Unify modules dir ?
+  * Make modules dir accept multiple pathes ?
+  * or perhaps accept multiple pathes for same module type ?
 
-* How are Module status flags used ?
+* Module APIs:
+ * generic set_opt API for modules ?
+ * How are Module status flags used ?
 
-* Erase redundancy in usage of CfgValue ?
-
-* Write a configuration API documentation. 
+* Configuration:
+ * Write a configuration API documentation. 
 
 * Connector API modifications.
   * Listener and client listing and counting functions.
@@ -219,12 +255,14 @@ Goal: The sky is the limit.
 * Networking API:
   * Make it a dynamically loaded module so it can be 
     replaced without restart.
-  * Add it to modman, and make an interface type for it ?
+  * Add it to modman, and make an interface type for it. (Net)
   * And yes, there can be multiple networking modules 
     loaded at the same time.
   * MCET shall use the new abstract model.
 
-* Interface and module implementation guides.
+* Module writers guide.
+
+* Interface writers guide.
 
 * DBAuth - Database Authentication / Autherization.
 
@@ -237,3 +275,9 @@ Goal: The sky is the limit.
   * Configurable suspended logging:
     * So logging wouldn't slow down the operation being logged.
   * template-able Logging formats.
+
+* Module installer ?
+  * odutil
+  * support for module dependency checking.
+
+* Module writer macros.

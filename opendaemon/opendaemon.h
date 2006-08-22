@@ -11,13 +11,12 @@
  * -------------------------------------------------------------- * 
  */
  
-#ifndef __INIT_H
-#define __INIT_H
+#ifndef __OPENDAEMON_H
+#define __OPENDAEMON_H
 
 proc_pool *main_proc_pool;
 
 void shutdown(int);
-void update_config(int);
 
-#endif /* __INIT_H */
+#endif /* __OPENDAEMON_H */
 

@@ -27,6 +27,7 @@ Status modman_init(void);
 Module *modman_load_module(char *, int);
 void *modman_get_module_instance(Module *, char *);
 Status modman_unload_module(Module *);
+void modman_destroy_module_instance(Module *, void *);
 char *_get_module_path(int, int);
 
 #endif /* __MODMAN_H */

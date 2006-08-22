@@ -11,6 +11,10 @@
  * -------------------------------------------------------------- * 
  */
 
+#include "../def.h"
+#include "../includes.h"
+#include "../classes/interface.h"
+#include "../classes/connector.h"
 #include "echoserver.h"
 
 void *_get_module_instance(CfgSection *tree) {
@@ -42,7 +46,7 @@ Status echoserver_init(Interface *es_if) {
 
  Module *mcet_module = modman_load_module("mcet", MODULE_CONNECTOR_MODULE);
  ((EchoServerData *) es_if->data)->mcet = (Connector *) modman_get_module_instance(mcet_module, "mcet.conf");
- if (((*mcet->init) (((EchoServerData *) es_if->data)->mcet, echoserver_connection, echoserver_request, echoserver_free_user)) == SUCCESS) {
+ if (((*((EchoServerData *) es_if->data)->mcet->init) (((EchoServerData *) es_if->data)->mcet, echoserver_connection, echoserver_request, echoserver_free_user)) == SUCCESS) {
   
   es_directive = CfgSection_get_directive(es_if->cfg, "Listeners", 0);
   if (es_directive != NULL) {
@@ -52,7 +56,7 @@ Status echoserver_init(Interface *es_if) {
      _add_error(es_if, "Listener value type mismatch.", ERROR_WARNING);
     }
     else {
-     if ((*(((EchoServerData *) es_if->data)->mcet->add_listener) (((EchoServerData *) es_if->data)->mcet, (int) es_value->value)) == FAILURE) {
+     if (((*((EchoServerData *) es_if->data)->mcet->add_listener) (((EchoServerData *) es_if->data)->mcet, (int) es_value->value)) == FAILURE) {
       _add_error(es_if, "Listener is already in list.", ERROR_WARNING);
      }
     }
@@ -69,25 +73,24 @@ Status echoserver_init(Interface *es_if) {
 
 void echoserver_main(Interface *es_if) {
  Connector *mcet = ((EchoServerData *) es_if->data)->mcet;
- *(mcet->run) (mcet);
+ (*mcet->run) (mcet);
 }
 
 void echoserver_destroy(Interface *es_if) {
  Connector *mcet = ((EchoServerData *) es_if->data)->mcet;
- *(mcet->destroy) (mcet);
+ (*mcet->destroy) (mcet);
 }
 
 void echoserver_connection(Connector *mcet, int fd) {
- Connector *mcet = ((EchoServerData *) es_if->data)->mcet;
  int cfd = socket_accept(fd);
- *(mcet->add_client) (mcet, NULL, cfd);
+ (*mcet->add_client) (mcet, NULL, cfd);
 }
 
 void echoserver_request(Connector *mcet, int fd) {
- Connector *mcet = ((EchoServerData *) es_if->data)->mcet;
- char *msg = socket_read(fd, ((EchoServerData *) es_if->data)->max_msg_length);
+ char *msg = socket_read(fd, 100);
+ // ((EchoServerData *) es_if->data)->max_msg_length);
  if (strcmp(msg, "stop") == 0) {
-  *(mcet_stop) (mcet);
+  (*mcet->stop) (mcet);
  }
  socket_write(fd, msg);
 }
@@ -115,7 +118,7 @@ void _add_error(Interface *es_if, char *msg, ErrorLevel level) {
 }
 
 void _remove_error(Interface *es_if) {
- int length = Assoc_get_length(((MCETData *) mcet->data)->errors);
- free(Assoc_get(((EchoServerData *) es_if->data)->errors, length));
+ int length = Assoc_get_length(((EchoServerData *) es_if->data)->errors);
+ free(Assoc_get(((EchoServerData *) es_if->data)->errors, (void *) length));
  Assoc_remove(((EchoServerData *) es_if->data)->errors, (void *) length);
 }

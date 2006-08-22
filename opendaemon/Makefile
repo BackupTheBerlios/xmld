@@ -1,14 +1,13 @@
-OBJECTS = cfg.o engine_list.o interface_list.o passfd.o sutils.o interface.o connman.o \
-	  opendaemon.o cfg_directive.o cfg_section.o cfg_value.o engine.o file.o sockets.o \
-	  ptasker.o assoc.o assoc_walker.o lex.yy.o echoserver.o cfg_parser.tab.o
+OBJECTS = cfg.o sutils.o opendaemon.o error.o module.o modman.o interfaceman.o cfg_directive.o cfg_section.o \
+          cfg_value.o sockets.o process_pool.o assoc.o assoc_walker.o lex.yy.o cfg_parser.tab.o
 BISON = bison
 FLEX = flex
-CFLAGS = -Wall -DUSE_ECHOSERVER -DUSE_PTASKER
+CFLAGS = -Wall
 CC = gcc
-VPATH = ptasker:echoserver:classes:apis
+VPATH = classes:apis
 
 all: generate ${OBJECTS}
-	${CC} $(wordlist 2, $(words $^), $^) -lfl -lm -o opendaemon
+	${CC} $(wordlist 2, $(words $^), $^) -lfl -lm -ldl -o opendaemon
 
 %.o: $(wildcard *.h)
 
@@ -25,8 +24,7 @@ generate: cfg_parser.y cfg_parser.lex $(wildcard *.h)
 clean:
 	rm -f opendaemon
 	rm -f *.o
-	rm -f ptasker/*.o
-	rm -f echoserver/*.o
+	rm -f apis/*.o
 	rm -f classes/*.o
 	rm -f cfg_parser.tab.h cfg_parser.tab.c
 	rm -f lex.yy.c

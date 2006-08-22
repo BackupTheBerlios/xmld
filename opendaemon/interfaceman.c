@@ -11,8 +11,13 @@
  * -------------------------------------------------------------- * 
  */
 
+#include <pwd.h>
+#include <sys/types.h>
+#include <unistd.h>
 #include "includes.h"
-#include "interfaceman.h"
+#include "process_pool.h"
+#include "opendaemon.h"
+#include "classes/interface.h"
 
 Status interfaceman_init(void) {
  CfgSection *interface_section;
@@ -55,7 +60,7 @@ Status interfaceman_init(void) {
    interface_params[2] = NULL;
   }
   
-  ptasker_handle(main_proc_pool, _launch, (void *) &interface_params);
+  process_pool_handle(main_proc_pool, _launch, (void *) &interface_params);
   i++;
  }
  return SUCCESS;
@@ -66,28 +71,28 @@ void _launch(void *params) {
  if (*(cfg_params + 2) != NULL) {
   struct passwd *user_id_struct = getpwnam((*(cfg_params + 2))->value);
   if (setuid(user_id_struct->pw_uid) != 0) {
-   printf("\t* Interface manager: Unable to set the user to %s for the process of an interface loading the code %s\n", (*(cfg_params + 2))->value, (*(cfg_params))->value);
+   printf("\t* Interface manager: Unable to set the user to %s for the process of an interface loading the code %s\n", (char *) (*(cfg_params + 2))->value, (char *) (*(cfg_params))->value);
    return;
   }
  }
 
- Module *mod = modman_load_module((*cfg_params)->value, MODMAN_INTERFACE_MODULE);
+ Module *mod = modman_load_module((*cfg_params)->value, MODULE_INTERFACE_MODULE);
  if (mod == NULL) {
-  printf("\t* Interface manager: Error loading interface module %s\n", (*(cfg_params))->value);
+  printf("\t* Interface manager: Error loading interface module %s\n", (char *) (*(cfg_params))->value);
   return;
  }
 
- Interface *if_inst = (Interface *) modman_get_module_instance(mod, (*(cfg_params + 1))->value);
+ Interface *if_inst = (Interface *) modman_get_module_instance(mod, (char *) (*(cfg_params + 1))->value);
  Error *msg;
 
  if ((*(if_inst->init)) (if_inst) == FAILURE) {
   msg = (*if_inst->get_error) (if_inst);
-  printf("\t* Interface manager: Error initializing interface module %s: %s\n", (*(cfg_params))->value, init_error->message);
+  printf("\t* Interface manager: Error initializing interface module %s: %s\n", (char *) (*(cfg_params))->value, msg->message);
   return;
  }
  else {
   msg = (*if_inst->get_error) (if_inst);
-  printf("\t* %s: %s", (*(cfg_params))->value, msg->message);
+  printf("\t* %s: %s", (char *) (*(cfg_params))->value, msg->message);
   (*(if_inst->main)) (if_inst); /* Let her do her job */
   (*(if_inst->destroy)) (if_inst); /* Kill her! */
  }

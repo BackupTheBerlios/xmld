@@ -16,14 +16,16 @@
 
 /* OpenDaemon Symbols */
 char opendaemon_version[] = "0.8.0";
-void *_get_module_instance(CfgTree *);
+void *_get_module_instance(CfgSection *);
 
 /* Internal Symbols */
 struct EchoServerData {
  int max_msg_length;
  Assoc *errors;
  Connector *mcet;
-}
+};
+
+typedef struct EchoServerData EchoServerData;
 
 Status echoserver_init(Interface *);
 void echoserver_main(Interface *);

@@ -18,7 +18,7 @@
 struct thread_pool;
 
 struct thread {
- thread_t thread_id;
+ pthread_t thread_id;
  struct thread_pool *pool;
  void (*func) (void*);
  void *data;

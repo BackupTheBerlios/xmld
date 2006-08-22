@@ -41,4 +41,6 @@ struct Auth {
  Error *(*get_error) (Auth *);
 }
 
+typedef struct Auth Auth;
+
 #endif /* __AUTH_H */
