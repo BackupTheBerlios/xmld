@@ -193,7 +193,14 @@ Goal: API enrichment.
   * Compile echoserver. (done)
   * Run OpenDaemon with echoserver. (done)
   * Fix Blocking bugs.
-    * Startup segfaults.
+    * Use a message queue to pass data from interfaceman_init to _launch. (done)
+    * shmat before checking if a child is busy. (done)
+    * Message length shall be retrieved from msgrcv. (done)
+    * msgsnd sends empty buf.mtext. (fixed)
+    * Initializing echoserver fails.
+
+* Check if the written message queue code is memory efficient, should
+  the structures be used directly without doing a memory copy ?
 
 * Make files for MCET and echoserver.
 
