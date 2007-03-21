@@ -3,7 +3,7 @@ OBJECTS = cfg.o sutils.o opendaemon.o error.o module.o modman.o interfaceman.o c
 BISON = bison
 FLEX = flex
 CFLAGS = -Wall
-CC = gcc
+CC = gcc -g
 VPATH = classes:apis
 
 all: generate ${OBJECTS}
